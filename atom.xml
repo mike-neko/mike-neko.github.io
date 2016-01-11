@@ -4,7 +4,7 @@
   <title><![CDATA[M.Ike]]></title>
   <link href="https://mike-neko.github.io/atom.xml" rel="self"/>
   <link href="https://mike-neko.github.io/"/>
-  <updated>2016-01-11T23:26:36+09:00</updated>
+  <updated>2016-01-12T00:00:15+09:00</updated>
   <id>https://mike-neko.github.io/</id>
   <author>
     <name><![CDATA[M.Ike]]></name>
@@ -42,8 +42,7 @@
 </pre></td><td class='code'><pre><code class=''><span class='line'>rake new_post["ここにタイトルを入力"]</span></code></pre></td></tr></table></div></figure>
 
 
-<p>
-<code>octopress/source/_posts/</code>に日付+1で指定したタイトル名で生成される</p>
+<p> <code>octopress/source/_posts/</code>に日付+1で指定したタイトル名で生成される</p>
 
 <ul>
 <li><p>MEMO:<br/>
@@ -57,29 +56,15 @@
 </ul>
 
 
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
+
+
+<p>エラーが出なければ更新完了</p>
+
 <h2>GitHubでの書き方</h2>
 
-<p>HTMLは勝手に？
-Markdown</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[titletest]]></title>
-    <link href="https://mike-neko.github.io/blog/titletest/"/>
-    <updated>2015-12-30T15:20:55+09:00</updated>
-    <id>https://mike-neko.github.io/blog/titletest</id>
-    <content type="html"><![CDATA[<p>Here&rsquo;s an example:
-aaa</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">test</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;notice the blank line before this function?&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<p><a href="https://help.github.com/articles/github-flavored-markdown/">https://help.github.com/articles/github-flavored-markdown/</a></p>
 ]]></content>
   </entry>
   

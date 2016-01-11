@@ -4,7 +4,7 @@
   <title><![CDATA[Category: github | M.Ike]]></title>
   <link href="https://mike-neko.github.io/blog/categories/github/atom.xml" rel="self"/>
   <link href="https://mike-neko.github.io/"/>
-  <updated>2016-01-11T23:55:58+09:00</updated>
+  <updated>2016-01-12T00:00:15+09:00</updated>
   <id>https://mike-neko.github.io/</id>
   <author>
     <name><![CDATA[M.Ike]]></name>
@@ -34,7 +34,7 @@ rake preview
 <li><p>ターミナルから記事のファイルを作成する<br/>
 <code>
 rake new_post["ここにタイトルを入力"]
-</code><br/>
+</code>
 <code>octopress/source/_posts/</code>に日付+1で指定したタイトル名で生成される</p></li>
 <li><p>MEMO:<br/>
 ここでタイトルとして指定したものがファイル名とタイトルとして利用されるが、日本語を使うと勝手に中国語？に変換されてしまうので、ファイル名になるものを指定したほうが良いかも</p></li>
