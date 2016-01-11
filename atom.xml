@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[M.Ike]]></title>
-  <link href="https://mike-neko.github.io/atom.xml" rel="self"/>
-  <link href="https://mike-neko.github.io/"/>
-  <updated>2016-01-12T00:50:11+09:00</updated>
-  <id>https://mike-neko.github.io/</id>
+  <link href="http://mike-neko.github.io/atom.xml" rel="self"/>
+  <link href="http://mike-neko.github.io/"/>
+  <updated>2016-01-12T01:01:30+09:00</updated>
+  <id>http://mike-neko.github.io/</id>
   <author>
     <name><![CDATA[M.Ike]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Octopress利用方法メモ]]></title>
-    <link href="https://mike-neko.github.io/blog/octopress-memo/"/>
+    <link href="http://mike-neko.github.io/blog/octopress-memo/"/>
     <updated>2016-01-11T22:11:43+09:00</updated>
-    <id>https://mike-neko.github.io/blog/octopress-memo</id>
+    <id>http://mike-neko.github.io/blog/octopress-memo</id>
     <content type="html"><![CDATA[<h1>Octopress利用方法メモ</h1>
 
 <h2>ローカルでの確認方法</h2>
