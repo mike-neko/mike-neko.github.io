@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: github | M.Ike]]></title>
+  <link href="https://mike-neko.github.io/blog/categories/github/atom.xml" rel="self"/>
+  <link href="https://mike-neko.github.io/"/>
+  <updated>2016-01-11T23:26:36+09:00</updated>
+  <id>https://mike-neko.github.io/</id>
+  <author>
+    <name><![CDATA[M.Ike]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress利用方法メモ]]></title>
+    <link href="https://mike-neko.github.io/blog/octopress-memo/"/>
+    <updated>2016-01-11T22:11:43+09:00</updated>
+    <id>https://mike-neko.github.io/blog/octopress-memo</id>
+    <content type="html"><![CDATA[<h1>Octopress利用方法メモ</h1>
+
+<h2>ローカルでの確認方法</h2>
+
+<p>1.ターミナルからプレビューを起動
+<code>
+rake preview
+</code><br/>
+2.ブラウザから<code>http://localhost:4000/</code>へアクセス</p>
+
+<h2>記事の作成方法</h2>
+
+<ol>
+<li><p>ターミナルから記事のファイルを作成する<br/>
+<code>
+rake new_post["ここにタイトルを入力"]
+</code><br/>
+<code>octopress/source/_posts/</code>に日付+1で指定したタイトル名で生成される</p></li>
+<li><p>MEMO:<br/>
+ここでタイトルとして指定したものがファイル名とタイトルとして利用されるが、日本語を使うと勝手に中国語？に変換されてしまうので、ファイル名になるものを指定したほうが良いかも</p></li>
+<li><p>1のファイルを編集して内容を作成<br/>
+カテゴリは<code>categories: [github, メモ]</code>といった感じで複数指定可能（他にも記述方法あり）</p></li>
+<li><p>MEMO:<br/>
+ローカルだと保存した段階でブラウザの更新をすれば内容の確認が可能 <br/>
+他にatomのプレビュー（<code>Ctrl+Shift+M</code>）も便利</p></li>
+<li>デプロイする</li>
+</ol>
+
+
+<h2>GitHubでの書き方</h2>
+
+<p>HTMLは勝手に？
+Markdown</p>
+]]></content>
+  </entry>
+  
+</feed>
