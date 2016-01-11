@@ -4,7 +4,7 @@
   <title><![CDATA[Category: github | M.Ike]]></title>
   <link href="https://mike-neko.github.io/blog/categories/github/atom.xml" rel="self"/>
   <link href="https://mike-neko.github.io/"/>
-  <updated>2016-01-12T00:00:15+09:00</updated>
+  <updated>2016-01-12T00:50:11+09:00</updated>
   <id>https://mike-neko.github.io/</id>
   <author>
     <name><![CDATA[M.Ike]]></name>
@@ -22,38 +22,45 @@
 
 <h2>ローカルでの確認方法</h2>
 
-<p>1.ターミナルからプレビューを起動
+<p>1. ターミナルからプレビューを起動
 <code>
 rake preview
-</code><br/>
-2.ブラウザから<code>http://localhost:4000/</code>へアクセス</p>
+</code></p>
+
+<blockquote><p><em>MEMO:</em><br/>
+このターミナルはエラー確認のため閉じずにそのまま</p></blockquote>
+
+<p>2. ブラウザから<code>http://localhost:4000/</code>へアクセス</p>
 
 <h2>記事の作成方法</h2>
 
-<ol>
-<li><p>ターミナルから記事のファイルを作成する<br/>
+<p>1. ターミナルから記事のファイルを作成する<br/>
 <code>
 rake new_post["ここにタイトルを入力"]
 </code>
-<code>octopress/source/_posts/</code>に日付+1で指定したタイトル名で生成される</p></li>
-<li><p>MEMO:<br/>
-ここでタイトルとして指定したものがファイル名とタイトルとして利用されるが、日本語を使うと勝手に中国語？に変換されてしまうので、ファイル名になるものを指定したほうが良いかも</p></li>
-<li><p>1のファイルを編集して内容を作成<br/>
-カテゴリは<code>categories: [github, メモ]</code>といった感じで複数指定可能（他にも記述方法あり）</p></li>
-<li><p>MEMO:<br/>
-ローカルだと保存した段階でブラウザの更新をすれば内容の確認が可能 <br/>
-他にatomのプレビュー（<code>Ctrl+Shift+M</code>）も便利</p></li>
-<li>デプロイする
+<code>octopress/source/_posts/</code>に日付+1で指定したタイトル名で生成される</p>
+
+<blockquote><p><em>MEMO:</em><br/>
+ここでタイトルとして指定したものがファイル名とタイトルとして利用されるが、日本語を使うと勝手に中国語？に変換されてしまうので、ファイル名にしたいものを指定して、タイトルは手動で変更するのが良いかも</p></blockquote>
+
+<p>2. 1のファイルを編集して内容を作成<br/>
+カテゴリは<code>categories: [github, メモ]</code>といった感じで複数指定可能（他にも記述方法あり）</p>
+
+<blockquote><p><em>MEMO:</em><br/>
+ローカルだと保存した段階でブラウザの更新をすれば内容の確認が可能<br/>
+反映されない場合は、文法でエラーが出てる可能性があるので、プレビューを起動したターミナルを確認してみる<br/>
+他にatomのプレビュー（<code>Ctrl+Shift+M</code>）も便利</p></blockquote>
+
+<p>3. デプロイする
 <code>
 rake deploy
 </code>
-エラーが出なければ更新完了</li>
-</ol>
-
+エラーが出なければ更新完了</p>
 
 <h2>GitHubでの書き方</h2>
 
-<p><a href="https://help.github.com/articles/github-flavored-markdown/">https://help.github.com/articles/github-flavored-markdown/</a></p>
+<p>参考リンク
+<a href="https://help.github.com/articles/github-flavored-markdown/">GitHub専用(公式)</a></p>
 ]]></content>
   </entry>
   

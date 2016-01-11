@@ -7,9 +7,9 @@
 
 	<meta name="author" content="M.Ike"> 
 	
-	<meta name="description" content="Octopress利用方法メモ ローカルでの確認方法 1.ターミナルからプレビューを起動 1
-rake preview 2.ブラウザからhttp://localhost:4000/へアクセス 記事の作成方法 ターミナルから記事のファイルを作成する 1
-rake new_post[" &hellip;"> <meta name="keywords" content="">
+	<meta name="description" content="Octopress利用方法メモ ローカルでの確認方法 1. ターミナルからプレビューを起動 1
+rake preview MEMO:
+このターミナルはエラー確認のため閉じずにそのまま 2. ブラウザからhttp://localhost:4000/へアクセス 記事の作成方法 1. &hellip;"> <meta name="keywords" content="">
 
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -56,39 +56,39 @@ rake new_post[" &hellip;"> <meta name="keywords" content="">
 
 <h2>ローカルでの確認方法</h2>
 
-<p>1.ターミナルからプレビューを起動</p>
+<p>1. ターミナルからプレビューを起動</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>rake preview</span></code></pre></td></tr></table></div></figure>
 
 
-<p>
-2.ブラウザから<code>http://localhost:4000/</code>へアクセス</p>
+<blockquote><p><em>MEMO:</em><br/>
+このターミナルはエラー確認のため閉じずにそのまま</p></blockquote>
+
+<p>2. ブラウザから<code>http://localhost:4000/</code>へアクセス</p>
 
 <h2>記事の作成方法</h2>
 
-<ol>
-<li>ターミナルから記事のファイルを作成する</li>
-</ol>
-
+<p>1. ターミナルから記事のファイルを作成する</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>rake new_post["ここにタイトルを入力"]</span></code></pre></td></tr></table></div></figure>
 
 
-<p> <code>octopress/source/_posts/</code>に日付+1で指定したタイトル名で生成される</p>
+<p><code>octopress/source/_posts/</code>に日付+1で指定したタイトル名で生成される</p>
 
-<ul>
-<li><p>MEMO:<br/>
-ここでタイトルとして指定したものがファイル名とタイトルとして利用されるが、日本語を使うと勝手に中国語？に変換されてしまうので、ファイル名になるものを指定したほうが良いかも</p></li>
-<li><p>1のファイルを編集して内容を作成<br/>
-カテゴリは<code>categories: [github, メモ]</code>といった感じで複数指定可能（他にも記述方法あり）</p></li>
-<li><p>MEMO:<br/>
-ローカルだと保存した段階でブラウザの更新をすれば内容の確認が可能 <br/>
-他にatomのプレビュー（<code>Ctrl+Shift+M</code>）も便利</p></li>
-<li>デプロイする</li>
-</ul>
+<blockquote><p><em>MEMO:</em><br/>
+ここでタイトルとして指定したものがファイル名とタイトルとして利用されるが、日本語を使うと勝手に中国語？に変換されてしまうので、ファイル名にしたいものを指定して、タイトルは手動で変更するのが良いかも</p></blockquote>
 
+<p>2. 1のファイルを編集して内容を作成<br/>
+カテゴリは<code>categories: [github, メモ]</code>といった感じで複数指定可能（他にも記述方法あり）</p>
+
+<blockquote><p><em>MEMO:</em><br/>
+ローカルだと保存した段階でブラウザの更新をすれば内容の確認が可能<br/>
+反映されない場合は、文法でエラーが出てる可能性があるので、プレビューを起動したターミナルを確認してみる<br/>
+他にatomのプレビュー（<code>Ctrl+Shift+M</code>）も便利</p></blockquote>
+
+<p>3. デプロイする</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
@@ -98,7 +98,8 @@ rake new_post[" &hellip;"> <meta name="keywords" content="">
 
 <h2>GitHubでの書き方</h2>
 
-<p><a href="https://help.github.com/articles/github-flavored-markdown/">https://help.github.com/articles/github-flavored-markdown/</a></p>
+<p>参考リンク
+<a href="https://help.github.com/articles/github-flavored-markdown/">GitHub専用(公式)</a></p>
 </div>
 
 
