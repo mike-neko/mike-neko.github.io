@@ -1,24 +1,59 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[M.Ike]]></title>
-  <link href="https://mike-neko.github.io/atom.xml" rel="self"/>
-  <link href="https://mike-neko.github.io/"/>
-  <updated>2016-01-14T01:33:18+09:00</updated>
-  <id>https://mike-neko.github.io/</id>
-  <author>
-    <name><![CDATA[M.Ike]]></name>
-    
-  </author>
-  <generator uri="http://octopress.org/">Octopress</generator>
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Metalサンプル(その1) | M.Ike</title>
+
+	<meta name="author" content="M.Ike"> 
+	
+	<meta name="description" content="Metalサンプル(その1) 概要 元ネタは、Apple公式のMetalKitEssentialsでこれをSwiftで書き直し＋αしたもの
+内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
+シェーダもいたってシンプルでライトもなし。
+ちなみに、 &hellip;"> <meta name="keywords" content="">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="M.Ike" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
+	
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	
+</head>
+
+
+
+<body>
+	<header id="header">
+<div class="inner">
+  <ul class="navigation">
+    <li><a href="/"><h1>M.Ike</h1></a></li>
+    <li><a href="/" class="is-selected">Blog</a></li>
+    <li><a href="http://github.com/mike-neko" target="blank">Github</a></li>
+  </ul>
+</div></header>
+
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">Metalサンプル(その1)</h2>
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
 
   
-  <entry>
-    <title type="html"><![CDATA[Metalサンプル(その1)]]></title>
-    <link href="https://mike-neko.github.io/blog/metalmodel/"/>
-    <updated>2016-01-12T22:56:40+09:00</updated>
-    <id>https://mike-neko.github.io/blog/metalmodel</id>
-    <content type="html"><![CDATA[<h1>Metalサンプル(その1)</h1>
+
+
+
+<time datetime="2016-01-12T22:56:40+09:00" pubdate data-updated="true">2016/01/12</time></div>
+	</div>
+	<div class="entry-content"><h1>Metalサンプル(その1)</h1>
 
 <h2>概要</h2>
 
@@ -106,63 +141,47 @@
 <li>iPhone6+</li>
 </ul>
 
-]]></content>
-  </entry>
+</div>
+
+
+<div class="sharing">
   
-  <entry>
-    <title type="html"><![CDATA[Octopress利用方法メモ]]></title>
-    <link href="https://mike-neko.github.io/blog/octopress-memo/"/>
-    <updated>2016-01-11T22:11:43+09:00</updated>
-    <id>https://mike-neko.github.io/blog/octopress-memo</id>
-    <content type="html"><![CDATA[<h1>Octopress利用方法メモ</h1>
-
-<h2>ローカルでの確認方法</h2>
-
-<p>1. ターミナルからプレビューを起動</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rake preview</span></code></pre></td></tr></table></div></figure>
-
-
-<blockquote><p><em>MEMO:</em><br/>
-このターミナルはエラー確認のため閉じずにそのまま</p></blockquote>
-
-<p>2. ブラウザから<code>http://localhost:4000/</code>へアクセス</p>
-
-<h2>記事の作成方法</h2>
-
-<p>1. ターミナルから記事のファイルを作成する</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rake new_post["ここにタイトルを入力"]</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>octopress/source/_posts/</code>に日付+1で指定したタイトル名で生成される</p>
-
-<blockquote><p><em>MEMO:</em><br/>
-ここでタイトルとして指定したものがファイル名とタイトルとして利用されるが、日本語を使うと勝手に中国語？に変換されてしまうので、ファイル名にしたいものを指定して、タイトルは手動で変更するのが良いかも</p></blockquote>
-
-<p>2. 1のファイルを編集して内容を作成<br/>
-カテゴリは<code>categories: [github, メモ]</code>といった感じで複数指定可能（他にも記述方法あり）</p>
-
-<blockquote><p><em>MEMO:</em><br/>
-ローカルだと保存した段階でブラウザの更新をすれば内容の確認が可能<br/>
-反映されない場合は、文法でエラーが出てる可能性があるので、プレビューを起動したターミナルを確認してみる<br/>
-他にatomのプレビュー（<code>Ctrl+Shift+M</code>）も便利</p></blockquote>
-
-<p>3. デプロイする</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
-
-
-<p>エラーが出なければ更新完了</p>
-
-<h2>GitHubでの書き方</h2>
-
-<p>参考リンク
-<a href="https://help.github.com/articles/github-flavored-markdown/">GitHub専用(公式)</a></p>
-]]></content>
-  </entry>
+  <div class="sns-tw">
+    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js  ';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+  </div>
   
-</feed>
+  
+  
+</div>
+</article>
+</div>
+	<footer id="footer" class="inner"><div class="aboutme">
+<hr>
+  <div class="profile">
+    <a href="http://twitter.com/m__ike_"><img class="icon" src=""></a>
+
+    <h3>M.Ike</h3>
+    <p><a href="http://twitter.com/m__ike_">@m__ike_</a></p>
+
+    <div class="codes">
+      <h4>Codes</h4>
+      <div class="github"><a href="https://github.com/mike-neko">github.com/mike-neko</a></div>
+    </div>
+  </div>
+
+  <div class="float_clear"></div>
+
+</div>
+Copyright &copy; 2016
+ M.Ike 
+<br>
+Powered by Octopress.
+
+
+
+</footer>
+	
+
+</body>
+</html>

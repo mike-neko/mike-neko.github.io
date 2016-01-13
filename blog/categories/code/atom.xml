@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: code | M.Ike]]></title>
+  <link href="https://mike-neko.github.io/blog/categories/code/atom.xml" rel="self"/>
+  <link href="https://mike-neko.github.io/"/>
+  <updated>2016-01-14T01:33:18+09:00</updated>
+  <id>https://mike-neko.github.io/</id>
+  <author>
+    <name><![CDATA[M.Ike]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Metalサンプル(その1)]]></title>
+    <link href="https://mike-neko.github.io/blog/metalmodel/"/>
+    <updated>2016-01-12T22:56:40+09:00</updated>
+    <id>https://mike-neko.github.io/blog/metalmodel</id>
+    <content type="html"><![CDATA[<h1>Metalサンプル(その1)</h1>
+
+<h2>概要</h2>
+
+<p>元ネタは、Apple公式の<a href="https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html">MetalKitEssentials</a>でこれをSwiftで書き直し＋αしたもの<br/>
+内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。<br/>
+シェーダもいたってシンプルでライトもなし。<br/>
+ちなみに、MetalKitはiOS9以降でしか使えないので注意。</p>
+
+<h2>ポイント</h2>
+
+<h3>はじめに</h3>
+
+<p>一番最初につまずいたのは、ビルド自体が通らず、Metalのフレームワークのインポートでエラーになる！ってこと。ちゃんとリンクしているし、そもそも公式サンプルでもエラーになるしで？？？状態。<br/>
+結論から言うと、原因はターゲットにシュミレータを選択していたこと。実行できないのは知っていたけど、まさかビルドすら通らないのは予想外だった。</p>
+
+<h3>バッファへのアクセス</h3>
+
+<p>今回、一番書き方が判らなくて苦労したのがこれ。
+<code>Swift
+let p = UnsafeMutablePointer&lt;VertexUniforms&gt;(frameUniformBuffers[ren.activeBufferNumber].contents())
+var uni = p.memory
+let mat = ren.cameraMatrix * modelMatrix
+uni.projectionView = ren.projectionMatrix * mat
+uni.normal = mat.inverse.transpose
+p.memory = uni
+</code>
+これがObjective-Cだと、
+<code>Objective-C
+VertexUniforms* p = (VertexUniforms*)[frameUniformBuffers[ren.activeBufferNumber] contents];
+matrix_float4x4 mat = ren.cameraMatrix * modelMatrix;
+p-&gt;projectionView = ren.projectionMatrix * mat
+p-&gt;normal = matrix_invert(matrix_transpose(modelViewMatrix));
+</code>
+となる。<br/>
+単にVertexBufferへのポインタを取得して、中のオブジェクトを読み書きしたいだけなのだが、Swiftはまずポインタを明示的に取得し、それから<code>memory()</code>で中のデータへアクセスするという手間をかけないといけない。なお、今回のサンプルでは配列ではないので<code>p.memory()</code>だが、バッファの内容が配列で配列へインデックスでアクセスしたい場合は、<code>p.advancedBy(i).memory()</code>(iがインデックス)とすれば良い。<br/>
+ちょっと面倒だけど、「わかる人にはわかる」といった曖昧さを排除し、ポインタの状態やメモリにアクセスしていることをはっきりさせるのが、Swiftの良さの一つだと思う。</p>
+
+<h3>シェーダ用の構造体</h3>
+
+<p>今回、シェーダにデータを渡す時の型（構造体）を、シェーダのファイルとSwift上でそれぞれ同じ宣言している。これは、Swiftから直接Cのファイルを見に行けない為。ブリッジヘッダを使ったりすれば重複して宣言しなくてよさそうだけど、未検証。Swift上ではSwiftの構造体を使えた方が便利かなと思ったので（結局使わなかったけど）<br/>
+なお、当然ながら<strong>メモリのアライメントには注意が必要</strong>なので、必要に応じてパディングすること。ちなみに忘れると画面が心霊現象みたくなる・・・</p>
+
+<h3>SIMD</h3>
+
+<p>Xcode7からようやくSIMDがサポート。これでvectorやmatrixのベタなコードを書く or 持ってくる必要がなくなった。（でも移動や回転とかはやっぱり自前が必要）
+<code>Swift
+import simd
+</code>
+で使える。<code>MetalKit</code>をインポートしても使えるようになる。</p>
+
+<h2>感想</h2>
+
+<p>今や3DといえばUnityやUE4を使うのがいろんな意味で鉄板だけど、エフェクトだけめっちゃ豪華とかGPGPUといったツール系アプリを作りたい時の選択肢として勉強してみた。<br/>
+正直なところ、上に挙げたエンジンに慣れた身にとっては結構大変だった。。。<br/>
+日本語の資料も少ないし、公式の資料もObjective-Cが多くて、予想外に苦戦。<br/>
+といっても、DirectXのダラダラとした初期化とかに比べると、機種依存もほぼないし簡潔なので楽。<br/>
+結局まあ、Unityとかが偉大すぎるという当たり前の結論に到達。</p>
+
+<h2>ソース</h2>
+
+<p><a href="https://github.com/mike-neko/MetalModel">こちら</a></p>
+
+<h4>開発環境</h4>
+
+<ul>
+<li>Xcode 7.2</li>
+<li>iOS9.2</li>
+<li>iPhone6+</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

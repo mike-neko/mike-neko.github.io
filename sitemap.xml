@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://mike-neko.github.io/blog/octopress-memo/</loc>
+    <loc>https://mike-neko.github.io/blog/metalmodel/</loc>
+    <lastmod>2016-01-12T22:56:40+09:00</lastmod>
+  </url>
+  <url>
+    <loc>https://mike-neko.github.io/blog/octopress-memo/</loc>
     <lastmod>2016-01-11T22:11:43+09:00</lastmod>
   </url>
   <url>
-    <loc>http://mike-neko.github.io/blog/archives/</loc>
+    <loc>https://mike-neko.github.io/blog/archives/</loc>
   </url>
   <url>
-    <loc>http://mike-neko.github.io/blog/</loc>
+    <loc>https://mike-neko.github.io/blog/</loc>
   </url>
   <url>
-    <loc>http://mike-neko.github.io/</loc>
+    <loc>https://mike-neko.github.io/</loc>
   </url>
   <url>
-    <loc>http://mike-neko.github.io/blog/categories/github/</loc>
+    <loc>https://mike-neko.github.io/blog/categories/github/</loc>
+  </url>
+  <url>
+    <loc>https://mike-neko.github.io/blog/categories/memo/</loc>
+  </url>
+  <url>
+    <loc>https://mike-neko.github.io/blog/categories/metal/</loc>
+  </url>
+  <url>
+    <loc>https://mike-neko.github.io/blog/categories/code/</loc>
   </url>
 </urlset>
