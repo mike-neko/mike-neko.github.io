@@ -3,56 +3,85 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Metalサンプル(その1) | M.Ike</title>
+	<title>Metalサンプル(その1) - M.Ike</title>
+	<meta name="author" content="M.Ike">
 
-	<meta name="author" content="M.Ike"> 
 	
 	<meta name="description" content="Metalサンプル(その1) 概要 元ネタは、Apple公式のMetalKitEssentialsでこれをSwiftで書き直し＋αしたもの
 内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
 シェーダもいたってシンプルでライトもなし。
-ちなみに、 &hellip;"> <meta name="keywords" content="">
-
+ちなみに、 &hellip;">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 	<link href="/atom.xml" rel="alternate" title="M.Ike" type="application/atom+xml">
 	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
 	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-	<link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
-	
 	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script async="true" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	
 </head>
 
 
-
 <body>
-	<header id="header">
-<div class="inner">
-  <ul class="navigation">
-    <li><a href="/"><h1>M.Ike</h1></a></li>
-    <li><a href="/" class="is-selected">Blog</a></li>
-    <li><a href="http://github.com/mike-neko" target="blank">Github</a></li>
-  </ul>
-</div></header>
+	<header id="header" class="inner"><h1><a href="/">M.Ike</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="https://www.google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:mike-neko.github.io">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		
+		<a class="twitter" href="http://twitter.com/m__ike_" title="Twitter">Twitter</a>
+		
+		
+		<a class="github" href="https://github.com/mike-neko" title="GitHub">GitHub</a>
+		
+    
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+    
+	</div>
+	<form class="search" action="https://www.google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:mike-neko.github.io">
+	</form>
+</nav>
 
+</header>
+	
+		
+	
 	<div id="content" class="inner"><article class="post">
 	<h2 class="title">Metalサンプル(その1)</h2>
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-
-<time datetime="2016-01-12T22:56:40+09:00" pubdate data-updated="true">2016/01/12</time></div>
-	</div>
 	<div class="entry-content"><h1>Metalサンプル(その1)</h1>
 
 <h2>概要</h2>
@@ -107,7 +136,7 @@
 
 <h3>シェーダ用の構造体</h3>
 
-<p>今回、シェーダにデータを渡す時の型（構造体）を、シェーダのファイルとSwift上でそれぞれ同じ宣言している。これは、Swiftから直接Cのファイルを見に行けない為。ブリッジヘッダを使ったりすれば重複して宣言しなくてよさそうだけど、未検証。Swift上ではSwiftの構造体を使えた方が便利かなと思ったので（結局使わなかったけど）<br/>
+<p>今回、シェーダにデータを渡す時の型（構造体）を、シェーダのファイルとSwift上でそれぞれ同じ宣言をしている。これは、Swiftから直接Cのファイルを見に行けない為。ブリッジヘッダを使ったりすれば重複して宣言しなくてよさそうだけど、未検証。Swift上ではSwiftの構造体を使えた方が便利かなと思ったので（結局使わなかったけど）<br/>
 なお、当然ながら<strong>メモリのアライメントには注意が必要</strong>なので、必要に応じてパディングすること。ちなみに忘れると画面が心霊現象みたくなる・・・</p>
 
 <h3>SIMD</h3>
@@ -144,44 +173,55 @@
 </div>
 
 
-<div class="sharing">
-  
-  <div class="sns-tw">
-    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js  ';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-  </div>
-  
-  
-  
+<div class="meta">
+	<div class="date">
+
+
+
+
+2016/01/12</div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/categories/code/'>code</a>, <a class='category' href='/blog/categories/metal/'>metal</a>
+
+
+</div>
+	
 </div>
 </article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+		
+		
+		<a class="addthis_button_tweet"></a>
+		
+		
+		
+	</div>
+	
 </div>
-	<footer id="footer" class="inner"><div class="aboutme">
-<hr>
-  <div class="profile">
-    <a href="http://twitter.com/m__ike_"><img class="icon" src=""></a>
 
-    <h3>M.Ike</h3>
-    <p><a href="http://twitter.com/m__ike_">@m__ike_</a></p>
-
-    <div class="codes">
-      <h4>Codes</h4>
-      <div class="github"><a href="https://github.com/mike-neko">github.com/mike-neko</a></div>
-    </div>
-  </div>
-
-  <div class="float_clear"></div>
 
 </div>
-Copyright &copy; 2016
- M.Ike 
-<br>
-Powered by Octopress.
+	<footer id="footer" class="inner">Copyright &copy; 2016
 
-
+    M.Ike
 
 </footer>
-	
+	<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+
+
+
 
 </body>
 </html>
