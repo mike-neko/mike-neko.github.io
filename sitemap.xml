@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://mike-neko.github.io/</loc>
+    <lastmod>2016-01-20T22:48:33+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/blog/hugo%E5%88%A9%E7%94%A8%E6%96%B9%E6%B3%95%E3%83%A1%E3%83%A2/</loc>
+    <lastmod>2016-01-20T22:48:33+09:00</lastmod>
+  </url>
+  
+</urlset>
