@@ -10,16 +10,16 @@
     <atom:link href="https://mike-neko.github.io/categories/metal/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>Metalサンプルのメモ(その1)</title>
-      <link>https://mike-neko.github.io/blog/metal%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB%E3%81%AE%E3%83%A1%E3%83%A2%E3%81%9D%E3%81%AE1/</link>
+      <title>MetalKitのSwift版サンプル</title>
+      <link>https://mike-neko.github.io/blog/metalkit%E3%81%AEswift%E7%89%88%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB/</link>
       <pubDate>Fri, 22 Jan 2016 00:23:56 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/metal%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB%E3%81%AE%E3%83%A1%E3%83%A2%E3%81%9D%E3%81%AE1/</guid>
+      <guid>https://mike-neko.github.io/blog/metalkit%E3%81%AEswift%E7%89%88%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB/</guid>
       <description>
 
 &lt;h2 id=&#34;概要:6a6245d2d174e54873361b2ccb73e605&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;元ネタは、Apple公式の&lt;a href=&#34;https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html&#34;&gt;MetalKitEssentials&lt;/a&gt;でこれをSwiftで書き直し＋αしたもの。
+&lt;p&gt;元ネタのApple公式の&lt;a href=&#34;https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html&#34;&gt;MetalKitEssentials&lt;/a&gt;をSwiftで書き直し＋αしたもの。
 内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
 シェーダもいたってシンプルでライトもなし。&lt;br /&gt;
 ちなみに、MetalKitは&lt;strong&gt;iOS9以降&lt;/strong&gt;でしか使えないので注意。&lt;/p&gt;
@@ -66,10 +66,6 @@
 &lt;p&gt;触っていて、良い！と思ったのは、バグで描画がおかしくなったりしても、影響が端末だけに限られて作業しているMacは無事なこと。&lt;br /&gt;
 昔々のDirectXでしょっちゅうブルースクリーンを出してしまい、コードが消えたりPC不安定になっていた人なので、これはとても助かった。&lt;/p&gt;
 
-&lt;h1 id=&#34;ソース:6a6245d2d174e54873361b2ccb73e605&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalModel&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
 &lt;h1 id=&#34;開発環境:6a6245d2d174e54873361b2ccb73e605&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
@@ -77,6 +73,10 @@
 &lt;li&gt;iOS 9.2&lt;/li&gt;
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース:6a6245d2d174e54873361b2ccb73e605&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalModel&#34;&gt;こちら&lt;/a&gt; (&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>
     </item>
     
