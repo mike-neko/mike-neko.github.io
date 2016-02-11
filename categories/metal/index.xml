@@ -6,8 +6,149 @@
     <description>Recent content in Metal on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Thu, 28 Jan 2016 22:32:26 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 11 Feb 2016 09:20:27 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/metal/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>MetalのGPGPUによるパーティクルデモ</title>
+      <link>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8B%E3%83%91%E3%83%BC%E3%83%86%E3%82%A3%E3%82%AF%E3%83%AB%E3%83%87%E3%83%A2/</link>
+      <pubDate>Thu, 11 Feb 2016 09:20:27 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8B%E3%83%91%E3%83%BC%E3%83%86%E3%82%A3%E3%82%AF%E3%83%AB%E3%83%87%E3%83%A2/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージした。&lt;/p&gt;
+
+&lt;p&gt;画像サイズが512*512、1ピクセル=1パーティクルに分解するので、約26万個のパーティクルを動かしているが、60FPSを維持している。約100万まで増やすとiPhone6+で30FPSぐらいとなる。&lt;/p&gt;
+
+&lt;p&gt;そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。&lt;/p&gt;
+
+&lt;h2 id=&#34;動作イメージ:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;動作イメージ&lt;/h2&gt;
+
+&lt;p&gt;&lt;blockquote class=&#34;instagram-media&#34; data-instgrm-version=&#34;6&#34; style=&#34; background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);&#34;&gt;&lt;div style=&#34;padding:8px;&#34;&gt; &lt;div style=&#34; background:#F8F8F8; line-height:0; margin-top:40px; padding:62.3366013072% 0; text-align:center; width:100%;&#34;&gt; &lt;div style=&#34; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;&#34;&gt;&lt;/div&gt;&lt;/div&gt;&lt;p style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;&#34;&gt;&lt;a href=&#34;https://www.instagram.com/p/BBn2nSclQZi/&#34; style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;&#34; target=&#34;_blank&#34;&gt;@m_ike__が投稿した動画&lt;/a&gt; - &lt;time style=&#34; font-family:Arial,sans-serif; font-size:14px; line-height:17px;&#34; datetime=&#34;2016-02-10T22:35:15+00:00&#34;&gt;2016  2月 10 2:35午後 PST&lt;/time&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;
+&lt;script async defer src=&#34;//platform.instagram.com/en_US/embeds.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;ちなみに実機で見るともっとキレイ&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;p&gt;処理はおおまかにわけて、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;事前処理として、テクスチャを読み込んで、ピクセル数分のバッファを確保&lt;/li&gt;
+&lt;li&gt;テクスチャからパーティクルを生成&lt;/li&gt;
+&lt;li&gt;生成したパーティクルを動かす&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;となる。事前処理はCPU側で行い、以降はそれぞれ専用のシェーダを準備して、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;生成用シェーダ&lt;code&gt;fallImageSetup&lt;/code&gt;をセットしてパーティクルを生成&lt;/li&gt;
+&lt;li&gt;実行用シェーダ&lt;code&gt;fallImageCompute&lt;/code&gt;へ切り替えてパーティクルを動かす&lt;/li&gt;
+&lt;li&gt;動き終われば1へ戻る&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;といった流れでループする。&lt;/p&gt;
+
+&lt;p&gt;注意点として、画像の座標とMetalでの座標軸は違うので、x軸とy軸に−1のスケールをかけて補正している。テクスチャ読み込み時に何かできるかは未調査だが、そもそもこういうテクスチャの使い方は普通しないと思うのでそのまま。&lt;/p&gt;
+
+&lt;h3 id=&#34;テクスチャからパーティクルを生成:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;テクスチャからパーティクルを生成&lt;/h3&gt;
+
+&lt;h4 id=&#34;パーティクルの位置の計算:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;パーティクルの位置の計算&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;// ImagePiece* particles [[ buffer(0) ]]
+// uint2 id [[ thread_position_in_grid ]]
+// uint2 size [[ threads_per_grid ]]
+// uint index = id.x + id.y * size.x;
+particles[index].position = float4(id.x / (float)size.x, id.y / (float)size.y, 0, 1);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;イメージとしては1*1の板ポリの中にすべてのパーティクルを配置する感じで、各パーティクルのローカル座標が(0, 0)から(1, 1)の中に収まるようにする。&lt;/p&gt;
+
+&lt;h4 id=&#34;画像の対応するピクセルの色を取得:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;画像の対応するピクセルの色を取得&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;// texture2d&amp;lt;float, access::read&amp;gt; image [[ texture(0) ]]
+particles[index].color = image.read(id);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;今回は1ピクセル=1パーティクル、スレッドも同じように分割しているので、テクスチャの対応するピクセルの座標は、そのままグリッド内のスレッド位置と同じになる。&lt;/p&gt;
+
+&lt;h4 id=&#34;動きのパラメータの初期設定:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;動きのパラメータの初期設定&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;// param.time.w : y方向のdelay
+// rnd : 乱数
+float rnd_d = param.time.w * (1 - (float)rnd / UINT_MAX * 0.1);  // 1
+
+// param.delta : 各軸の1フレーム毎の移動量
+particles[index].acc = float4(param.delta.x, param.delta.y, param.delta.z, rnd_d * id.y);  // 2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;下の方から順にパーティクルが落ちるように、画像の上の方ほど遅れて落ち始めるようにで遅延を設定する(2の&lt;code&gt;rnd_d * id.y&lt;/code&gt;部分)。また落ち方がそれっぽく見えるように、遅延時間は元の指定の100%〜90%の間でばらつくように乱数を使う(1の部分)。&lt;/p&gt;
+
+&lt;h3 id=&#34;パーティクルに動きをつける:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;パーティクルに動きをつける&lt;/h3&gt;
+
+&lt;h4 id=&#34;位置の更新:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;位置の更新&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;// particles[index].acc.w : delay
+// param.time.x : スタートからの経過時間
+// param.time.y : 前フレームからの経過時間
+float t = fmax(0.f, param.time.x - particles[index].acc.w) * param.time.y * rnd_d;
+particles[index].position += t * particles[index].acc;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;パーティクルの位置は、スムーズに見えるように&lt;code&gt;前回からの経過時間*時間あたりの移動量&lt;/code&gt;で計算する。ただし、各パーティクルには遅延時間があるので、それを経過するまでは経過時間は0として動かないようにする(&lt;code&gt;fmax(0.f, param.time.x - particles[index].acc.w)&lt;/code&gt;の部分)。さらに、こちらも乱数で落ち方にばらつきを与える。&lt;/p&gt;
+
+&lt;h4 id=&#34;消滅処理:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;消滅処理&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;float4 f = step(param.delta.w, particles[index].position + t * particles[index].acc);
+particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;一定距離落ちれば徐々に消滅したように見せる為に、まず&lt;code&gt;step()&lt;/code&gt;で指定した距離を超えていないかチェックする。超えていれば、該当の要素が0になるのでαが減算されて消えたように見せかける（パーティクル自体は生きている）。ここも乱数で消え方にばらつきを与える。&lt;/p&gt;
+
+&lt;p&gt;ここでハマったのが、アルファブレンドをONにするのを忘れていて全然消えてくれなかったこと・・・&lt;br /&gt;
+デフォルトではフラグメントシェーダでどれだけαを変更しても無視されるので、&lt;code&gt;pipelineDescriptor.alphaToCoverageEnabled = true&lt;/code&gt;でαの指定を有効にする。&lt;/p&gt;
+
+&lt;p&gt;ポイントとなるのは、フラグメントシェーダ内の&lt;code&gt;if (in.color.a &amp;lt; 0.1) discard_fragment();&lt;/code&gt;という見えなくなったピクセルの破棄処理。なくてもパーティクルは消えてくれるが、この処理を行うことで若干フレームレートが改善するので入れた（&lt;del&gt;単に使ってみたかっただけ&lt;/del&gt;）。&lt;/p&gt;
+
+&lt;h3 id=&#34;乱数の生成:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;乱数の生成&lt;/h3&gt;
+
+&lt;p&gt;Metalではシェーダ上で使える乱数の関数は準備されていない為、使いたい場合はシェーダ上で自前で実装するかCPU側で生成したものを渡して使うかになる。今回はCPU側でほとんど処理しないので、シェーダ上で実装する方を選択した。&lt;/p&gt;
+
+&lt;p&gt;乱数のアルゴリズムは幾つかあるし、このデモでの利用方法なら前回作ったようなノイズ関数を用いても良いが、ちょうど少し前に面白い記事(参考リンク参照)を見つけたので、&lt;code&gt;xorshift&lt;/code&gt;を採用することにした。32bitにしたのは、もしCPU側とやりとりする場合（シードの初期値など）に、64bit以上の型は直接渡せない為。&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/b1c006b69ccb57261f7d.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;今回はシードの初期値に&lt;code&gt;2463534242&lt;/code&gt;の値を直で指定している。もし本当にランダムにしたいならCPU側から現在のミリ秒あたりを渡して設定すればよい。&lt;/p&gt;
+
+&lt;p&gt;ポイントは、生成された乱数が次回のシードになるので、アドレス空間に&lt;code&gt;threadgroup&lt;/code&gt;を指定していること。これにより同じスレッドグループ内のスレッドでこのシードが共有されるようになる。（指定しないと毎回初期値が設定されてしまう。）&lt;/p&gt;
+
+&lt;p&gt;しかし、GPGPUでは同時にスレッドが並列で幾つも実行される為、単にシードを共有するだけでは同じシードを複数のスレッドを使うことになり、結果が偏ったものになってしまう。そこで、シードを渡す時に&lt;code&gt;rotate(rnd, id.x)&lt;/code&gt;として値をばらつかせている（フローの起きないrotateが標準で使えるのは、ほんと助かる）。&lt;/p&gt;
+
+&lt;p&gt;得られる結果は&lt;code&gt;uint&lt;/code&gt;なので、実際のコード内では使いやすいよう&lt;code&gt;(float)rnd / UINT_MAX&lt;/code&gt;として正規化してから使っている。&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;乱数のアルゴリズムの解説記事&lt;br /&gt;
+&lt;a href=&#34;https://blog.visvirial.com/articles/575&#34;&gt;Google Chromeが採用した、擬似乱数生成アルゴリズム「xorshift」の数理&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 7.2&lt;/li&gt;
+&lt;li&gt;iOS 9.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalImage&#34;&gt;こちら&lt;/a&gt;(&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Metal組み込み関数</title>
