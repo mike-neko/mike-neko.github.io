@@ -23,7 +23,7 @@
 
 &lt;p&gt;なお、QRコードに限らず、他のバーコードや顔認識にも対応。対応形式は&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/AVFoundation/Reference/AVMetadataMachineReadableCodeObject_Class/index.html#//apple_ref/doc/constant_group/Machine_Readable_Object_Types&#34;&gt;公式&lt;/a&gt;を参照。地味にiOS8で対応形式が増えている。&lt;/p&gt;
 
-&lt;p&gt;あと、2次元なら同時認識できたりするが、その辺りの詳細は参考サイトの公式FAQが詳しい。&lt;/p&gt;
+&lt;p&gt;あと、2次元なら同時認識できたりするが、その辺りの詳細は参考リンクの公式FAQが詳しい。&lt;/p&gt;
 
 &lt;h2 id=&#34;小ネタ:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;小ネタ&lt;/h2&gt;
 
@@ -59,7 +59,7 @@
 
 &lt;p&gt;あと、カメラをわざわざ起動しなくても画像を直接認識してくれるようになって欲しい。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考サイト:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;参考サイト&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/technotes/tn2325/_index.html&#34;&gt;AV Foundation iOS Machine Readable Code Detection FAQ&lt;/a&gt;&lt;/li&gt;
@@ -100,7 +100,7 @@
 
 &lt;h2 id=&#34;小ネタ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;小ネタ&lt;/h2&gt;
 
-&lt;p&gt;ソース自体はGPUGemsのサンプルをほぼほぼ書き換えただけなので、ノイズ生成のアルゴリズムなどは参考サイトの方で。。。&lt;/p&gt;
+&lt;p&gt;ソース自体はGPUGemsのサンプルをほぼほぼ書き換えただけなので、ノイズ生成のアルゴリズムなどは参考リンクの方で。。。&lt;/p&gt;
 
 &lt;h3 id=&#34;ノイズ生成の流れ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;ノイズ生成の流れ&lt;/h3&gt;
 
@@ -158,7 +158,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 今回はサイズが2次元(width * height * 1)なので、シェーダ側は&lt;code&gt;uint2 id [[ thread_position_in_grid ]]&lt;/code&gt;と、
 &lt;code&gt;uint2&lt;/code&gt;で受け取ることになる(間違えるとシェーダのコンパイルが通らない親切?仕様)。1次元なら&lt;code&gt;uint&lt;/code&gt;で受け取れば良い。&lt;/p&gt;
 
-&lt;p&gt;また、グループが複数だったり1次元のバッファで2次元のグループサイズを指定している様な場合は、&lt;code&gt;threads_per_grid&lt;/code&gt;や&lt;code&gt;thread_position_in_threadgroup&lt;/code&gt;を追加で受け取る必要がある。詳細は公式の&lt;a href=&#34;https://developer.apple.com/library/tvos/documentation/Metal/Reference/MetalShadingLanguageGuide/func-var-qual/func-var-qual.html&#34;&gt;Attribute Qualifiers for Kernel Function Input&lt;/a&gt;の項目を参照。&lt;/p&gt;
+&lt;p&gt;また、グループが複数だったり1次元のバッファで2次元のグループサイズを指定している様な場合は、&lt;code&gt;threads_per_grid&lt;/code&gt;や&lt;code&gt;thread_position_in_threadgroup&lt;/code&gt;を追加で受け取る必要がある。詳細は公式の&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Metal/Reference/MetalShadingLanguageGuide/func-var-qual/func-var-qual.html&#34;&gt;Attribute Qualifiers for Kernel Function Input&lt;/a&gt;の項目を参照。&lt;/p&gt;
 
 &lt;p&gt;同じスレッドグループ内であれば、メモリの共有ができたりするのだが、そのあたりも公式のサンプル&lt;a href=&#34;https://developer.apple.com/library/ios/samplecode/Metal_NBody_Simulation/Introduction/Intro.html&#34;&gt;Metal N-Body&lt;/a&gt;が参考になる。&lt;/p&gt;
 
@@ -175,13 +175,13 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 &lt;p&gt;Metalの発表を聞いて一番ワクワクして触りたかったのが、このGPGPUだった。これまでMacでは統合開発環境でGPGPUが組めなかった（普通のシェーダだけならUnityがあった）ので、使い慣れたXcodeで触れるのは楽しみだった。&lt;/p&gt;
 
-&lt;p&gt;元々ソース自体はGemsのものや参考サイトのものがあったので、移植しただけ。実際にはパラメータやノイズの加工を工夫すれば、雲になったり地形になったりしていくが、パラメータの調整はどうも苦手というか時間がものすごくかかるので、とりあえず今回はここまでで。&lt;/p&gt;
+&lt;p&gt;元々ソース自体はGemsのものや参考リンクのものがあったので、移植しただけ。実際にはパラメータやノイズの加工を工夫すれば、雲になったり地形になったりしていくが、パラメータの調整はどうも苦手というか時間がものすごくかかるので、とりあえず今回はここまでで。&lt;/p&gt;
 
 &lt;p&gt;並列化によってどれくらい高速化するのかとか、モバイルのGPGPUでどのくらいパフォーマンスが上がるのか（もちろんバッファの転送が無いだけでも効果は大きいだろうけど）とかが気になったのだけど、それもまた別の機会に・・・&lt;/p&gt;
 
 &lt;p&gt;にしても、シェーダ関係は環境毎に用語が微妙に変わるのは何とかしてほしい。。。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考サイト:c76c02a9716918700fc6ffc19450c1da&#34;&gt;参考サイト&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク:c76c02a9716918700fc6ffc19450c1da&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;日本語の解説：&lt;a href=&#34;http://postd.cc/understanding-perlin-noise/&#34;&gt;パーリンノイズを理解する(POSTD)&lt;/a&gt;&lt;/li&gt;

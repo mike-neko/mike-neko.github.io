@@ -90,7 +90,7 @@
 
 <h2 id="小ネタ:c76c02a9716918700fc6ffc19450c1da">小ネタ</h2>
 
-<p>ソース自体はGPUGemsのサンプルをほぼほぼ書き換えただけなので、ノイズ生成のアルゴリズムなどは参考サイトの方で。。。</p>
+<p>ソース自体はGPUGemsのサンプルをほぼほぼ書き換えただけなので、ノイズ生成のアルゴリズムなどは参考リンクの方で。。。</p>
 
 <h3 id="ノイズ生成の流れ:c76c02a9716918700fc6ffc19450c1da">ノイズ生成の流れ</h3>
 
@@ -148,7 +148,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 今回はサイズが2次元(width * height * 1)なので、シェーダ側は<code>uint2 id [[ thread_position_in_grid ]]</code>と、
 <code>uint2</code>で受け取ることになる(間違えるとシェーダのコンパイルが通らない親切?仕様)。1次元なら<code>uint</code>で受け取れば良い。</p>
 
-<p>また、グループが複数だったり1次元のバッファで2次元のグループサイズを指定している様な場合は、<code>threads_per_grid</code>や<code>thread_position_in_threadgroup</code>を追加で受け取る必要がある。詳細は公式の<a href="https://developer.apple.com/library/tvos/documentation/Metal/Reference/MetalShadingLanguageGuide/func-var-qual/func-var-qual.html">Attribute Qualifiers for Kernel Function Input</a>の項目を参照。</p>
+<p>また、グループが複数だったり1次元のバッファで2次元のグループサイズを指定している様な場合は、<code>threads_per_grid</code>や<code>thread_position_in_threadgroup</code>を追加で受け取る必要がある。詳細は公式の<a href="https://developer.apple.com/library/ios/documentation/Metal/Reference/MetalShadingLanguageGuide/func-var-qual/func-var-qual.html">Attribute Qualifiers for Kernel Function Input</a>の項目を参照。</p>
 
 <p>同じスレッドグループ内であれば、メモリの共有ができたりするのだが、そのあたりも公式のサンプル<a href="https://developer.apple.com/library/ios/samplecode/Metal_NBody_Simulation/Introduction/Intro.html">Metal N-Body</a>が参考になる。</p>
 
@@ -165,13 +165,13 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 <p>Metalの発表を聞いて一番ワクワクして触りたかったのが、このGPGPUだった。これまでMacでは統合開発環境でGPGPUが組めなかった（普通のシェーダだけならUnityがあった）ので、使い慣れたXcodeで触れるのは楽しみだった。</p>
 
-<p>元々ソース自体はGemsのものや参考サイトのものがあったので、移植しただけ。実際にはパラメータやノイズの加工を工夫すれば、雲になったり地形になったりしていくが、パラメータの調整はどうも苦手というか時間がものすごくかかるので、とりあえず今回はここまでで。</p>
+<p>元々ソース自体はGemsのものや参考リンクのものがあったので、移植しただけ。実際にはパラメータやノイズの加工を工夫すれば、雲になったり地形になったりしていくが、パラメータの調整はどうも苦手というか時間がものすごくかかるので、とりあえず今回はここまでで。</p>
 
 <p>並列化によってどれくらい高速化するのかとか、モバイルのGPGPUでどのくらいパフォーマンスが上がるのか（もちろんバッファの転送が無いだけでも効果は大きいだろうけど）とかが気になったのだけど、それもまた別の機会に・・・</p>
 
 <p>にしても、シェーダ関係は環境毎に用語が微妙に変わるのは何とかしてほしい。。。</p>
 
-<h1 id="参考サイト:c76c02a9716918700fc6ffc19450c1da">参考サイト</h1>
+<h1 id="参考リンク:c76c02a9716918700fc6ffc19450c1da">参考リンク</h1>
 
 <ul>
 <li>日本語の解説：<a href="http://postd.cc/understanding-perlin-noise/">パーリンノイズを理解する(POSTD)</a></li>
