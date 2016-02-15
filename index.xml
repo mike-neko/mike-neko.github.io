@@ -120,7 +120,11 @@
 
 &lt;h1 id=&#34;ソース:5faa08a3423ea1353ad8985880ae422e&#34;&gt;ソース&lt;/h1&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/SpriteShaderSample&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/mike-neko/SpriteShaderSample&#34;&gt;プロジェクト一式&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;ベタ塗りシェーダ(&lt;a href=&#34;https://github.com/mike-neko/SpriteShaderSample/blob/master/Assets/Shaders/SpriteBetaMask.shader&#34;&gt;ソースのみ&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;アウトラインシェーダ(&lt;a href=&#34;https://github.com/mike-neko/SpriteShaderSample/blob/master/Assets/Shaders/SpriteOutline.shader&#34;&gt;ソースのみ&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;&lt;div&gt;
 	&lt;img src=&#34;http://unity-chan.com/images/imageLicenseLogo.png&#34; alt=&#34;ユニティちゃんライセンス&#34;&gt;
