@@ -6,13 +6,13 @@
     <description>Recent content in Unity on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sun, 14 Feb 2016 04:13:47 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 16 Feb 2016 04:13:47 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/unity/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>UnityのSprite用シェーダ(2本)</title>
       <link>https://mike-neko.github.io/blog/unity%E3%81%AEsprite%E7%94%A8%E3%82%B7%E3%82%A7%E3%83%BC%E3%83%802%E6%9C%AC/</link>
-      <pubDate>Sun, 14 Feb 2016 04:13:47 +0900</pubDate>
+      <pubDate>Tue, 16 Feb 2016 04:13:47 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/unity%E3%81%AEsprite%E7%94%A8%E3%82%B7%E3%82%A7%E3%83%BC%E3%83%802%E6%9C%AC/</guid>
       <description>
@@ -40,7 +40,7 @@
 &lt;/ul&gt;
 
 &lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-14-sprite-shader/beta.gif&#34; /&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-16-sprite-shader/beta.gif&#34; /&gt;
 &lt;/figure&gt;
 
 
@@ -50,7 +50,7 @@
 画像を別に用意しなくても良い＆ある程度動的に変化できるように作ったシェーダ&lt;/p&gt;
 
 &lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-14-sprite-shader/outline.gif&#34; /&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-16-sprite-shader/outline.gif&#34; /&gt;
 &lt;/figure&gt;
 
 
@@ -93,7 +93,7 @@
 
 &lt;p&gt;なので、ポリゴンはそのままで中に表示する画像を縮小することで、無理やり余白を作っている。（モデルを法線方向へ膨らます通常のアウトラインシェーダとは逆にしてみた）
 &lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-14-sprite-shader/comp.png&#34; /&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-16-sprite-shader/comp.png&#34; /&gt;
 &lt;/figure&gt;
 
 （左側が余白を作った状態なので、多少太めの線を引いても途切れない。逆に右側の通常のスプライトだと余白がほぼないのですぐに途切れてしまう。縮小する割合&lt;code&gt;1.2&lt;/code&gt;は実際に試して自分の環境でバランスのとれた値なので、必要に応じて調整を）&lt;/p&gt;
