@@ -11,10 +11,10 @@
     
     <item>
       <title>MetalのGPGPUによるパーティクルデモ</title>
-      <link>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8B%E3%83%91%E3%83%BC%E3%83%86%E3%82%A3%E3%82%AF%E3%83%AB%E3%83%87%E3%83%A2/</link>
+      <link>https://mike-neko.github.io/blog/metal-image/</link>
       <pubDate>Thu, 11 Feb 2016 09:20:27 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8B%E3%83%91%E3%83%BC%E3%83%86%E3%82%A3%E3%82%AF%E3%83%AB%E3%83%87%E3%83%A2/</guid>
+      <guid>https://mike-neko.github.io/blog/metal-image/</guid>
       <description>
 
 &lt;h2 id=&#34;概要:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;概要&lt;/h2&gt;
@@ -152,10 +152,10 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
     
     <item>
       <title>Metal組み込み関数</title>
-      <link>https://mike-neko.github.io/blog/metal%E7%B5%84%E3%81%BF%E8%BE%BC%E3%81%BF%E9%96%A2%E6%95%B0/</link>
+      <link>https://mike-neko.github.io/blog/metal-function/</link>
       <pubDate>Thu, 28 Jan 2016 22:32:26 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/metal%E7%B5%84%E3%81%BF%E8%BE%BC%E3%81%BF%E9%96%A2%E6%95%B0/</guid>
+      <guid>https://mike-neko.github.io/blog/metal-function/</guid>
       <description>
 
 &lt;h2 id=&#34;metalのシェーダで利用できる関数のまとめ:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;Metalのシェーダで利用できる関数のまとめ&lt;/h2&gt;
@@ -944,10 +944,10 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
     
     <item>
       <title>MetalのGPGPUによるPerlinノイズ</title>
-      <link>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8Bperlin%E3%83%8E%E3%82%A4%E3%82%BA/</link>
+      <link>https://mike-neko.github.io/blog/metal-noise/</link>
       <pubDate>Mon, 25 Jan 2016 19:41:59 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8Bperlin%E3%83%8E%E3%82%A4%E3%82%BA/</guid>
+      <guid>https://mike-neko.github.io/blog/metal-noise/</guid>
       <description>
 
 &lt;h2 id=&#34;概要:c76c02a9716918700fc6ffc19450c1da&#34;&gt;概要&lt;/h2&gt;

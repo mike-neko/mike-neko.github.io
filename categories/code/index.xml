@@ -11,10 +11,10 @@
     
     <item>
       <title>UnityのSprite用シェーダ(2本)</title>
-      <link>https://mike-neko.github.io/blog/unity%E3%81%AEsprite%E7%94%A8%E3%82%B7%E3%82%A7%E3%83%BC%E3%83%802%E6%9C%AC/</link>
+      <link>https://mike-neko.github.io/blog/sprite-shader/</link>
       <pubDate>Tue, 16 Feb 2016 04:13:47 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/unity%E3%81%AEsprite%E7%94%A8%E3%82%B7%E3%82%A7%E3%83%BC%E3%83%802%E6%9C%AC/</guid>
+      <guid>https://mike-neko.github.io/blog/sprite-shader/</guid>
       <description>
 
 &lt;h2 id=&#34;概要:5faa08a3423ea1353ad8985880ae422e&#34;&gt;概要&lt;/h2&gt;
@@ -135,10 +135,10 @@
     
     <item>
       <title>MetalのGPGPUによるパーティクルデモ</title>
-      <link>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8B%E3%83%91%E3%83%BC%E3%83%86%E3%82%A3%E3%82%AF%E3%83%AB%E3%83%87%E3%83%A2/</link>
+      <link>https://mike-neko.github.io/blog/metal-image/</link>
       <pubDate>Thu, 11 Feb 2016 09:20:27 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8B%E3%83%91%E3%83%BC%E3%83%86%E3%82%A3%E3%82%AF%E3%83%AB%E3%83%87%E3%83%A2/</guid>
+      <guid>https://mike-neko.github.io/blog/metal-image/</guid>
       <description>
 
 &lt;h2 id=&#34;概要:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;概要&lt;/h2&gt;
@@ -276,10 +276,10 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
     
     <item>
       <title>QRコードの読み取りサンプル(Swift)</title>
-      <link>https://mike-neko.github.io/blog/qr%E3%82%B3%E3%83%BC%E3%83%89%E3%81%AE%E8%AA%AD%E3%81%BF%E5%8F%96%E3%82%8A%E3%82%B5%E3%83%B3%E3%83%97%E3%83%ABswift/</link>
+      <link>https://mike-neko.github.io/blog/code-reader/</link>
       <pubDate>Tue, 02 Feb 2016 22:52:40 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/qr%E3%82%B3%E3%83%BC%E3%83%89%E3%81%AE%E8%AA%AD%E3%81%BF%E5%8F%96%E3%82%8A%E3%82%B5%E3%83%B3%E3%83%97%E3%83%ABswift/</guid>
+      <guid>https://mike-neko.github.io/blog/code-reader/</guid>
       <description>
 
 &lt;h2 id=&#34;概要:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;概要&lt;/h2&gt;
@@ -346,10 +346,10 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
     
     <item>
       <title>MetalのGPGPUによるPerlinノイズ</title>
-      <link>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8Bperlin%E3%83%8E%E3%82%A4%E3%82%BA/</link>
+      <link>https://mike-neko.github.io/blog/metal-noise/</link>
       <pubDate>Mon, 25 Jan 2016 19:41:59 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8Bperlin%E3%83%8E%E3%82%A4%E3%82%BA/</guid>
+      <guid>https://mike-neko.github.io/blog/metal-noise/</guid>
       <description>
 
 &lt;h2 id=&#34;概要:c76c02a9716918700fc6ffc19450c1da&#34;&gt;概要&lt;/h2&gt;
@@ -472,10 +472,10 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
     
     <item>
       <title>MetalKitのSwift版サンプル</title>
-      <link>https://mike-neko.github.io/blog/metalkit%E3%81%AEswift%E7%89%88%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB/</link>
+      <link>https://mike-neko.github.io/blog/metal-model/</link>
       <pubDate>Fri, 22 Jan 2016 00:23:56 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/metalkit%E3%81%AEswift%E7%89%88%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB/</guid>
+      <guid>https://mike-neko.github.io/blog/metal-model/</guid>
       <description>
 
 &lt;h2 id=&#34;概要:6a6245d2d174e54873361b2ccb73e605&#34;&gt;概要&lt;/h2&gt;

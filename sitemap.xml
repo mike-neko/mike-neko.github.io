@@ -3,42 +3,47 @@
   
   <url>
     <loc>https://mike-neko.github.io/</loc>
-    <lastmod>2016-02-16T04:13:47+09:00</lastmod>
+    <lastmod>2016-02-16T23:07:23+09:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://mike-neko.github.io/blog/unity%E3%81%AEsprite%E7%94%A8%E3%82%B7%E3%82%A7%E3%83%BC%E3%83%802%E6%9C%AC/</loc>
+    <loc>https://mike-neko.github.io/blog/hugo-shortcode/</loc>
+    <lastmod>2016-02-16T23:07:23+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/blog/sprite-shader/</loc>
     <lastmod>2016-02-16T04:13:47+09:00</lastmod>
   </url>
   
   <url>
-    <loc>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8B%E3%83%91%E3%83%BC%E3%83%86%E3%82%A3%E3%82%AF%E3%83%AB%E3%83%87%E3%83%A2/</loc>
+    <loc>https://mike-neko.github.io/blog/metal-image/</loc>
     <lastmod>2016-02-11T09:20:27+09:00</lastmod>
   </url>
   
   <url>
-    <loc>https://mike-neko.github.io/blog/qr%E3%82%B3%E3%83%BC%E3%83%89%E3%81%AE%E8%AA%AD%E3%81%BF%E5%8F%96%E3%82%8A%E3%82%B5%E3%83%B3%E3%83%97%E3%83%ABswift/</loc>
+    <loc>https://mike-neko.github.io/blog/code-reader/</loc>
     <lastmod>2016-02-02T22:52:40+09:00</lastmod>
   </url>
   
   <url>
-    <loc>https://mike-neko.github.io/blog/metal%E7%B5%84%E3%81%BF%E8%BE%BC%E3%81%BF%E9%96%A2%E6%95%B0/</loc>
+    <loc>https://mike-neko.github.io/blog/metal-function/</loc>
     <lastmod>2016-01-28T22:32:26+09:00</lastmod>
   </url>
   
   <url>
-    <loc>https://mike-neko.github.io/blog/metal%E3%81%AEgpgpu%E3%81%AB%E3%82%88%E3%82%8Bperlin%E3%83%8E%E3%82%A4%E3%82%BA/</loc>
+    <loc>https://mike-neko.github.io/blog/metal-noise/</loc>
     <lastmod>2016-01-25T19:41:59+09:00</lastmod>
   </url>
   
   <url>
-    <loc>https://mike-neko.github.io/blog/metalkit%E3%81%AEswift%E7%89%88%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB/</loc>
+    <loc>https://mike-neko.github.io/blog/metal-model/</loc>
     <lastmod>2016-01-22T00:23:56+09:00</lastmod>
   </url>
   
   <url>
-    <loc>https://mike-neko.github.io/blog/hugo%E5%88%A9%E7%94%A8%E6%96%B9%E6%B3%95%E3%83%A1%E3%83%A2/</loc>
+    <loc>https://mike-neko.github.io/blog/hugo-memo/</loc>
     <lastmod>2016-01-20T22:48:33+09:00</lastmod>
   </url>
   

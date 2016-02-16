@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Hugoのshortcodeのメモ &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Tips</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2016 <a href="https://mike-neko.github.io/license/">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Hugoのshortcodeのメモ</h1>
+    <span class="post-date">Feb 16, 2016 
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/categories/github">github</a><a class="label" href="https://mike-neko.github.io/categories/%E3%83%A1%E3%83%A2">メモ</a>
+    </span>
+    
+
+<p>Hugoの<code>shortcode</code>を使って、記事の中でHTMLのタグをべた書きしなくて良い様にする方法のメモ。あと、おまけで<code>shortcode</code>をMarkdownの中でエスケープして表示する方法。</p>
+
+<h2 id="画像を貼り付けるshortcode:82b443db7a6a95ed9bb9f499c6e51b27">画像を貼り付けるshortcode</h2>
+
+<p>Hugoで画像を表示するには、<code>static</code>の中に置く必要がある。この中は全サイト共通になっているので、整理しやすいように以下のディレクトリ構成にした。</p>
+
+<pre><code>- static
+    - media
+        - 2016-02-16-sprite-shader
+            - comp.png
+            - beta.gif
+        - 2016-02-18-higo-shortcode
+            - sample.jpg
+        ...
+</code></pre>
+
+<p><code>media</code>の中に、記事毎に<code>[作成日付]-[slug]</code>というディレクトリを作り、その中に画像などのコンテンツを置いている。</p>
+
+<p>この状態で記事の中で画像を表示させるには、<code>{{&lt; figure src=&quot;/media/2016-02-18-higo-shortcode/sample.jpg&quot; &gt;}}</code>となる。</p>
+
+<p>これを毎回書くのは面倒だが<code>shortcode</code>を使うと、<code>{{&lt; img &quot;sample.jpg&quot; &gt;}}</code>とだけ書けばよい。</p>
+
+<h3 id="作り方:82b443db7a6a95ed9bb9f499c6e51b27">作り方</h3>
+
+<ol>
+<li><code>&lt;site-name&gt;/layouts/shortcodes/img.html</code>を作成</li>
+<li>1のファイルに
+<script type="text/javascript" src="https://gist.github.com/593de54e0ba8f5db4c6b.js"></script>
+を貼り付けて保存</li>
+<li>あとは使いたい場所で<code>{{&lt; img &quot;ファイル名&quot; &gt;}}</code>とすればOK</li>
+</ol>
+
+<h2 id="エスケープ方法:82b443db7a6a95ed9bb9f499c6e51b27">エスケープ方法</h2>
+
+<p>記事の中で、<code>shortcode</code>などを表示させたい場合に、そのまま書くと当然ながらそのコードが実行されてしまうので、エスケープが必要となる。</p>
+
+<p>このエスケープ方法は幾つかある（他にもあるかも）</p>
+
+<ol>
+<li><code>\</code>をつける方法<br />
+<code>\{\{&lt; コード &gt;}}</code></li>
+<li><code>{</code>を<code>&amp;lt;</code>と入力する方法<br />
+<code>{{&amp;lt; コード &gt;}}</code></li>
+<li><code>/**/</code>のコメントにする方法<br />
+<code>{{/* コード */}}</code></li>
+</ol>
+
+<p>で、一番おすすめなのは3の方法。他の方法だと``で囲った時にうまく表示されないので。</p>
+
+<h1 id="参考リンク:82b443db7a6a95ed9bb9f499c6e51b27">参考リンク</h1>
+
+<ul>
+<li>公式：<a href="https://gohugo.io/extras/shortcodes/">Hugo - Shortcodes</a></li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>
+
