@@ -28,14 +28,14 @@
         - 2016-02-16-sprite-shader
             - comp.png
             - beta.gif
-        - 2016-02-18-higo-shortcode
+        - 2016-02-18-hugo-shortcode
             - sample.jpg
         ...
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;code&gt;media&lt;/code&gt;の中に、記事毎に&lt;code&gt;[作成日付]-[slug]&lt;/code&gt;というディレクトリを作り、その中に画像などのコンテンツを置いている。&lt;/p&gt;
 
-&lt;p&gt;この状態で記事の中で画像を表示させるには、&lt;code&gt;{{&amp;lt; figure src=&amp;quot;/media/2016-02-18-higo-shortcode/sample.jpg&amp;quot; &amp;gt;}}&lt;/code&gt;となる。&lt;/p&gt;
+&lt;p&gt;この状態で記事の中で画像を表示させるには、&lt;code&gt;{{&amp;lt; figure src=&amp;quot;/media/2016-02-18-hugo-shortcode/sample.jpg&amp;quot; &amp;gt;}}&lt;/code&gt;となる。&lt;/p&gt;
 
 &lt;p&gt;これを毎回書くのは面倒だが&lt;code&gt;shortcode&lt;/code&gt;を使うと、&lt;code&gt;{{&amp;lt; img &amp;quot;sample.jpg&amp;quot; &amp;gt;}}&lt;/code&gt;とだけ書けばよい。&lt;/p&gt;
 
