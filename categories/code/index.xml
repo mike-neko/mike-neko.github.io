@@ -286,7 +286,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 
 &lt;p&gt;iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル。&lt;/p&gt;
 
-&lt;p&gt;なお、QRコードに限らず、他のバーコードや顔認識にも対応。対応形式は&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/AVFoundation/Reference/AVMetadataMachineReadableCodeObject_Class/index.html#//apple_ref/doc/constant_group/Machine_Readable_Object_Types&#34;&gt;公式&lt;/a&gt;を参照。地味にiOS8で対応形式が増えている。&lt;/p&gt;
+&lt;p&gt;なお、QRコードに限らず、他のバーコードや顔認識にも対応。対応形式は&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/AVFoundation/Reference/AVMetadataMachineReadableCodeObject_Class/index.html#//apple_ref/doc/constant_group/Machine_Readable_Object_Types&#34;&gt;公式&lt;/a&gt;を参照。地味にiOS8から対応形式が増えている。&lt;/p&gt;
 
 &lt;p&gt;あと、2次元なら同時認識できたりするが、その辺りの詳細は参考リンクの公式FAQが詳しい。&lt;/p&gt;
 
@@ -312,7 +312,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 
 &lt;p&gt;&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;の中の&lt;code&gt;corners&lt;/code&gt;にコードの座標位置が含まれているが、これはプレビューのViewの座標系とは異なるので、そのままでは使えない。&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;AVCaptureVideoPreviewLayer&lt;/code&gt;の&lt;code&gt;transformedMetadataObjectForMetadataObject&lt;/code&gt;で変換後の座標が入ったできる&lt;code&gt;AVMetadataObject&lt;/code&gt;が取得できるので、その中の&lt;code&gt;bounds&lt;/code&gt;を使って枠線を描画している。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;AVCaptureVideoPreviewLayer&lt;/code&gt;の&lt;code&gt;transformedMetadataObjectForMetadataObject&lt;/code&gt;で変換後の座標が入った&lt;code&gt;AVMetadataObject&lt;/code&gt;が取得できるので、その中の&lt;code&gt;bounds&lt;/code&gt;を使って枠線を描画している。&lt;/p&gt;
 
 &lt;p&gt;（以前は手動でちゃんとプレビュー画面上の座標に変換していたが、今回、この簡単に変換できるメソッドを発見！&lt;code&gt;AVCaptureVideoPreviewLayer&lt;/code&gt;の方もちゃんと調べていれば・・・）&lt;/p&gt;
 

@@ -81,7 +81,7 @@
 
 <p>iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル。</p>
 
-<p>なお、QRコードに限らず、他のバーコードや顔認識にも対応。対応形式は<a href="https://developer.apple.com/library/prerelease/ios/documentation/AVFoundation/Reference/AVMetadataMachineReadableCodeObject_Class/index.html#//apple_ref/doc/constant_group/Machine_Readable_Object_Types">公式</a>を参照。地味にiOS8で対応形式が増えている。</p>
+<p>なお、QRコードに限らず、他のバーコードや顔認識にも対応。対応形式は<a href="https://developer.apple.com/library/prerelease/ios/documentation/AVFoundation/Reference/AVMetadataMachineReadableCodeObject_Class/index.html#//apple_ref/doc/constant_group/Machine_Readable_Object_Types">公式</a>を参照。地味にiOS8から対応形式が増えている。</p>
 
 <p>あと、2次元なら同時認識できたりするが、その辺りの詳細は参考リンクの公式FAQが詳しい。</p>
 
@@ -107,7 +107,7 @@
 
 <p><code>AVMetadataMachineReadableCodeObject</code>の中の<code>corners</code>にコードの座標位置が含まれているが、これはプレビューのViewの座標系とは異なるので、そのままでは使えない。</p>
 
-<p><code>AVCaptureVideoPreviewLayer</code>の<code>transformedMetadataObjectForMetadataObject</code>で変換後の座標が入ったできる<code>AVMetadataObject</code>が取得できるので、その中の<code>bounds</code>を使って枠線を描画している。</p>
+<p><code>AVCaptureVideoPreviewLayer</code>の<code>transformedMetadataObjectForMetadataObject</code>で変換後の座標が入った<code>AVMetadataObject</code>が取得できるので、その中の<code>bounds</code>を使って枠線を描画している。</p>
 
 <p>（以前は手動でちゃんとプレビュー画面上の座標に変換していたが、今回、この簡単に変換できるメソッドを発見！<code>AVCaptureVideoPreviewLayer</code>の方もちゃんと調べていれば・・・）</p>
 
