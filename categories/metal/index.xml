@@ -6,8 +6,115 @@
     <description>Recent content in Metal on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Thu, 11 Feb 2016 09:20:27 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 25 Feb 2016 22:05:16 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/metal/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Metalによる砂のシミュレーションもどき</title>
+      <link>https://mike-neko.github.io/blog/metal-sand/</link>
+      <pubDate>Thu, 25 Feb 2016 22:05:16 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal-sand/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要:41585ab4c2e78900081a05c039c1f55d&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
+パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。&lt;/p&gt;
+
+&lt;p&gt;なお、これも約26万パーティクルで60FPSを維持している。&lt;/p&gt;
+
+&lt;h2 id=&#34;動作イメージ:41585ab4c2e78900081a05c039c1f55d&#34;&gt;動作イメージ&lt;/h2&gt;
+
+&lt;p&gt;&lt;blockquote class=&#34;instagram-media&#34; data-instgrm-version=&#34;6&#34; style=&#34; background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);&#34;&gt;&lt;div style=&#34;padding:8px;&#34;&gt; &lt;div style=&#34; background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;&#34;&gt; &lt;div style=&#34; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;&#34;&gt;&lt;/div&gt;&lt;/div&gt;&lt;p style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;&#34;&gt;&lt;a href=&#34;https://www.instagram.com/p/BCX1ylEFQd_/&#34; style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;&#34; target=&#34;_blank&#34;&gt;@m_ike__が投稿した動画&lt;/a&gt; - &lt;time style=&#34; font-family:Arial,sans-serif; font-size:14px; line-height:17px;&#34; datetime=&#34;2016-02-29T13:51:35+00:00&#34;&gt;2016 2月 29 5:51午前 PST&lt;/time&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt; &lt;script async defer src=&#34;//platform.instagram.com/en_US/embeds.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;（2色にして拡大してみたけど、動画だとイマイチになってしまった・・・）&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ:41585ab4c2e78900081a05c039c1f55d&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;砂の動き:41585ab4c2e78900081a05c039c1f55d&#34;&gt;砂の動き&lt;/h3&gt;
+
+&lt;p&gt;タイトルに「もどき」とある通り、砂の動きは粒子法などのちゃんとした物理計算をしているわけではないが、GameGems本の中の地形生成の粒子堆積を参考にしている。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;h4 id=&#34;フラクタル地形生成-粒子堆積:41585ab4c2e78900081a05c039c1f55d&#34;&gt;フラクタル地形生成-粒子堆積&lt;/h4&gt;
+
+&lt;p&gt;&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-25-metal-sand/gems4-19-3.png&#34; /&gt;
+&lt;/figure&gt;
+
+出典：Game Programming Gems&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;上図にあるように、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;粒子を地面（粒子）にぶつかるまで落下させる&lt;/li&gt;
+&lt;li&gt;ぶつかった地点の周囲で最も低い地点を探す&lt;br /&gt;
+見つからなければそこに粒子を固定（地面化）させて終了&lt;/li&gt;
+&lt;li&gt;2で見つかった地点に粒子を移動させる&lt;/li&gt;
+&lt;li&gt;1に戻って落下させ続ける&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;という動きをGPUで計算している。&lt;/p&gt;
+
+&lt;h3 id=&#34;コンピュートシェーダのコード:41585ab4c2e78900081a05c039c1f55d&#34;&gt;コンピュートシェーダのコード&lt;/h3&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/c6997165804cbaa25402.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;流れとしては、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;CPU側で砂の初期位置とy軸への落下速度を設定&lt;/li&gt;
+&lt;li&gt;コンピュートシェーダで砂の動きを計算して描画用バッファへ書き出し&lt;/li&gt;
+&lt;li&gt;バーテックスシェーダとフラグメントシェーダはシンプルにパーティクルを描画&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;となる。&lt;/p&gt;
+
+&lt;h4 id=&#34;地面との衝突判定:41585ab4c2e78900081a05c039c1f55d&#34;&gt;地面との衝突判定&lt;/h4&gt;
+
+&lt;p&gt;今回は地面との衝突の判定のみで、粒子間の衝突などは考慮しない。よって、512*512のバッファ&lt;code&gt;laminateBuffer&lt;/code&gt;を地面に見立てて、各座標の高さを記録している。ここでテクスチャを使っていないのは、コンピュートシェーダではテクスチャの読み書きを同時に行うことができない為。&lt;/p&gt;
+
+&lt;p&gt;地面にぶつかったら、元の位置からそれぞれ30度+αずつずらした位置の地面の高さを見て、一番低いところを探す。なお、ここで手を抜いてsincosを使わなければ、四角い山ができてしまう・・・&lt;/p&gt;
+
+&lt;p&gt;一番低いところの判定を&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;min_id = mix((float)min_id, 1.f, not(step(h[1], h[min_id])));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;としているが、これは&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;min_id = (h[1] &amp;lt;= h[min_id]) ? min_id : 1;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と同じである。(Metalの座標系のy軸は上が-になる)&lt;/p&gt;
+
+&lt;p&gt;現在位置が一番低い場所であれば、y軸の速度を0にして粒子を固定する。同時に地面の高さも更新し、次回参照時からはそこが地面の扱いとなる。&lt;/p&gt;
+
+&lt;p&gt;あとはこれをひたすら繰り返していくと山のように積み重なっていく。&lt;/p&gt;
+
+&lt;h2 id=&#34;感想:41585ab4c2e78900081a05c039c1f55d&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;パラメータの調整とかバッファへの書き込みの精度を上げたりするなど、まだまだ改良の余地はありそう。。。&lt;/p&gt;
+
+&lt;p&gt;なんにしても単純な方法を力任せに処理してもちゃんと動くあたり、GPGPUは頼もしい。&lt;/p&gt;
+
+&lt;p&gt;あと、GameGemsの1以外も電子書籍で出ないかなぁ。内容的には古くても色々参考になるし、紙版は置く場所考えるとどうしても買いづらいので&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境:41585ab4c2e78900081a05c039c1f55d&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 7.2&lt;/li&gt;
+&lt;li&gt;iOS 9.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース:41585ab4c2e78900081a05c039c1f55d&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalSand&#34;&gt;こちら&lt;/a&gt;(&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>MetalのGPGPUによるパーティクルデモ</title>
