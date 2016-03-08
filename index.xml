@@ -6,8 +6,86 @@
     <description>Recent content on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Thu, 25 Feb 2016 22:05:16 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 07 Mar 2016 23:59:45 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>IPアドレス取得のサンプル(Swift)</title>
+      <link>https://mike-neko.github.io/blog/ipaddress/</link>
+      <pubDate>Mon, 07 Mar 2016 23:59:45 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/ipaddress/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;iOS端末のIPアドレスを取得するサンプル。Cの関数呼び出し周りも含めてSwiftにて実装。&lt;/p&gt;
+
+&lt;p&gt;一応、Apple公式の方法でIPv6only環境でも動作確認済。&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;cの関数呼び出し:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;Cの関数呼び出し&lt;/h3&gt;
+
+&lt;p&gt;端末内部のネットワーク情報を取得する為に、&lt;code&gt;getifaddrs&lt;/code&gt;や&lt;code&gt;inet_ntop&lt;/code&gt;などの関数を呼び出すが、
+通常のCであればファイルの頭で&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;ifaddrs.h&amp;gt;
+#include &amp;lt;sys/socket.h&amp;gt;
+#include &amp;lt;netinet/in.h&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とするが、Swiftなので&lt;code&gt;Bridging-Header.h&lt;/code&gt;を用意して、そこに&lt;code&gt;include&lt;/code&gt;を書く。&lt;/p&gt;
+
+&lt;p&gt;あと、ヘッダを追加した後にはビルド設定の&lt;code&gt;Objective-C Bridging Header&lt;/code&gt;も忘れずに変更。&lt;/p&gt;
+
+&lt;h3 id=&#34;デバイス:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;デバイス&lt;/h3&gt;
+
+&lt;p&gt;とりあえず今回は、IPアドレスを取りたいだけなので、WiFi(&lt;code&gt;en0&lt;/code&gt;)とCellular(&lt;code&gt;pdp_ip0&lt;/code&gt;)の
+デバイスのみチェックしている。&lt;/p&gt;
+
+&lt;h3 id=&#34;swiftの言語的なこと:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;Swiftの言語的なこと&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;defer&lt;/code&gt;がとっても便利。これのおかげでリソースの解放のような後始末が必要なコードが、
+とても簡単にかけるし処理漏れもなくなるので素晴らしい！&lt;br /&gt;
+(これが無いと今回のように処理の中でエラーで返すような場合はコードが面倒になる)&lt;/p&gt;
+
+&lt;p&gt;ポインタが見えなくなったり、型が厳格になってC系のソースの移植が面倒に思えるけど、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;対応する型への変換（特に&lt;code&gt;UnsafePointer&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;C++の&lt;code&gt;-&amp;gt;&lt;/code&gt;に相当するのが&lt;code&gt;memory&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;同じく&lt;code&gt;[]&lt;/code&gt;に相当するのが&lt;code&gt;advancedBy&lt;/code&gt;(今回は出てこないけど)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;と言ったあたりを押さえておけばOKな気がする。&lt;/p&gt;
+
+&lt;p&gt;確かに冗長な感じは否めないが、型は書かなくても済むことが多いし、
+逆に一度正しく変換しておけば後はコンパイラで型チェックが行われるのは安心できる。&lt;/p&gt;
+
+&lt;p&gt;この辺りのバランス感覚がSwiftは絶妙だと思う。&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/UnderstandingandPreparingfortheIPv6Transition/UnderstandingandPreparingfortheIPv6Transition.html&#34;&gt;IPv6only環境の確認方法&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html&#34;&gt;CのAPIをSwiftで使う方法&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 7.2&lt;/li&gt;
+&lt;li&gt;iOS 9.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;li&gt;Mac OS 10.11.3(NAT64ネットワーク)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/NetworkInfo&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Metalによる砂のシミュレーションもどき</title>

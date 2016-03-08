@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>IPアドレス取得のサンプル(Swift) &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Tips</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2016 <a href="https://mike-neko.github.io/license/">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>IPアドレス取得のサンプル(Swift)</h1>
+    <span class="post-date">Mar 7, 2016 
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a>
+    </span>
+    
+
+<h2 id="概要:b896621a8ba2c96e1312fe1998076f7a">概要</h2>
+
+<p>iOS端末のIPアドレスを取得するサンプル。Cの関数呼び出し周りも含めてSwiftにて実装。</p>
+
+<p>一応、Apple公式の方法でIPv6only環境でも動作確認済。</p>
+
+<h2 id="小ネタ:b896621a8ba2c96e1312fe1998076f7a">小ネタ</h2>
+
+<h3 id="cの関数呼び出し:b896621a8ba2c96e1312fe1998076f7a">Cの関数呼び出し</h3>
+
+<p>端末内部のネットワーク情報を取得する為に、<code>getifaddrs</code>や<code>inet_ntop</code>などの関数を呼び出すが、
+通常のCであればファイルの頭で</p>
+
+<pre><code>#include &lt;ifaddrs.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netinet/in.h&gt;
+</code></pre>
+
+<p>とするが、Swiftなので<code>Bridging-Header.h</code>を用意して、そこに<code>include</code>を書く。</p>
+
+<p>あと、ヘッダを追加した後にはビルド設定の<code>Objective-C Bridging Header</code>も忘れずに変更。</p>
+
+<h3 id="デバイス:b896621a8ba2c96e1312fe1998076f7a">デバイス</h3>
+
+<p>とりあえず今回は、IPアドレスを取りたいだけなので、WiFi(<code>en0</code>)とCellular(<code>pdp_ip0</code>)の
+デバイスのみチェックしている。</p>
+
+<h3 id="swiftの言語的なこと:b896621a8ba2c96e1312fe1998076f7a">Swiftの言語的なこと</h3>
+
+<p><code>defer</code>がとっても便利。これのおかげでリソースの解放のような後始末が必要なコードが、
+とても簡単にかけるし処理漏れもなくなるので素晴らしい！<br />
+(これが無いと今回のように処理の中でエラーで返すような場合はコードが面倒になる)</p>
+
+<p>ポインタが見えなくなったり、型が厳格になってC系のソースの移植が面倒に思えるけど、</p>
+
+<ul>
+<li>対応する型への変換（特に<code>UnsafePointer</code>）</li>
+<li>C++の<code>-&gt;</code>に相当するのが<code>memory</code></li>
+<li>同じく<code>[]</code>に相当するのが<code>advancedBy</code>(今回は出てこないけど)</li>
+</ul>
+
+<p>と言ったあたりを押さえておけばOKな気がする。</p>
+
+<p>確かに冗長な感じは否めないが、型は書かなくても済むことが多いし、
+逆に一度正しく変換しておけば後はコンパイラで型チェックが行われるのは安心できる。</p>
+
+<p>この辺りのバランス感覚がSwiftは絶妙だと思う。</p>
+
+<h1 id="参考リンク:b896621a8ba2c96e1312fe1998076f7a">参考リンク</h1>
+
+<ul>
+<li>公式：<a href="https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/UnderstandingandPreparingfortheIPv6Transition/UnderstandingandPreparingfortheIPv6Transition.html">IPv6only環境の確認方法</a></li>
+<li>公式：<a href="https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html">CのAPIをSwiftで使う方法</a></li>
+</ul>
+
+<h1 id="開発環境:b896621a8ba2c96e1312fe1998076f7a">開発環境</h1>
+
+<ul>
+<li>Xcode 7.2</li>
+<li>iOS 9.2</li>
+<li>iPhone 6+</li>
+<li>Mac OS 10.11.3(NAT64ネットワーク)</li>
+</ul>
+
+<h1 id="ソース:b896621a8ba2c96e1312fe1998076f7a">ソース</h1>
+
+<p><a href="https://github.com/mike-neko/NetworkInfo">こちら</a></p>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>
+
