@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on M.Ikeの小ネタ集</title>
+    <link>https://mike-neko.github.io/categories/docker/</link>
+    <description>Recent content in Docker on M.Ikeの小ネタ集</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>jp</language>
+    <lastBuildDate>Sat, 02 Apr 2016 14:00:57 +0900</lastBuildDate>
+    <atom:link href="https://mike-neko.github.io/categories/docker/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Dockerのコマンド備忘録</title>
+      <link>https://mike-neko.github.io/blog/docker-cmd/</link>
+      <pubDate>Sat, 02 Apr 2016 14:00:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/docker-cmd/</guid>
+      <description>
+
+&lt;h2 id=&#34;dockerでよく使うコマンド:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;Dockerでよく使うコマンド&lt;/h2&gt;
+
+&lt;h3 id=&#34;イメージ操作:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージ操作&lt;/h3&gt;
+
+&lt;h4 id=&#34;イメージのリスト表示:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージのリスト表示&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;docker images
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;指定したイメージの削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;指定したイメージの削除&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;docker rmi [イメージの名前かID]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;イメージの指定は&lt;code&gt;IMAGE ID&lt;/code&gt;の先頭数文字での特定が便利&lt;/p&gt;
+
+&lt;h4 id=&#34;イメージの全削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージの全削除&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;docker rmi $(docker images -a -q)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;コンテナ操作:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;コンテナ操作&lt;/h3&gt;
+
+&lt;h4 id=&#34;コンテナのリスト表示:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;コンテナのリスト表示&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;docker ps
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;全部停止:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;全部停止&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;docker stop $(docker ps -a -q)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;全部削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;全部削除&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;docker rm $(docker ps -a -q) 
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
