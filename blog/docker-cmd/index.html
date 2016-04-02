@@ -115,6 +115,40 @@
 <pre><code>docker rm $(docker ps -a -q) 
 </code></pre>
 
+<h3 id="dockercompose:1c4ea1d59e18285c6c3ba7b5bb3a3b42">DockerCompose</h3>
+
+<h4 id="起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42">起動</h4>
+
+<pre><code>cd [docker-copose.ymlを置いてる場所]
+docker-compose up -d
+</code></pre>
+
+<p>これだけで<code>build</code>と<code>pull</code>と<code>run</code>を一気にしてくれる</p>
+
+<h4 id="停止:1c4ea1d59e18285c6c3ba7b5bb3a3b42">停止</h4>
+
+<pre><code>docker-compose stop
+</code></pre>
+
+<h3 id="nginx:1c4ea1d59e18285c6c3ba7b5bb3a3b42">nginx</h3>
+
+<p><em>80ポートを使う場合はsudoが必要</em></p>
+
+<h4 id="起動-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42">起動</h4>
+
+<pre><code>nginx
+</code></pre>
+
+<h4 id="停止-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42">停止</h4>
+
+<pre><code>nginx -s stop
+</code></pre>
+
+<h4 id="再起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42">再起動</h4>
+
+<pre><code>nginx -s reload
+</code></pre>
+
   </div>
   
 </div>

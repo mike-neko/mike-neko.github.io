@@ -54,6 +54,40 @@
 
 &lt;pre&gt;&lt;code&gt;docker rm $(docker ps -a -q) 
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;dockercompose:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;DockerCompose&lt;/h3&gt;
+
+&lt;h4 id=&#34;起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;起動&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;cd [docker-copose.ymlを置いてる場所]
+docker-compose up -d
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これだけで&lt;code&gt;build&lt;/code&gt;と&lt;code&gt;pull&lt;/code&gt;と&lt;code&gt;run&lt;/code&gt;を一気にしてくれる&lt;/p&gt;
+
+&lt;h4 id=&#34;停止:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;停止&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;docker-compose stop
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;nginx:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;nginx&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;80ポートを使う場合はsudoが必要&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;起動-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;起動&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;停止-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;停止&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;nginx -s stop
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;再起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;再起動&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;nginx -s reload
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
