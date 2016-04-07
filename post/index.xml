@@ -368,6 +368,17 @@ docker-compose up -d
 
 &lt;pre&gt;&lt;code&gt;nginx -s reload
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;php:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;PHP&lt;/h2&gt;
+
+&lt;h3 id=&#34;オプション:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;オプション&lt;/h3&gt;
+
+&lt;h4 id=&#34;docker-php-ext-installで指定できるもの:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;docker-php-ext-installで指定できるもの&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;bcmath bz2 calendar ctype curl dba dom enchant exif fileinfo filter ftp gd gettext gmp hash iconv imap interbase intl json ldap mbstring mcrypt mssql mysql mysqli oci8 odbc opcache pcntl pdo pdo_dblib pdo_firebird pdo_mysql pdo_oci pdo_odbc pdo_pgsql pdo_sqlite pgsql phar posix pspell readline recode reflection session shmop simplexml snmp soap sockets spl standard sybase_ct sysvmsg sysvsem sysvshm tidy tokenizer wddx xml xmlreader xmlrpc xmlwriter xsl zip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;(デフォルトのPHPイメージは最低限の状態なのでDockerfileで指定して追加する)&lt;/p&gt;
 </description>
     </item>
     
