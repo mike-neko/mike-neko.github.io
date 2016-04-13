@@ -6,8 +6,169 @@
     <description>Recent content in Posts on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Mon, 04 Apr 2016 00:35:57 +0900</lastBuildDate>
+    <lastBuildDate>Fri, 08 Apr 2016 22:25:06 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Perfect 導入編</title>
+      <link>https://mike-neko.github.io/blog/perfect-1/</link>
+      <pubDate>Fri, 08 Apr 2016 22:25:06 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/perfect-1/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモ&lt;/p&gt;
+
+&lt;p&gt;導入編ではベースとなるプロジェクトを一から作るあたりまで&lt;/p&gt;
+
+&lt;h2 id=&#34;きっかけ:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;きっかけ&lt;/h2&gt;
+
+&lt;p&gt;Perfectがついに1.0になったというのを聞きつけてGitHubのREADMEを見てると、、、&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;WebSockets &amp;amp; iOS Push Notifications&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Perfect now includes a &lt;strong&gt;WebSockets&lt;/strong&gt; server and support for handling your own server-side &lt;strong&gt;iOS push notifications&lt;/strong&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;ってのを発見！&lt;/p&gt;
+
+&lt;p&gt;ちょうど、Push通知周りの実験をしたかったこともあり、さっそく手を出すことに〜&lt;/p&gt;
+
+&lt;h2 id=&#34;手順:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;下準備:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;下準備&lt;/h3&gt;
+
+&lt;h4 id=&#34;github-https-github-com-perfectlysoft-perfect-からperfectをダウンロードする:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;&lt;a href=&#34;https://github.com/PerfectlySoft/Perfect&#34;&gt;GitHub&lt;/a&gt;からPerfectをダウンロードする&lt;/h4&gt;
+
+&lt;p&gt;ダウンロードしたら適当な場所に展開しておく&lt;/p&gt;
+
+&lt;h4 id=&#34;xcodeにテンプレートを追加:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;Xcodeにテンプレートを追加&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;~/Library/Developer/Xcode&lt;/code&gt;をFinderで開く&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Xcode&lt;/code&gt;直下に(無ければ)&lt;code&gt;Templates&lt;/code&gt;というフォルダを作成&lt;/li&gt;
+&lt;li&gt;その&lt;code&gt;Templates&lt;/code&gt;直下に(無ければ)&lt;code&gt;Project Template&lt;/code&gt;というフォルダを作成&lt;/li&gt;
+&lt;li&gt;ダウンロードしておいたPerfectのプロジェクトの中（&lt;code&gt;Perfect-master/Extras/Xcode Templates/Perfect/&lt;/code&gt;）にある&lt;code&gt;Perfect Server Framework.xctemplate&lt;/code&gt;のフォルダを丸ごとコピー&lt;/li&gt;
+&lt;li&gt;3で作ったフォルダに4のフォルダを貼り付け&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;プロジェクトの作成:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;プロジェクトの作成&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;ワークスペース名：&lt;code&gt;SmapleBasePerfect&lt;/code&gt;&lt;br /&gt;
+ プロジェクト名：&lt;code&gt;SampleServer&lt;/code&gt;&lt;/em&gt;&lt;br /&gt;
+で作成する前提での手順&lt;/p&gt;
+
+&lt;h4 id=&#34;ワークスペースの作成:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;ワークスペースの作成&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Xcodeのメニューの&lt;code&gt;File&lt;/code&gt;-&lt;code&gt;New&lt;/code&gt;-&lt;code&gt;Workspace...&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;ワークスペース名と保存先のフォルダを選択(作成)して&lt;code&gt;Save&lt;/code&gt;&lt;br /&gt;
+（ワークスペースはプロジェクトと違ってフォルダは自動作成されないので注意）&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;自動で空のワークスペースの画面が開かれるので、そのままの状態で次の手順へ&lt;/p&gt;
+
+&lt;h4 id=&#34;プロジェクトの作成-1:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;プロジェクトの作成&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Xcodeのメニューの&lt;code&gt;File&lt;/code&gt;-&lt;code&gt;New&lt;/code&gt;-&lt;code&gt;Project...&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;左側の&lt;code&gt;OS X&lt;/code&gt;-&lt;code&gt;Project Template&lt;/code&gt;の中から&lt;code&gt;Perfect Server Framework&lt;/code&gt;を選択して&lt;code&gt;Next&lt;/code&gt;（下図）
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-04-08-perfect-1/template.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li&gt;プロジェクト名などを適宜入力して&lt;code&gt;Next&lt;/code&gt;&lt;br /&gt;
+（プロジェクト名はワークスペースと同じにできない）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Add to:&lt;/code&gt;でワークスペース名を選択する&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;保存先を選択して&lt;code&gt;Create&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;デフォルトで下のようなプロジェクトが生成される
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-04-08-perfect-1/project.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;h4 id=&#34;perfectを追加:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;Perfectを追加&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;ダウンロードしておいたPerfectのプロジェクト直下にある&lt;code&gt;PerfectLib&lt;/code&gt;と&lt;code&gt;PerfectServer&lt;/code&gt;のフォルダを丸ごとコピー&lt;/li&gt;
+&lt;li&gt;プロジェクトのフォルダと同じ階層に貼り付け&lt;/li&gt;
+&lt;li&gt;XcodeのProject Navigator(上のイメージの部分)の何もないところで右クリック&lt;/li&gt;
+&lt;li&gt;出てきたメニューから&lt;code&gt;Add files to &amp;quot;ワークスペース名&amp;quot;...&lt;/code&gt;を選択&lt;br /&gt;
+（もしプロジェクト名が出てきたら3からやり直し）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Copy items into ...&lt;/code&gt;はチェック無、&lt;code&gt;Create groups ...&lt;/code&gt;にチェック有にする&lt;br /&gt;
+（無い場合は&lt;code&gt;Option&lt;/code&gt;をクリック）&lt;/li&gt;
+&lt;li&gt;1と2でコピーしたフォルダの中から&lt;code&gt;PerfectLib.xcodeproj&lt;/code&gt;を選択して&lt;code&gt;Add&lt;/code&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;PerfectServer.xcodeproj&lt;/code&gt;についても3からの同じ手順で追加&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;スキームの設定:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;スキームの設定&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Xcodeのメニューの&lt;code&gt;Product&lt;/code&gt;-&lt;code&gt;Scheme&lt;/code&gt;-&lt;code&gt;Manage Schemes...&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;プロジェクト名と同じスキームを選択して&lt;code&gt;Edit...&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;左側で&lt;code&gt;Run&lt;/code&gt;、右側の&lt;code&gt;Info&lt;/code&gt;タグを選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Executable&lt;/code&gt;で&lt;code&gt;PerfectServer HTTP.app&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;下の方にある&lt;code&gt;Shared&lt;/code&gt;にチェック&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Close&lt;/code&gt;で閉じる&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;フレームワークの追加:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;フレームワークの追加&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;作成したプロジェクトを選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;TARGETS&lt;/code&gt;でプロジェクト名と同じもの、&lt;code&gt;General&lt;/code&gt;タブを選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Linked Frameworks and Libraries&lt;/code&gt;の&lt;code&gt;＋&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;PerfectLib.framework&lt;/code&gt;で&lt;code&gt;OSX&lt;/code&gt;の方を選択して&lt;code&gt;Add&lt;/code&gt;
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-04-08-perfect-1/framework.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;ドキュメントを配置:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;ドキュメントを配置&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Build Phases&lt;/code&gt;タブを選択&lt;/li&gt;
+&lt;li&gt;左上の&lt;code&gt;＋&lt;/code&gt;をクリックして、&lt;code&gt;New Copy Files Phases&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Destination&lt;/code&gt;で&lt;code&gt;Products Directory&lt;/code&gt;を選択&lt;br /&gt;
+&lt;code&gt;Subpath&lt;/code&gt;に&lt;code&gt;webroot&lt;/code&gt;と入力&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Name&lt;/code&gt;の下の方にある&lt;code&gt;＋&lt;/code&gt;をクリックし、&lt;code&gt;index.mustache&lt;/code&gt;を選択して&lt;code&gt;Add&lt;/code&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;動作確認:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;動作確認&lt;/h2&gt;
+
+&lt;p&gt;Xcodeで&lt;code&gt;SampleServer&lt;/code&gt;のスキームで&lt;code&gt;Run&lt;/code&gt;して、GUIが立ち上がるとサーバが動作した状態となる。&lt;/p&gt;
+
+&lt;p&gt;その状態で&lt;code&gt;http://0.0.0.0:8181/&lt;/code&gt;にアクセスして、「Hello, world!」と出ればひとまずOK。&lt;/p&gt;
+
+&lt;h1 id=&#34;感想:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;感想&lt;/h1&gt;
+
+&lt;p&gt;意外に日本語の、特にMac上で動かす場合の資料が少なくて苦労した。&lt;br /&gt;
+それとこういうのを触る度にサーバ周りの知識が足りないのを痛感する・・・&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://code-me-dirty.blogspot.jp/2016/02/creating-perfect-swift-server.html&#34;&gt;Create a Perfect Swift Server Project(from scratch) in Xcode&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.4&lt;/li&gt;
+&lt;li&gt;Xcode 7.3&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/SmapleBasePerfect&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Docker構築メモ</title>
