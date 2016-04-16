@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Metal &middot; M.Ike</title>
+  <title>Posts &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -25,7 +25,7 @@
   
   
   
-  <link href="https://mike-neko.github.io/categories/metal/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
+  <link href="https://mike-neko.github.io/post/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -94,56 +94,9 @@
 
 
 <div class="content container">
-  <h1>metal</h1>
+  <h1>post</h1>
   <div class="posts">
     
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/metal-sand/">Metalによる砂のシミュレーションもどき</a>
-      </h1>
-      <span class="post-date">Feb 25, 2016
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/metal">metal</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a><a class="label" href="https://mike-neko.github.io/categories/gpgpu">gpgpu</a>
-      </span>
-      
-      <h2 id="概要:41585ab4c2e78900081a05c039c1f55d">概要</h2>
-
-<p>MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
-パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。</p>
-
-<p>なお、これも約26万パーティクルで60FPSを維持している。</p>
-
-<h2 id="動作イメージ:41585ab4c2e78900081a05c039c1f55d">動作イメージ</h2>
-
-      <a href="https://mike-neko.github.io/blog/metal-sand/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/metal-image/">MetalのGPGPUによるパーティクルデモ</a>
-      </h1>
-      <span class="post-date">Feb 11, 2016
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/metal">metal</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a><a class="label" href="https://mike-neko.github.io/categories/gpgpu">gpgpu</a>
-      </span>
-      
-      <h2 id="概要:ee598c9d217a1971ba9d28d3419c0378">概要</h2>
-
-<p>読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。</p>
-
-<p>画像サイズが512*512、1ピクセル=1パーティクルに分解するので、約26万個のパーティクルを動かしているが、60FPSを維持している。約100万まで増やすとiPhone6+で30FPSぐらいとなる。</p>
-
-<p>そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。</p>
-
-<h2 id="動作イメージ:ee598c9d217a1971ba9d28d3419c0378">動作イメージ</h2>
-
-      <a href="https://mike-neko.github.io/blog/metal-image/">Read On &rarr;</a>
-      
-    </div>
     
     <div class="post">
       <h1 class="post-title">
@@ -214,7 +167,52 @@
       
     </div>
     
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/hugo-memo/">Hugo利用方法メモ</a>
+      </h1>
+      <span class="post-date">Jan 20, 2016
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/categories/github">github</a><a class="label" href="https://mike-neko.github.io/categories/memo">memo</a>
+      </span>
+      
+      <p>初めはOctopressを使ってたものの、シンタックスハイライトがどうもうまく好みにならなかったので、結局、１週間ほどでHugoに乗り換え。Octopressに比べると構成もわかりやすいし、最新の資料が多くてよかった。<br />
+テーマはなるべくシンプル、かつ、スマホでも見やすい<a href="http://themes.gohugo.io/hyde-x/">Hyde-X</a>を選定。以下はHyde-Xの場合の設定なので、他のテーマでは変わることがあるので注意。</p>
+
+      <a href="https://mike-neko.github.io/blog/hugo-memo/">Read On &rarr;</a>
+      
+    </div>
     
+    
+    
+    <ul class="pagination">
+        
+        <li>
+            <a href="/post/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        </li>
+        
+        <li
+        >
+        <a href="/post/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        
+        <li
+        ><a href="/post/">1</a></li>
+        
+        <li
+        class="active"><a href="/post/page/2/">2</a></li>
+        
+        <li
+        class="disabled">
+        <a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+        
+        <li>
+            <a href="/post/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        </li>
+        
+    </ul>
     
   </div>
 </div>
