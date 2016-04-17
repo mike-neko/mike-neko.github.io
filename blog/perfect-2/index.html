@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Perfect 基礎編 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      <li>
+        
+          &nbsp;<a href="/categories/code">code&nbsp;(9)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/docker">docker&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/github">github&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/ios">ios&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/memo">memo&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/metal">metal&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/perfect">perfect&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/unity">unity&nbsp;(1)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2016
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Perfect 基礎編</h1>
+    <span class="post-date">Apr 10, 2016 
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/categories/perfect">perfect</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a>
+    </span>
+    
+
+<h2 id="概要:421c6f0fa67c2dade0dfb3230a5c0297">概要</h2>
+
+<p>サーバーサイドSwiftフレームワークの<a href="https://perfect.org/">Perfect</a>の使い方のメモその2</p>
+
+<p>基礎編ではルーティングやリクエストの処理方法のあたりまで</p>
+
+<h2 id="urlルーティング:421c6f0fa67c2dade0dfb3230a5c0297">URLルーティング</h2>
+
+<p>サンプルを見ると、ルーティングは大きくわけて</p>
+
+<ul>
+<li><code>mustache</code>テンプレートエンジンのページを<code>PageHandler</code>に登録</li>
+<li><code>Routing</code>に<code>RequestHandler</code>を登録</li>
+</ul>
+
+<p>の2種類がある様子。</p>
+
+<p>設定はいずれも<code>PerfectServerModuleInit()</code>の中で行う。</p>
+
+<h3 id="pagehandlerでのルーティング:421c6f0fa67c2dade0dfb3230a5c0297">PageHandlerでのルーティング</h3>
+
+<p>Webアプリなどでの固定ページの表示向け。<br />
+公式の参考になるサンプルは<a href="https://github.com/PerfectlySoft/Perfect/tree/master/Examples/Authenticator">Authenticator</a></p>
+
+<p>例えば、<code>http://0.0.0.0:8181/admin/</code>というページを表示させたい時の流れとしては、</p>
+
+<h4 id="表示するページを-mustache-のテンプレートで作成:421c6f0fa67c2dade0dfb3230a5c0297">表示するページを<code>mustache</code>のテンプレートで作成</h4>
+
+<p>例だと<code>admin.mustache</code>というファイル名にし、先頭のところで<code>handler:AdminHandler</code>と指定する。<br />
+ポイントは、</p>
+
+<ul>
+<li>先頭の<code>handler:</code>の部分で対応する<code>PageHandler</code>の名前を指定</li>
+<li>ファイル名がアクセスする際のディレクトリと対応</li>
+</ul>
+
+<h4 id="テンプレートをプロジェクトへ追加:421c6f0fa67c2dade0dfb3230a5c0297">テンプレートをプロジェクトへ追加</h4>
+
+<p>後述の小ネタにある「ドキュメントの配置」の方法で、<code>admin.mustache</code>がドキュメントルートへ配置されるように設定する。</p>
+
+<h4 id="pagehandler-を作成:421c6f0fa67c2dade0dfb3230a5c0297"><code>PageHandler</code>を作成</h4>
+
+<p>ページにアクセスがあった時の処理を行う為の<code>PageHandler</code>を継承したクラスを作る。<br />
+（クラス名は任意だが、わかりやすいように<code>AdminHandler</code>としておく）</p>
+
+<p>作ったクラスを<code>PageHandlerRegistry.addPageHandler</code>で登録する。</p>
+
+<pre><code>PageHandlerRegistry.addPageHandler(&quot;AdminHandler&quot;) {
+// (r: WebResponse) -&gt; PageHandler in
+  return AdminHandler()
+}
+</code></pre>
+
+<p>ポイントは、</p>
+
+<ul>
+<li><code>addPageHandler</code>の一つ目の引数の文字列は、テンプレートの中で指定したhandlerと同じにする</li>
+<li>リクエストの詳細な情報で分岐させたい時は、コメントアウトを外し<code>WebResponse</code>の情報を使う</li>
+</ul>
+
+<p><code>PageHandler</code>の中では、テンプレートに流し込む変数のDictionaryを生成する。</p>
+
+<h3 id="requesthandlerでのルーティング:421c6f0fa67c2dade0dfb3230a5c0297">RequestHandlerでのルーティング</h3>
+
+<p>APIとかブログのような動的なページ向け。<br />
+公式の参考になるサンプルは<a href="https://github.com/PerfectlySoft/Perfect/tree/master/Examples/URL%20Routing">URL Routing</a></p>
+
+<p>例えば、REST APIで<code>http://0.0.0.0:8181/user/mike</code>の<code>GET</code>でmikeというユーザの情報を取得したい時の流れとしては、</p>
+
+<h4 id="ルーティングを設定:421c6f0fa67c2dade0dfb3230a5c0297">ルーティングを設定</h4>
+
+<p><code>Routing</code>でルーティングのルール（HTTPのメソッドやURLなど）を<code>RouteMap</code>を使って設定する。</p>
+
+<p>例だと、</p>
+
+<pre><code>Routing.Routes[&quot;GET&quot;, &quot;/user/{id}&quot;] = { _ in return UserHandler() }
+</code></pre>
+
+<p>となる。ポイントは、</p>
+
+<ul>
+<li>HTTPのメソッドが指定できる<br />
+（指定する場合は一つ目にする）</li>
+<li>URL部分は配列で複数指定できる</li>
+<li>ルール部分では<code>{}</code>で囲うと<code>RequestHandler</code>へ値を渡せる</li>
+<li><code>*</code>が使える</li>
+<li>クロージャで対応する<code>RequestHandler</code>を指定する</li>
+</ul>
+
+<h4 id="requesthandler-を作成:421c6f0fa67c2dade0dfb3230a5c0297"><code>RequestHandler</code>を作成</h4>
+
+<p>クライアントへ返すレスポンスを生成する為の<code>RequestHandler</code>を継承したクラスを作る。<br />
+（クラス名は任意だが、わかりやすいように<code>UserHandler</code>としておく）</p>
+
+<p>URLで指定されたユーザ名をそのままJSONで返す場合は以下の感じ。
+<script type="text/javascript" src="https://gist.github.com/55c5d91b5b1d7a309289f5d0b2a12edd.js"></script></p>
+
+<p>これで、<code>http://0.0.0.0:8181/user/mike</code>にアクセスすると<code>{ user: &quot;mike&quot; }</code>と返ってくる。</p>
+
+<h4 id="ルーティング設定の確認:421c6f0fa67c2dade0dfb3230a5c0297">ルーティング設定の確認</h4>
+
+<p><code>Routing.Routes.description</code>で設定をダンプできる。これ、かなり便利！</p>
+
+<h2 id="リクエストの処理:421c6f0fa67c2dade0dfb3230a5c0297">リクエストの処理</h2>
+
+<p>URLパラメータやPOSTのボディの中身は、<code>WebRequest</code>の中に格納されている。</p>
+
+<p><code>http://0.0.0.0:8181/hoge?key1=value1&amp;key2=value2</code>とした場合、</p>
+
+<pre><code>func handleRequest(request: WebRequest, response: WebResponse) {
+  request.queryString()  // key1=value1&amp;key2=value2
+  request.queryParams    // [(&quot;key1&quot;, &quot;value1&quot;), (&quot;key2&quot;, &quot;value2&quot;)]
+  request.params()       // [(&quot;key1&quot;, &quot;value1&quot;), (&quot;key2&quot;, &quot;value2&quot;)]
+  request.param(&quot;key1&quot;)  // value1
+  request.param(&quot;key3&quot;, defaultValue: &quot;value3&quot;)  // value3
+</code></pre>
+
+<p>POSTで<code>{ &quot;count&quot;=100 }</code>を送った場合、</p>
+
+<pre><code>func handleRequest(request: WebRequest, response: WebResponse) {
+  let body = request.postBodyString
+  let json = try! JSONDecoder().decode(body) as! JSONDictionaryType
+  json[&quot;count&quot;]  // 100
+</code></pre>
+
+<p>といった感じで取得できる。</p>
+
+<h2 id="小ネタ:421c6f0fa67c2dade0dfb3230a5c0297">小ネタ</h2>
+
+<h3 id="ドキュメントの配置:421c6f0fa67c2dade0dfb3230a5c0297">ドキュメントの配置</h3>
+
+<p>Xcode経由で起動している時に、サーバからドキュメントへアクセスできるようにする方法。なお、ドキュメントルートはデフォルトで<code>./webroot/</code>が設定されている。</p>
+
+<h4 id="documentrootのパスを変更する:421c6f0fa67c2dade0dfb3230a5c0297">DocumentRootのパスを変更する</h4>
+
+<p>状況によってはソースから改変するのもアリだが、起動時に立ち上がるGUIから変更するのが手軽。<code>Choose...</code>でフォルダ位置を選択できる。ただし、注意すべきなのは<code>Document Root</code>のテキストフィールド内でキー操作(return)しないと変更と認識されずに保存されない点（これにはまってソースまで見てようやく気付いた・・・）。変更後はサーバの再起動が必要（というか勝手にされるはず）。</p>
+
+<p>この方法だとサーバを起動したままでもドキュメントを変更できるが、一方でパスの設定が必要となる。</p>
+
+<h4 id="ビルドでファイルを配置する:421c6f0fa67c2dade0dfb3230a5c0297">ビルドでファイルを配置する</h4>
+
+<p>前回の導入編で使った方法で、デフォルトの<code>./webroot/</code>を使いたい場合用。</p>
+
+<ol>
+<li>作成したプロジェクトを選択</li>
+<li><code>TARGETS</code>でプロジェクト名と同じもの、<code>Build Phases</code>タブを選択</li>
+<li>左上の<code>＋</code>をクリックして、<code>New Copy Files Phases</code>を選択</li>
+<li><code>Destination</code>で<code>Products Directory</code>を選択<br />
+<code>Subpath</code>に<code>webroot</code>と入力</li>
+<li><code>Name</code>の下の方にある<code>＋</code>をクリックし、追加ファイルを選択して<code>Add</code><br />
+（プロジェクトに未追加のファイルの場合は<code>Add Other...</code>からで）</li>
+</ol>
+
+<h3 id="同一lan内からのアクセス:421c6f0fa67c2dade0dfb3230a5c0297">同一LAN内からのアクセス</h3>
+
+<p>例えば同じルータに繋がっているiPhoneから、Mac上で動いているPerfectのサーバに接続する方法。</p>
+
+<p>起動時に立ち上がるGUIの<code>Server Address</code>をMacに割り当てられているIPアドレスに変更すればOK。
+（変更後にreturnで確定を忘れずに・・・）
+ポートも変更できるが、<code>80</code>とかはroot権限が必要と怒られて変更できないので注意。</p>
+
+<p>（今回は既に<a href="../docker/">Docker+nginxを構築</a>してあったので、nginxのリバースプロキシの設定でさくっと対応）</p>
+
+<h1 id="感想:421c6f0fa67c2dade0dfb3230a5c0297">感想</h1>
+
+<p>普段、クライアント（iOSアプリ）側で使っている開発環境と全く同じ環境でサーバの開発が出来るというのは、
+想像以上に便利というかストレスフリーな感じ。</p>
+
+<p>もちろん、PerfectではCocoaが使えないというのはあるし、物足りない感じはしなくも無いが。。。</p>
+
+<p>ただ、そのあたりのカバーを目指しての<code>Perfect</code>という命名なんだろうと勝手に想像。</p>
+
+<h1 id="参考リンク:421c6f0fa67c2dade0dfb3230a5c0297">参考リンク</h1>
+
+<ul>
+<li><a href="http://www.chrismanahan.com/creating-a-web-service-swift-perfect">Creating a Web Service for Your App in Swift with Perfect</a></li>
+</ul>
+
+<h1 id="開発環境:421c6f0fa67c2dade0dfb3230a5c0297">開発環境</h1>
+
+<ul>
+<li>OS X 10.11.4</li>
+<li>Xcode 7.3</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>
+
