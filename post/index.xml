@@ -39,7 +39,7 @@
 &lt;h3 id=&#34;pagehandlerでのルーティング:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;PageHandlerでのルーティング&lt;/h3&gt;
 
 &lt;p&gt;Webアプリなどでの固定ページの表示向け。&lt;br /&gt;
-公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/Perfect/tree/master/Examples/Authenticator&#34;&gt;Authenticator&lt;/a&gt;&lt;/p&gt;
+公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/PerfectExamples/blob/master/Sources/Authenticator/#authenticator&#34;&gt;Authenticator&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;例えば、&lt;code&gt;http://0.0.0.0:8181/admin/&lt;/code&gt;というページを表示させたい時の流れとしては、&lt;/p&gt;
 
@@ -82,7 +82,7 @@
 &lt;h3 id=&#34;requesthandlerでのルーティング:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;RequestHandlerでのルーティング&lt;/h3&gt;
 
 &lt;p&gt;APIとかブログのような動的なページ向け。&lt;br /&gt;
-公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/Perfect/tree/master/Examples/URL%20Routing&#34;&gt;URL Routing&lt;/a&gt;&lt;/p&gt;
+公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/PerfectExamples/blob/master/Sources/URL%20Routing/#url-routing&#34;&gt;URL Routing&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;例えば、REST APIで&lt;code&gt;http://0.0.0.0:8181/user/mike&lt;/code&gt;の&lt;code&gt;GET&lt;/code&gt;でmikeというユーザの情報を取得したい時の流れとしては、&lt;/p&gt;
 
