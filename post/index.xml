@@ -6,8 +6,184 @@
     <description>Recent content in Posts on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sun, 10 Apr 2016 23:09:11 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 11 Apr 2016 19:45:28 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Perfect APNs編</title>
+      <link>https://mike-neko.github.io/blog/perfect-push/</link>
+      <pubDate>Mon, 11 Apr 2016 19:45:28 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/perfect-push/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要:895c24bcebc238bc55d3833602dde15b&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその3&lt;/p&gt;
+
+&lt;p&gt;今回はiOSのプッシュ通知を送信する方法について&lt;/p&gt;
+
+&lt;p&gt;Perfectは最新のAPNsの通信形式に対応していて、細かなエラーレスポンスを取れるのがメリット。
+なので、開発用としては大変使いやすい。&lt;/p&gt;
+
+&lt;h2 id=&#34;手順:895c24bcebc238bc55d3833602dde15b&#34;&gt;手順&lt;/h2&gt;
+
+&lt;p&gt;Push通知はサーバ側で微妙に必要とされる証明書が変わったりするのがややこしいところ。
+PerfectでPush通知を送るのに必要なものは以下の通り。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;サーバ
+
+&lt;ul&gt;
+&lt;li&gt;APNs用証明書と秘密鍵&lt;/li&gt;
+&lt;li&gt;CAルート証明書&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;クライアント
+
+&lt;ul&gt;
+&lt;li&gt;プロビジョニングプロファイル&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;登録-プロビジョニングプロファイルと証明書の作成:895c24bcebc238bc55d3833602dde15b&#34;&gt;登録〜プロビジョニングプロファイルと証明書の作成&lt;/h3&gt;
+
+&lt;p&gt;証明書の取得には&lt;code&gt;AppID&lt;/code&gt;の登録やら結構手順があって大変だが、まずは以下のリンク先の通りに作業をすればOK。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Qiita:&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb#7-apns%E7%94%A8%E8%A8%BC%E6%98%8E%E6%9B%B8p12%E3%81%AE%E4%BD%9C%E6%88%90&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;なお、最後の手順の&lt;code&gt;APNs用証明書(.p12)&lt;/code&gt;を書き出す時のファイル名は&lt;code&gt;apns.p12&lt;/code&gt;とする&lt;/p&gt;
+
+&lt;h3 id=&#34;サーバ用の証明書の準備:895c24bcebc238bc55d3833602dde15b&#34;&gt;サーバ用の証明書の準備&lt;/h3&gt;
+
+&lt;h4 id=&#34;apns用証明書-pem:895c24bcebc238bc55d3833602dde15b&#34;&gt;APNs用証明書(.pem)&lt;/h4&gt;
+
+&lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_cert.pem&lt;/code&gt;を作成する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd [apns.p12を書き出した場所]
+openssl pkcs12 -clcerts -nokeys -out apns_dev_cert.pem -in apns.p12
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;秘密鍵-pem:895c24bcebc238bc55d3833602dde15b&#34;&gt;秘密鍵(.pem)&lt;/h4&gt;
+
+&lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_key.pem&lt;/code&gt;を作成する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd [apns.p12を書き出した場所]
+openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;Enter PEM pass phrase:&lt;/code&gt;と秘密鍵のパスフレーズを聞かれるので、適当なものを入れる。
+後でサーバに設定するので忘れないように・・・&lt;/p&gt;
+
+&lt;h4 id=&#34;caルート証明書:895c24bcebc238bc55d3833602dde15b&#34;&gt;CAルート証明書&lt;/h4&gt;
+
+&lt;p&gt;APNsとサーバで接続する為に&lt;code&gt;Entrust&lt;/code&gt;の証明書が必要なので、以下からダウンロードする。&lt;/p&gt;
+
+&lt;p&gt;Entrust.net Certificate Authority (2048)：
+&lt;a href=&#34;https://www.entrust.com/root-certificates/entrust_2048_ca.cer&#34;&gt;entrust_2048_ca.cer&lt;/a&gt;&lt;br /&gt;
+（&lt;a href=&#34;https://www.entrust.com/get-support/ssl-certificate-support/root-certificate-downloads/&#34;&gt;Entrustの証明書DLページ&lt;/a&gt; - Entrust.net Certificate Authority (2048) - Download）&lt;/p&gt;
+
+&lt;h3 id=&#34;iosアプリの作成:895c24bcebc238bc55d3833602dde15b&#34;&gt;iOSアプリの作成&lt;/h3&gt;
+
+&lt;p&gt;とりあえず、必要最低限でPush通知を受信できる状態にする。
+デバイストークンの更新等には未対応なので注意。&lt;/p&gt;
+
+&lt;h4 id=&#34;プロジェクトの設定:895c24bcebc238bc55d3833602dde15b&#34;&gt;プロジェクトの設定&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ダウンロードしたプロビジョニングプロファイルをダブルクリックしてインストール&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Bundle Identifier&lt;/code&gt;を&lt;code&gt;AppID&lt;/code&gt;取得時のものと一緒にする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Provisioning Profile&lt;/code&gt;をインストールしたプロビジョニングプロファイルにする&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;アプリの実装:895c24bcebc238bc55d3833602dde15b&#34;&gt;アプリの実装&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;AppDelegate&lt;/code&gt;に以下の実装をする&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;didFinishLaunchingWithOptions&lt;/code&gt;でPush通知の登録&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;didRegisterForRemoteNotificationsWithDeviceToken&lt;/code&gt;でデバイストークンを受信&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;コードにすると以下の通り
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/8000f2d8dc5b37773323065e867e2e4d.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;これを実機上で実行すると、端末のデバイストークンがログ出力される。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;デバッグ実行を停止させると、Push通知が届かない場合があるので、デバッグ実行したままにするか
+再度実機上からアクティブにしてバックグラウンドに落としておく。&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;また、マルチタスクから終了させても届かない場合があるので、注意&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;サーバへ証明書の設置:895c24bcebc238bc55d3833602dde15b&#34;&gt;サーバへ証明書の設置&lt;/h3&gt;
+
+&lt;p&gt;基礎編の&lt;a href=&#34;../perfect-2/&#34;&gt;ビルドでファイルを配置する&lt;/a&gt;の方法で証明書を配置する&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;対象のファイル
+
+&lt;ul&gt;
+&lt;li&gt;apns_dev_cert.pem&lt;/li&gt;
+&lt;li&gt;apns_dev_key.pem&lt;/li&gt;
+&lt;li&gt;entrust_2048_ca.cer&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Copy Files&lt;/code&gt;の設定
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Destination&lt;/code&gt;:Products Directory&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Subpath&lt;/code&gt;:空白&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;（&lt;code&gt;webroot&lt;/code&gt;へのドキュメントの配置とは別に&lt;code&gt;Copy Files&lt;/code&gt;を設定する）&lt;/p&gt;
+
+&lt;h3 id=&#34;サーバの実装:895c24bcebc238bc55d3833602dde15b&#34;&gt;サーバの実装&lt;/h3&gt;
+
+&lt;p&gt;サーバ側での実装は主に2つ。
+ひとつは証明書を&lt;code&gt;NotificationPusher&lt;/code&gt;に初期設定するのと、
+もう一つは実際にPush通知を送る実装。&lt;/p&gt;
+
+&lt;p&gt;初期設定は一度だけ行えばOKなので、（実環境では送信毎にチェックした方が良いけど）
+今回は&lt;code&gt;PerfectServerModuleInit&lt;/code&gt;で行う。&lt;/p&gt;
+
+&lt;p&gt;Push通知の送信は、&lt;code&gt;IOSNotificationItem&lt;/code&gt;の配列
+（ここのenumの使い方は参考になる）で送信内容を作成し、
+&lt;code&gt;NotificationPusher().pushIOS&lt;/code&gt;で送信を行う。&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/821b3dced86e0eb741563e23c43fed0f.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;この実装でサーバにアクセスする度に、Push通知が端末へ送られる。
+送信時の結果は、ブラウザに表示される（エラーであればエラー内容）。&lt;/p&gt;
+
+&lt;h2 id=&#34;感想:895c24bcebc238bc55d3833602dde15b&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;今回の一番大変だったのはEntrustの証明書の置き場が変わっていたこと。。。
+逆に言えばそれ以外はとても簡単にPush通知を送れる環境を作れた感じ。&lt;/p&gt;
+
+&lt;p&gt;巷にはたくさんAPNsに対応したフレームワークやサービスがあるけど、
+開発用としては、このPerfectが一番手軽で確実だと思う。
+なにせ環境構築は不要で、Xcodeでプロジェクトを作って
+少し実装すれば良いだけという素晴らしさ！&lt;/p&gt;
+
+&lt;p&gt;もちろん、商用はAWSとかがオススメだけど。。。&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク:895c24bcebc238bc55d3833602dde15b&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境:895c24bcebc238bc55d3833602dde15b&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.4&lt;/li&gt;
+&lt;li&gt;Xcode 7.3&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Perfect 基礎編</title>
@@ -2440,119 +2616,6 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 &lt;h1 id=&#34;ソース:6a6245d2d174e54873361b2ccb73e605&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalModel&#34;&gt;こちら&lt;/a&gt; (&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Hugo利用方法メモ</title>
-      <link>https://mike-neko.github.io/blog/hugo-memo/</link>
-      <pubDate>Wed, 20 Jan 2016 22:48:33 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/hugo-memo/</guid>
-      <description>
-
-&lt;p&gt;初めはOctopressを使ってたものの、シンタックスハイライトがどうもうまく好みにならなかったので、結局、１週間ほどでHugoに乗り換え。Octopressに比べると構成もわかりやすいし、最新の資料が多くてよかった。&lt;br /&gt;
-テーマはなるべくシンプル、かつ、スマホでも見やすい&lt;a href=&#34;http://themes.gohugo.io/hyde-x/&#34;&gt;Hyde-X&lt;/a&gt;を選定。以下はHyde-Xの場合の設定なので、他のテーマでは変わることがあるので注意。&lt;/p&gt;
-
-&lt;h2 id=&#34;初期設定:8d244dac89903f7d90007c69acaf707d&#34;&gt;初期設定&lt;/h2&gt;
-
-&lt;h3 id=&#34;ローカルにディレクトリ作成:8d244dac89903f7d90007c69acaf707d&#34;&gt;ローカルにディレクトリ作成&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;hugo new site &amp;lt;site-name&amp;gt;&lt;/code&gt;で作業用のローカルディレクトリを作成&lt;/li&gt;
-&lt;li&gt;公開用ディレクトリを作成してGitを設定
-&lt;code&gt;
-cd &amp;lt;site-name&amp;gt;
-mkdir public
-git remote add origin https://github.com/&amp;lt;github name&amp;gt;/&amp;lt;github name&amp;gt;.github.io.git
-&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;.gitignore&lt;/code&gt;を&lt;a href=&#34;https://github.com/github/gitignore&#34;&gt;https://github.com/github/gitignore&lt;/a&gt; から落としてきて、2の&lt;code&gt;public&lt;/code&gt;の中に置く。&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;記事のテンプレを作成:8d244dac89903f7d90007c69acaf707d&#34;&gt;記事のテンプレを作成&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;&amp;lt;site-name&amp;gt;/archetypes&lt;/code&gt;に&lt;code&gt;default.md&lt;/code&gt;を作成する。&lt;br /&gt;
-内容は以下の感じ。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;date = &amp;quot;now()&amp;quot;
-draft = true
-slug = &amp;quot;&amp;quot;
-title = &amp;quot;&amp;quot;
-categories = []
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;configを編集:8d244dac89903f7d90007c69acaf707d&#34;&gt;configを編集&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;&amp;lt;site-name&amp;gt;/config.toml&lt;/code&gt;を環境に合わせて編集する。&lt;br /&gt;
-（設定方法はテーマのREADME.mdを参照）&lt;/p&gt;
-
-&lt;h3 id=&#34;highlight-jsをカスタマイズ:8d244dac89903f7d90007c69acaf707d&#34;&gt;highlight.jsをカスタマイズ&lt;/h3&gt;
-
-&lt;p&gt;デフォルトで入っていた分ではSwiftが未対応。。。まぁ基本的にはGistを使う予定だけど、一応使えるように。&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;https://highlightjs.org/&#34;&gt;highlightjs公式&lt;/a&gt;で使いそうなものだけを選択してカスタムパッケージをDL&lt;/li&gt;
-&lt;li&gt;DLしたものの中から&lt;code&gt;highlight.pack.js&lt;/code&gt;を&lt;code&gt;&amp;lt;site-name&amp;gt;/themes/hyde-x/static/js/highlight.pack.js&lt;/code&gt;と丸ごと置き換え&lt;/li&gt;
-&lt;li&gt;カラースタイルもついでにXcodeにしたいので、DLしたものの中から&lt;code&gt;xcode.css&lt;/code&gt;を&lt;code&gt;&amp;lt;site-name&amp;gt;/themes/hyde-x/static/css/highlight&lt;/code&gt;に追加&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;config.toml&lt;/code&gt;の中の&lt;code&gt;highlight&lt;/code&gt;を&lt;code&gt;xcode&lt;/code&gt;に変更&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;これで、無事Swiftもハイライトされるようになった。&lt;/p&gt;
-
-&lt;h3 id=&#34;gist埋め込みコードを設定:8d244dac89903f7d90007c69acaf707d&#34;&gt;Gist埋め込みコードを設定&lt;/h3&gt;
-
-&lt;p&gt;普通にリンクをコピペしても良いのだけれども（&lt;del&gt;GistBoxを使い出したら逆にハッシュだけコピペするのが面倒だったり&lt;/del&gt;）、せっかくMarkdownで書いているのだから、あまりタグを入れて表記が揺らぐのも微妙なので。&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;&amp;lt;site-name&amp;gt;/layouts/shortcodes/gist.html&lt;/code&gt;を作成&lt;/li&gt;
-&lt;li&gt;1のファイルに
-&lt;code&gt;
-&amp;lt;script type=&amp;quot;text/javascript&amp;quot; src=&amp;quot;https://gist.github.com/{{ .Get 0 }}.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
-&lt;/code&gt;
-を貼り付けて保存&lt;/li&gt;
-&lt;li&gt;使いたい場所で&lt;br /&gt;
-&lt;code&gt;
-{{&amp;lt; gist gist_sha1_hash &amp;gt;}}
-&lt;/code&gt;&lt;br /&gt;
-とすると、
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5526bee6ee5efd2fc5a7.js&#34;&gt;&lt;/script&gt;
-といった感じで埋め込まれる&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;記事の作成:8d244dac89903f7d90007c69acaf707d&#34;&gt;記事の作成&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;&amp;lt;site-name&amp;gt;&lt;/code&gt;直下で&lt;code&gt;hugo new post/&amp;lt;file-name&amp;gt;.md&lt;/code&gt;を実行する。&lt;/p&gt;
-
-&lt;p&gt;プレビューは&lt;code&gt;hugo server -t Hyde-X -D -w&lt;/code&gt;を実行した後に、&lt;a href=&#34;http://localhost:1313/&#34;&gt;http://localhost:1313/&lt;/a&gt; へアクセス。&lt;/p&gt;
-
-&lt;h2 id=&#34;公開手順:8d244dac89903f7d90007c69acaf707d&#34;&gt;公開手順&lt;/h2&gt;
-
-&lt;h3 id=&#34;流れ:8d244dac89903f7d90007c69acaf707d&#34;&gt;流れ&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;hugo -t Hyde-X&lt;/code&gt;でサイトを生成&lt;br /&gt;
-(データ一式がpublicに格納される)&lt;/li&gt;
-&lt;li&gt;1のデータをGitで&lt;code&gt;commit&lt;/code&gt;して&lt;code&gt;push&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;ただ、毎回これをやるのは面倒なので、シェルスクリプトにしておく。&lt;/p&gt;
-
-&lt;h3 id=&#34;デプロイ用スクリプト:8d244dac89903f7d90007c69acaf707d&#34;&gt;デプロイ用スクリプト&lt;/h3&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/3159af7dd05c6278a778.js&#34;&gt;&lt;/script&gt;
-
-&lt;h1 id=&#34;githubでの書き方:8d244dac89903f7d90007c69acaf707d&#34;&gt;GitHubでの書き方&lt;/h1&gt;
-
-&lt;p&gt;参考リンク
-&lt;a href=&#34;https://help.github.com/articles/github-flavored-markdown/&#34;&gt;GitHub専用(公式)&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク:8d244dac89903f7d90007c69acaf707d&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.kotazi.com/blog/post/2015111301/&#34;&gt;【Hugo】Hosting on GitHub Pages【翻訳】&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://tanksuzuki.com/post/hugo-github-pages-1/&#34;&gt;Hugoでブログ作成 第一部：Hugoでブログを作る&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://blog.cronally.com/embed-gists-with-hugo/&#34;&gt;Hugo Shortcode for Embedded Gists&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     
