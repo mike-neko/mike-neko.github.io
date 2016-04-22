@@ -180,7 +180,12 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;OS X 10.11.4&lt;/li&gt;
 &lt;li&gt;Xcode 7.3&lt;/li&gt;
 &lt;li&gt;iOS 9.3.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;iPhone 6+&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Perfect 導入編&lt;a href=&#34;../perfect-1/&#34;&gt;その1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Perfect 基礎編&lt;a href=&#34;../perfect-2/&#34;&gt;その2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
@@ -375,7 +380,12 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.4&lt;/li&gt;
-&lt;li&gt;Xcode 7.3&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Xcode 7.3&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Perfect 導入編&lt;a href=&#34;../perfect-1/&#34;&gt;その1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Perfect APNs編&lt;a href=&#34;../perfect-push/&#34;&gt;その3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
