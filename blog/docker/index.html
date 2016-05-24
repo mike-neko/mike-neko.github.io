@@ -360,6 +360,20 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &lt; server.csr &gt; se
 <code>www/index.html</code>が表示される。
 （ただし、オレオレ証明書なので認証の警告などは出る）</p>
 
+<h1 id="追記:9f4de33edfbe837dbb3e37ebe79037f8">追記</h1>
+
+<p>Docker起動時に</p>
+
+<pre><code>ERROR: Couldn't connect to Docker daemon - you might need to run `docker-machine start default`.
+</code></pre>
+
+<p>というエラーが出る場合は、VMの設定の</p>
+
+<pre><code>VBoxManage controlvm &quot;default&quot; natpf1 &quot;nginx,tcp,127.0.0.1,8080,,80&quot;
+</code></pre>
+
+<p>をしてから起動し直すと大丈夫っぽい。なお、原因は不明・・・</p>
+
 <h1 id="感想:9f4de33edfbe837dbb3e37ebe79037f8">感想</h1>
 
 <p>開発環境をプラグインみたいな感じで構築していけるのと構築内容がテキストで残るのはあとあと楽。</p>

@@ -275,6 +275,20 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 &lt;code&gt;www/index.html&lt;/code&gt;が表示される。
 （ただし、オレオレ証明書なので認証の警告などは出る）&lt;/p&gt;
 
+&lt;h1 id=&#34;追記:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;追記&lt;/h1&gt;
+
+&lt;p&gt;Docker起動時に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ERROR: Couldn&#39;t connect to Docker daemon - you might need to run `docker-machine start default`.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というエラーが出る場合は、VMの設定の&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;VBoxManage controlvm &amp;quot;default&amp;quot; natpf1 &amp;quot;nginx,tcp,127.0.0.1,8080,,80&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;をしてから起動し直すと大丈夫っぽい。なお、原因は不明・・・&lt;/p&gt;
+
 &lt;h1 id=&#34;感想:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;感想&lt;/h1&gt;
 
 &lt;p&gt;開発環境をプラグインみたいな感じで構築していけるのと構築内容がテキストで残るのはあとあと楽。&lt;/p&gt;
