@@ -144,17 +144,9 @@ OpenSSLの更新方法：<a href="http://qiita.com/Chrowa3/items/b04e772be959cdd
 <pre><code>brew uninstall nginx
 </code></pre></li>
 
-<li><p>nginx-fullをインストールする</p>
+<li><p>nginxをhttp2モジュール付きでインストールする</p>
 
-<pre><code>brew tap homebrew/nginx
-brew install nginx-full --with-http2
-</code></pre>
-
-<p>通常の<code>Homebrew</code>の<code>nginx</code>ではモジュールが足りないので<code>nginx-full</code>をインストールする。<br />
-モジュールの一覧は以下で確認すること。
-（<a href="https://nginx.org/en/docs/http/ngx_http_v2_module.html">公式</a>のモジュールの情報?とは違うようなのでこれで確認）</p>
-
-<pre><code>brew info nginx-full
+<pre><code>brew install nginx --with-http2
 </code></pre></li>
 
 <li><p>nginxのconfを編集<br />
@@ -184,6 +176,30 @@ listen  443 ssl http2;
 <p><code>http2</code>の場合は、<code>log_format</code>の<code>$http2</code>に<code>h2</code>と入ってくる。<br />
 詳細は以下のページを参考に<br />
 <a href="http://d.hatena.ne.jp/ASnoKaze/20150818/1439896998">nginxでアクセスログにhttp2の通信か出力する</a></p>
+
+<h2 id="過去情報:6214d744b42492b1045fac72bc277c04">過去情報</h2>
+
+<p>標準の<code>nginx</code>に<code>http2</code>モジュールがないと思っていたら、
+実はちゃんとあったので訂正。</p>
+
+<p>もったいないので、<code>nginx-full</code>の情報を残しておく。</p>
+
+<h3 id="nginx-full:6214d744b42492b1045fac72bc277c04">nginx-full</h3>
+
+<p>通常の<code>Homebrew</code>の<code>nginx</code>ではオプションのモジュールが少ないので、
+標準では足りないモジュールをインストールしたい時は<code>nginx-full</code>をインストールする。</p>
+
+<p>例） nginxをhttp2モジュール付きでインストールする</p>
+
+<pre><code>brew tap homebrew/nginx
+brew install nginx-full --with-http2
+</code></pre>
+
+<p>モジュールの一覧は以下で確認すること。
+（<a href="https://nginx.org/en/docs/http/ngx_http_v2_module.html">公式</a>のモジュールの情報?とは違うようなのでこれで確認）</p>
+
+<pre><code>brew info nginx-full
+</code></pre>
 
 <h1 id="参考リンク:6214d744b42492b1045fac72bc277c04">参考リンク</h1>
 
