@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Hugoのshortcodeのメモ &middot; M.Ike</title>
+  <title>Code &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -26,7 +26,7 @@
   
   
   
-  
+  <link href="https://mike-neko.github.io/categories/code/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -92,76 +92,68 @@
 </div>
 
 
+
+
+
+
 <div class="content container">
-  <div class="post">
-    <h1>Hugoのshortcodeのメモ</h1>
-    <span class="post-date">Feb 16, 2016 
+  <h1>Category: " code "</h1>
+  <div class="posts">
     
-    <br/>
-    <a class="label" href="https://mike-neko.github.io/categories/github">github</a><a class="label" href="https://mike-neko.github.io/categories/memo">memo</a>
-    </span>
     
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/metal-model/">MetalKitのSwift版サンプル</a>
+      </h1>
+      <span class="post-date">Jan 22, 2016
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/metal">metal</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a>
+      </span>
+      
+      <h2 id="概要:6a6245d2d174e54873361b2ccb73e605">概要</h2>
 
-<p>Hugoの<code>shortcode</code>を使って、記事の中でHTMLのタグをべた書きしなくて良い様にする方法のメモ。あと、おまけで<code>shortcode</code>をMarkdownの中でエスケープして表示する方法。</p>
+<p>元ネタのApple公式の<a href="https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html">MetalKitEssentials</a>をSwiftで書き直し＋αしたもの。
+内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
+シェーダもいたってシンプルでライトもなし。<br />
+ちなみに、MetalKitは<strong>iOS9以降</strong>でしか使えないので注意。</p>
 
-<h2 id="画像を貼り付けるshortcode:82b443db7a6a95ed9bb9f499c6e51b27">画像を貼り付けるshortcode</h2>
-
-<p>Hugoで画像を表示するには、<code>static</code>の中に置く必要がある。この中は全サイト共通になっているので、整理しやすいように以下のディレクトリ構成にした。</p>
-
-<pre><code>- static
-    - media
-        - 2016-02-16-sprite-shader
-            - comp.png
-            - beta.gif
-        - 2016-02-18-hugo-shortcode
-            - sample.jpg
-        ...
-</code></pre>
-
-<p><code>media</code>の中に、記事毎に<code>[作成日付]-[slug]</code>というディレクトリを作り、その中に画像などのコンテンツを置いている。</p>
-
-<p>この状態で記事の中で画像を表示させるには、<code>{{&lt; figure src=&quot;/media/2016-02-18-hugo-shortcode/sample.jpg&quot; &gt;}}</code>となる。</p>
-
-<p>これを毎回書くのは面倒だが<code>shortcode</code>を使うと、<code>{{&lt; img &quot;sample.jpg&quot; &gt;}}</code>とだけ書けばよい。</p>
-
-<h3 id="作り方:82b443db7a6a95ed9bb9f499c6e51b27">作り方</h3>
-
-<ol>
-<li><code>&lt;site-name&gt;/layouts/shortcodes/img.html</code>を作成</li>
-<li>1のファイルに
-<script type="text/javascript" src="https://gist.github.com/593de54e0ba8f5db4c6b.js"></script>
-を貼り付けて保存</li>
-<li>あとは使いたい場所で<code>{{&lt; img &quot;ファイル名&quot; &gt;}}</code>とすればOK</li>
-</ol>
-
-<h2 id="エスケープ方法:82b443db7a6a95ed9bb9f499c6e51b27">エスケープ方法</h2>
-
-<p>記事の中で、<code>shortcode</code>などを表示させたい場合に、そのまま書くと当然ながらそのコードが実行されてしまうので、エスケープが必要となる。</p>
-
-<p>このエスケープ方法は幾つかある（他にもあるかも）</p>
-
-<ol>
-<li><code>\</code>をつける方法<br />
-<code>\{\{&lt; コード &gt;}}</code></li>
-<li><code>{</code>を<code>&amp;lt;</code>と入力する方法<br />
-<code>{{&amp;lt; コード &gt;}}</code></li>
-<li><code>/**/</code>のコメントにする方法<br />
-<code>{{/* コード */}}</code></li>
-</ol>
-
-<p>で、一番おすすめなのは3の方法。他の方法だと``で囲った時にうまく表示されないので。</p>
-
-<h1 id="参考リンク:82b443db7a6a95ed9bb9f499c6e51b27">参考リンク</h1>
-
-<ul>
-<li>公式：<a href="https://gohugo.io/extras/shortcodes/">Hugo - Shortcodes</a></li>
-</ul>
-
+      <a href="https://mike-neko.github.io/blog/metal-model/">Read On &rarr;</a>
+      
+    </div>
+    
+    
+    
+    <ul class="pagination">
+        
+        <li>
+            <a href="/categories/code/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        </li>
+        
+        <li
+        >
+        <a href="/categories/code/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        
+        <li
+        ><a href="/categories/code/">1</a></li>
+        
+        <li
+        class="active"><a href="/categories/code/page/2/">2</a></li>
+        
+        <li
+        class="disabled">
+        <a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+        
+        <li>
+            <a href="/categories/code/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        </li>
+        
+    </ul>
+    
   </div>
-  
 </div>
-
-
 
 
 <script src="https://mike-neko.github.io/js/highlight.pack.js"></script>

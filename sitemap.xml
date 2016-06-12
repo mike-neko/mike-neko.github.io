@@ -3,8 +3,13 @@
   
   <url>
     <loc>https://mike-neko.github.io/</loc>
-    <lastmod>2016-06-03T21:29:36+09:00</lastmod>
+    <lastmod>2016-06-07T00:56:50+09:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/blog/unity-opencv/</loc>
+    <lastmod>2016-06-07T00:56:50+09:00</lastmod>
   </url>
   
   <url>

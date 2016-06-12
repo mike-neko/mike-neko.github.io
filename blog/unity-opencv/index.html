@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>UnityからOpenCVを利用する(iOS) &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      <li>
+        
+          &nbsp;<a href="/categories/code">code&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/docker">docker&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/github">github&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/ios">ios&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/memo">memo&nbsp;(6)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/metal">metal&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/perfect">perfect&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/server">server&nbsp;(6)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/unity">unity&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2016
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>UnityからOpenCVを利用する(iOS)</h1>
+    <span class="post-date">Jun 7, 2016 
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a><a class="label" href="https://mike-neko.github.io/categories/unity">unity</a>
+    </span>
+    
+
+<h2 id="概要:571ed67a2af601d4cff30db4980e4e99">概要</h2>
+
+<p>UnityからiOSのネイティブプラグイン経由で<code>OpenCV</code>でカメラを利用するサンプル。</p>
+
+<p>内容としては、</p>
+
+<ol>
+<li>OpenCV経由で端末のカメラ画像を取得</li>
+<li>取得した画像をOpenCVで処理（シンプルにグレースケールへ変換）</li>
+<li>ネイティブプラグイン経由でUnity側(C#)へ渡す</li>
+<li>Unity側でテクスチャを生成して表示する</li>
+</ol>
+
+<p>といった流れになる。</p>
+
+<h2 id="手順:571ed67a2af601d4cff30db4980e4e99">手順</h2>
+
+<h3 id="opencvのフレームワークの準備:571ed67a2af601d4cff30db4980e4e99">OpenCVのフレームワークの準備</h3>
+
+<ol>
+<li><p><a href="http://opencv.org/downloads.html">公式のダウンロードページ</a>から<code>for iOS</code>の<strong>Ver.2系</strong>をダウンロードする<br />
+（サンプルでは<a href="https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/opencv2.framework.zip/download">Ver.2.4.13</a>）</p></li>
+
+<li><p>ダウンロードしたファイルを解凍して<code>opencv2.framework</code>を取り出しておく</p></li>
+</ol>
+
+<p>なお、Ver.2を利用したのは、作成時点ではVer.3だとエラーが出てしまったので。
+多分ソースからビルドするかバージョン上がれば、Ver.3系でも問題ないかと。</p>
+
+<h3 id="iosネイティブ部分のソースを作成:571ed67a2af601d4cff30db4980e4e99">iOSネイティブ部分のソースを作成</h3>
+
+<p>OpenCVがC++なので、言語は<code>Objective-C++</code>を利用する。<br />
+(残念ながらSwiftはC++を扱うことができないのでObjC一択)</p>
+
+<p>それに伴い、忘れずにファイルの拡張子を<code>.mm</code>にしておくこと。<br />
+ただその場合、ヘッダファイル（<code>.hpp</code>）はUnityがプラグインのファイルとして認識してくれないので、
+今回は一つのファイルに収まるように書いている。<br />
+（通常の<code>.h</code>はちゃんと認識してくれるのに・・・）</p>
+
+<p>プラグインの呼び出しは以下の感じ。</p>
+
+<pre><code>[iOS]
+OpenCV(C++)での処理
+ |
+ObjC++のクラスでラップ
+ |
+Cの関数でラッパークラスをエクスポート
+ |
+[Unity]
+C#でDLLimportして呼び出し
+</code></pre>
+
+<p>ObjC++で一旦ラップしているのは、OpenCV部分の開発は別にXCode上で行う為。
+ただ、場合によってはメソッド呼び出しが遅いのでそこは注意。</p>
+
+<p>ネイティブ側のソースの全文は以下の通り。
+<script type="text/javascript" src="https://gist.github.com/bf258536e5414e25b1e147c8b5e7834d.js"></script></p>
+
+<h4 id="通常のopencv周りの処理-4-51行目あたり:571ed67a2af601d4cff30db4980e4e99">通常のOpenCV周りの処理（4〜51行目あたり）</h4>
+
+<p>ややこしいのが、C++はARC管理外の為、手動でメモリ管理が必要。
+今回はメモリの確保/破棄をラッパークラスの初期化/破棄と合わせて、
+ラッパークラスの生存期間とOpenCVのオブジェクトの生存期間が一致するようにしてある。</p>
+
+<p>カメラの画像の取得は、初期化と同時に<code>cv::VideoCapture</code>を生成し、
+その後は毎フレーム<code>*camera &gt;&gt; img</code>で画像を読み込んでいる。</p>
+
+<p>この時、取得された画像のフォーマットは<code>BGR</code>なのがポイント。
+最終的にUnityのテクスチャのサイズとフォーマット<code>RGBA</code>に変換してUnity側へ渡す。<br />
+（Unity側では<code>ARGB</code>の表記なので、最初それで変換してハマってた・・・）</p>
+
+<h4 id="プラグインのエントリポイントを用意-54-77行目あたり:571ed67a2af601d4cff30db4980e4e99">プラグインのエントリポイントを用意（54〜77行目あたり）</h4>
+
+<p>用意するのはラッパークラス<code>VideoCapture</code>の生成、毎フレーム呼び出す用、破棄の3つのCの関数。</p>
+
+<p>これを55〜59行目のように宣言してC#へエクスポートする。
+このファイルはC++の扱いになっているので<code>extern &quot;C&quot;</code>が必要。<br />
+（逆に言うと、C#からはこれ以外が見えない状態となっている）</p>
+
+<p>関数の本体は61行目以降にあるように、単純にブリッジしているだけ。</p>
+
+<h3 id="unityでネイティブプラグイン作成:571ed67a2af601d4cff30db4980e4e99">Unityでネイティブプラグイン作成</h3>
+
+<h4 id="unityにネイティブのソース類を組み込む:571ed67a2af601d4cff30db4980e4e99">Unityにネイティブのソース類を組み込む</h4>
+
+<ol>
+<li><code>Assets</code>直下に<code>Plugins</code>フォルダを作る</li>
+<li>作成した<code>Plugins</code>フォルダにiOSネイティブ用のソースファイルを入れる<br />
+Unityのエディタ上のインスペクタの設定を念のため確認
+
+<ul>
+<li><code>Select platforms for plugin</code>：iOS</li>
+<li><code>Platform settings</code>：チェック不要<br /></li>
+</ul></li>
+<li>同じく<code>Plugins</code>フォルダにダウンロードしておいた<code>opencv2.framework</code>を丸ごと入れる<br />
+Unity上ではフォルダとして認識されて、中にいろいろあればOK</li>
+</ol>
+
+<h4 id="コンポーネントの作成:571ed67a2af601d4cff30db4980e4e99">コンポーネントの作成</h4>
+
+<p>ネイティブの画像データからテクスチャを生成し、
+そのテクスチャを指定した<code>Renderer</code>のマテリアルにセットするコンポーネントを作成。</p>
+
+<script type="text/javascript" src="https://gist.github.com/5ea8d851f18b163ae6a70f6a05ccd4d1.js"></script>
+
+<p>当然、ネイティブプラグイン部分は、iOS上での実行時しか動かないので、
+該当部分は<code>#if UNITY_IOS</code>〜<code>#endif</code>でエディタ実行時にエラーにならないようにしておく。</p>
+
+<p>ネイティブ側で準備したエントリポイントを利用する為にインポートの宣言（16〜26行目あたり）が必要。</p>
+
+<p>Cの関数宣言をそのままC#での宣言にするが、同じデータ型がC#にない場合は対応するデータ型を代わりに指定する。
+（今回だと<code>void*</code>が<code>IntPtr</code>）</p>
+
+<p>なお、構造体をやりとりするような場合は<code>マーシャリング</code>が必要となるので結構面倒。</p>
+
+<p>宣言すれば後は通常のメソッドと同じ様に利用できる。ただし、C側と引数などが異なっていた場合は、
+実行時にエラーとなるので注意。</p>
+
+<p>後は、コンポーネントのライフサイクルと、キャプチャ用とテクスチャのオブジェクトのライフサイクルを一致させればOK。</p>
+
+<h4 id="シーン作成:571ed67a2af601d4cff30db4980e4e99">シーン作成</h4>
+
+<ol>
+<li>キャプチャしたテクスチャ用の<code>Material</code>を作成
+
+<ul>
+<li><code>Shader</code>で<code>Unlit/Texture</code>を選択<br />
+（キャプチャ画像にライトが反映して光らないように）</li>
+</ul></li>
+<li><code>Quad</code>でテクスチャを貼るオブジェクトを作成
+
+<ul>
+<li>Scaleを<code>X:3, Y:4, Z:1</code>にする<br />
+（数値はキャプチャ画像のアスペクト比と合わせる）</li>
+<li><code>Material</code>に1で作成したマテリアルをセット</li>
+</ul></li>
+<li>プラグインのコンポーネントを追加
+
+<ul>
+<li>プラグインの<code>renderTarget</code>に自身をセット</li>
+</ul></li>
+</ol>
+
+<h1 id="開発環境:571ed67a2af601d4cff30db4980e4e99">開発環境</h1>
+
+<ul>
+<li>OS X 10.11.5</li>
+<li>Unity 5.3.4f1</li>
+<li>Xcode 7.3.1</li>
+<li>iOS 9.3.2</li>
+<li>iPhone 6+</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>
+

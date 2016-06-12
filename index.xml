@@ -6,8 +6,171 @@
     <description>Recent content on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Fri, 03 Jun 2016 21:29:36 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 07 Jun 2016 00:56:50 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>UnityからOpenCVを利用する(iOS)</title>
+      <link>https://mike-neko.github.io/blog/unity-opencv/</link>
+      <pubDate>Tue, 07 Jun 2016 00:56:50 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/unity-opencv/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要:571ed67a2af601d4cff30db4980e4e99&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;UnityからiOSのネイティブプラグイン経由で&lt;code&gt;OpenCV&lt;/code&gt;でカメラを利用するサンプル。&lt;/p&gt;
+
+&lt;p&gt;内容としては、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;OpenCV経由で端末のカメラ画像を取得&lt;/li&gt;
+&lt;li&gt;取得した画像をOpenCVで処理（シンプルにグレースケールへ変換）&lt;/li&gt;
+&lt;li&gt;ネイティブプラグイン経由でUnity側(C#)へ渡す&lt;/li&gt;
+&lt;li&gt;Unity側でテクスチャを生成して表示する&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;といった流れになる。&lt;/p&gt;
+
+&lt;h2 id=&#34;手順:571ed67a2af601d4cff30db4980e4e99&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;opencvのフレームワークの準備:571ed67a2af601d4cff30db4980e4e99&#34;&gt;OpenCVのフレームワークの準備&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://opencv.org/downloads.html&#34;&gt;公式のダウンロードページ&lt;/a&gt;から&lt;code&gt;for iOS&lt;/code&gt;の&lt;strong&gt;Ver.2系&lt;/strong&gt;をダウンロードする&lt;br /&gt;
+（サンプルでは&lt;a href=&#34;https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/opencv2.framework.zip/download&#34;&gt;Ver.2.4.13&lt;/a&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ダウンロードしたファイルを解凍して&lt;code&gt;opencv2.framework&lt;/code&gt;を取り出しておく&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;なお、Ver.2を利用したのは、作成時点ではVer.3だとエラーが出てしまったので。
+多分ソースからビルドするかバージョン上がれば、Ver.3系でも問題ないかと。&lt;/p&gt;
+
+&lt;h3 id=&#34;iosネイティブ部分のソースを作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;iOSネイティブ部分のソースを作成&lt;/h3&gt;
+
+&lt;p&gt;OpenCVがC++なので、言語は&lt;code&gt;Objective-C++&lt;/code&gt;を利用する。&lt;br /&gt;
+(残念ながらSwiftはC++を扱うことができないのでObjC一択)&lt;/p&gt;
+
+&lt;p&gt;それに伴い、忘れずにファイルの拡張子を&lt;code&gt;.mm&lt;/code&gt;にしておくこと。&lt;br /&gt;
+ただその場合、ヘッダファイル（&lt;code&gt;.hpp&lt;/code&gt;）はUnityがプラグインのファイルとして認識してくれないので、
+今回は一つのファイルに収まるように書いている。&lt;br /&gt;
+（通常の&lt;code&gt;.h&lt;/code&gt;はちゃんと認識してくれるのに・・・）&lt;/p&gt;
+
+&lt;p&gt;プラグインの呼び出しは以下の感じ。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[iOS]
+OpenCV(C++)での処理
+ |
+ObjC++のクラスでラップ
+ |
+Cの関数でラッパークラスをエクスポート
+ |
+[Unity]
+C#でDLLimportして呼び出し
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ObjC++で一旦ラップしているのは、OpenCV部分の開発は別にXCode上で行う為。
+ただ、場合によってはメソッド呼び出しが遅いのでそこは注意。&lt;/p&gt;
+
+&lt;p&gt;ネイティブ側のソースの全文は以下の通り。
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bf258536e5414e25b1e147c8b5e7834d.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;通常のopencv周りの処理-4-51行目あたり:571ed67a2af601d4cff30db4980e4e99&#34;&gt;通常のOpenCV周りの処理（4〜51行目あたり）&lt;/h4&gt;
+
+&lt;p&gt;ややこしいのが、C++はARC管理外の為、手動でメモリ管理が必要。
+今回はメモリの確保/破棄をラッパークラスの初期化/破棄と合わせて、
+ラッパークラスの生存期間とOpenCVのオブジェクトの生存期間が一致するようにしてある。&lt;/p&gt;
+
+&lt;p&gt;カメラの画像の取得は、初期化と同時に&lt;code&gt;cv::VideoCapture&lt;/code&gt;を生成し、
+その後は毎フレーム&lt;code&gt;*camera &amp;gt;&amp;gt; img&lt;/code&gt;で画像を読み込んでいる。&lt;/p&gt;
+
+&lt;p&gt;この時、取得された画像のフォーマットは&lt;code&gt;BGR&lt;/code&gt;なのがポイント。
+最終的にUnityのテクスチャのサイズとフォーマット&lt;code&gt;RGBA&lt;/code&gt;に変換してUnity側へ渡す。&lt;br /&gt;
+（Unity側では&lt;code&gt;ARGB&lt;/code&gt;の表記なので、最初それで変換してハマってた・・・）&lt;/p&gt;
+
+&lt;h4 id=&#34;プラグインのエントリポイントを用意-54-77行目あたり:571ed67a2af601d4cff30db4980e4e99&#34;&gt;プラグインのエントリポイントを用意（54〜77行目あたり）&lt;/h4&gt;
+
+&lt;p&gt;用意するのはラッパークラス&lt;code&gt;VideoCapture&lt;/code&gt;の生成、毎フレーム呼び出す用、破棄の3つのCの関数。&lt;/p&gt;
+
+&lt;p&gt;これを55〜59行目のように宣言してC#へエクスポートする。
+このファイルはC++の扱いになっているので&lt;code&gt;extern &amp;quot;C&amp;quot;&lt;/code&gt;が必要。&lt;br /&gt;
+（逆に言うと、C#からはこれ以外が見えない状態となっている）&lt;/p&gt;
+
+&lt;p&gt;関数の本体は61行目以降にあるように、単純にブリッジしているだけ。&lt;/p&gt;
+
+&lt;h3 id=&#34;unityでネイティブプラグイン作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;Unityでネイティブプラグイン作成&lt;/h3&gt;
+
+&lt;h4 id=&#34;unityにネイティブのソース類を組み込む:571ed67a2af601d4cff30db4980e4e99&#34;&gt;Unityにネイティブのソース類を組み込む&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Assets&lt;/code&gt;直下に&lt;code&gt;Plugins&lt;/code&gt;フォルダを作る&lt;/li&gt;
+&lt;li&gt;作成した&lt;code&gt;Plugins&lt;/code&gt;フォルダにiOSネイティブ用のソースファイルを入れる&lt;br /&gt;
+Unityのエディタ上のインスペクタの設定を念のため確認
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Select platforms for plugin&lt;/code&gt;：iOS&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Platform settings&lt;/code&gt;：チェック不要&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;同じく&lt;code&gt;Plugins&lt;/code&gt;フォルダにダウンロードしておいた&lt;code&gt;opencv2.framework&lt;/code&gt;を丸ごと入れる&lt;br /&gt;
+Unity上ではフォルダとして認識されて、中にいろいろあればOK&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;コンポーネントの作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;コンポーネントの作成&lt;/h4&gt;
+
+&lt;p&gt;ネイティブの画像データからテクスチャを生成し、
+そのテクスチャを指定した&lt;code&gt;Renderer&lt;/code&gt;のマテリアルにセットするコンポーネントを作成。&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5ea8d851f18b163ae6a70f6a05ccd4d1.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;当然、ネイティブプラグイン部分は、iOS上での実行時しか動かないので、
+該当部分は&lt;code&gt;#if UNITY_IOS&lt;/code&gt;〜&lt;code&gt;#endif&lt;/code&gt;でエディタ実行時にエラーにならないようにしておく。&lt;/p&gt;
+
+&lt;p&gt;ネイティブ側で準備したエントリポイントを利用する為にインポートの宣言（16〜26行目あたり）が必要。&lt;/p&gt;
+
+&lt;p&gt;Cの関数宣言をそのままC#での宣言にするが、同じデータ型がC#にない場合は対応するデータ型を代わりに指定する。
+（今回だと&lt;code&gt;void*&lt;/code&gt;が&lt;code&gt;IntPtr&lt;/code&gt;）&lt;/p&gt;
+
+&lt;p&gt;なお、構造体をやりとりするような場合は&lt;code&gt;マーシャリング&lt;/code&gt;が必要となるので結構面倒。&lt;/p&gt;
+
+&lt;p&gt;宣言すれば後は通常のメソッドと同じ様に利用できる。ただし、C側と引数などが異なっていた場合は、
+実行時にエラーとなるので注意。&lt;/p&gt;
+
+&lt;p&gt;後は、コンポーネントのライフサイクルと、キャプチャ用とテクスチャのオブジェクトのライフサイクルを一致させればOK。&lt;/p&gt;
+
+&lt;h4 id=&#34;シーン作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;シーン作成&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;キャプチャしたテクスチャ用の&lt;code&gt;Material&lt;/code&gt;を作成
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Shader&lt;/code&gt;で&lt;code&gt;Unlit/Texture&lt;/code&gt;を選択&lt;br /&gt;
+（キャプチャ画像にライトが反映して光らないように）&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Quad&lt;/code&gt;でテクスチャを貼るオブジェクトを作成
+
+&lt;ul&gt;
+&lt;li&gt;Scaleを&lt;code&gt;X:3, Y:4, Z:1&lt;/code&gt;にする&lt;br /&gt;
+（数値はキャプチャ画像のアスペクト比と合わせる）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Material&lt;/code&gt;に1で作成したマテリアルをセット&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;プラグインのコンポーネントを追加
+
+&lt;ul&gt;
+&lt;li&gt;プラグインの&lt;code&gt;renderTarget&lt;/code&gt;に自身をセット&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;開発環境:571ed67a2af601d4cff30db4980e4e99&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.5&lt;/li&gt;
+&lt;li&gt;Unity 5.3.4f1&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>nginxをhttp2に対応させる</title>
@@ -2572,132 +2735,6 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;li&gt;OpenGL4.5：&lt;a href=&#34;https://www.opengl.org/sdk/docs/reference_card/opengl45-reference-card.pdf&#34;&gt;API Reference Card&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;DirectX：&lt;a href=&#34;https://msdn.microsoft.com/ja-jp/library/bb509611.aspx&#34;&gt;組み込み関数 (DirectX HLSL)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>MetalのGPGPUによるPerlinノイズ</title>
-      <link>https://mike-neko.github.io/blog/metal-noise/</link>
-      <pubDate>Mon, 25 Jan 2016 19:41:59 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/metal-noise/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要:c76c02a9716918700fc6ffc19450c1da&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。&lt;/p&gt;
-
-&lt;p&gt;パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
-デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。&lt;/p&gt;
-
-&lt;h2 id=&#34;動作イメージ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;動作イメージ&lt;/h2&gt;
-
-&lt;p&gt;&lt;blockquote class=&#34;instagram-media&#34; data-instgrm-captioned data-instgrm-version=&#34;6&#34; style=&#34; background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);&#34;&gt;&lt;div style=&#34;padding:8px;&#34;&gt; &lt;div style=&#34; background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;&#34;&gt; &lt;div style=&#34; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;&#34;&gt;&lt;/div&gt;&lt;/div&gt; &lt;p style=&#34; margin:8px 0 0 0; padding:0 4px;&#34;&gt; &lt;a href=&#34;https://www.instagram.com/p/BBATaXDFQW1/&#34; style=&#34; color:#000; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none; word-wrap:break-word;&#34; target=&#34;_blank&#34;&gt;ノイズ生成デモ&lt;/a&gt;&lt;/p&gt; &lt;p style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;&#34;&gt;@m_ike__が投稿した動画 - &lt;time style=&#34; font-family:Arial,sans-serif; font-size:14px; line-height:17px;&#34; datetime=&#34;2016-01-26T13:57:16+00:00&#34;&gt;2016 1月 26 5:57午前 PST&lt;/time&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt; &lt;script async defer src=&#34;//platform.instagram.com/en_US/embeds.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;p&gt;ソース自体はGPUGemsのサンプルをほぼほぼ書き換えただけなので、ノイズ生成のアルゴリズムなどは参考リンクの方で。。。&lt;/p&gt;
-
-&lt;h3 id=&#34;ノイズ生成の流れ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;ノイズ生成の流れ&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;初期化時に順列テーブル&lt;code&gt;permBuffer&lt;/code&gt;を生成&lt;br /&gt;
-初回のみなのでCPU側で生成&lt;br /&gt;
-実行時毎にノイズの模様が変化する様にランダムに並び替えを行う&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;毎フレームごと、ComputeShaderでノイズを生成&lt;br /&gt;
-シェーダは各種パラメータ&lt;code&gt;NoiseParameter&lt;/code&gt;や順列テーブルなどを受け取って、生成した結果をテクスチャに書き込んで返却する&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;2のテクスチャを板ポリに貼って描画する&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;computeshader用の設定:c76c02a9716918700fc6ffc19450c1da&#34;&gt;ComputeShader用の設定&lt;/h3&gt;
-
-&lt;h4 id=&#34;mtkviewの設定:c76c02a9716918700fc6ffc19450c1da&#34;&gt;MTKViewの設定&lt;/h4&gt;
-
-&lt;p&gt;ComputeShaderを利用する場合は、&lt;code&gt;MTKView&lt;/code&gt;の&lt;code&gt;framebufferOnly&lt;/code&gt;を&lt;code&gt;false&lt;/code&gt;にしておくこと。&lt;br /&gt;
-ただし、パフォーマンスに影響を与えるので、利用しない時は触らないこと。&lt;/p&gt;
-
-&lt;h4 id=&#34;waituntilcompleted:c76c02a9716918700fc6ffc19450c1da&#34;&gt;waitUntilCompleted()&lt;/h4&gt;
-
-&lt;p&gt;各種コマンドの実行の終了するまで待機するメソッド。&lt;br /&gt;
-以下のように&lt;code&gt;commandBuffer.commit()&lt;/code&gt;より後に置く。&lt;br /&gt;
-描画時のような毎フレームごとの呼び出しの時は、別途 &lt;code&gt;dispatch_semaphore_wait&lt;/code&gt;で処理を待機するので不要だが、
-初期化時の1回のみ実行するような場合は、これを使って待機させる。&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;pre&gt;&lt;code&gt;/* ~~ （ここでGPGPUのコマンド処理） ~~ */
-commandBuffer.commit()
-commandBuffer.waitUntilCompleted()
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&#34;スレッド:c76c02a9716918700fc6ffc19450c1da&#34;&gt;スレッド&lt;/h3&gt;
-
-&lt;p&gt;GPGPUは大量のスレッドを並列動作させて圧倒的な処理を行うのが特徴だが、モバイルのGPUのため、スレッドグループ毎の最大のスレッド数は512までになっている(&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Miscellaneous/Conceptual/MetalProgrammingGuide/MetalFeatureSetTables/MetalFeatureSetTables.html&#34;&gt;公式&lt;/a&gt;)。&lt;/p&gt;
-
-&lt;p&gt;なお、スレッド数は32の倍数にするのが良い。nVIDIAの資料(URL忘れた…)によると64−192ぐらいが一番パフォーマンス的に良いらしいがA系チップに当てはまるかは不明。&lt;/p&gt;
-
-&lt;p&gt;今回は以下のように、スレッドグループは1つのみだが、グループのサイズをテクスチャのサイズと同じにしている。&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;pre&gt;&lt;code&gt;// スレッドグループの事前設定
-threadgroupSize = MTLSize(width: TexSize, height: TexSize, depth: 1)
-threadgroupCount = MTLSize(width: 1, height: 1, depth: 1)
-
-// コマンドバッファへスレッドグループの設定
-computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: threadgroupCount)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;ここでの注意ポイントは、スレッドの&lt;strong&gt;&lt;em&gt;次元&lt;/em&gt;&lt;/strong&gt;に合わせてシェーダ側の引数も変更が必要なこと。
-今回はサイズが2次元(width * height * 1)なので、シェーダ側は&lt;code&gt;uint2 id [[ thread_position_in_grid ]]&lt;/code&gt;と、
-&lt;code&gt;uint2&lt;/code&gt;で受け取ることになる(間違えるとシェーダのコンパイルが通らない親切?仕様)。1次元なら&lt;code&gt;uint&lt;/code&gt;で受け取れば良い。&lt;/p&gt;
-
-&lt;p&gt;また、グループが複数だったり1次元のバッファで2次元のグループサイズを指定している様な場合は、&lt;code&gt;threads_per_grid&lt;/code&gt;や&lt;code&gt;thread_position_in_threadgroup&lt;/code&gt;を追加で受け取る必要がある。詳細は公式の&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Metal/Reference/MetalShadingLanguageGuide/func-var-qual/func-var-qual.html&#34;&gt;Attribute Qualifiers for Kernel Function Input&lt;/a&gt;の項目を参照。&lt;/p&gt;
-
-&lt;p&gt;同じスレッドグループ内であれば、メモリの共有ができたりするのだが、そのあたりも公式のサンプル&lt;a href=&#34;https://developer.apple.com/library/ios/samplecode/Metal_NBody_Simulation/Introduction/Intro.html&#34;&gt;Metal N-Body&lt;/a&gt;が参考になる。&lt;/p&gt;
-
-&lt;h3 id=&#34;デバッグ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;デバッグ&lt;/h3&gt;
-
-&lt;p&gt;Xcodeの&lt;code&gt;Capture GPU Frame&lt;/code&gt;がとても便利。&lt;/p&gt;
-
-&lt;p&gt;これを使うと、実行中の各バッファやテクスチャのイメージの様子をキャプチャしてくれる。
-バッファのバイナリも見れるので、例えば構造体のアライメントが崩れたりしているのを簡単に見つけることができる。&lt;/p&gt;
-
-&lt;p&gt;また、プロファイル機能も充実していてどこがボトルネックがわかりやすい。&lt;/p&gt;
-
-&lt;h2 id=&#34;感想:c76c02a9716918700fc6ffc19450c1da&#34;&gt;感想&lt;/h2&gt;
-
-&lt;p&gt;Metalの発表を聞いて一番ワクワクして触りたかったのが、このGPGPUだった。これまでMacでは統合開発環境でGPGPUが組めなかった（普通のシェーダだけならUnityがあった）ので、使い慣れたXcodeで触れるのは楽しみだった。&lt;/p&gt;
-
-&lt;p&gt;元々ソース自体はGemsのものや参考リンクのものがあったので、移植しただけ。実際にはパラメータやノイズの加工を工夫すれば、雲になったり地形になったりしていくが、パラメータの調整はどうも苦手というか時間がものすごくかかるので、とりあえず今回はここまでで。&lt;/p&gt;
-
-&lt;p&gt;並列化によってどれくらい高速化するのかとか、モバイルのGPGPUでどのくらいパフォーマンスが上がるのか（もちろんバッファの転送が無いだけでも効果は大きいだろうけど）とかが気になったのだけど、それもまた別の機会に・・・&lt;/p&gt;
-
-&lt;p&gt;にしても、シェーダ関係は環境毎に用語が微妙に変わるのは何とかしてほしい。。。&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク:c76c02a9716918700fc6ffc19450c1da&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;日本語の解説：&lt;a href=&#34;http://postd.cc/understanding-perlin-noise/&#34;&gt;パーリンノイズを理解する(POSTD)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;本家：&lt;a href=&#34;http://mrl.nyu.edu/~perlin/&#34;&gt;Ken Perlin&amp;rsquo;s homepage&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;GPUGems Chapter5：&lt;a href=&#34;http://http.developer.nvidia.com/GPUGems/gpugems_ch05.html&#34;&gt;Implementing Improved Perlin Noise&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;GPUGems2 Chapter26：&lt;a href=&#34;http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter26.html&#34;&gt;Implementing Improved Perlin Noise&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;FragmentShaderで実装や応用例：&lt;a href=&#34;http://www.sci.utah.edu/~leenak/IndStudy_reportfall/Perlin%20Noise%20on%20GPU.html&#34;&gt;Perlin Noise on GPU&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境:c76c02a9716918700fc6ffc19450c1da&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 7.2&lt;/li&gt;
-&lt;li&gt;iOS 9.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース:c76c02a9716918700fc6ffc19450c1da&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalCompute&#34;&gt;こちら&lt;/a&gt; (&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>
     </item>
     
