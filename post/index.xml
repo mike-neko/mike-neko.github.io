@@ -160,6 +160,13 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
+&lt;h1 id=&#34;感想:571ed67a2af601d4cff30db4980e4e99&#34;&gt;感想&lt;/h1&gt;
+
+&lt;p&gt;サンプルでは出てこないけど、C#のアンマネージドの辺りが、ObjCやSwiftに比べると結構大変な気がした。
+慣れてないからかも知れないけど、特にメモリ周りやマーシャリングはいずれちゃんと勉強しないと。&lt;/p&gt;
+
+&lt;p&gt;あと、OpenCV周りの細かい挙動もまだ把握しきれていないので調べたい。&lt;/p&gt;
+
 &lt;h1 id=&#34;開発環境:571ed67a2af601d4cff30db4980e4e99&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
@@ -169,6 +176,15 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;li&gt;iOS 9.3.2&lt;/li&gt;
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース:571ed67a2af601d4cff30db4980e4e99&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/UnityOpenCV&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;ただし、上記ソースには&lt;code&gt;opencv2.framework&lt;/code&gt;が含まれていない。&lt;br /&gt;
+（Githubの100MB制限にかかってしまったので）&lt;br /&gt;
+動かすには、&lt;code&gt;OpenCVのフレームワークの準備&lt;/code&gt;の項目で準備した
+&lt;code&gt;opencv2.framework&lt;/code&gt;を手動で&lt;code&gt;UnityOpenCV/Assets/Plugins/&lt;/code&gt;直下に追加する必要がある。&lt;/p&gt;
 </description>
     </item>
     

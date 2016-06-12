@@ -245,6 +245,13 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 </ul></li>
 </ol>
 
+<h1 id="感想:571ed67a2af601d4cff30db4980e4e99">感想</h1>
+
+<p>サンプルでは出てこないけど、C#のアンマネージドの辺りが、ObjCやSwiftに比べると結構大変な気がした。
+慣れてないからかも知れないけど、特にメモリ周りやマーシャリングはいずれちゃんと勉強しないと。</p>
+
+<p>あと、OpenCV周りの細かい挙動もまだ把握しきれていないので調べたい。</p>
+
 <h1 id="開発環境:571ed67a2af601d4cff30db4980e4e99">開発環境</h1>
 
 <ul>
@@ -254,6 +261,15 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 <li>iOS 9.3.2</li>
 <li>iPhone 6+</li>
 </ul>
+
+<h1 id="ソース:571ed67a2af601d4cff30db4980e4e99">ソース</h1>
+
+<p><a href="https://github.com/mike-neko/UnityOpenCV">こちら</a></p>
+
+<p>ただし、上記ソースには<code>opencv2.framework</code>が含まれていない。<br />
+（Githubの100MB制限にかかってしまったので）<br />
+動かすには、<code>OpenCVのフレームワークの準備</code>の項目で準備した
+<code>opencv2.framework</code>を手動で<code>UnityOpenCV/Assets/Plugins/</code>直下に追加する必要がある。</p>
 
   </div>
   
