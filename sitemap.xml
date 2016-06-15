@@ -3,8 +3,13 @@
   
   <url>
     <loc>https://mike-neko.github.io/</loc>
-    <lastmod>2016-06-07T00:56:50+09:00</lastmod>
+    <lastmod>2016-06-14T22:52:40+09:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/blog/code-reader/</loc>
+    <lastmod>2016-06-14T22:52:40+09:00</lastmod>
   </url>
   
   <url>
@@ -70,11 +75,6 @@
   <url>
     <loc>https://mike-neko.github.io/blog/metal-image/</loc>
     <lastmod>2016-02-11T09:20:27+09:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://mike-neko.github.io/blog/code-reader/</loc>
-    <lastmod>2016-02-02T22:52:40+09:00</lastmod>
   </url>
   
   <url>
