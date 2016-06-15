@@ -6,13 +6,13 @@
     <description>Recent content in Ios on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Tue, 14 Jun 2016 22:52:40 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 15 Jun 2016 22:52:40 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>QRコードの読み取りサンプル(Swift)　その1</title>
       <link>https://mike-neko.github.io/blog/code-reader/</link>
-      <pubDate>Tue, 14 Jun 2016 22:52:40 +0900</pubDate>
+      <pubDate>Wed, 15 Jun 2016 22:52:40 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/code-reader/</guid>
       <description>
@@ -58,7 +58,7 @@
 &lt;p&gt;以前は結構カメラの起動もコードの読み取りも時間がかかっていたのだが、今回はかなりスピードアップした感じがした。iPhoneのカメラの進化もすごいということか。ただ、バッテリーには優しくないので常に使うのは厳しそう・・・&lt;/p&gt;
 
 &lt;p&gt;&lt;del&gt;あと、カメラをわざわざ起動しなくても画像を直接認識してくれるようになって欲しい。&lt;/del&gt;
-(追記：方法が判ったのでその2を作成予定)&lt;/p&gt;
+(6/14追記：方法が判ったのでその2を作成予定)&lt;/p&gt;
 
 &lt;h1 id=&#34;参考リンク:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;参考リンク&lt;/h1&gt;
 
