@@ -10,7 +10,7 @@
     <atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>QRコードの読み取りサンプル(Swift)　その1</title>
+      <title>QRコードの読み取りサンプル(Swift) その1</title>
       <link>https://mike-neko.github.io/blog/code-reader/</link>
       <pubDate>Wed, 15 Jun 2016 22:52:40 +0900</pubDate>
       
@@ -579,6 +579,15 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;p&gt;iOS端末のIPアドレスを取得するサンプル。Cの関数呼び出し周りも含めてSwiftにて実装。&lt;/p&gt;
 
 &lt;p&gt;一応、Apple公式の方法でIPv6only環境でも動作確認済。&lt;/p&gt;
+
+&lt;h3 id=&#34;実装概要:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;実装概要&lt;/h3&gt;
+
+&lt;p&gt;アドレス取得の実装は&lt;code&gt;NetworkInfo&lt;/code&gt;にまとまっている。
+実装の中身自体はよくあるIPアドレスの取得のコード。&lt;/p&gt;
+
+&lt;p&gt;サンプルでは、IPアドレスの一覧を取得して&lt;code&gt;TableView&lt;/code&gt;に表示している。&lt;/p&gt;
+
+&lt;p&gt;細かい点は実際のソースを参照のこと。&lt;/p&gt;
 
 &lt;h2 id=&#34;小ネタ:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;小ネタ&lt;/h2&gt;
 
