@@ -6,8 +6,104 @@
     <description>Recent content in Posts on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 15 Jun 2016 22:52:40 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 16 Jun 2016 21:17:36 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>QRコードの読み取りサンプル(Swift) その2</title>
+      <link>https://mike-neko.github.io/blog/qr-reader/</link>
+      <pubDate>Thu, 16 Jun 2016 21:17:36 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/qr-reader/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要:864526975070042dd27a73a748ee1dfb&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;以前に書いた&lt;a href=&#34;../code-reader/&#34;&gt;QRコードの読み取りサンプル&lt;/a&gt;の別バージョン。
+今回はカメラ不要で画像データから直接QRコードを読み取りが可能。&lt;/p&gt;
+
+&lt;p&gt;サンプルでは、カメラロールから画像を取得し、認識できたQRコードを切り出して表示している。&lt;/p&gt;
+
+&lt;p&gt;今回の認識部分は、&lt;code&gt;CoreImage&lt;/code&gt;の&lt;code&gt;CIDetector&lt;/code&gt;を利用している。
+&lt;code&gt;CIDetector&lt;/code&gt;は顔認識や文字認識もできる優れもの。&lt;/p&gt;
+
+&lt;h3 id=&#34;相違点:864526975070042dd27a73a748ee1dfb&#34;&gt;相違点&lt;/h3&gt;
+
+&lt;p&gt;前回の&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;を利用した方法との違いは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;画像データから読み取り可能&lt;/li&gt;
+&lt;li&gt;読み取り可能なコードはQRコードのみ&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;といった辺り。複数認識可能なのは変わらない。&lt;/p&gt;
+
+&lt;p&gt;画像データは&lt;code&gt;UIImage&lt;/code&gt;が生成できるデータを用意すれば良いので、
+元データはローカルファイルでもネット上でも、当然カメラからでもOK。&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ:864526975070042dd27a73a748ee1dfb&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;qr検出:864526975070042dd27a73a748ee1dfb&#34;&gt;QR検出&lt;/h3&gt;
+
+&lt;p&gt;検出のコードはとてもシンプル。&lt;/p&gt;
+
+&lt;p&gt;画像データを&lt;code&gt;CoreImage&lt;/code&gt;の形式へ変換し、検出器にかけるだけ。&lt;/p&gt;
+
+&lt;p&gt;エラー処理を省略して抜粋すると以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let ciimg = CIImage(image: image)!
+let detector = CIDetector(ofType: CIDetectorTypeQRCode,
+                         context: nil, options: nil)
+let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで、検出されたコードの配列が取得される。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;CIQRCodeFeature&lt;/code&gt;には&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;bounds&lt;/code&gt;：コードを検出した領域&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bottomLeft bottomRight topLeft topRight&lt;/code&gt;：コードを検出した位置&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;messageString&lt;/code&gt;：コードに含まれるデータ&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;が入っている。&lt;/p&gt;
+
+&lt;h3 id=&#34;検出位置:864526975070042dd27a73a748ee1dfb&#34;&gt;検出位置&lt;/h3&gt;
+
+&lt;p&gt;位置の座標は、画面ではなく画像の座標を基準とした座標で取得される。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;bounds&lt;/code&gt;とそれ以外の&lt;code&gt;bottom〜&lt;/code&gt;や&lt;code&gt;top〜&lt;/code&gt;で取れる座標は、
+検出したQRコードが回転していた場合に異なってくる。&lt;/p&gt;
+
+&lt;p&gt;例えば、斜めの状態のQRコードが検出された場合、
+&lt;code&gt;bounds&lt;/code&gt;は周りの余白部分を含めた正方形の領域が入る。
+それ以外のものにはQRコードの各頂点の座標がそれぞれ入る。&lt;br /&gt;
+（この辺りは実際に斜めの画像を読み込んで見ればよくわかる）&lt;/p&gt;
+
+&lt;h2 id=&#34;感想:864526975070042dd27a73a748ee1dfb&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;このQRコードの検出は&lt;code&gt;iOS8&lt;/code&gt;から可能になっているが、全然把握できていなかったので反省。&lt;/p&gt;
+
+&lt;p&gt;この&lt;code&gt;CIDetector&lt;/code&gt;は他にもいろいろ検出できるので楽しみ。
+他にもまだこういう知らないものがいっぱいあるんだろうな・・・&lt;/p&gt;
+
+&lt;p&gt;なお、&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;との性能などの差は未調査。。。&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境:864526975070042dd27a73a748ee1dfb&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.5&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース:864526975070042dd27a73a748ee1dfb&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/QRReader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>QRコードの読み取りサンプル(Swift) その1</title>
@@ -60,7 +156,7 @@
 &lt;p&gt;以前は結構カメラの起動もコードの読み取りも時間がかかっていたのだが、今回はかなりスピードアップした感じがした。iPhoneのカメラの進化もすごいということか。ただ、バッテリーには優しくないので常に使うのは厳しそう・・・&lt;/p&gt;
 
 &lt;p&gt;&lt;del&gt;あと、カメラをわざわざ起動しなくても画像を直接認識してくれるようになって欲しい。&lt;/del&gt;
-(6/14追記：方法が判ったのでその2を作成予定)&lt;/p&gt;
+(6/17追記：方法が判ったので&lt;a href=&#34;../qr-reader/&#34;&gt;その2&lt;/a&gt;を作成した)&lt;/p&gt;
 
 &lt;h1 id=&#34;参考リンク:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;参考リンク&lt;/h1&gt;
 
@@ -79,6 +175,8 @@
 &lt;h1 id=&#34;ソース:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/CodeReader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;カメラ不要なバージョンは&lt;a href=&#34;../qr-reader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
@@ -1971,798 +2069,6 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;h1 id=&#34;ソース:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalImage&#34;&gt;こちら&lt;/a&gt;(&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Metal組み込み関数</title>
-      <link>https://mike-neko.github.io/blog/metal-function/</link>
-      <pubDate>Thu, 28 Jan 2016 22:32:26 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/metal-function/</guid>
-      <description>
-
-&lt;h2 id=&#34;metalのシェーダで利用できる関数のまとめ:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;Metalのシェーダで利用できる関数のまとめ&lt;/h2&gt;
-
-&lt;h4 id=&#34;hlsl-glslは各言語との対比:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;HLSL/GLSLは各言語との対比&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;(空白) : 同じ&lt;/li&gt;
-&lt;li&gt;ー : 該当なし&lt;/li&gt;
-&lt;li&gt;△ : 同等の関数があるが詳細が異なる&lt;/li&gt;
-&lt;li&gt;(関数名) : 挙動は同じだが、名前が別の関数がある&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;共通関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;共通関数&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Metal&lt;/th&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;HLSL&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;GLSL&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;T clamp(T x, T min, T max)&lt;/td&gt;
-&lt;td&gt;x を [min, max] の範囲にクランプする&lt;br&gt;fmin(fmax(x, min), max) を返す&lt;br&gt;min &amp;gt; maxは&lt;strong&gt;不定&lt;/strong&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T mix(T x, T y, T a)&lt;/td&gt;
-&lt;td&gt;[x, y] の間の a で線形補間&lt;br&gt;x + (y – x) * a を返す&lt;br&gt;a は 0.0 から 1.0。それ以外は&lt;strong&gt;不定&lt;/strong&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;lerp&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T saturate(T x)&lt;/td&gt;
-&lt;td&gt;x を [0.0, 1.0] の範囲にクランプして返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T sign(T x)&lt;/td&gt;
-&lt;td&gt;x &amp;gt; 0 で 1.0, x &amp;lt; 0 で -1.0,&lt;br&gt;x = -0.0 で -0.0, x = +0.0 で +0.0,&lt;br&gt;x = NaN で 0.0 を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;△&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;△&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T smoothstep(T e0, T e1, T x)&lt;/td&gt;
-&lt;td&gt;x &amp;lt;= e0 で 0.0, x &amp;gt;= e1 で 1.0&lt;BR&gt;それ以外は [0.0, 1.0] の範囲でエルミート補間した値を返す&lt;br&gt;スムーズなトランジションに便利&lt;br&gt;t = clamp((x – e0)/(e1 – e0), 0, 1);&lt;br&gt;return t * t * (3 – 2 * t);と等価&lt;br&gt;e0 &amp;gt;= e1 または&lt;br&gt; x, e0, e1 のいずれかが NaN は&lt;strong&gt;不定&lt;/strong&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T step(T edge, T x)&lt;/td&gt;
-&lt;td&gt;x &amp;lt; edge で 0.0&lt;br&gt;それ以外は 1.0 を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;整数関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;整数関数&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;T は整数のスカラーかベクター&lt;/li&gt;
-&lt;li&gt;Tu は符号なし整数のスカラーかベクター&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Metal&lt;/th&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;HLSL&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;GLSL&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;T abs(T x)&lt;br&gt;T fabs(T x)&lt;/td&gt;
-&lt;td&gt;x の絶対値を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Tu absdiff(T x, T y)&lt;/td&gt;
-&lt;td&gt;オーバーフローなしで x - y の絶対値を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T clz(T x)&lt;/td&gt;
-&lt;td&gt;x の先頭ビットから連続する 0 の個数&lt;br&gt;x = 0 で x の型のビットのサイズを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T ctz(T x)&lt;/td&gt;
-&lt;td&gt;x の末尾ビットから連続する 0 の個数&lt;br&gt;x = 0 で x の型のビットのサイズを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T hadd(T x, T y)&lt;/td&gt;
-&lt;td&gt;(x + y) &amp;gt;&amp;gt; 1 を返す&lt;br&gt;中間合計はオーバーフローしない&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T madhi(T a, T b, T c)&lt;/td&gt;
-&lt;td&gt;mulhi(a, b) + c を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T madsat(T a, T b, T c)&lt;/td&gt;
-&lt;td&gt;saturate(a * b + c) を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T max(T x, T y)&lt;/td&gt;
-&lt;td&gt;x と y の最大値を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T min(T x, T x)&lt;/td&gt;
-&lt;td&gt;x と y の最小値を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T mulhi(T x, T y)&lt;/td&gt;
-&lt;td&gt;x * y の結果の上位半分のビットを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T popcount(T x)&lt;/td&gt;
-&lt;td&gt;x の 0 ではないビットの数を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T rhadd(T x, T y)&lt;/td&gt;
-&lt;td&gt;(x + y + 1) &amp;gt;&amp;gt; 1 を返す&lt;br&gt;中間合計はオーバーフローしない&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T rotate(T v, T i)&lt;/td&gt;
-&lt;td&gt;v の各要素に対し対応する i の要素の値のビット数分左へシフトした値を返す&lt;br&gt;あふれたビットは右端から挿入される&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T subsat(T x, T y)&lt;/td&gt;
-&lt;td&gt;saturate(x - y) を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;関係関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;関係関数&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
-&lt;li&gt;Ti は整数かブーリアン型のスカラーかベクター&lt;/li&gt;
-&lt;li&gt;Tb はブーリアン型のスカラーかベクター&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Metal&lt;/th&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;HLSL&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;GLSL&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;bool all(Tb x)&lt;/td&gt;
-&lt;td&gt;x の全ての要素が true の時に true を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;△&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;bool any(Tb x)&lt;/td&gt;
-&lt;td&gt;x のいずれかの要素が true の時に true を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;△&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Tb isfinite(T x)&lt;/td&gt;
-&lt;td&gt;x が有限の場合は true を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Tb isinf(T x)&lt;/td&gt;
-&lt;td&gt;x が無限大(+/-)であれば true を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Tb isnan(T x)&lt;/td&gt;
-&lt;td&gt;x がNanであれば true を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Tb isnormal(T x)&lt;/td&gt;
-&lt;td&gt;x が正規化数であれば true を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Tb isordered(T x, T y)&lt;/td&gt;
-&lt;td&gt;x と y の引数が順序付けられているか&lt;br&gt;(x == x) &amp;amp;&amp;amp; (y == y) を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Tb isunordered(T x, T y)&lt;/td&gt;
-&lt;td&gt;x と y の引数が順序付けられていないか&lt;br&gt;x か y が NaN であれば true を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T select(T a, T b, Tb c)&lt;/td&gt;
-&lt;td&gt;result[i] = c[i] ? b[i] : a[i] を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Ti select(Ti a, Ti b, Tb c)&lt;/td&gt;
-&lt;td&gt;result = c ? b : a　を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Tb signbit(T x)&lt;/td&gt;
-&lt;td&gt;符号ビットをテストする&lt;br&gt;x に浮動小数点数がセットされている場合は true&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;数学関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;数学関数&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
-&lt;li&gt;Ti は整数のスカラーかベクター&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Metal&lt;/th&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;HLSL&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;GLSL&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;T acos(T x)&lt;/td&gt;
-&lt;td&gt;x のアークコサインを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T acosh(T x)&lt;/td&gt;
-&lt;td&gt;x のハイパボリックアークコサインを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T asin(T x)&lt;/td&gt;
-&lt;td&gt;x のアークサインを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T asinh(T x)&lt;/td&gt;
-&lt;td&gt;x のハイパボリックアークサインを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T atan(T x)&lt;/td&gt;
-&lt;td&gt;x のアークタンジェントを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T atan2(T y, T x)&lt;/td&gt;
-&lt;td&gt;y と x のアークタンジェントを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T atanh(T x)&lt;/td&gt;
-&lt;td&gt;x のハイパボリックアークタンジェントを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T ceil(T x)&lt;/td&gt;
-&lt;td&gt;x を正の無限大に近いほうの整数に丸めた値を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T copysign(T x, T y)&lt;/td&gt;
-&lt;td&gt;y の符号に変えた x を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T cos(T x)&lt;/td&gt;
-&lt;td&gt;x のコサインを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T cosh(T x)&lt;/td&gt;
-&lt;td&gt;x のハイパボリックコサインを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T cospi(T x)&lt;/td&gt;
-&lt;td&gt;pi * x のコサインを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T exp(T x)&lt;/td&gt;
-&lt;td&gt;e ^ x を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T exp2(T x)&lt;/td&gt;
-&lt;td&gt;2 ^ x を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T exp10(T x)&lt;/td&gt;
-&lt;td&gt;10 ^ x を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T fdim(T x, T y)&lt;/td&gt;
-&lt;td&gt;x &amp;gt; y で x - y,&lt;br&gt;x &amp;lt;= y で +0 を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T floor(T x)&lt;/td&gt;
-&lt;td&gt;x を負の無限大に近いほうの整数に丸めた値を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T fma(T a, T b, T c)&lt;/td&gt;
-&lt;td&gt;a * b + c を返す&lt;br&gt;融合積和演算(IEEE 754-2008準拠)&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T fmod(T x, T y)&lt;/td&gt;
-&lt;td&gt;x - y * trunc(x / y) を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T fract(T x)&lt;/td&gt;
-&lt;td&gt;x の小数部を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;frac&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T frexp(T x, Ti &amp;amp;exp)&lt;/td&gt;
-&lt;td&gt;x = [返り値] * 2 ^ exp となる&lt;br&gt;返り値は[&lt;sup&gt;1&lt;/sup&gt;&amp;frasl;&lt;sub&gt;2&lt;/sub&gt;, 1]の範囲か 0 となる&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Ti ilogb(T x)&lt;/td&gt;
-&lt;td&gt;x の指数を整数で返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T ldexp(T x, Ti k)&lt;/td&gt;
-&lt;td&gt;x * 2 ^ k を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T log(T x)&lt;/td&gt;
-&lt;td&gt;x の自然対数を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T log2(T x)&lt;/td&gt;
-&lt;td&gt;x の 2 を底とする対数を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T log10(T x)&lt;/td&gt;
-&lt;td&gt;x の 10 を底とする対数を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T fmax(T x, T y)&lt;/td&gt;
-&lt;td&gt;x と y の最大値を返す&lt;br&gt;片方の引数が NaN なら NaN では無い方の値を返す&lt;br&gt;両方が NaN なら NaN を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T fmin(T x, T y)&lt;/td&gt;
-&lt;td&gt;x と y の最小値を返す&lt;br&gt;片方の引数が NaN なら NaN では無い方の値を返す&lt;br&gt;両方が NaN なら NaN を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T modf(T x, T &amp;amp;intval)&lt;/td&gt;
-&lt;td&gt;x を同じ符号を持つ整数部と少数部に分ける&lt;br&gt;少数部を返り値で、整数部を intval で返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T pow(T x, T y)&lt;/td&gt;
-&lt;td&gt;x ^ y を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T powr(T x, T y)&lt;/td&gt;
-&lt;td&gt;x &amp;gt;= 0 の x ^ y を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T rint(T x)&lt;/td&gt;
-&lt;td&gt;x を最近接偶数へ丸めた整数値を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T round(T x)&lt;/td&gt;
-&lt;td&gt;x を直近の整数値に丸めて返す&lt;br&gt;半分の場合は 0 に近い方となる&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;△&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;△&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T rsqrt(T x)&lt;/td&gt;
-&lt;td&gt;x の平方根の逆数を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T sin(T x)&lt;/td&gt;
-&lt;td&gt;x のサインを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T sincos(T x, T &amp;amp;cosval)&lt;/td&gt;
-&lt;td&gt;x のサインとコサインを計算する&lt;br&gt;サインを返り値で、コサインを cosval で返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T sinh(T x)&lt;/td&gt;
-&lt;td&gt;x のハイパボリックサインを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T sinpi(T x)&lt;/td&gt;
-&lt;td&gt;pi * x のサインを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T sqrt(T x)&lt;/td&gt;
-&lt;td&gt;x の平方根を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T tan(T x)&lt;/td&gt;
-&lt;td&gt;x のタンジェントを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T tanh(T x)&lt;/td&gt;
-&lt;td&gt;x のハイパボリックタンジェントを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T tanpi(T x)&lt;/td&gt;
-&lt;td&gt;pi * x のタンジェントを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T trunc(T x)&lt;/td&gt;
-&lt;td&gt;x を 0 に近い方向へ丸めた値を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;行列関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;行列関数&lt;/h2&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Metal&lt;/th&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;HLSL&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;GLSL&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;float determinant(floatnxn)&lt;br&gt;half determinant(halfnxn)&lt;/td&gt;
-&lt;td&gt;行列式を返す&lt;br&gt;行列は正方行列でなければならない&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;floatmxn transpose(floatnxm)&lt;br&gt;halfmxn transpose(halfnxm)&lt;/td&gt;
-&lt;td&gt;転置行列を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;幾何関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;幾何関数&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;T は浮動小数点数(floatn / halfn)のベクター&lt;/li&gt;
-&lt;li&gt;Ts はベクターに対応するスカラー&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Metal&lt;/th&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;HLSL&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;GLSL&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;T cross(T x, T y)&lt;/td&gt;
-&lt;td&gt;x と y の外積を返す&lt;br&gt;T は3次元ベクトルでなければならない&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Ts distance(T x, T y)&lt;/td&gt;
-&lt;td&gt;x と y の距離を求める&lt;br&gt;length(x - y) を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Ts distance_squared(T x, T y)&lt;/td&gt;
-&lt;td&gt;x と y の距離の平方を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Ts dot(T x, T y)&lt;/td&gt;
-&lt;td&gt;x と y の内積を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T faceforward(T N, T I, T Nref)&lt;/td&gt;
-&lt;td&gt;dot(Nref, I) &amp;lt; 0.0 で N&lt;br&gt;それ以外は -N を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Ts length(T x)&lt;/td&gt;
-&lt;td&gt;x のベクトルの長さを返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;Ts length_squared(T x)&lt;/td&gt;
-&lt;td&gt;x のベクトルの長さの平方を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T normalize(T x)&lt;/td&gt;
-&lt;td&gt;x の正規化した値を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T reflect(T I, T N)&lt;/td&gt;
-&lt;td&gt;入射ベクトル I と面の法線ベクトル N から、反射ベクトル I – 2 * dot(N, I) * N を返す&lt;br&gt;N は正規されていなければならない&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T refract(T I, T N, Ts eta)&lt;/td&gt;
-&lt;td&gt;入射ベクトル I と面の法線ベクトル N と屈折率 eta から、屈折ベクトルを返す&lt;br&gt;I と N  は正規されていなければならない&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;グラフィック関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;グラフィック関数&lt;/h2&gt;
-
-&lt;h3 id=&#34;フラグメントシェーダ:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;フラグメントシェーダ&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;T はfloat, float2, float3, float4, half, half2, half3, half4&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Metal&lt;/th&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;HLSL&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;GLSL&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;T dfdx(T p)&lt;/td&gt;
-&lt;td&gt;スクリーン空間の指定された x 座標に対する高精度の偏微分を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ddx&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;dFdxFine&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T dfdy(T p)&lt;/td&gt;
-&lt;td&gt;スクリーン空間の指定された y 座標に対する高精度の偏微分を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ddy&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;dFdyFine&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;T fwidth(T p)&lt;/td&gt;
-&lt;td&gt;fabs(dfdx(p)) + fabs(dfdy(p)) を返す&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;感想:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;感想&lt;/h2&gt;
-
-&lt;p&gt;さすが後発なだけあって、全部入り。GLSLをベースにHLSLやらOpenCLからありったけ詰め込んだような感じ。&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Metal/Reference/MetalShadingLanguageGuide/std-lib/std-lib.html&#34;&gt;Metal Standard Library&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;OpenGL4.5：&lt;a href=&#34;https://www.opengl.org/sdk/docs/reference_card/opengl45-reference-card.pdf&#34;&gt;API Reference Card&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;DirectX：&lt;a href=&#34;https://msdn.microsoft.com/ja-jp/library/bb509611.aspx&#34;&gt;組み込み関数 (DirectX HLSL)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     
