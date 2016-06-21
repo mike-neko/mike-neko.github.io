@@ -23,7 +23,7 @@
 今回はカメラ不要で画像データから直接QRコードを読み取りが可能。&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;過去の記事（[QRコードの読み取りサンプル](../code-reader/）&lt;/p&gt;
+&lt;p&gt;過去の記事（&lt;a href=&#34;../code-reader/&#34;&gt;QRコードの読み取りサンプル&lt;/a&gt;）&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;サンプルでは、カメラロールから画像を取得し、認識できたQRコードを切り出して表示している。&lt;/p&gt;
