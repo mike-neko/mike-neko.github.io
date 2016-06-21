@@ -19,8 +19,12 @@
 
 &lt;h2 id=&#34;概要:864526975070042dd27a73a748ee1dfb&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;以前に書いた&lt;a href=&#34;../code-reader/&#34;&gt;QRコードの読み取りサンプル&lt;/a&gt;の別バージョン。
+&lt;p&gt;以前に書いたQRコードの読み取りサンプルの別バージョン。
 今回はカメラ不要で画像データから直接QRコードを読み取りが可能。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;過去の記事（[QRコードの読み取りサンプル](../code-reader/）&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;p&gt;サンプルでは、カメラロールから画像を取得し、認識できたQRコードを切り出して表示している。&lt;/p&gt;
 

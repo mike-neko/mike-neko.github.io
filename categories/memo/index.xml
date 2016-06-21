@@ -19,7 +19,11 @@
 
 &lt;h2 id=&#34;概要:6214d744b42492b1045fac72bc277c04&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;以前に構築した&lt;a href=&#34;../docker/&#34;&gt;Dockerでの開発環境&lt;/a&gt;で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
+&lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;過去の記事（&lt;a href=&#34;../docker/&#34;&gt;Dockerでの開発環境&lt;/a&gt;）&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;h3 id=&#34;環境:6214d744b42492b1045fac72bc277c04&#34;&gt;環境&lt;/h3&gt;
 
