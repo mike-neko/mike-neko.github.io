@@ -6,8 +6,89 @@
     <description>Recent content in Code on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Thu, 16 Jun 2016 21:17:36 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 23 Jun 2016 00:13:25 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/code/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>WKWebViewの内容をPDFで保存する(Swift)</title>
+      <link>https://mike-neko.github.io/blog/webview-pdf/</link>
+      <pubDate>Thu, 23 Jun 2016 00:13:25 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/webview-pdf/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要:48e0e9453a88119590499cbf57bbeabc&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;昔に&lt;code&gt;UIWebView&lt;/code&gt;でやっていたものを最新の&lt;code&gt;WKWebView&lt;/code&gt;+&lt;code&gt;Swift&lt;/code&gt;で書き換えた時のメモ。&lt;/p&gt;
+
+&lt;p&gt;内容は大したことないのだけれど、検索で引っかかるWebの資料がiOS9の実機で動かなかったので残しておく。&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ:48e0e9453a88119590499cbf57bbeabc&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;内容全体の取得:48e0e9453a88119590499cbf57bbeabc&#34;&gt;内容全体の取得&lt;/h3&gt;
+
+&lt;p&gt;今回は&lt;code&gt;WebView&lt;/code&gt;の中身全体をPDF化したいので、PDF化する時に表示中のコンテンツがビュー内に収まるように、
+コンテンツの表示位置（&lt;code&gt;scrollView.contentOffset&lt;/code&gt;）を初期位置に戻し、
+ビュー自体のサイズも表示ページのサイズ（&lt;code&gt;scrollView.contentSize&lt;/code&gt;）に拡大している。&lt;/p&gt;
+
+&lt;p&gt;また、以下のようにPDFのページのサイズもコンテンツと同じサイズに設定している。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// frameの中身はコンテンツのサイズ
+UIGraphicsBeginPDFPageWithInfo(frame, nil)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（つまり、書き出し時には一瞬画面がちらついてしまうので、気になる場合は
+&lt;code&gt;ViewController&lt;/code&gt;の&lt;code&gt;view&lt;/code&gt;にマスクとなるビューを&lt;code&gt;addSubView&lt;/code&gt;して隠すこと）&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;ただし、あまりにコンテンツが長い場合は、うまく描画されないので注意！&lt;/strong&gt;&lt;br /&gt;
+（例えば、Google検索結果とかだと半分ぐらいから下は空白状態になったり、全く空白になったりする）&lt;/p&gt;
+
+&lt;p&gt;なお、端末によっても状況が異なるようで、対処方法は未調査。。。&lt;/p&gt;
+
+&lt;h3 id=&#34;pdfへの書き出し:48e0e9453a88119590499cbf57bbeabc&#34;&gt;PDFへの書き出し&lt;/h3&gt;
+
+&lt;p&gt;今回は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;webView.scrollView.drawViewHierarchyInRect(frame, afterScreenUpdates: true)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;としてWebView内のコンテンツをPDFに書き出ししている。&lt;/p&gt;
+
+&lt;p&gt;ちまたにある資料では、この部分が、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;webView.scrollView.layer.renderInContext(context)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;のようになっているのが多いが、iOS9の実機では、
+&lt;code&gt;CGImageCreateWithImageProvider: invalid image provider: NULL&lt;/code&gt;
+のエラーが出て書き出しが出来なくなっている。（他のOSは未検証）&lt;/p&gt;
+
+&lt;p&gt;なお、&lt;code&gt;drawViewHierarchyInRect&lt;/code&gt;の方が速いらしいが、個人的には、
+わざわざコンテキストの取得がいらなくなったのがありがたい。
+（よく書く場所を間違えて取得に失敗する凡ミスをしていたので）&lt;/p&gt;
+
+&lt;h3 id=&#34;pdfのファイル保存:48e0e9453a88119590499cbf57bbeabc&#34;&gt;PDFのファイル保存&lt;/h3&gt;
+
+&lt;p&gt;PDFをファイルとして保存したい場合は、&lt;code&gt;UIGraphicsBeginPDFContextToFile&lt;/code&gt;を利用するが、
+このメソッドは既存のファイルを問答無用で上書きするので注意すること。&lt;/p&gt;
+
+&lt;p&gt;もし、サーバへ送信などでデータが欲しい場合は、&lt;code&gt;UIGraphicsBeginPDFContextToData&lt;/code&gt;を利用すれば、
+&lt;code&gt;NSData&lt;/code&gt;で取得できる。&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境:48e0e9453a88119590499cbf57bbeabc&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.5&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース:48e0e9453a88119590499cbf57bbeabc&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/WebView2PDF&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>QRコードの読み取りサンプル(Swift) その2</title>
