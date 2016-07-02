@@ -708,7 +708,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;td&gt;T fract(T x)&lt;/td&gt;
 &lt;td&gt;x の小数部を返す&lt;/td&gt;
 &lt;td align=&#34;center&#34;&gt;frac&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;ー&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
