@@ -6,8 +6,228 @@
     <description>Recent content in Ios on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Thu, 23 Jun 2016 00:13:25 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 10 Jul 2016 18:28:58 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>SceneKitでMetalのシェーダを利用する</title>
+      <link>https://mike-neko.github.io/blog/metalshader-scenekit/</link>
+      <pubDate>Sun, 10 Jul 2016 18:28:58 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metalshader-scenekit/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Metal&lt;/code&gt;を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
+なので、その面倒な部分を&lt;code&gt;SceneKit&lt;/code&gt;に任せたいという時の話。&lt;/p&gt;
+
+&lt;p&gt;今回は描画周りに&lt;code&gt;Metal&lt;/code&gt;のシェーダを使うパターン。&lt;/p&gt;
+
+&lt;p&gt;主に&lt;code&gt;SceneKit&lt;/code&gt;でカスタムシェーダを使いたい場合は、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;SCNProgram&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SCNShadable&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SCNTechnique&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;といった辺りがあるみたい。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;SCNTechnique&lt;/code&gt;はマルチパスのレンダリングに使うのがメインっぽい。
+&lt;del&gt;（これも試したけどシェーダへカスタム変数を渡す辺りでつまずいて放置）&lt;/del&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;SCNShadable&lt;/code&gt;は&lt;code&gt;Metal&lt;/code&gt;での使えそうなサンプルがなかったので断念。&lt;/p&gt;
+
+&lt;p&gt;という訳で、WWDCのセッションの資料にあった&lt;code&gt;SCNProgram&lt;/code&gt;を使って実装。&lt;/p&gt;
+
+&lt;h2 id=&#34;下準備:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;下準備&lt;/h2&gt;
+
+&lt;p&gt;プロジェクトはXcodeのデフォルトのテンプレートの&lt;code&gt;Game&lt;/code&gt;を流用している。
+作成時の&lt;code&gt;Game Technology&lt;/code&gt;では&lt;code&gt;SceneKit&lt;/code&gt;を選択する。&lt;/p&gt;
+
+&lt;h3 id=&#34;scenekitの設定:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;SceneKitの設定&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Main.storeyboard&lt;/code&gt;を開き、&lt;code&gt;Game View Controller&lt;/code&gt;の&lt;code&gt;SceneKit View&lt;/code&gt;の
+&lt;code&gt;Rendering API&lt;/code&gt;を&lt;code&gt;Metal&lt;/code&gt;にする&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;GameViewController&lt;/code&gt;の&lt;code&gt;viewDidLoad&lt;/code&gt;の中のライト周りのコードを削除&lt;br /&gt;
+（今回のシェーダはライトを使わないもので不必要なので消す）&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;scnprogramの作成:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;SCNProgramの作成&lt;/h3&gt;
+
+&lt;p&gt;以下のようにして&lt;code&gt;SCNProgram&lt;/code&gt;を生成してシェーダの関数名を設定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let program = SCNProgram()
+program.vertexFunctionName = &amp;quot;textureVertex&amp;quot;
+program.fragmentFunctionName = &amp;quot;textureFragment&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;生成した&lt;code&gt;SCNProgram&lt;/code&gt;を適用させたいマテリアルに設定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let material = ship.childNodes.first?.geometry?.firstMaterial!
+material.program = program
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;シェーダの準備:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;シェーダの準備&lt;/h3&gt;
+
+&lt;p&gt;通常どおり&lt;code&gt;Metal&lt;/code&gt;のファイルを追加した後に、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;SceneKit/scn_metal&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とする。
+これは後述の&lt;code&gt;SceneKit&lt;/code&gt;とデータのやりとりに必要。&lt;/p&gt;
+
+&lt;h2 id=&#34;データの渡し方:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;データの渡し方&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;SceneKit&lt;/code&gt;から描画に必要なデータ（座標や変換行列、テクスチャなど）を
+シェーダへ渡す方法&lt;/p&gt;
+
+&lt;h3 id=&#34;vertexshader側:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;VertexShader側&lt;/h3&gt;
+
+&lt;h4 id=&#34;頂点属性-位置とか法線とかuv座標とか:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;頂点属性（位置とか法線とかuv座標とか）&lt;/h4&gt;
+
+&lt;p&gt;まずは、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct VertexInput {
+    float3 position [[ attribute(SCNVertexSemanticPosition) ]];
+    float2 texcoord [[ attribute(SCNVertexSemanticTexcoord0) ]];
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という感じで、頂点属性の中で必要なものを構造体で定義する。
+すると、変数名の後ろの&lt;code&gt;Attribute Qualifier&lt;/code&gt;(&amp;rdquo;[[]]&amp;ldquo;で囲まれた部分)で指定したものが
+&lt;code&gt;[[stage_in]]&lt;/code&gt;にバインドされて自動で渡されてくる。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;指定できるものはドキュメントの&lt;code&gt;Table 1 
+SceneKit Vertex Attribute Qualifiers for Metal Shaders&lt;/code&gt;を参照&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&#34;フレーム定数-ビューの変換行列など:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;フレーム定数（ビューの変換行列など）&lt;/h4&gt;
+
+&lt;p&gt;あらかじめ&lt;code&gt;SCNSceneBuffer&lt;/code&gt;という構造体が用意されており、これらはその中に入っている。
+このデータは&lt;code&gt;[[buffer(0)]]&lt;/code&gt;にバインドされて渡されてくる。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;構造体の定義はドキュメントの&lt;code&gt;Frame-Constant Data&lt;/code&gt;の項目を参照&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&#34;ノード毎のデータ-モデルの変換行列など:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;ノード毎のデータ（モデルの変換行列など）&lt;/h4&gt;
+
+&lt;p&gt;これは、あらかじめ用意された構造体がなく、代わりに必要なものをピックアップして
+以下のように自分で構造体を定義する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct NodeBuffer {
+    float4x4 modelViewProjectionTransform;
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;すると、そのデータが&lt;code&gt;[[buffer(1)]]&lt;/code&gt;にバインドされてシェーダに渡される。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ピックアップできるものはドキュメントの&lt;code&gt;Listing 1 
+Available Fields for Per-Node Shader Data&lt;/code&gt;を参照&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&#34;カスタム変数:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;カスタム変数&lt;/h4&gt;
+
+&lt;p&gt;上記以外の変数は構造体として定義が必要。定義自体は通常通りに行う。
+ただし、バインドされるバッファは2以降になる。&lt;/p&gt;
+
+&lt;h4 id=&#34;実装:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;実装&lt;/h4&gt;
+
+&lt;p&gt;まとめると、&lt;code&gt;VertexShader&lt;/code&gt;の宣言部分は以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vertex output myVertex(input in [[ stage_in ]],
+                       constant SCNSceneBuffer&amp;amp; scn_frame [[ buffer(0) ]],
+                       constant NodeBuffer&amp;amp; scn_node [[ buffer(1) ]],
+                       constant CustomBuffer&amp;amp; custom [[ buffer(2) ]]) {
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ここでの重要なポイントは&lt;strong&gt;引数名&lt;/strong&gt;。
+- &lt;code&gt;scn_frame&lt;/code&gt;と&lt;code&gt;scn_node&lt;/code&gt;は固定&lt;br /&gt;
+（違う名前にすると正しくバインドされない）
+- カスタム変数の引数名&lt;code&gt;custom&lt;/code&gt;は&lt;code&gt;SceneKit&lt;/code&gt;からデータを渡す時に使う&lt;/p&gt;
+
+&lt;p&gt;中での処理は必要な計算をして、それを&lt;code&gt;FragmentShader&lt;/code&gt;に渡すという、
+通常の&lt;code&gt;Metal&lt;/code&gt;のシェーダと同じ実装を行う。&lt;/p&gt;
+
+&lt;h3 id=&#34;fragmentshader側:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;FragmentShader側&lt;/h3&gt;
+
+&lt;h4 id=&#34;テクスチャ:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;テクスチャ&lt;/h4&gt;
+
+&lt;p&gt;テクスチャを利用したい場合は、特に事前の定義などは不要で通常通り宣言する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;fragment half4 textureFragment(outout in [[ stage_in ]],
+                               texture2d&amp;lt;float&amp;gt; texture [[ texture(0) ]]) {
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ただしここでも重要なポイントは&lt;strong&gt;引数名&lt;/strong&gt;（詳細は後述）。&lt;/p&gt;
+
+&lt;h3 id=&#34;scenekit側:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;SceneKit側&lt;/h3&gt;
+
+&lt;p&gt;カスタム変数とテクスチャ以外は自動でバインドされる&lt;br /&gt;
+（＝SceneKit側の処理は特にない）&lt;/p&gt;
+
+&lt;h4 id=&#34;カスタム変数-1:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;カスタム変数&lt;/h4&gt;
+
+&lt;p&gt;シェーダ側と同じ構造体のデータを準備する辺りは通常通り。&lt;/p&gt;
+
+&lt;p&gt;そのデータをシェーダ側にバインドするのは以下のように&lt;code&gt;setValue&lt;/code&gt;を利用する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var custom = CustomBuffer(color: float4(0, 0, 0, 1))
+material.setValue(NSData(bytes: &amp;amp;custom, length:sizeof(CustomBuffer)),
+                  forKey: &amp;quot;custom&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;setValue&lt;/code&gt;は&lt;code&gt;SCNProgram&lt;/code&gt;をセットしたのと同じ対象（今回は&lt;code&gt;material&lt;/code&gt;）に行う。&lt;br /&gt;
+また、&lt;code&gt;value&lt;/code&gt;は&lt;code&gt;NSData&lt;/code&gt;としてバイナリで渡し、&lt;code&gt;key&lt;/code&gt;はシェーダでの宣言と同じ名前にする。&lt;/p&gt;
+
+&lt;h4 id=&#34;テクスチャ-1:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;テクスチャ&lt;/h4&gt;
+
+&lt;p&gt;今回のモデルではマテリアルの&lt;code&gt;diffuse&lt;/code&gt;にテクスチャが設定されているので、まずそれを取得する。
+その後、&lt;code&gt;SCNMaterialProperty&lt;/code&gt;の形式にしてから変数と同様に&lt;code&gt;setValue&lt;/code&gt;する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;guard let contents = material.diffuse.contents else { return }
+material.setValue(SCNMaterialProperty(contents: contents),
+                  forKey: &amp;quot;texture&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ポイントは、&lt;code&gt;SCNMaterialProperty&lt;/code&gt;を生成しなおしてからセットすること。&lt;br /&gt;
+直接&lt;code&gt;diffuse&lt;/code&gt;の中のデータを&lt;code&gt;setValue&lt;/code&gt;すると正しくデータが渡されない。&lt;/p&gt;
+
+&lt;h4 id=&#34;命名の注意点:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;命名の注意点&lt;/h4&gt;
+
+&lt;p&gt;シェーダの引数名と&lt;code&gt;SceneKit&lt;/code&gt;側で&lt;code&gt;setValue&lt;/code&gt;の&lt;code&gt;key&lt;/code&gt;は一致させる必要がある。&lt;/p&gt;
+
+&lt;p&gt;さらに大事な点として、&lt;code&gt;setValue&lt;/code&gt;は&lt;code&gt;KVO&lt;/code&gt;を利用しているので、
+命名時にはオブジェクトのプロパティとかぶる様な名前をつけてはいけない。&lt;br /&gt;
+（例えば&lt;code&gt;color&lt;/code&gt;などは実行時にエラーログが出て連携ができない）&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Apple公式ドキュメント(&lt;a href=&#34;https://developer.apple.com/reference/scenekit/scnprogram&#34;&gt;SCNProgram&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.5&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalShaderSceneKit&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>WKWebViewの内容をPDFで保存する(Swift)</title>
