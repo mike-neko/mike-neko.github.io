@@ -10,7 +10,7 @@
     <atom:link href="https://mike-neko.github.io/categories/metal/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>SceneKitでMetalのシェーダを利用する</title>
+      <title>SceneKitでMetalのシェーダを利用する(SCNProgram)</title>
       <link>https://mike-neko.github.io/blog/metalshader-scenekit/</link>
       <pubDate>Sun, 10 Jul 2016 18:28:58 +0900</pubDate>
       
