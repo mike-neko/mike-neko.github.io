@@ -14,3 +14,5 @@
   list-style: none;
   margin-bottom: 1rem;
 }
+
+.gist-data {max-height: 500px;}
