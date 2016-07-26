@@ -102,47 +102,47 @@
     </span>
     
 
-<h2 id="dockerでよく使うコマンド:1c4ea1d59e18285c6c3ba7b5bb3a3b42">Dockerでよく使うコマンド</h2>
+<h2 id="dockerでよく使うコマンド">Dockerでよく使うコマンド</h2>
 
-<h3 id="イメージ操作:1c4ea1d59e18285c6c3ba7b5bb3a3b42">イメージ操作</h3>
+<h3 id="イメージ操作">イメージ操作</h3>
 
-<h4 id="イメージのリスト表示:1c4ea1d59e18285c6c3ba7b5bb3a3b42">イメージのリスト表示</h4>
+<h4 id="イメージのリスト表示">イメージのリスト表示</h4>
 
 <pre><code>docker images
 </code></pre>
 
-<h4 id="指定したイメージの削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42">指定したイメージの削除</h4>
+<h4 id="指定したイメージの削除">指定したイメージの削除</h4>
 
 <pre><code>docker rmi [イメージの名前かID]
 </code></pre>
 
 <p>イメージの指定は<code>IMAGE ID</code>の先頭数文字での特定が便利</p>
 
-<h4 id="イメージの全削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42">イメージの全削除</h4>
+<h4 id="イメージの全削除">イメージの全削除</h4>
 
 <pre><code>docker rmi $(docker images -a -q)
 </code></pre>
 
-<h3 id="コンテナ操作:1c4ea1d59e18285c6c3ba7b5bb3a3b42">コンテナ操作</h3>
+<h3 id="コンテナ操作">コンテナ操作</h3>
 
-<h4 id="コンテナのリスト表示:1c4ea1d59e18285c6c3ba7b5bb3a3b42">コンテナのリスト表示</h4>
+<h4 id="コンテナのリスト表示">コンテナのリスト表示</h4>
 
 <pre><code>docker ps
 </code></pre>
 
-<h4 id="全部停止:1c4ea1d59e18285c6c3ba7b5bb3a3b42">全部停止</h4>
+<h4 id="全部停止">全部停止</h4>
 
 <pre><code>docker stop $(docker ps -a -q)
 </code></pre>
 
-<h4 id="全部削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42">全部削除</h4>
+<h4 id="全部削除">全部削除</h4>
 
 <pre><code>docker rm $(docker ps -a -q) 
 </code></pre>
 
-<h3 id="dockercompose:1c4ea1d59e18285c6c3ba7b5bb3a3b42">DockerCompose</h3>
+<h3 id="dockercompose">DockerCompose</h3>
 
-<h4 id="起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42">起動</h4>
+<h4 id="起動">起動</h4>
 
 <pre><code>cd [docker-copose.ymlを置いてる場所]
 docker-compose up -d
@@ -150,35 +150,35 @@ docker-compose up -d
 
 <p>これだけで<code>build</code>と<code>pull</code>と<code>run</code>を一気にしてくれる</p>
 
-<h4 id="停止:1c4ea1d59e18285c6c3ba7b5bb3a3b42">停止</h4>
+<h4 id="停止">停止</h4>
 
 <pre><code>docker-compose stop
 </code></pre>
 
-<h3 id="nginx:1c4ea1d59e18285c6c3ba7b5bb3a3b42">nginx</h3>
+<h3 id="nginx">nginx</h3>
 
 <p><em>80ポートを使う場合はsudoが必要</em></p>
 
-<h4 id="起動-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42">起動</h4>
+<h4 id="起動-1">起動</h4>
 
 <pre><code>nginx
 </code></pre>
 
-<h4 id="停止-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42">停止</h4>
+<h4 id="停止-1">停止</h4>
 
 <pre><code>nginx -s stop
 </code></pre>
 
-<h4 id="再起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42">再起動</h4>
+<h4 id="再起動">再起動</h4>
 
 <pre><code>nginx -s reload
 </code></pre>
 
-<h2 id="php:1c4ea1d59e18285c6c3ba7b5bb3a3b42">PHP</h2>
+<h2 id="php">PHP</h2>
 
-<h3 id="オプション:1c4ea1d59e18285c6c3ba7b5bb3a3b42">オプション</h3>
+<h3 id="オプション">オプション</h3>
 
-<h4 id="docker-php-ext-installで指定できるもの:1c4ea1d59e18285c6c3ba7b5bb3a3b42">docker-php-ext-installで指定できるもの</h4>
+<h4 id="docker-php-ext-installで指定できるもの">docker-php-ext-installで指定できるもの</h4>
 
 <pre><code>bcmath bz2 calendar ctype curl dba dom enchant exif fileinfo filter ftp gd gettext gmp hash iconv imap interbase intl json ldap mbstring mcrypt mssql mysql mysqli oci8 odbc opcache pcntl pdo pdo_dblib pdo_firebird pdo_mysql pdo_oci pdo_odbc pdo_pgsql pdo_sqlite pgsql phar posix pspell readline recode reflection session shmop simplexml snmp soap sockets spl standard sybase_ct sysvmsg sysvsem sysvshm tidy tokenizer wddx xml xmlreader xmlrpc xmlwriter xsl zip
 </code></pre>

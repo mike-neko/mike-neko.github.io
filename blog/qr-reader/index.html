@@ -102,7 +102,7 @@
     </span>
     
 
-<h2 id="概要:864526975070042dd27a73a748ee1dfb">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p>以前に書いたQRコードの読み取りサンプルの別バージョン。
 今回はカメラ不要で画像データから直接QRコードを読み取りが可能。</p>
@@ -116,7 +116,7 @@
 <p>今回の認識部分は、<code>CoreImage</code>の<code>CIDetector</code>を利用している。
 <code>CIDetector</code>は顔認識や文字認識もできる優れもの。</p>
 
-<h3 id="相違点:864526975070042dd27a73a748ee1dfb">相違点</h3>
+<h3 id="相違点">相違点</h3>
 
 <p>前回の<code>AVMetadataMachineReadableCodeObject</code>を利用した方法との違いは、</p>
 
@@ -130,9 +130,9 @@
 <p>画像データは<code>UIImage</code>が生成できるデータを用意すれば良いので、
 元データはローカルファイルでもネット上でも、当然カメラからでもOK。</p>
 
-<h2 id="小ネタ:864526975070042dd27a73a748ee1dfb">小ネタ</h2>
+<h2 id="小ネタ">小ネタ</h2>
 
-<h3 id="qr検出:864526975070042dd27a73a748ee1dfb">QR検出</h3>
+<h3 id="qr検出">QR検出</h3>
 
 <p>検出のコードはとてもシンプル。</p>
 
@@ -158,7 +158,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 
 <p>が入っている。</p>
 
-<h3 id="検出位置:864526975070042dd27a73a748ee1dfb">検出位置</h3>
+<h3 id="検出位置">検出位置</h3>
 
 <p>位置の座標は、画面ではなく画像の座標を基準とした座標で取得される。</p>
 
@@ -170,7 +170,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 それ以外のものにはQRコードの各頂点の座標がそれぞれ入る。<br />
 （この辺りは実際に斜めの画像を読み込んで見ればよくわかる）</p>
 
-<h2 id="感想:864526975070042dd27a73a748ee1dfb">感想</h2>
+<h2 id="感想">感想</h2>
 
 <p>このQRコードの検出は<code>iOS8</code>から可能になっているが、全然把握できていなかったので反省。</p>
 
@@ -179,7 +179,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 
 <p>なお、<code>AVMetadataMachineReadableCodeObject</code>との性能などの差は未調査。。。</p>
 
-<h1 id="開発環境:864526975070042dd27a73a748ee1dfb">開発環境</h1>
+<h1 id="開発環境">開発環境</h1>
 
 <ul>
 <li>OS X 10.11.5</li>
@@ -188,7 +188,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 <li>iPhone 6+</li>
 </ul>
 
-<h1 id="ソース:864526975070042dd27a73a748ee1dfb">ソース</h1>
+<h1 id="ソース">ソース</h1>
 
 <p><a href="https://github.com/mike-neko/QRReader/">こちら</a></p>
 

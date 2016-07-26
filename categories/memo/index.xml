@@ -17,7 +17,7 @@
       <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:6214d744b42492b1045fac72bc277c04&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
 
@@ -25,7 +25,7 @@
 &lt;p&gt;過去の記事（&lt;a href=&#34;../docker/&#34;&gt;Dockerでの開発環境&lt;/a&gt;）&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;環境:6214d744b42492b1045fac72bc277c04&#34;&gt;環境&lt;/h3&gt;
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
 
 &lt;p&gt;ベースは前回構築したnginx+Dockerで通信はオレオレ証明書によるSSLを前提。&lt;/p&gt;
 
@@ -40,9 +40,9 @@
 
 &lt;p&gt;なお、iOSは&lt;strong&gt;iOS9&lt;/strong&gt;からhttp2へ対応している。&lt;/p&gt;
 
-&lt;h2 id=&#34;手順:6214d744b42492b1045fac72bc277c04&#34;&gt;手順&lt;/h2&gt;
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
-&lt;h3 id=&#34;事前準備:6214d744b42492b1045fac72bc277c04&#34;&gt;事前準備&lt;/h3&gt;
+&lt;h3 id=&#34;事前準備&#34;&gt;事前準備&lt;/h3&gt;
 
 &lt;p&gt;http2での通信かどうかの確認用に以下のChromeのプラグインを入れておく。&lt;/p&gt;
 
@@ -51,7 +51,7 @@
 
 &lt;p&gt;http2での通信だと稲妻が青色になるので確認が楽。&lt;/p&gt;
 
-&lt;h3 id=&#34;macでの作業:6214d744b42492b1045fac72bc277c04&#34;&gt;Macでの作業&lt;/h3&gt;
+&lt;h3 id=&#34;macでの作業&#34;&gt;Macでの作業&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;OpenSSLを最新にあげる&lt;br /&gt;
@@ -82,13 +82,13 @@ listen  443 ssl http2;
 &lt;li&gt;&lt;p&gt;ChromeからMacへアクセスしてみて青い稲妻になっていれば&lt;code&gt;nginx&lt;/code&gt;の設定は成功&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;ios端末での通信:6214d744b42492b1045fac72bc277c04&#34;&gt;iOS端末での通信&lt;/h3&gt;
+&lt;h3 id=&#34;ios端末での通信&#34;&gt;iOS端末での通信&lt;/h3&gt;
 
 &lt;p&gt;iOS9以降の&lt;code&gt;NSURLSession&lt;/code&gt;での通信であれば、特に設定など不要で自動で&lt;code&gt;http2&lt;/code&gt;になる。&lt;/p&gt;
 
 &lt;p&gt;なお、規格上は&lt;code&gt;http&lt;/code&gt;のみでも対応しているがiOSでどうかは未検証。&lt;/p&gt;
 
-&lt;h3 id=&#34;ログ設定:6214d744b42492b1045fac72bc277c04&#34;&gt;ログ設定&lt;/h3&gt;
+&lt;h3 id=&#34;ログ設定&#34;&gt;ログ設定&lt;/h3&gt;
 
 &lt;p&gt;iOS端末からの通信も&lt;code&gt;http2&lt;/code&gt;になっているかの確認は、&lt;code&gt;nginx&lt;/code&gt;のログで判別する。&lt;/p&gt;
 
@@ -96,14 +96,14 @@ listen  443 ssl http2;
 詳細は以下のページを参考に&lt;br /&gt;
 &lt;a href=&#34;http://d.hatena.ne.jp/ASnoKaze/20150818/1439896998&#34;&gt;nginxでアクセスログにhttp2の通信か出力する&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;過去情報:6214d744b42492b1045fac72bc277c04&#34;&gt;過去情報&lt;/h2&gt;
+&lt;h2 id=&#34;過去情報&#34;&gt;過去情報&lt;/h2&gt;
 
 &lt;p&gt;標準の&lt;code&gt;nginx&lt;/code&gt;に&lt;code&gt;http2&lt;/code&gt;モジュールがないと思っていたら、
 実はちゃんとあったので訂正。&lt;/p&gt;
 
 &lt;p&gt;もったいないので、&lt;code&gt;nginx-full&lt;/code&gt;の情報を残しておく。&lt;/p&gt;
 
-&lt;h3 id=&#34;nginx-full:6214d744b42492b1045fac72bc277c04&#34;&gt;nginx-full&lt;/h3&gt;
+&lt;h3 id=&#34;nginx-full&#34;&gt;nginx-full&lt;/h3&gt;
 
 &lt;p&gt;通常の&lt;code&gt;Homebrew&lt;/code&gt;の&lt;code&gt;nginx&lt;/code&gt;ではオプションのモジュールが少ないので、
 標準では足りないモジュールをインストールしたい時は&lt;code&gt;nginx-full&lt;/code&gt;をインストールする。&lt;/p&gt;
@@ -120,13 +120,13 @@ brew install nginx-full --with-http2
 &lt;pre&gt;&lt;code&gt;brew info nginx-full
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h1 id=&#34;参考リンク:6214d744b42492b1045fac72bc277c04&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://kannokanno.hatenablog.com/entry/2014/02/10/134920&#34;&gt;Mac - homebrewでnginxを入れるときはnginx-fullを入れよう&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:6214d744b42492b1045fac72bc277c04&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.5&lt;/li&gt;
@@ -145,13 +145,13 @@ brew install nginx-full --with-http2
       <guid>https://mike-neko.github.io/blog/docker/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;なお、ローカルの開発用ということでセキュリティは考慮していないので注意&lt;/em&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;要件:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;要件&lt;/h3&gt;
+&lt;h3 id=&#34;要件&#34;&gt;要件&lt;/h3&gt;
 
 &lt;p&gt;主にAPIでサーバとやりとりするアプリの開発用なので以下の感じ&lt;/p&gt;
 
@@ -161,9 +161,9 @@ brew install nginx-full --with-http2
 &lt;li&gt;SSLが使えること（iOS用）&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;環境:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;環境&lt;/h3&gt;
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
 
-&lt;h4 id=&#34;構成イメージ:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;構成イメージ&lt;/h4&gt;
+&lt;h4 id=&#34;構成イメージ&#34;&gt;構成イメージ&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;Mac   (192.168.0.2) == ルータ(192.168.0.1) == iPhone(192.168.0.3)  
 ｜  
@@ -176,7 +176,7 @@ Docker(192.168.99.100)
 
 &lt;p&gt;ゴールは、iPhone上から&lt;code&gt;https://192.168.0.2&lt;/code&gt;へアクセスするとページが表示(APIの通信)できればOK。&lt;/p&gt;
 
-&lt;h4 id=&#34;mac上-ホストos:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Mac上(ホストOS)&lt;/h4&gt;
+&lt;h4 id=&#34;mac上-ホストos&#34;&gt;Mac上(ホストOS)&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;MacOS 10.11.3(El Capitan)&lt;/li&gt;
@@ -185,7 +185,7 @@ Docker(192.168.99.100)
 &lt;li&gt;nginx 1.8.1&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;docker上-ゲストos:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Docker上(ゲストOS)&lt;/h4&gt;
+&lt;h4 id=&#34;docker上-ゲストos&#34;&gt;Docker上(ゲストOS)&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Apache&lt;/li&gt;
@@ -195,9 +195,9 @@ Docker(192.168.99.100)
 (phpmyadmin)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;手順:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;手順&lt;/h1&gt;
+&lt;h1 id=&#34;手順&#34;&gt;手順&lt;/h1&gt;
 
-&lt;h3 id=&#34;dockerのインストール:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Dockerのインストール&lt;/h3&gt;
+&lt;h3 id=&#34;dockerのインストール&#34;&gt;Dockerのインストール&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.docker.com/products/docker-toolbox&#34;&gt;公式&lt;/a&gt;から&lt;code&gt;DockerToolBox&lt;/code&gt;をダウンロードしてインストールを実行&lt;br /&gt;&lt;/li&gt;
@@ -206,7 +206,7 @@ Docker(192.168.99.100)
 &lt;li&gt;すると勝手にVM作成やらネットワーク設定をしてくれる親切設計なのでクジラが出てくるまで待つ&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;dockercomposeの設定:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;DockerComposeの設定&lt;/h3&gt;
+&lt;h3 id=&#34;dockercomposeの設定&#34;&gt;DockerComposeの設定&lt;/h3&gt;
 
 &lt;p&gt;Dockerはコンテナをパーツのように組み合わせて環境を作っていく。&lt;/p&gt;
 
@@ -227,7 +227,7 @@ Docker(192.168.99.100)
 &lt;p&gt;ただ、この方法だと引数の指定が多かったり複数のコンテナを利用する場合は大変なので、
 &lt;code&gt;DockerCompose&lt;/code&gt;を用いて管理する。&lt;/p&gt;
 
-&lt;h4 id=&#34;事前準備:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;事前準備&lt;/h4&gt;
+&lt;h4 id=&#34;事前準備&#34;&gt;事前準備&lt;/h4&gt;
 
 &lt;p&gt;まずは適当な場所に、コンテナ毎の&lt;code&gt;Dockerfile&lt;/code&gt;や設定ファイルなどを
 まとめておくディレクトリを作ってカレントディレクトリとする。
@@ -244,7 +244,7 @@ Docker(192.168.99.100)
      └─ index.html       # 動作確認用のHTML
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;apache-php:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Apache+PHP&lt;/h4&gt;
+&lt;h4 id=&#34;apache-php&#34;&gt;Apache+PHP&lt;/h4&gt;
 
 &lt;p&gt;ApacheはPHPに同梱されているものを使うのが便利なので、&lt;code&gt;apache&lt;/code&gt;がついているタグのものを使う。
 今回は&lt;a href=&#34;https://hub.docker.com/_/php/&#34;&gt;公式&lt;/a&gt;で5系の一番新しいバージョンの&lt;code&gt;5.6.18-apache&lt;/code&gt;を選択。&lt;/p&gt;
@@ -267,7 +267,7 @@ Docker(192.168.99.100)
 &lt;p&gt;これでMac上からは、&lt;code&gt;http://192.168.99.100/index.html&lt;/code&gt;へアクセスすると、
 &lt;code&gt;www/index.html&lt;/code&gt;が表示される。&lt;/p&gt;
 
-&lt;h4 id=&#34;mariadb-phpmyadmin:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;MariaDB+phpMyAdmin&lt;/h4&gt;
+&lt;h4 id=&#34;mariadb-phpmyadmin&#34;&gt;MariaDB+phpMyAdmin&lt;/h4&gt;
 
 &lt;p&gt;特に変更点もないのでイメージは公式の最新をそのままを使う。&lt;/p&gt;
 
@@ -298,14 +298,14 @@ phpmyadmin:
 
 &lt;p&gt;&lt;em&gt;注意点としてこの状態ではDBの永続化はできていないので、コンテナを削除するとDBの内容も消える&lt;/em&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;ios端末からのアクセス:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;iOS端末からのアクセス&lt;/h3&gt;
+&lt;h3 id=&#34;ios端末からのアクセス&#34;&gt;iOS端末からのアクセス&lt;/h3&gt;
 
 &lt;p&gt;ここまでの状態だとMacからしかアクセスできないので、Mac上で&lt;code&gt;nginx&lt;/code&gt;をリバースプロキシとして動かし、
 他のiOS端末からアクセスできるようにする。&lt;/p&gt;
 
 &lt;p&gt;また、iOS9のATSへ対応する為にSSLでアクセスできるようにする。ただしローカル環境なのでオレオレ証明書を利用する。&lt;/p&gt;
 
-&lt;h4 id=&#34;nginxのインストール:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;nginxのインストール&lt;/h4&gt;
+&lt;h4 id=&#34;nginxのインストール&#34;&gt;nginxのインストール&lt;/h4&gt;
 
 &lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;でインストールする。&lt;/p&gt;
 
@@ -334,7 +334,7 @@ brew install nginx
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;sslの証明書について:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;SSLの証明書について&lt;/h4&gt;
+&lt;h4 id=&#34;sslの証明書について&#34;&gt;SSLの証明書について&lt;/h4&gt;
 
 &lt;p&gt;今回はnginx部分だけSSLに対応させる。（dockerはHTTPのまま）&lt;/p&gt;
 
@@ -351,7 +351,7 @@ brew install nginx
 &lt;p&gt;もし、上の条件が満たせない場合は、ATSの設定を変えるとか個別に認証処理を書くなどして回避する必要がある。
 （回避できないのもあるけど）&lt;/p&gt;
 
-&lt;h4 id=&#34;sslの証明書の作成:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;SSLの証明書の作成&lt;/h4&gt;
+&lt;h4 id=&#34;sslの証明書の作成&#34;&gt;SSLの証明書の作成&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;openssl genrsa -out server.key 2048 -sha256
 openssl req -new -sha256 -key server.key &amp;gt; server.csr
@@ -380,7 +380,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;vmの設定:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;VMの設定&lt;/h4&gt;
+&lt;h4 id=&#34;vmの設定&#34;&gt;VMの設定&lt;/h4&gt;
 
 &lt;p&gt;DockerはVirtualBox上で動いているので、VMのポートフォワードを設定が必要となる。
 設定は、&lt;/p&gt;
@@ -390,7 +390,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 
 &lt;p&gt;とする。VirtualBoxを起動して、&lt;code&gt;default-設定-ネットワーク-アダプター1-ポートフォワーディング&lt;/code&gt;からでもOK。&lt;/p&gt;
 
-&lt;h2 id=&#34;起動:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;起動&lt;/h2&gt;
+&lt;h2 id=&#34;起動&#34;&gt;起動&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Dockerを起動させる&lt;/li&gt;
@@ -403,7 +403,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 &lt;code&gt;www/index.html&lt;/code&gt;が表示される。
 （ただし、オレオレ証明書なので認証の警告などは出る）&lt;/p&gt;
 
-&lt;h1 id=&#34;追記:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;追記&lt;/h1&gt;
+&lt;h1 id=&#34;追記&#34;&gt;追記&lt;/h1&gt;
 
 &lt;p&gt;Docker起動時に&lt;/p&gt;
 
@@ -417,14 +417,14 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 
 &lt;p&gt;をしてから起動し直すと大丈夫っぽい。なお、原因は不明・・・&lt;/p&gt;
 
-&lt;h1 id=&#34;感想:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;感想&lt;/h1&gt;
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
 
 &lt;p&gt;開発環境をプラグインみたいな感じで構築していけるのと構築内容がテキストで残るのはあとあと楽。&lt;/p&gt;
 
 &lt;p&gt;ただ、サーバ環境とまるまる同じものを構築するならVagrantの方が良いのかも・・・
 でも、Dockerはいろいろな環境を次々に試すのには便利なので、使い分けが大事そう。&lt;/p&gt;
 
-&lt;h1 id=&#34;ファイル一式:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;ファイル一式&lt;/h1&gt;
+&lt;h1 id=&#34;ファイル一式&#34;&gt;ファイル一式&lt;/h1&gt;
 
 &lt;p&gt;実際の各イメージのDockerfileや設定ファイルをまとめたものは
 &lt;a href=&#34;https://github.com/mike-neko/Docker/tree/master/SSLWebServer&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
@@ -439,47 +439,47 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
       <guid>https://mike-neko.github.io/blog/docker-cmd/</guid>
       <description>
 
-&lt;h2 id=&#34;dockerでよく使うコマンド:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;Dockerでよく使うコマンド&lt;/h2&gt;
+&lt;h2 id=&#34;dockerでよく使うコマンド&#34;&gt;Dockerでよく使うコマンド&lt;/h2&gt;
 
-&lt;h3 id=&#34;イメージ操作:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージ操作&lt;/h3&gt;
+&lt;h3 id=&#34;イメージ操作&#34;&gt;イメージ操作&lt;/h3&gt;
 
-&lt;h4 id=&#34;イメージのリスト表示:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージのリスト表示&lt;/h4&gt;
+&lt;h4 id=&#34;イメージのリスト表示&#34;&gt;イメージのリスト表示&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker images
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;指定したイメージの削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;指定したイメージの削除&lt;/h4&gt;
+&lt;h4 id=&#34;指定したイメージの削除&#34;&gt;指定したイメージの削除&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker rmi [イメージの名前かID]
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;イメージの指定は&lt;code&gt;IMAGE ID&lt;/code&gt;の先頭数文字での特定が便利&lt;/p&gt;
 
-&lt;h4 id=&#34;イメージの全削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージの全削除&lt;/h4&gt;
+&lt;h4 id=&#34;イメージの全削除&#34;&gt;イメージの全削除&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker rmi $(docker images -a -q)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;コンテナ操作:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;コンテナ操作&lt;/h3&gt;
+&lt;h3 id=&#34;コンテナ操作&#34;&gt;コンテナ操作&lt;/h3&gt;
 
-&lt;h4 id=&#34;コンテナのリスト表示:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;コンテナのリスト表示&lt;/h4&gt;
+&lt;h4 id=&#34;コンテナのリスト表示&#34;&gt;コンテナのリスト表示&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker ps
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;全部停止:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;全部停止&lt;/h4&gt;
+&lt;h4 id=&#34;全部停止&#34;&gt;全部停止&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker stop $(docker ps -a -q)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;全部削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;全部削除&lt;/h4&gt;
+&lt;h4 id=&#34;全部削除&#34;&gt;全部削除&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker rm $(docker ps -a -q) 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;dockercompose:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;DockerCompose&lt;/h3&gt;
+&lt;h3 id=&#34;dockercompose&#34;&gt;DockerCompose&lt;/h3&gt;
 
-&lt;h4 id=&#34;起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;起動&lt;/h4&gt;
+&lt;h4 id=&#34;起動&#34;&gt;起動&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;cd [docker-copose.ymlを置いてる場所]
 docker-compose up -d
@@ -487,35 +487,35 @@ docker-compose up -d
 
 &lt;p&gt;これだけで&lt;code&gt;build&lt;/code&gt;と&lt;code&gt;pull&lt;/code&gt;と&lt;code&gt;run&lt;/code&gt;を一気にしてくれる&lt;/p&gt;
 
-&lt;h4 id=&#34;停止:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;停止&lt;/h4&gt;
+&lt;h4 id=&#34;停止&#34;&gt;停止&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker-compose stop
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;nginx:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;nginx&lt;/h3&gt;
+&lt;h3 id=&#34;nginx&#34;&gt;nginx&lt;/h3&gt;
 
 &lt;p&gt;&lt;em&gt;80ポートを使う場合はsudoが必要&lt;/em&gt;&lt;/p&gt;
 
-&lt;h4 id=&#34;起動-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;起動&lt;/h4&gt;
+&lt;h4 id=&#34;起動-1&#34;&gt;起動&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;nginx
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;停止-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;停止&lt;/h4&gt;
+&lt;h4 id=&#34;停止-1&#34;&gt;停止&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;nginx -s stop
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;再起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;再起動&lt;/h4&gt;
+&lt;h4 id=&#34;再起動&#34;&gt;再起動&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;nginx -s reload
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;php:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;PHP&lt;/h2&gt;
+&lt;h2 id=&#34;php&#34;&gt;PHP&lt;/h2&gt;
 
-&lt;h3 id=&#34;オプション:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;オプション&lt;/h3&gt;
+&lt;h3 id=&#34;オプション&#34;&gt;オプション&lt;/h3&gt;
 
-&lt;h4 id=&#34;docker-php-ext-installで指定できるもの:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;docker-php-ext-installで指定できるもの&lt;/h4&gt;
+&lt;h4 id=&#34;docker-php-ext-installで指定できるもの&#34;&gt;docker-php-ext-installで指定できるもの&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;bcmath bz2 calendar ctype curl dba dom enchant exif fileinfo filter ftp gd gettext gmp hash iconv imap interbase intl json ldap mbstring mcrypt mssql mysql mysqli oci8 odbc opcache pcntl pdo pdo_dblib pdo_firebird pdo_mysql pdo_oci pdo_odbc pdo_pgsql pdo_sqlite pgsql phar posix pspell readline recode reflection session shmop simplexml snmp soap sockets spl standard sybase_ct sysvmsg sysvsem sysvshm tidy tokenizer wddx xml xmlreader xmlrpc xmlwriter xsl zip
 &lt;/code&gt;&lt;/pre&gt;
@@ -534,7 +534,7 @@ docker-compose up -d
 
 &lt;p&gt;Hugoの&lt;code&gt;shortcode&lt;/code&gt;を使って、記事の中でHTMLのタグをべた書きしなくて良い様にする方法のメモ。あと、おまけで&lt;code&gt;shortcode&lt;/code&gt;をMarkdownの中でエスケープして表示する方法。&lt;/p&gt;
 
-&lt;h2 id=&#34;画像を貼り付けるshortcode:82b443db7a6a95ed9bb9f499c6e51b27&#34;&gt;画像を貼り付けるshortcode&lt;/h2&gt;
+&lt;h2 id=&#34;画像を貼り付けるshortcode&#34;&gt;画像を貼り付けるshortcode&lt;/h2&gt;
 
 &lt;p&gt;Hugoで画像を表示するには、&lt;code&gt;static&lt;/code&gt;の中に置く必要がある。この中は全サイト共通になっているので、整理しやすいように以下のディレクトリ構成にした。&lt;/p&gt;
 
@@ -554,7 +554,7 @@ docker-compose up -d
 
 &lt;p&gt;これを毎回書くのは面倒だが&lt;code&gt;shortcode&lt;/code&gt;を使うと、&lt;code&gt;{{&amp;lt; img &amp;quot;sample.jpg&amp;quot; &amp;gt;}}&lt;/code&gt;とだけ書けばよい。&lt;/p&gt;
 
-&lt;h3 id=&#34;作り方:82b443db7a6a95ed9bb9f499c6e51b27&#34;&gt;作り方&lt;/h3&gt;
+&lt;h3 id=&#34;作り方&#34;&gt;作り方&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;&amp;lt;site-name&amp;gt;/layouts/shortcodes/img.html&lt;/code&gt;を作成&lt;/li&gt;
@@ -564,7 +564,7 @@ docker-compose up -d
 &lt;li&gt;あとは使いたい場所で&lt;code&gt;{{&amp;lt; img &amp;quot;ファイル名&amp;quot; &amp;gt;}}&lt;/code&gt;とすればOK&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;エスケープ方法:82b443db7a6a95ed9bb9f499c6e51b27&#34;&gt;エスケープ方法&lt;/h2&gt;
+&lt;h2 id=&#34;エスケープ方法&#34;&gt;エスケープ方法&lt;/h2&gt;
 
 &lt;p&gt;記事の中で、&lt;code&gt;shortcode&lt;/code&gt;などを表示させたい場合に、そのまま書くと当然ながらそのコードが実行されてしまうので、エスケープが必要となる。&lt;/p&gt;
 
@@ -581,7 +581,7 @@ docker-compose up -d
 
 &lt;p&gt;で、一番おすすめなのは3の方法。他の方法だと``で囲った時にうまく表示されないので。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:82b443db7a6a95ed9bb9f499c6e51b27&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;公式：&lt;a href=&#34;https://gohugo.io/extras/shortcodes/&#34;&gt;Hugo - Shortcodes&lt;/a&gt;&lt;/li&gt;
@@ -597,9 +597,9 @@ docker-compose up -d
       <guid>https://mike-neko.github.io/blog/metal-function/</guid>
       <description>
 
-&lt;h2 id=&#34;metalのシェーダで利用できる関数のまとめ:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;Metalのシェーダで利用できる関数のまとめ&lt;/h2&gt;
+&lt;h2 id=&#34;metalのシェーダで利用できる関数のまとめ&#34;&gt;Metalのシェーダで利用できる関数のまとめ&lt;/h2&gt;
 
-&lt;h4 id=&#34;hlsl-glslは各言語との対比:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;HLSL/GLSLは各言語との対比&lt;/h4&gt;
+&lt;h4 id=&#34;hlsl-glslは各言語との対比&#34;&gt;HLSL/GLSLは各言語との対比&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;(空白) : 同じ&lt;/li&gt;
@@ -608,7 +608,7 @@ docker-compose up -d
 &lt;li&gt;(関数名) : 挙動は同じだが、名前が別の関数がある&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;共通関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;共通関数&lt;/h2&gt;
+&lt;h2 id=&#34;共通関数&#34;&gt;共通関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
@@ -669,7 +669,7 @@ docker-compose up -d
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;整数関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;整数関数&lt;/h2&gt;
+&lt;h2 id=&#34;整数関数&#34;&gt;整数関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は整数のスカラーかベクター&lt;/li&gt;
@@ -787,7 +787,7 @@ docker-compose up -d
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;関係関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;関係関数&lt;/h2&gt;
+&lt;h2 id=&#34;関係関数&#34;&gt;関係関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
@@ -885,7 +885,7 @@ docker-compose up -d
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;数学関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;数学関数&lt;/h2&gt;
+&lt;h2 id=&#34;数学関数&#34;&gt;数学関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
@@ -1206,7 +1206,7 @@ docker-compose up -d
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;行列関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;行列関数&lt;/h2&gt;
+&lt;h2 id=&#34;行列関数&#34;&gt;行列関数&lt;/h2&gt;
 
 &lt;table&gt;
 &lt;thead&gt;
@@ -1235,7 +1235,7 @@ docker-compose up -d
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;幾何関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;幾何関数&lt;/h2&gt;
+&lt;h2 id=&#34;幾何関数&#34;&gt;幾何関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数(floatn / halfn)のベクター&lt;/li&gt;
@@ -1325,9 +1325,9 @@ docker-compose up -d
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;グラフィック関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;グラフィック関数&lt;/h2&gt;
+&lt;h2 id=&#34;グラフィック関数&#34;&gt;グラフィック関数&lt;/h2&gt;
 
-&lt;h3 id=&#34;フラグメントシェーダ:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;フラグメントシェーダ&lt;/h3&gt;
+&lt;h3 id=&#34;フラグメントシェーダ&#34;&gt;フラグメントシェーダ&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T はfloat, float2, float3, float4, half, half2, half3, half4&lt;/li&gt;
@@ -1367,11 +1367,11 @@ docker-compose up -d
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;感想:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;さすが後発なだけあって、全部入り。GLSLをベースにHLSLやらOpenCLからありったけ詰め込んだような感じ。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Metal/Reference/MetalShadingLanguageGuide/std-lib/std-lib.html&#34;&gt;Metal Standard Library&lt;/a&gt;&lt;/li&gt;
@@ -1392,9 +1392,9 @@ docker-compose up -d
 &lt;p&gt;初めはOctopressを使ってたものの、シンタックスハイライトがどうもうまく好みにならなかったので、結局、１週間ほどでHugoに乗り換え。Octopressに比べると構成もわかりやすいし、最新の資料が多くてよかった。&lt;br /&gt;
 テーマはなるべくシンプル、かつ、スマホでも見やすい&lt;a href=&#34;http://themes.gohugo.io/hyde-x/&#34;&gt;Hyde-X&lt;/a&gt;を選定。以下はHyde-Xの場合の設定なので、他のテーマでは変わることがあるので注意。&lt;/p&gt;
 
-&lt;h2 id=&#34;初期設定:8d244dac89903f7d90007c69acaf707d&#34;&gt;初期設定&lt;/h2&gt;
+&lt;h2 id=&#34;初期設定&#34;&gt;初期設定&lt;/h2&gt;
 
-&lt;h3 id=&#34;ローカルにディレクトリ作成:8d244dac89903f7d90007c69acaf707d&#34;&gt;ローカルにディレクトリ作成&lt;/h3&gt;
+&lt;h3 id=&#34;ローカルにディレクトリ作成&#34;&gt;ローカルにディレクトリ作成&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;hugo new site &amp;lt;site-name&amp;gt;&lt;/code&gt;で作業用のローカルディレクトリを作成&lt;/li&gt;
@@ -1407,7 +1407,7 @@ git remote add origin https://github.com/&amp;lt;github name&amp;gt;/&amp;lt;git
 &lt;li&gt;&lt;code&gt;.gitignore&lt;/code&gt;を&lt;a href=&#34;https://github.com/github/gitignore&#34;&gt;https://github.com/github/gitignore&lt;/a&gt; から落としてきて、2の&lt;code&gt;public&lt;/code&gt;の中に置く。&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;記事のテンプレを作成:8d244dac89903f7d90007c69acaf707d&#34;&gt;記事のテンプレを作成&lt;/h3&gt;
+&lt;h3 id=&#34;記事のテンプレを作成&#34;&gt;記事のテンプレを作成&lt;/h3&gt;
 
 &lt;p&gt;&lt;code&gt;&amp;lt;site-name&amp;gt;/archetypes&lt;/code&gt;に&lt;code&gt;default.md&lt;/code&gt;を作成する。&lt;br /&gt;
 内容は以下の感じ。&lt;/p&gt;
@@ -1419,12 +1419,12 @@ title = &amp;quot;&amp;quot;
 categories = []
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;configを編集:8d244dac89903f7d90007c69acaf707d&#34;&gt;configを編集&lt;/h3&gt;
+&lt;h3 id=&#34;configを編集&#34;&gt;configを編集&lt;/h3&gt;
 
 &lt;p&gt;&lt;code&gt;&amp;lt;site-name&amp;gt;/config.toml&lt;/code&gt;を環境に合わせて編集する。&lt;br /&gt;
 （設定方法はテーマのREADME.mdを参照）&lt;/p&gt;
 
-&lt;h3 id=&#34;highlight-jsをカスタマイズ:8d244dac89903f7d90007c69acaf707d&#34;&gt;highlight.jsをカスタマイズ&lt;/h3&gt;
+&lt;h3 id=&#34;highlight-jsをカスタマイズ&#34;&gt;highlight.jsをカスタマイズ&lt;/h3&gt;
 
 &lt;p&gt;デフォルトで入っていた分ではSwiftが未対応。。。まぁ基本的にはGistを使う予定だけど、一応使えるように。&lt;/p&gt;
 
@@ -1437,7 +1437,7 @@ categories = []
 
 &lt;p&gt;これで、無事Swiftもハイライトされるようになった。&lt;/p&gt;
 
-&lt;h3 id=&#34;gist埋め込みコードを設定:8d244dac89903f7d90007c69acaf707d&#34;&gt;Gist埋め込みコードを設定&lt;/h3&gt;
+&lt;h3 id=&#34;gist埋め込みコードを設定&#34;&gt;Gist埋め込みコードを設定&lt;/h3&gt;
 
 &lt;p&gt;普通にリンクをコピペしても良いのだけれども（&lt;del&gt;GistBoxを使い出したら逆にハッシュだけコピペするのが面倒だったり&lt;/del&gt;）、せっかくMarkdownで書いているのだから、あまりタグを入れて表記が揺らぐのも微妙なので。&lt;/p&gt;
 
@@ -1457,15 +1457,15 @@ categories = []
 といった感じで埋め込まれる&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;記事の作成:8d244dac89903f7d90007c69acaf707d&#34;&gt;記事の作成&lt;/h2&gt;
+&lt;h2 id=&#34;記事の作成&#34;&gt;記事の作成&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;&amp;lt;site-name&amp;gt;&lt;/code&gt;直下で&lt;code&gt;hugo new post/&amp;lt;file-name&amp;gt;.md&lt;/code&gt;を実行する。&lt;/p&gt;
 
 &lt;p&gt;プレビューは&lt;code&gt;hugo server -t Hyde-X -D -w&lt;/code&gt;を実行した後に、&lt;a href=&#34;http://localhost:1313/&#34;&gt;http://localhost:1313/&lt;/a&gt; へアクセス。&lt;/p&gt;
 
-&lt;h2 id=&#34;公開手順:8d244dac89903f7d90007c69acaf707d&#34;&gt;公開手順&lt;/h2&gt;
+&lt;h2 id=&#34;公開手順&#34;&gt;公開手順&lt;/h2&gt;
 
-&lt;h3 id=&#34;流れ:8d244dac89903f7d90007c69acaf707d&#34;&gt;流れ&lt;/h3&gt;
+&lt;h3 id=&#34;流れ&#34;&gt;流れ&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;hugo -t Hyde-X&lt;/code&gt;でサイトを生成&lt;br /&gt;
@@ -1475,16 +1475,16 @@ categories = []
 
 &lt;p&gt;ただ、毎回これをやるのは面倒なので、シェルスクリプトにしておく。&lt;/p&gt;
 
-&lt;h3 id=&#34;デプロイ用スクリプト:8d244dac89903f7d90007c69acaf707d&#34;&gt;デプロイ用スクリプト&lt;/h3&gt;
+&lt;h3 id=&#34;デプロイ用スクリプト&#34;&gt;デプロイ用スクリプト&lt;/h3&gt;
 
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/3159af7dd05c6278a778.js&#34;&gt;&lt;/script&gt;
 
-&lt;h1 id=&#34;githubでの書き方:8d244dac89903f7d90007c69acaf707d&#34;&gt;GitHubでの書き方&lt;/h1&gt;
+&lt;h1 id=&#34;githubでの書き方&#34;&gt;GitHubでの書き方&lt;/h1&gt;
 
 &lt;p&gt;参考リンク
 &lt;a href=&#34;https://help.github.com/articles/github-flavored-markdown/&#34;&gt;GitHub専用(公式)&lt;/a&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:8d244dac89903f7d90007c69acaf707d&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://www.kotazi.com/blog/post/2015111301/&#34;&gt;【Hugo】Hosting on GitHub Pages【翻訳】&lt;/a&gt;&lt;/li&gt;

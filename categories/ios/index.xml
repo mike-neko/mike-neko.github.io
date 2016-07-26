@@ -17,17 +17,17 @@
       <guid>https://mike-neko.github.io/blog/swift-kvo/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;で&lt;code&gt;KVO&lt;/code&gt;を利用する方法について。特に&lt;code&gt;context&lt;/code&gt;を一意の識別子として使いたい場合の方法。&lt;/p&gt;
 
-&lt;h2 id=&#34;サンプルコード:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;サンプルコード&lt;/h2&gt;
+&lt;h2 id=&#34;サンプルコード&#34;&gt;サンプルコード&lt;/h2&gt;
 
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5f00c1927b3cede0376c575147956112.js&#34;&gt;&lt;/script&gt;
 
-&lt;h2 id=&#34;ポイント:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;ポイント&lt;/h2&gt;
+&lt;h2 id=&#34;ポイント&#34;&gt;ポイント&lt;/h2&gt;
 
-&lt;h3 id=&#34;nsobject-を継承する:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;&lt;code&gt;NSObject&lt;/code&gt;を継承する&lt;/h3&gt;
+&lt;h3 id=&#34;nsobject-を継承する&#34;&gt;&lt;code&gt;NSObject&lt;/code&gt;を継承する&lt;/h3&gt;
 
 &lt;p&gt;監視対象も監視するクラスも両方とも&lt;code&gt;NSObject&lt;/code&gt;のサブクラスであることが必要。&lt;/p&gt;
 
@@ -40,7 +40,7 @@
 
 &lt;p&gt;監視する側だとそもそも&lt;code&gt;addObserver&lt;/code&gt;などが利用できない。&lt;/p&gt;
 
-&lt;h3 id=&#34;プロパティには-dynamic-をつける:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;プロパティには&lt;code&gt;dynamic&lt;/code&gt;をつける&lt;/h3&gt;
+&lt;h3 id=&#34;プロパティには-dynamic-をつける&#34;&gt;プロパティには&lt;code&gt;dynamic&lt;/code&gt;をつける&lt;/h3&gt;
 
 &lt;p&gt;監視対象のプロパティ（&lt;code&gt;addObserver&lt;/code&gt;で追加するプロパティ）は必ず&lt;code&gt;dynamic&lt;/code&gt;をつけること。&lt;/p&gt;
 
@@ -48,7 +48,7 @@
 （＝変更されても&lt;code&gt;observeValueForKeyPath&lt;/code&gt;が呼ばれない）
 という判りにくいバグになってしまう。&lt;/p&gt;
 
-&lt;h3 id=&#34;アクセスコントロールに注意:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;アクセスコントロールに注意&lt;/h3&gt;
+&lt;h3 id=&#34;アクセスコントロールに注意&#34;&gt;アクセスコントロールに注意&lt;/h3&gt;
 
 &lt;p&gt;プロパティが別クラスのオブジェクト?の場合、&lt;code&gt;private&lt;/code&gt;にすると&lt;/p&gt;
 
@@ -63,7 +63,7 @@
 &lt;p&gt;&lt;code&gt;String&lt;/code&gt;や&lt;code&gt;Int&lt;/code&gt;ではエラーにならないのは確認したが、具体的な条件は未調査・・・&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;識別子としての-context-の指定:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;識別子としての&lt;code&gt;context&lt;/code&gt;の指定&lt;/h3&gt;
+&lt;h3 id=&#34;識別子としての-context-の指定&#34;&gt;識別子としての&lt;code&gt;context&lt;/code&gt;の指定&lt;/h3&gt;
 
 &lt;p&gt;通常の指定方法は参考リンクの通り（&lt;code&gt;private var myContext = 0&lt;/code&gt;）。
 ただ、今回のサンプルでは、キー値の指定とまとめて以下のようにしている。&lt;/p&gt;
@@ -89,21 +89,21 @@ class ViewController: UIViewController {
 
 &lt;p&gt;と言った書き方でも同じ。&lt;/p&gt;
 
-&lt;h3 id=&#34;通知の登録-解除:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;通知の登録 / 解除&lt;/h3&gt;
+&lt;h3 id=&#34;通知の登録-解除&#34;&gt;通知の登録 / 解除&lt;/h3&gt;
 
-&lt;h4 id=&#34;呼び出しタイミング:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;呼び出しタイミング&lt;/h4&gt;
+&lt;h4 id=&#34;呼び出しタイミング&#34;&gt;呼び出しタイミング&lt;/h4&gt;
 
-&lt;h5 id=&#34;登録時:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;登録時&lt;/h5&gt;
+&lt;h5 id=&#34;登録時&#34;&gt;登録時&lt;/h5&gt;
 
 &lt;p&gt;サンプルでは&lt;code&gt;UIViewController&lt;/code&gt;なので、&lt;code&gt;viewWillAppear&lt;/code&gt;で登録しているが、
 通常は&lt;code&gt;init&lt;/code&gt;での登録が良さげ。&lt;/p&gt;
 
-&lt;h5 id=&#34;解除時:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;解除時&lt;/h5&gt;
+&lt;h5 id=&#34;解除時&#34;&gt;解除時&lt;/h5&gt;
 
 &lt;p&gt;サンプルでは登録が&lt;code&gt;viewWillAppear&lt;/code&gt;なので、対となる&lt;code&gt;viewWillDisappear&lt;/code&gt;で解除しているが、
 通常は&lt;code&gt;deinit&lt;/code&gt;での登録が良い。&lt;/p&gt;
 
-&lt;h4 id=&#34;登録方法:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;登録方法&lt;/h4&gt;
+&lt;h4 id=&#34;登録方法&#34;&gt;登録方法&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;addObserver(self, forKeyPath: KeyContext.value1, options: .New, context: &amp;amp;KeyContext.value1)
 &lt;/code&gt;&lt;/pre&gt;
@@ -118,7 +118,7 @@ class ViewController: UIViewController {
 
 &lt;p&gt;といったあたり。&lt;/p&gt;
 
-&lt;h3 id=&#34;通知の受信:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;通知の受信&lt;/h3&gt;
+&lt;h3 id=&#34;通知の受信&#34;&gt;通知の受信&lt;/h3&gt;
 
 &lt;p&gt;今回は、&lt;code&gt;context&lt;/code&gt;を識別子として利用しているので、&lt;code&gt;switch&lt;/code&gt;でまとめて比較しているが、&lt;code&gt;defalut&lt;/code&gt;の時にちゃんと&lt;/p&gt;
 
@@ -135,7 +135,7 @@ class ViewController: UIViewController {
 
 &lt;p&gt;の実行時エラーとなる。&lt;/p&gt;
 
-&lt;h4 id=&#34;値の取得:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;値の取得&lt;/h4&gt;
+&lt;h4 id=&#34;値の取得&#34;&gt;値の取得&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;// Change Dictionary Keys: 
 // NSKeyValueChangeNewKeyとかNSKeyValueChangeOldKeyとか
@@ -146,13 +146,13 @@ let value = change?[&amp;quot;Change Dictionary Keys&amp;quot;] as? &amp;quot;�
 &lt;code&gt;NSNull&lt;/code&gt;や型が違う場合などは、最終的に&lt;code&gt;nil&lt;/code&gt;が入るのでサンプルのように
 &lt;code&gt;guard&lt;/code&gt;ではじいておくとスマート。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/AdoptingCocoaDesignPatterns.html#//apple_ref/doc/uid/TP40014216-CH7-ID12&#34;&gt;Using Swift with Cocoa and Objective-C (Swift 2.2)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:2d62b24ac35a6aa9b350e669016ea483&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Xcode 7.3.1&lt;/li&gt;
@@ -168,7 +168,7 @@ let value = change?[&amp;quot;Change Dictionary Keys&amp;quot;] as? &amp;quot;�
       <guid>https://mike-neko.github.io/blog/metalshader-scenekit/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;Metal&lt;/code&gt;を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
 なので、その面倒な部分を&lt;code&gt;SceneKit&lt;/code&gt;に任せたいという時の話。&lt;/p&gt;
@@ -192,12 +192,12 @@ let value = change?[&amp;quot;Change Dictionary Keys&amp;quot;] as? &amp;quot;�
 
 &lt;p&gt;という訳で、WWDCのセッションの資料にあった&lt;code&gt;SCNProgram&lt;/code&gt;を使って実装。&lt;/p&gt;
 
-&lt;h2 id=&#34;下準備:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;下準備&lt;/h2&gt;
+&lt;h2 id=&#34;下準備&#34;&gt;下準備&lt;/h2&gt;
 
 &lt;p&gt;プロジェクトはXcodeのデフォルトのテンプレートの&lt;code&gt;Game&lt;/code&gt;を流用している。
 作成時の&lt;code&gt;Game Technology&lt;/code&gt;では&lt;code&gt;SceneKit&lt;/code&gt;を選択する。&lt;/p&gt;
 
-&lt;h3 id=&#34;scenekitの設定:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;SceneKitの設定&lt;/h3&gt;
+&lt;h3 id=&#34;scenekitの設定&#34;&gt;SceneKitの設定&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;&lt;code&gt;Main.storeyboard&lt;/code&gt;を開き、&lt;code&gt;Game View Controller&lt;/code&gt;の&lt;code&gt;SceneKit View&lt;/code&gt;の
@@ -207,7 +207,7 @@ let value = change?[&amp;quot;Change Dictionary Keys&amp;quot;] as? &amp;quot;�
 （今回のシェーダはライトを使わないもので不必要なので消す）&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;scnprogramの作成:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;SCNProgramの作成&lt;/h3&gt;
+&lt;h3 id=&#34;scnprogramの作成&#34;&gt;SCNProgramの作成&lt;/h3&gt;
 
 &lt;p&gt;以下のようにして&lt;code&gt;SCNProgram&lt;/code&gt;を生成してシェーダの関数名を設定する&lt;/p&gt;
 
@@ -222,7 +222,7 @@ program.fragmentFunctionName = &amp;quot;textureFragment&amp;quot;
 material.program = program
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;シェーダの準備:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;シェーダの準備&lt;/h3&gt;
+&lt;h3 id=&#34;シェーダの準備&#34;&gt;シェーダの準備&lt;/h3&gt;
 
 &lt;p&gt;通常どおり&lt;code&gt;Metal&lt;/code&gt;のファイルを追加した後に、&lt;/p&gt;
 
@@ -232,14 +232,14 @@ material.program = program
 &lt;p&gt;とする。
 これは後述の&lt;code&gt;SceneKit&lt;/code&gt;とデータのやりとりに必要。&lt;/p&gt;
 
-&lt;h2 id=&#34;データの渡し方:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;データの渡し方&lt;/h2&gt;
+&lt;h2 id=&#34;データの渡し方&#34;&gt;データの渡し方&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;SceneKit&lt;/code&gt;から描画に必要なデータ（座標や変換行列、テクスチャなど）を
 シェーダへ渡す方法&lt;/p&gt;
 
-&lt;h3 id=&#34;vertexshader側:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;VertexShader側&lt;/h3&gt;
+&lt;h3 id=&#34;vertexshader側&#34;&gt;VertexShader側&lt;/h3&gt;
 
-&lt;h4 id=&#34;頂点属性-位置とか法線とかuv座標とか:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;頂点属性（位置とか法線とかuv座標とか）&lt;/h4&gt;
+&lt;h4 id=&#34;頂点属性-位置とか法線とかuv座標とか&#34;&gt;頂点属性（位置とか法線とかuv座標とか）&lt;/h4&gt;
 
 &lt;p&gt;まずは、&lt;/p&gt;
 
@@ -258,7 +258,7 @@ material.program = program
 SceneKit Vertex Attribute Qualifiers for Metal Shaders&lt;/code&gt;を参照&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h4 id=&#34;フレーム定数-ビューの変換行列など:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;フレーム定数（ビューの変換行列など）&lt;/h4&gt;
+&lt;h4 id=&#34;フレーム定数-ビューの変換行列など&#34;&gt;フレーム定数（ビューの変換行列など）&lt;/h4&gt;
 
 &lt;p&gt;あらかじめ&lt;code&gt;SCNSceneBuffer&lt;/code&gt;という構造体が用意されており、これらはその中に入っている。
 このデータは&lt;code&gt;[[buffer(0)]]&lt;/code&gt;にバインドされて渡されてくる。&lt;/p&gt;
@@ -267,7 +267,7 @@ SceneKit Vertex Attribute Qualifiers for Metal Shaders&lt;/code&gt;を参照&lt;
 &lt;p&gt;構造体の定義はドキュメントの&lt;code&gt;Frame-Constant Data&lt;/code&gt;の項目を参照&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h4 id=&#34;ノード毎のデータ-モデルの変換行列など:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;ノード毎のデータ（モデルの変換行列など）&lt;/h4&gt;
+&lt;h4 id=&#34;ノード毎のデータ-モデルの変換行列など&#34;&gt;ノード毎のデータ（モデルの変換行列など）&lt;/h4&gt;
 
 &lt;p&gt;これは、あらかじめ用意された構造体がなく、代わりに必要なものをピックアップして
 以下のように自分で構造体を定義する。&lt;/p&gt;
@@ -284,12 +284,12 @@ SceneKit Vertex Attribute Qualifiers for Metal Shaders&lt;/code&gt;を参照&lt;
 Available Fields for Per-Node Shader Data&lt;/code&gt;を参照&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h4 id=&#34;カスタム変数:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;カスタム変数&lt;/h4&gt;
+&lt;h4 id=&#34;カスタム変数&#34;&gt;カスタム変数&lt;/h4&gt;
 
 &lt;p&gt;上記以外の変数は構造体として定義が必要。定義自体は通常通りに行う。
 ただし、バインドされるバッファは2以降になる。&lt;/p&gt;
 
-&lt;h4 id=&#34;実装:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;実装&lt;/h4&gt;
+&lt;h4 id=&#34;実装&#34;&gt;実装&lt;/h4&gt;
 
 &lt;p&gt;まとめると、&lt;code&gt;VertexShader&lt;/code&gt;の宣言部分は以下の通り&lt;/p&gt;
 
@@ -307,9 +307,9 @@ Available Fields for Per-Node Shader Data&lt;/code&gt;を参照&lt;/p&gt;
 &lt;p&gt;中での処理は必要な計算をして、それを&lt;code&gt;FragmentShader&lt;/code&gt;に渡すという、
 通常の&lt;code&gt;Metal&lt;/code&gt;のシェーダと同じ実装を行う。&lt;/p&gt;
 
-&lt;h3 id=&#34;fragmentshader側:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;FragmentShader側&lt;/h3&gt;
+&lt;h3 id=&#34;fragmentshader側&#34;&gt;FragmentShader側&lt;/h3&gt;
 
-&lt;h4 id=&#34;テクスチャ:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;テクスチャ&lt;/h4&gt;
+&lt;h4 id=&#34;テクスチャ&#34;&gt;テクスチャ&lt;/h4&gt;
 
 &lt;p&gt;テクスチャを利用したい場合は、特に事前の定義などは不要で通常通り宣言する&lt;/p&gt;
 
@@ -319,12 +319,12 @@ Available Fields for Per-Node Shader Data&lt;/code&gt;を参照&lt;/p&gt;
 
 &lt;p&gt;ただしここでも重要なポイントは&lt;strong&gt;引数名&lt;/strong&gt;（詳細は後述）。&lt;/p&gt;
 
-&lt;h3 id=&#34;scenekit側:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;SceneKit側&lt;/h3&gt;
+&lt;h3 id=&#34;scenekit側&#34;&gt;SceneKit側&lt;/h3&gt;
 
 &lt;p&gt;カスタム変数とテクスチャ以外は自動でバインドされる&lt;br /&gt;
 （＝SceneKit側の処理は特にない）&lt;/p&gt;
 
-&lt;h4 id=&#34;カスタム変数-1:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;カスタム変数&lt;/h4&gt;
+&lt;h4 id=&#34;カスタム変数-1&#34;&gt;カスタム変数&lt;/h4&gt;
 
 &lt;p&gt;シェーダ側と同じ構造体のデータを準備する辺りは通常通り。&lt;/p&gt;
 
@@ -338,7 +338,7 @@ material.setValue(NSData(bytes: &amp;amp;custom, length:sizeof(CustomBuffer)),
 &lt;p&gt;&lt;code&gt;setValue&lt;/code&gt;は&lt;code&gt;SCNProgram&lt;/code&gt;をセットしたのと同じ対象（今回は&lt;code&gt;material&lt;/code&gt;）に行う。&lt;br /&gt;
 また、&lt;code&gt;value&lt;/code&gt;は&lt;code&gt;NSData&lt;/code&gt;としてバイナリで渡し、&lt;code&gt;key&lt;/code&gt;はシェーダでの宣言と同じ名前にする。&lt;/p&gt;
 
-&lt;h4 id=&#34;テクスチャ-1:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;テクスチャ&lt;/h4&gt;
+&lt;h4 id=&#34;テクスチャ-1&#34;&gt;テクスチャ&lt;/h4&gt;
 
 &lt;p&gt;今回のモデルではマテリアルの&lt;code&gt;diffuse&lt;/code&gt;にテクスチャが設定されているので、まずそれを取得する。
 その後、&lt;code&gt;SCNMaterialProperty&lt;/code&gt;の形式にしてから変数と同様に&lt;code&gt;setValue&lt;/code&gt;する&lt;/p&gt;
@@ -351,7 +351,7 @@ material.setValue(SCNMaterialProperty(contents: contents),
 &lt;p&gt;ポイントは、&lt;code&gt;SCNMaterialProperty&lt;/code&gt;を生成しなおしてからセットすること。&lt;br /&gt;
 直接&lt;code&gt;diffuse&lt;/code&gt;の中のデータを&lt;code&gt;setValue&lt;/code&gt;すると正しくデータが渡されない。&lt;/p&gt;
 
-&lt;h4 id=&#34;命名の注意点:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;命名の注意点&lt;/h4&gt;
+&lt;h4 id=&#34;命名の注意点&#34;&gt;命名の注意点&lt;/h4&gt;
 
 &lt;p&gt;シェーダの引数名と&lt;code&gt;SceneKit&lt;/code&gt;側で&lt;code&gt;setValue&lt;/code&gt;の&lt;code&gt;key&lt;/code&gt;は一致させる必要がある。&lt;/p&gt;
 
@@ -359,7 +359,7 @@ material.setValue(SCNMaterialProperty(contents: contents),
 命名時にはオブジェクトのプロパティとかぶる様な名前をつけてはいけない。&lt;br /&gt;
 （例えば&lt;code&gt;color&lt;/code&gt;などは実行時にエラーログが出て連携ができない）&lt;/p&gt;
 
-&lt;h2 id=&#34;感想:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;今回はサンプルもなくとても苦戦した。。。特にシェーダとSceneKit間のデータのやりとり辺りは、
 ドキュメントにも細かく書いてなくて苦労した。&lt;br /&gt;
@@ -372,13 +372,13 @@ material.setValue(SCNMaterialProperty(contents: contents),
 &lt;p&gt;ただ、Metalのバインドの辺りの仕組みはどうなっているのか興味深いので、
 もっといろいろ触ってみたい。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Apple公式ドキュメント(&lt;a href=&#34;https://developer.apple.com/reference/scenekit/scnprogram&#34;&gt;SCNProgram&lt;/a&gt;)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.5&lt;/li&gt;
@@ -387,7 +387,7 @@ material.setValue(SCNMaterialProperty(contents: contents),
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:abea6ba6b17ed17b65ca175add2d4d3a&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalShaderSceneKit&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
@@ -401,15 +401,15 @@ material.setValue(SCNMaterialProperty(contents: contents),
       <guid>https://mike-neko.github.io/blog/webview-pdf/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:48e0e9453a88119590499cbf57bbeabc&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;昔に&lt;code&gt;UIWebView&lt;/code&gt;でやっていたものを最新の&lt;code&gt;WKWebView&lt;/code&gt;+&lt;code&gt;Swift&lt;/code&gt;で書き換えた時のメモ。&lt;/p&gt;
 
 &lt;p&gt;内容は大したことないのだけれど、検索で引っかかるWebの資料がiOS9の実機で動かなかったので残しておく。&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:48e0e9453a88119590499cbf57bbeabc&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
-&lt;h3 id=&#34;内容全体の取得:48e0e9453a88119590499cbf57bbeabc&#34;&gt;内容全体の取得&lt;/h3&gt;
+&lt;h3 id=&#34;内容全体の取得&#34;&gt;内容全体の取得&lt;/h3&gt;
 
 &lt;p&gt;今回は&lt;code&gt;WebView&lt;/code&gt;の中身全体をPDF化したいので、PDF化する時に表示中のコンテンツがビュー内に収まるように、
 コンテンツの表示位置（&lt;code&gt;scrollView.contentOffset&lt;/code&gt;）を初期位置に戻し、
@@ -429,7 +429,7 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
 
 &lt;p&gt;なお、端末によっても状況が異なるようで、対処方法は未調査。。。&lt;/p&gt;
 
-&lt;h3 id=&#34;pdfへの書き出し:48e0e9453a88119590499cbf57bbeabc&#34;&gt;PDFへの書き出し&lt;/h3&gt;
+&lt;h3 id=&#34;pdfへの書き出し&#34;&gt;PDFへの書き出し&lt;/h3&gt;
 
 &lt;p&gt;今回は、&lt;/p&gt;
 
@@ -451,7 +451,7 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
 わざわざコンテキストの取得がいらなくなったのがありがたい。
 （よく書く場所を間違えて取得に失敗する凡ミスをしていたので）&lt;/p&gt;
 
-&lt;h3 id=&#34;pdfのファイル保存:48e0e9453a88119590499cbf57bbeabc&#34;&gt;PDFのファイル保存&lt;/h3&gt;
+&lt;h3 id=&#34;pdfのファイル保存&#34;&gt;PDFのファイル保存&lt;/h3&gt;
 
 &lt;p&gt;PDFをファイルとして保存したい場合は、&lt;code&gt;UIGraphicsBeginPDFContextToFile&lt;/code&gt;を利用するが、
 このメソッドは既存のファイルを問答無用で上書きするので注意すること。&lt;/p&gt;
@@ -459,7 +459,7 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
 &lt;p&gt;もし、サーバへ送信などでデータが欲しい場合は、&lt;code&gt;UIGraphicsBeginPDFContextToData&lt;/code&gt;を利用すれば、
 &lt;code&gt;NSData&lt;/code&gt;で取得できる。&lt;/p&gt;
 
-&lt;h1 id=&#34;開発環境:48e0e9453a88119590499cbf57bbeabc&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.5&lt;/li&gt;
@@ -468,7 +468,7 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:48e0e9453a88119590499cbf57bbeabc&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/WebView2PDF&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
@@ -482,7 +482,7 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
       <guid>https://mike-neko.github.io/blog/qr-reader/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:864526975070042dd27a73a748ee1dfb&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;以前に書いたQRコードの読み取りサンプルの別バージョン。
 今回はカメラ不要で画像データから直接QRコードを読み取りが可能。&lt;/p&gt;
@@ -496,7 +496,7 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
 &lt;p&gt;今回の認識部分は、&lt;code&gt;CoreImage&lt;/code&gt;の&lt;code&gt;CIDetector&lt;/code&gt;を利用している。
 &lt;code&gt;CIDetector&lt;/code&gt;は顔認識や文字認識もできる優れもの。&lt;/p&gt;
 
-&lt;h3 id=&#34;相違点:864526975070042dd27a73a748ee1dfb&#34;&gt;相違点&lt;/h3&gt;
+&lt;h3 id=&#34;相違点&#34;&gt;相違点&lt;/h3&gt;
 
 &lt;p&gt;前回の&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;を利用した方法との違いは、&lt;/p&gt;
 
@@ -510,9 +510,9 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
 &lt;p&gt;画像データは&lt;code&gt;UIImage&lt;/code&gt;が生成できるデータを用意すれば良いので、
 元データはローカルファイルでもネット上でも、当然カメラからでもOK。&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:864526975070042dd27a73a748ee1dfb&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
-&lt;h3 id=&#34;qr検出:864526975070042dd27a73a748ee1dfb&#34;&gt;QR検出&lt;/h3&gt;
+&lt;h3 id=&#34;qr検出&#34;&gt;QR検出&lt;/h3&gt;
 
 &lt;p&gt;検出のコードはとてもシンプル。&lt;/p&gt;
 
@@ -538,7 +538,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 
 &lt;p&gt;が入っている。&lt;/p&gt;
 
-&lt;h3 id=&#34;検出位置:864526975070042dd27a73a748ee1dfb&#34;&gt;検出位置&lt;/h3&gt;
+&lt;h3 id=&#34;検出位置&#34;&gt;検出位置&lt;/h3&gt;
 
 &lt;p&gt;位置の座標は、画面ではなく画像の座標を基準とした座標で取得される。&lt;/p&gt;
 
@@ -550,7 +550,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 それ以外のものにはQRコードの各頂点の座標がそれぞれ入る。&lt;br /&gt;
 （この辺りは実際に斜めの画像を読み込んで見ればよくわかる）&lt;/p&gt;
 
-&lt;h2 id=&#34;感想:864526975070042dd27a73a748ee1dfb&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;このQRコードの検出は&lt;code&gt;iOS8&lt;/code&gt;から可能になっているが、全然把握できていなかったので反省。&lt;/p&gt;
 
@@ -559,7 +559,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 
 &lt;p&gt;なお、&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;との性能などの差は未調査。。。&lt;/p&gt;
 
-&lt;h1 id=&#34;開発環境:864526975070042dd27a73a748ee1dfb&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.5&lt;/li&gt;
@@ -568,7 +568,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:864526975070042dd27a73a748ee1dfb&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/QRReader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
@@ -582,7 +582,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
       <guid>https://mike-neko.github.io/blog/code-reader/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル。&lt;/p&gt;
 
@@ -592,15 +592,15 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 
 &lt;p&gt;コード認識自体はもっと詳しい説明がいろんなとこにあるので、ここは他で説明していなそうなところだけ。&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
-&lt;h3 id=&#34;シリアルキューの利用:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;シリアルキューの利用&lt;/h3&gt;
+&lt;h3 id=&#34;シリアルキューの利用&#34;&gt;シリアルキューの利用&lt;/h3&gt;
 
 &lt;p&gt;カメラの起動や画像認識は処理が重いので、それぞれ専用のシリアルキューを作成して利用している。&lt;/p&gt;
 
 &lt;p&gt;カメラの設定周りはフリーズ状態になるのを防ぐためだが、最近の端末は起動が早いらしく、キューを使わなくても特に問題無い感じ。&lt;/p&gt;
 
-&lt;h3 id=&#34;avmetadatamachinereadablecodeobject:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;AVMetadataMachineReadableCodeObject&lt;/h3&gt;
+&lt;h3 id=&#34;avmetadatamachinereadablecodeobject&#34;&gt;AVMetadataMachineReadableCodeObject&lt;/h3&gt;
 
 &lt;p&gt;認識されたコードは&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;のオブジェクトの配列で渡される。&lt;/p&gt;
 
@@ -610,7 +610,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 &lt;li&gt;&lt;code&gt;stringValue&lt;/code&gt;：コードに含まれるデータ&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;プレビュー画面上に認識したコードの枠を表示する:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;プレビュー画面上に認識したコードの枠を表示する&lt;/h3&gt;
+&lt;h3 id=&#34;プレビュー画面上に認識したコードの枠を表示する&#34;&gt;プレビュー画面上に認識したコードの枠を表示する&lt;/h3&gt;
 
 &lt;p&gt;&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;の中の&lt;code&gt;corners&lt;/code&gt;にコードの座標位置が含まれているが、これはプレビューのViewの座標系とは異なるので、そのままでは使えない。&lt;/p&gt;
 
@@ -618,7 +618,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 
 &lt;p&gt;（以前は手動でちゃんとプレビュー画面上の座標に変換していたが、今回、この簡単に変換できるメソッドを発見！&lt;code&gt;AVCaptureVideoPreviewLayer&lt;/code&gt;の方もちゃんと調べていれば・・・）&lt;/p&gt;
 
-&lt;h2 id=&#34;感想:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;昔iOS7で使えるようになった時に試したものを、Swiftで書き直し＋αしたコード。やはりSwiftはわかりやすく、かつエラー処理もしっかり書いても、Objective-Cよりコードが少ないので良い。&lt;/p&gt;
 
@@ -627,13 +627,13 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 &lt;p&gt;&lt;del&gt;あと、カメラをわざわざ起動しなくても画像を直接認識してくれるようになって欲しい。&lt;/del&gt;
 (6/17追記：方法が判ったので&lt;a href=&#34;../qr-reader/&#34;&gt;その2&lt;/a&gt;を作成した)&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/technotes/tn2325/_index.html&#34;&gt;AV Foundation iOS Machine Readable Code Detection FAQ&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Xcode 7.3&lt;/li&gt;
@@ -641,7 +641,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:a5cf36e06059d329ad01bad1fdbb45c5&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/CodeReader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 
@@ -657,7 +657,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
       <guid>https://mike-neko.github.io/blog/unity-opencv/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:571ed67a2af601d4cff30db4980e4e99&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;UnityからiOSのネイティブプラグイン経由で&lt;code&gt;OpenCV&lt;/code&gt;でカメラを利用するサンプル。&lt;/p&gt;
 
@@ -672,9 +672,9 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 
 &lt;p&gt;といった流れになる。&lt;/p&gt;
 
-&lt;h2 id=&#34;手順:571ed67a2af601d4cff30db4980e4e99&#34;&gt;手順&lt;/h2&gt;
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
-&lt;h3 id=&#34;opencvのフレームワークの準備:571ed67a2af601d4cff30db4980e4e99&#34;&gt;OpenCVのフレームワークの準備&lt;/h3&gt;
+&lt;h3 id=&#34;opencvのフレームワークの準備&#34;&gt;OpenCVのフレームワークの準備&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://opencv.org/downloads.html&#34;&gt;公式のダウンロードページ&lt;/a&gt;から&lt;code&gt;for iOS&lt;/code&gt;の&lt;strong&gt;Ver.2系&lt;/strong&gt;をダウンロードする&lt;br /&gt;
@@ -686,7 +686,7 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 &lt;p&gt;なお、Ver.2を利用したのは、作成時点ではVer.3だとエラーが出てしまったので。
 多分ソースからビルドするかバージョン上がれば、Ver.3系でも問題ないかと。&lt;/p&gt;
 
-&lt;h3 id=&#34;iosネイティブ部分のソースを作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;iOSネイティブ部分のソースを作成&lt;/h3&gt;
+&lt;h3 id=&#34;iosネイティブ部分のソースを作成&#34;&gt;iOSネイティブ部分のソースを作成&lt;/h3&gt;
 
 &lt;p&gt;OpenCVがC++なので、言語は&lt;code&gt;Objective-C++&lt;/code&gt;を利用する。&lt;br /&gt;
 (残念ながらSwiftはC++を扱うことができないのでObjC一択)&lt;/p&gt;
@@ -715,7 +715,7 @@ C#でDLLimportして呼び出し
 &lt;p&gt;ネイティブ側のソースの全文は以下の通り。
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bf258536e5414e25b1e147c8b5e7834d.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
 
-&lt;h4 id=&#34;通常のopencv周りの処理-4-51行目あたり:571ed67a2af601d4cff30db4980e4e99&#34;&gt;通常のOpenCV周りの処理（4〜51行目あたり）&lt;/h4&gt;
+&lt;h4 id=&#34;通常のopencv周りの処理-4-51行目あたり&#34;&gt;通常のOpenCV周りの処理（4〜51行目あたり）&lt;/h4&gt;
 
 &lt;p&gt;ややこしいのが、C++はARC管理外の為、手動でメモリ管理が必要。
 今回はメモリの確保/破棄をラッパークラスの初期化/破棄と合わせて、
@@ -728,7 +728,7 @@ C#でDLLimportして呼び出し
 最終的にUnityのテクスチャのサイズとフォーマット&lt;code&gt;RGBA&lt;/code&gt;に変換してUnity側へ渡す。&lt;br /&gt;
 （Unity側では&lt;code&gt;ARGB&lt;/code&gt;の表記なので、最初それで変換してハマってた・・・）&lt;/p&gt;
 
-&lt;h4 id=&#34;プラグインのエントリポイントを用意-54-77行目あたり:571ed67a2af601d4cff30db4980e4e99&#34;&gt;プラグインのエントリポイントを用意（54〜77行目あたり）&lt;/h4&gt;
+&lt;h4 id=&#34;プラグインのエントリポイントを用意-54-77行目あたり&#34;&gt;プラグインのエントリポイントを用意（54〜77行目あたり）&lt;/h4&gt;
 
 &lt;p&gt;用意するのはラッパークラス&lt;code&gt;VideoCapture&lt;/code&gt;の生成、毎フレーム呼び出す用、破棄の3つのCの関数。&lt;/p&gt;
 
@@ -738,9 +738,9 @@ C#でDLLimportして呼び出し
 
 &lt;p&gt;関数の本体は61行目以降にあるように、単純にブリッジしているだけ。&lt;/p&gt;
 
-&lt;h3 id=&#34;unityでネイティブプラグイン作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;Unityでネイティブプラグイン作成&lt;/h3&gt;
+&lt;h3 id=&#34;unityでネイティブプラグイン作成&#34;&gt;Unityでネイティブプラグイン作成&lt;/h3&gt;
 
-&lt;h4 id=&#34;unityにネイティブのソース類を組み込む:571ed67a2af601d4cff30db4980e4e99&#34;&gt;Unityにネイティブのソース類を組み込む&lt;/h4&gt;
+&lt;h4 id=&#34;unityにネイティブのソース類を組み込む&#34;&gt;Unityにネイティブのソース類を組み込む&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;Assets&lt;/code&gt;直下に&lt;code&gt;Plugins&lt;/code&gt;フォルダを作る&lt;/li&gt;
@@ -755,7 +755,7 @@ Unityのエディタ上のインスペクタの設定を念のため確認
 Unity上ではフォルダとして認識されて、中にいろいろあればOK&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h4 id=&#34;コンポーネントの作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;コンポーネントの作成&lt;/h4&gt;
+&lt;h4 id=&#34;コンポーネントの作成&#34;&gt;コンポーネントの作成&lt;/h4&gt;
 
 &lt;p&gt;ネイティブの画像データからテクスチャを生成し、
 そのテクスチャを指定した&lt;code&gt;Renderer&lt;/code&gt;のマテリアルにセットするコンポーネントを作成。&lt;/p&gt;
@@ -777,7 +777,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 
 &lt;p&gt;後は、コンポーネントのライフサイクルと、キャプチャ用とテクスチャのオブジェクトのライフサイクルを一致させればOK。&lt;/p&gt;
 
-&lt;h4 id=&#34;シーン作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;シーン作成&lt;/h4&gt;
+&lt;h4 id=&#34;シーン作成&#34;&gt;シーン作成&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;キャプチャしたテクスチャ用の&lt;code&gt;Material&lt;/code&gt;を作成
@@ -800,14 +800,14 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h1 id=&#34;感想:571ed67a2af601d4cff30db4980e4e99&#34;&gt;感想&lt;/h1&gt;
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
 
 &lt;p&gt;サンプルでは出てこないけど、C#のアンマネージドの辺りが、ObjCやSwiftに比べると結構大変な気がした。
 慣れてないからかも知れないけど、特にメモリ周りやマーシャリングはいずれちゃんと勉強しないと。&lt;/p&gt;
 
 &lt;p&gt;あと、OpenCV周りの細かい挙動もまだ把握しきれていないので調べたい。&lt;/p&gt;
 
-&lt;h1 id=&#34;開発環境:571ed67a2af601d4cff30db4980e4e99&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.5&lt;/li&gt;
@@ -817,7 +817,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:571ed67a2af601d4cff30db4980e4e99&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/UnityOpenCV&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 
@@ -836,7 +836,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
       <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:6214d744b42492b1045fac72bc277c04&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
 
@@ -844,7 +844,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;p&gt;過去の記事（&lt;a href=&#34;../docker/&#34;&gt;Dockerでの開発環境&lt;/a&gt;）&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;環境:6214d744b42492b1045fac72bc277c04&#34;&gt;環境&lt;/h3&gt;
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
 
 &lt;p&gt;ベースは前回構築したnginx+Dockerで通信はオレオレ証明書によるSSLを前提。&lt;/p&gt;
 
@@ -859,9 +859,9 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 
 &lt;p&gt;なお、iOSは&lt;strong&gt;iOS9&lt;/strong&gt;からhttp2へ対応している。&lt;/p&gt;
 
-&lt;h2 id=&#34;手順:6214d744b42492b1045fac72bc277c04&#34;&gt;手順&lt;/h2&gt;
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
-&lt;h3 id=&#34;事前準備:6214d744b42492b1045fac72bc277c04&#34;&gt;事前準備&lt;/h3&gt;
+&lt;h3 id=&#34;事前準備&#34;&gt;事前準備&lt;/h3&gt;
 
 &lt;p&gt;http2での通信かどうかの確認用に以下のChromeのプラグインを入れておく。&lt;/p&gt;
 
@@ -870,7 +870,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 
 &lt;p&gt;http2での通信だと稲妻が青色になるので確認が楽。&lt;/p&gt;
 
-&lt;h3 id=&#34;macでの作業:6214d744b42492b1045fac72bc277c04&#34;&gt;Macでの作業&lt;/h3&gt;
+&lt;h3 id=&#34;macでの作業&#34;&gt;Macでの作業&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;OpenSSLを最新にあげる&lt;br /&gt;
@@ -901,13 +901,13 @@ listen  443 ssl http2;
 &lt;li&gt;&lt;p&gt;ChromeからMacへアクセスしてみて青い稲妻になっていれば&lt;code&gt;nginx&lt;/code&gt;の設定は成功&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;ios端末での通信:6214d744b42492b1045fac72bc277c04&#34;&gt;iOS端末での通信&lt;/h3&gt;
+&lt;h3 id=&#34;ios端末での通信&#34;&gt;iOS端末での通信&lt;/h3&gt;
 
 &lt;p&gt;iOS9以降の&lt;code&gt;NSURLSession&lt;/code&gt;での通信であれば、特に設定など不要で自動で&lt;code&gt;http2&lt;/code&gt;になる。&lt;/p&gt;
 
 &lt;p&gt;なお、規格上は&lt;code&gt;http&lt;/code&gt;のみでも対応しているがiOSでどうかは未検証。&lt;/p&gt;
 
-&lt;h3 id=&#34;ログ設定:6214d744b42492b1045fac72bc277c04&#34;&gt;ログ設定&lt;/h3&gt;
+&lt;h3 id=&#34;ログ設定&#34;&gt;ログ設定&lt;/h3&gt;
 
 &lt;p&gt;iOS端末からの通信も&lt;code&gt;http2&lt;/code&gt;になっているかの確認は、&lt;code&gt;nginx&lt;/code&gt;のログで判別する。&lt;/p&gt;
 
@@ -915,14 +915,14 @@ listen  443 ssl http2;
 詳細は以下のページを参考に&lt;br /&gt;
 &lt;a href=&#34;http://d.hatena.ne.jp/ASnoKaze/20150818/1439896998&#34;&gt;nginxでアクセスログにhttp2の通信か出力する&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;過去情報:6214d744b42492b1045fac72bc277c04&#34;&gt;過去情報&lt;/h2&gt;
+&lt;h2 id=&#34;過去情報&#34;&gt;過去情報&lt;/h2&gt;
 
 &lt;p&gt;標準の&lt;code&gt;nginx&lt;/code&gt;に&lt;code&gt;http2&lt;/code&gt;モジュールがないと思っていたら、
 実はちゃんとあったので訂正。&lt;/p&gt;
 
 &lt;p&gt;もったいないので、&lt;code&gt;nginx-full&lt;/code&gt;の情報を残しておく。&lt;/p&gt;
 
-&lt;h3 id=&#34;nginx-full:6214d744b42492b1045fac72bc277c04&#34;&gt;nginx-full&lt;/h3&gt;
+&lt;h3 id=&#34;nginx-full&#34;&gt;nginx-full&lt;/h3&gt;
 
 &lt;p&gt;通常の&lt;code&gt;Homebrew&lt;/code&gt;の&lt;code&gt;nginx&lt;/code&gt;ではオプションのモジュールが少ないので、
 標準では足りないモジュールをインストールしたい時は&lt;code&gt;nginx-full&lt;/code&gt;をインストールする。&lt;/p&gt;
@@ -939,13 +939,13 @@ brew install nginx-full --with-http2
 &lt;pre&gt;&lt;code&gt;brew info nginx-full
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h1 id=&#34;参考リンク:6214d744b42492b1045fac72bc277c04&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://kannokanno.hatenablog.com/entry/2014/02/10/134920&#34;&gt;Mac - homebrewでnginxを入れるときはnginx-fullを入れよう&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:6214d744b42492b1045fac72bc277c04&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.5&lt;/li&gt;
@@ -964,7 +964,7 @@ brew install nginx-full --with-http2
       <guid>https://mike-neko.github.io/blog/perfect-push/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:895c24bcebc238bc55d3833602dde15b&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその3&lt;/p&gt;
 
@@ -973,7 +973,7 @@ brew install nginx-full --with-http2
 &lt;p&gt;Perfectは最新のAPNsの通信形式に対応していて、細かなエラーレスポンスを取れるのがメリット。
 なので、開発用としては大変使いやすい。&lt;/p&gt;
 
-&lt;h2 id=&#34;手順:895c24bcebc238bc55d3833602dde15b&#34;&gt;手順&lt;/h2&gt;
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
 &lt;p&gt;Push通知はサーバ側で微妙に必要とされる証明書が変わったりするのがややこしいところ。
 PerfectでPush通知を送るのに必要なものは以下の通り。&lt;/p&gt;
@@ -992,7 +992,7 @@ PerfectでPush通知を送るのに必要なものは以下の通り。&lt;/p&gt
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;登録-プロビジョニングプロファイルと証明書の作成:895c24bcebc238bc55d3833602dde15b&#34;&gt;登録〜プロビジョニングプロファイルと証明書の作成&lt;/h3&gt;
+&lt;h3 id=&#34;登録-プロビジョニングプロファイルと証明書の作成&#34;&gt;登録〜プロビジョニングプロファイルと証明書の作成&lt;/h3&gt;
 
 &lt;p&gt;証明書の取得には&lt;code&gt;AppID&lt;/code&gt;の登録やら結構手順があって大変だが、まずは以下のリンク先の通りに作業をすればOK。&lt;/p&gt;
 
@@ -1002,9 +1002,9 @@ PerfectでPush通知を送るのに必要なものは以下の通り。&lt;/p&gt
 
 &lt;p&gt;なお、最後の手順の&lt;code&gt;APNs用証明書(.p12)&lt;/code&gt;を書き出す時のファイル名は&lt;code&gt;apns.p12&lt;/code&gt;とする&lt;/p&gt;
 
-&lt;h3 id=&#34;サーバ用の証明書の準備:895c24bcebc238bc55d3833602dde15b&#34;&gt;サーバ用の証明書の準備&lt;/h3&gt;
+&lt;h3 id=&#34;サーバ用の証明書の準備&#34;&gt;サーバ用の証明書の準備&lt;/h3&gt;
 
-&lt;h4 id=&#34;apns用証明書-pem:895c24bcebc238bc55d3833602dde15b&#34;&gt;APNs用証明書(.pem)&lt;/h4&gt;
+&lt;h4 id=&#34;apns用証明書-pem&#34;&gt;APNs用証明書(.pem)&lt;/h4&gt;
 
 &lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_cert.pem&lt;/code&gt;を作成する&lt;/p&gt;
 
@@ -1012,7 +1012,7 @@ PerfectでPush通知を送るのに必要なものは以下の通り。&lt;/p&gt
 openssl pkcs12 -clcerts -nokeys -out apns_dev_cert.pem -in apns.p12
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;秘密鍵-pem:895c24bcebc238bc55d3833602dde15b&#34;&gt;秘密鍵(.pem)&lt;/h4&gt;
+&lt;h4 id=&#34;秘密鍵-pem&#34;&gt;秘密鍵(.pem)&lt;/h4&gt;
 
 &lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_key.pem&lt;/code&gt;を作成する&lt;/p&gt;
 
@@ -1023,7 +1023,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;p&gt;&lt;code&gt;Enter PEM pass phrase:&lt;/code&gt;と秘密鍵のパスフレーズを聞かれるので、適当なものを入れる。
 後でサーバに設定するので忘れないように・・・&lt;/p&gt;
 
-&lt;h4 id=&#34;caルート証明書:895c24bcebc238bc55d3833602dde15b&#34;&gt;CAルート証明書&lt;/h4&gt;
+&lt;h4 id=&#34;caルート証明書&#34;&gt;CAルート証明書&lt;/h4&gt;
 
 &lt;p&gt;APNsとサーバで接続する為に&lt;code&gt;Entrust&lt;/code&gt;の証明書が必要なので、以下からダウンロードする。&lt;/p&gt;
 
@@ -1031,12 +1031,12 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;a href=&#34;https://www.entrust.com/root-certificates/entrust_2048_ca.cer&#34;&gt;entrust_2048_ca.cer&lt;/a&gt;&lt;br /&gt;
 （&lt;a href=&#34;https://www.entrust.com/get-support/ssl-certificate-support/root-certificate-downloads/&#34;&gt;Entrustの証明書DLページ&lt;/a&gt; - Entrust.net Certificate Authority (2048) - Download）&lt;/p&gt;
 
-&lt;h3 id=&#34;iosアプリの作成:895c24bcebc238bc55d3833602dde15b&#34;&gt;iOSアプリの作成&lt;/h3&gt;
+&lt;h3 id=&#34;iosアプリの作成&#34;&gt;iOSアプリの作成&lt;/h3&gt;
 
 &lt;p&gt;とりあえず、必要最低限でPush通知を受信できる状態にする。
 デバイストークンの更新等には未対応なので注意。&lt;/p&gt;
 
-&lt;h4 id=&#34;プロジェクトの設定:895c24bcebc238bc55d3833602dde15b&#34;&gt;プロジェクトの設定&lt;/h4&gt;
+&lt;h4 id=&#34;プロジェクトの設定&#34;&gt;プロジェクトの設定&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;ダウンロードしたプロビジョニングプロファイルをダブルクリックしてインストール&lt;/li&gt;
@@ -1044,7 +1044,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;&lt;code&gt;Provisioning Profile&lt;/code&gt;をインストールしたプロビジョニングプロファイルにする&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;アプリの実装:895c24bcebc238bc55d3833602dde15b&#34;&gt;アプリの実装&lt;/h4&gt;
+&lt;h4 id=&#34;アプリの実装&#34;&gt;アプリの実装&lt;/h4&gt;
 
 &lt;p&gt;&lt;code&gt;AppDelegate&lt;/code&gt;に以下の実装をする&lt;/p&gt;
 
@@ -1063,7 +1063,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;また、マルチタスクから終了させても届かない場合があるので、注意&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;サーバへ証明書の設置:895c24bcebc238bc55d3833602dde15b&#34;&gt;サーバへ証明書の設置&lt;/h3&gt;
+&lt;h3 id=&#34;サーバへ証明書の設置&#34;&gt;サーバへ証明書の設置&lt;/h3&gt;
 
 &lt;p&gt;基礎編の&lt;a href=&#34;../perfect-2/&#34;&gt;ビルドでファイルを配置する&lt;/a&gt;の方法で証明書を配置する&lt;/p&gt;
 
@@ -1085,7 +1085,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;（&lt;code&gt;webroot&lt;/code&gt;へのドキュメントの配置とは別に&lt;code&gt;Copy Files&lt;/code&gt;を設定する）&lt;/p&gt;
 
-&lt;h3 id=&#34;サーバの実装:895c24bcebc238bc55d3833602dde15b&#34;&gt;サーバの実装&lt;/h3&gt;
+&lt;h3 id=&#34;サーバの実装&#34;&gt;サーバの実装&lt;/h3&gt;
 
 &lt;p&gt;サーバ側での実装は主に2つ。
 ひとつは証明書を&lt;code&gt;NotificationPusher&lt;/code&gt;に初期設定するのと、
@@ -1103,7 +1103,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;p&gt;この実装でサーバにアクセスする度に、Push通知が端末へ送られる。
 送信時の結果は、ブラウザに表示される（エラーであればエラー内容）。&lt;/p&gt;
 
-&lt;h2 id=&#34;感想:895c24bcebc238bc55d3833602dde15b&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;今回の一番大変だったのはEntrustの証明書の置き場が変わっていたこと。。。
 逆に言えばそれ以外はとても簡単にPush通知を送れる環境を作れた感じ。&lt;/p&gt;
@@ -1115,13 +1115,13 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;もちろん、商用はAWSとかがオススメだけど。。。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:895c24bcebc238bc55d3833602dde15b&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:895c24bcebc238bc55d3833602dde15b&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.4&lt;/li&gt;
@@ -1145,13 +1145,13 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
       <guid>https://mike-neko.github.io/blog/ipaddress/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOS端末のIPアドレスを取得するサンプル。Cの関数呼び出し周りも含めてSwiftにて実装。&lt;/p&gt;
 
 &lt;p&gt;一応、Apple公式の方法でIPv6only環境でも動作確認済。&lt;/p&gt;
 
-&lt;h3 id=&#34;実装概要:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;実装概要&lt;/h3&gt;
+&lt;h3 id=&#34;実装概要&#34;&gt;実装概要&lt;/h3&gt;
 
 &lt;p&gt;アドレス取得の実装は&lt;code&gt;NetworkInfo&lt;/code&gt;にまとまっている。
 実装の中身自体はよくあるIPアドレスの取得のコード。&lt;/p&gt;
@@ -1160,9 +1160,9 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;細かい点は実際のソースを参照のこと。&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
-&lt;h3 id=&#34;cの関数呼び出し:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;Cの関数呼び出し&lt;/h3&gt;
+&lt;h3 id=&#34;cの関数呼び出し&#34;&gt;Cの関数呼び出し&lt;/h3&gt;
 
 &lt;p&gt;端末内部のネットワーク情報を取得する為に、&lt;code&gt;getifaddrs&lt;/code&gt;や&lt;code&gt;inet_ntop&lt;/code&gt;などの関数を呼び出すが、
 通常のCであればファイルの頭で&lt;/p&gt;
@@ -1176,12 +1176,12 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;あと、ヘッダを追加した後にはビルド設定の&lt;code&gt;Objective-C Bridging Header&lt;/code&gt;も忘れずに変更。&lt;/p&gt;
 
-&lt;h3 id=&#34;デバイス:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;デバイス&lt;/h3&gt;
+&lt;h3 id=&#34;デバイス&#34;&gt;デバイス&lt;/h3&gt;
 
 &lt;p&gt;とりあえず今回は、IPアドレスを取りたいだけなので、WiFi(&lt;code&gt;en0&lt;/code&gt;)とCellular(&lt;code&gt;pdp_ip0&lt;/code&gt;)の
 デバイスのみチェックしている。&lt;/p&gt;
 
-&lt;h3 id=&#34;swiftの言語的なこと:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;Swiftの言語的なこと&lt;/h3&gt;
+&lt;h3 id=&#34;swiftの言語的なこと&#34;&gt;Swiftの言語的なこと&lt;/h3&gt;
 
 &lt;p&gt;&lt;code&gt;defer&lt;/code&gt;がとっても便利。これのおかげでリソースの解放のような後始末が必要なコードが、
 とても簡単にかけるし処理漏れもなくなるので素晴らしい！&lt;br /&gt;
@@ -1202,14 +1202,14 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;この辺りのバランス感覚がSwiftは絶妙だと思う。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/UnderstandingandPreparingfortheIPv6Transition/UnderstandingandPreparingfortheIPv6Transition.html&#34;&gt;IPv6only環境の確認方法&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html&#34;&gt;CのAPIをSwiftで使う方法&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Xcode 7.2&lt;/li&gt;
@@ -1218,7 +1218,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;Mac OS 10.11.3(NAT64ネットワーク)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:b896621a8ba2c96e1312fe1998076f7a&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/NetworkInfo&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
@@ -1232,27 +1232,27 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
       <guid>https://mike-neko.github.io/blog/metal-sand/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:41585ab4c2e78900081a05c039c1f55d&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
 パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。&lt;/p&gt;
 
 &lt;p&gt;なお、これも約26万パーティクルで60FPSを維持している。&lt;/p&gt;
 
-&lt;h2 id=&#34;動作イメージ:41585ab4c2e78900081a05c039c1f55d&#34;&gt;動作イメージ&lt;/h2&gt;
+&lt;h2 id=&#34;動作イメージ&#34;&gt;動作イメージ&lt;/h2&gt;
 
 &lt;p&gt;&lt;blockquote class=&#34;instagram-media&#34; data-instgrm-version=&#34;6&#34; style=&#34; background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);&#34;&gt;&lt;div style=&#34;padding:8px;&#34;&gt; &lt;div style=&#34; background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;&#34;&gt; &lt;div style=&#34; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;&#34;&gt;&lt;/div&gt;&lt;/div&gt;&lt;p style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;&#34;&gt;&lt;a href=&#34;https://www.instagram.com/p/BCX1ylEFQd_/&#34; style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;&#34; target=&#34;_blank&#34;&gt;@m_ike__が投稿した動画&lt;/a&gt; - &lt;time style=&#34; font-family:Arial,sans-serif; font-size:14px; line-height:17px;&#34; datetime=&#34;2016-02-29T13:51:35+00:00&#34;&gt;2016 2月 29 5:51午前 PST&lt;/time&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt; &lt;script async defer src=&#34;//platform.instagram.com/en_US/embeds.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
 
 &lt;p&gt;（2色にして拡大してみたけど、動画だとイマイチになってしまった・・・）&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:41585ab4c2e78900081a05c039c1f55d&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
-&lt;h3 id=&#34;砂の動き:41585ab4c2e78900081a05c039c1f55d&#34;&gt;砂の動き&lt;/h3&gt;
+&lt;h3 id=&#34;砂の動き&#34;&gt;砂の動き&lt;/h3&gt;
 
 &lt;p&gt;タイトルに「もどき」とある通り、砂の動きは粒子法などのちゃんとした物理計算をしているわけではないが、GameGems本の中の地形生成の粒子堆積を参考にしている。&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;h4 id=&#34;フラクタル地形生成-粒子堆積:41585ab4c2e78900081a05c039c1f55d&#34;&gt;フラクタル地形生成-粒子堆積&lt;/h4&gt;
+&lt;h4 id=&#34;フラクタル地形生成-粒子堆積&#34;&gt;フラクタル地形生成-粒子堆積&lt;/h4&gt;
 
 &lt;p&gt;&lt;figure&gt;
 	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-25-metal-sand/gems4-19-3.png&#34; /&gt;
@@ -1273,7 +1273,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;という動きをGPUで計算している。&lt;/p&gt;
 
-&lt;h3 id=&#34;コンピュートシェーダのコード:41585ab4c2e78900081a05c039c1f55d&#34;&gt;コンピュートシェーダのコード&lt;/h3&gt;
+&lt;h3 id=&#34;コンピュートシェーダのコード&#34;&gt;コンピュートシェーダのコード&lt;/h3&gt;
 
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/c6997165804cbaa25402.js&#34;&gt;&lt;/script&gt;
 
@@ -1287,7 +1287,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;となる。&lt;/p&gt;
 
-&lt;h4 id=&#34;地面との衝突判定:41585ab4c2e78900081a05c039c1f55d&#34;&gt;地面との衝突判定&lt;/h4&gt;
+&lt;h4 id=&#34;地面との衝突判定&#34;&gt;地面との衝突判定&lt;/h4&gt;
 
 &lt;p&gt;今回は地面との衝突の判定のみで、粒子間の衝突などは考慮しない。よって、512*512のバッファ&lt;code&gt;laminateBuffer&lt;/code&gt;を地面に見立てて、各座標の高さを記録している。ここでテクスチャを使っていないのは、コンピュートシェーダではテクスチャの読み書きを同時に行うことができない為。&lt;/p&gt;
 
@@ -1309,7 +1309,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;あとはこれをひたすら繰り返していくと山のように積み重なっていく。&lt;/p&gt;
 
-&lt;h2 id=&#34;感想:41585ab4c2e78900081a05c039c1f55d&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;パラメータの調整とかバッファへの書き込みの精度を上げたりするなど、まだまだ改良の余地はありそう。。。&lt;/p&gt;
 
@@ -1317,7 +1317,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;あと、GameGemsの1以外も電子書籍で出ないかなぁ。内容的には古くても色々参考になるし、紙版は置く場所考えるとどうしても買いづらいので&lt;/p&gt;
 
-&lt;h1 id=&#34;開発環境:41585ab4c2e78900081a05c039c1f55d&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Xcode 7.2&lt;/li&gt;
@@ -1325,7 +1325,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:41585ab4c2e78900081a05c039c1f55d&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalSand&#34;&gt;こちら&lt;/a&gt;(&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>
@@ -1339,7 +1339,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
       <guid>https://mike-neko.github.io/blog/objc-exception/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:42c35dd4df3ba60bfe736cb25290afa1&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;ObjectiveCで書かれた&lt;code&gt;NSException&lt;/code&gt;を発生させるソースをSwiftから利用したい時の処理方法。&lt;/p&gt;
 
@@ -1359,7 +1359,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;なので、今回は4の方法で例外を処理する方法についてメモしておく。&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:42c35dd4df3ba60bfe736cb25290afa1&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
 &lt;p&gt;基本的な考えた方は3と同じで、ObjectiveCでしか処理できない部分だけラップしてしまえ〜となる。
 まずは以下の様なブリッジ用のObjectiveCのクラスを作る。（&lt;code&gt;Bridging-Header&lt;/code&gt;への追加も忘れずに）&lt;/p&gt;
@@ -1372,7 +1372,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;（意図して処理がないことを明示させる為に空ブロックではなく&lt;code&gt;nil&lt;/code&gt;を渡せる様にしている）&lt;/p&gt;
 
-&lt;h3 id=&#34;使い方:42c35dd4df3ba60bfe736cb25290afa1&#34;&gt;使い方&lt;/h3&gt;
+&lt;h3 id=&#34;使い方&#34;&gt;使い方&lt;/h3&gt;
 
 &lt;p&gt;Swiftから呼び出す時は以下の感じ。&lt;/p&gt;
 
@@ -1404,7 +1404,7 @@ objC_finally: nil)
 
 &lt;p&gt;もし複数の&lt;code&gt;catch&lt;/code&gt;が使いたい場合は、これを元に拡張すればOK。&lt;/p&gt;
 
-&lt;h3 id=&#34;nonnullやnullableのアノテーションについて:42c35dd4df3ba60bfe736cb25290afa1&#34;&gt;nonnullやnullableのアノテーションについて&lt;/h3&gt;
+&lt;h3 id=&#34;nonnullやnullableのアノテーションについて&#34;&gt;nonnullやnullableのアノテーションについて&lt;/h3&gt;
 
 &lt;p&gt;ObjectiveC側でアノテーションを指定すると、Swiftとの連携時のメソッドの型にも反映される。&lt;/p&gt;
 
@@ -1449,14 +1449,14 @@ objC_finally: nil)
 
 &lt;p&gt;という形式になっていて、&lt;code&gt;objC_finally&lt;/code&gt;を&lt;code&gt;nullable&lt;/code&gt;にしたので、ちゃんと&lt;code&gt;?&lt;/code&gt;のついた&lt;code&gt;Optional&lt;/code&gt;になっているし、それ以外は&lt;code&gt;nonnull&lt;/code&gt;なので型がそのまま使われている。&lt;/p&gt;
 
-&lt;h1 id=&#34;開発環境:42c35dd4df3ba60bfe736cb25290afa1&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Xcode 7.2&lt;/li&gt;
 &lt;li&gt;iOS 9.2&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:42c35dd4df3ba60bfe736cb25290afa1&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/ObjC_Exception&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
@@ -1470,7 +1470,7 @@ objC_finally: nil)
       <guid>https://mike-neko.github.io/blog/metal-image/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。&lt;/p&gt;
 
@@ -1478,14 +1478,14 @@ objC_finally: nil)
 
 &lt;p&gt;そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。&lt;/p&gt;
 
-&lt;h2 id=&#34;動作イメージ:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;動作イメージ&lt;/h2&gt;
+&lt;h2 id=&#34;動作イメージ&#34;&gt;動作イメージ&lt;/h2&gt;
 
 &lt;p&gt;&lt;blockquote class=&#34;instagram-media&#34; data-instgrm-version=&#34;6&#34; style=&#34; background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);&#34;&gt;&lt;div style=&#34;padding:8px;&#34;&gt; &lt;div style=&#34; background:#F8F8F8; line-height:0; margin-top:40px; padding:62.3366013072% 0; text-align:center; width:100%;&#34;&gt; &lt;div style=&#34; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;&#34;&gt;&lt;/div&gt;&lt;/div&gt;&lt;p style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;&#34;&gt;&lt;a href=&#34;https://www.instagram.com/p/BBn2nSclQZi/&#34; style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;&#34; target=&#34;_blank&#34;&gt;@m_ike__が投稿した動画&lt;/a&gt; - &lt;time style=&#34; font-family:Arial,sans-serif; font-size:14px; line-height:17px;&#34; datetime=&#34;2016-02-10T22:35:15+00:00&#34;&gt;2016  2月 10 2:35午後 PST&lt;/time&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;
 &lt;script async defer src=&#34;//platform.instagram.com/en_US/embeds.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
 
 &lt;p&gt;ちなみに実機で見るともっとキレイ&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
 &lt;p&gt;処理はおおまかにわけて、&lt;/p&gt;
 
@@ -1507,9 +1507,9 @@ objC_finally: nil)
 
 &lt;p&gt;注意点として、画像の座標とMetalでの座標軸は違うので、x軸とy軸に−1のスケールをかけて補正している。テクスチャ読み込み時に何かできるかは未調査だが、そもそもこういうテクスチャの使い方は普通しないと思うのでそのまま。&lt;/p&gt;
 
-&lt;h3 id=&#34;テクスチャからパーティクルを生成:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;テクスチャからパーティクルを生成&lt;/h3&gt;
+&lt;h3 id=&#34;テクスチャからパーティクルを生成&#34;&gt;テクスチャからパーティクルを生成&lt;/h3&gt;
 
-&lt;h4 id=&#34;パーティクルの位置の計算:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;パーティクルの位置の計算&lt;/h4&gt;
+&lt;h4 id=&#34;パーティクルの位置の計算&#34;&gt;パーティクルの位置の計算&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;// ImagePiece* particles [[ buffer(0) ]]
 // uint2 id [[ thread_position_in_grid ]]
@@ -1520,7 +1520,7 @@ particles[index].position = float4(id.x / (float)size.x, id.y / (float)size.y, 0
 
 &lt;p&gt;イメージとしては1*1の板ポリの中にすべてのパーティクルを配置する感じで、各パーティクルのローカル座標が(0, 0)から(1, 1)の中に収まるようにする。&lt;/p&gt;
 
-&lt;h4 id=&#34;画像の対応するピクセルの色を取得:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;画像の対応するピクセルの色を取得&lt;/h4&gt;
+&lt;h4 id=&#34;画像の対応するピクセルの色を取得&#34;&gt;画像の対応するピクセルの色を取得&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;// texture2d&amp;lt;float, access::read&amp;gt; image [[ texture(0) ]]
 particles[index].color = image.read(id);
@@ -1528,7 +1528,7 @@ particles[index].color = image.read(id);
 
 &lt;p&gt;今回は1ピクセル=1パーティクル、スレッドも同じように分割しているので、テクスチャの対応するピクセルの座標は、そのままグリッド内のスレッド位置と同じになる。&lt;/p&gt;
 
-&lt;h4 id=&#34;動きのパラメータの初期設定:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;動きのパラメータの初期設定&lt;/h4&gt;
+&lt;h4 id=&#34;動きのパラメータの初期設定&#34;&gt;動きのパラメータの初期設定&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;// param.time.w : y方向のdelay
 // rnd : 乱数
@@ -1540,9 +1540,9 @@ particles[index].acc = float4(param.delta.x, param.delta.y, param.delta.z, rnd_d
 
 &lt;p&gt;下の方から順にパーティクルが落ちるように、画像の上の方ほど遅れて落ち始めるようにで遅延を設定する(2の&lt;code&gt;rnd_d * id.y&lt;/code&gt;部分)。また落ち方がそれっぽく見えるように、遅延時間は元の指定の100%〜90%の間でばらつくように乱数を使う(1の部分)。&lt;/p&gt;
 
-&lt;h3 id=&#34;パーティクルに動きをつける:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;パーティクルに動きをつける&lt;/h3&gt;
+&lt;h3 id=&#34;パーティクルに動きをつける&#34;&gt;パーティクルに動きをつける&lt;/h3&gt;
 
-&lt;h4 id=&#34;位置の更新:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;位置の更新&lt;/h4&gt;
+&lt;h4 id=&#34;位置の更新&#34;&gt;位置の更新&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;// particles[index].acc.w : delay
 // param.time.x : スタートからの経過時間
@@ -1553,7 +1553,7 @@ particles[index].position += t * particles[index].acc;
 
 &lt;p&gt;パーティクルの位置は、スムーズに見えるように&lt;code&gt;前回からの経過時間*時間あたりの移動量&lt;/code&gt;で計算する。ただし、各パーティクルには遅延時間があるので、それを経過するまでは経過時間は0として動かないようにする(&lt;code&gt;fmax(0.f, param.time.x - particles[index].acc.w)&lt;/code&gt;の部分)。さらに、こちらも乱数で落ち方にばらつきを与える。&lt;/p&gt;
 
-&lt;h4 id=&#34;消滅処理:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;消滅処理&lt;/h4&gt;
+&lt;h4 id=&#34;消滅処理&#34;&gt;消滅処理&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;float4 f = step(param.delta.w, particles[index].position + t * particles[index].acc);
 particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
@@ -1566,7 +1566,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 
 &lt;p&gt;ポイントとなるのは、フラグメントシェーダ内の&lt;code&gt;if (in.color.a &amp;lt; 0.1) discard_fragment();&lt;/code&gt;という見えなくなったピクセルの破棄処理。なくてもパーティクルは消えてくれるが、この処理を行うことで若干フレームレートが改善するので入れた（&lt;del&gt;単に使ってみたかっただけ&lt;/del&gt;）。&lt;/p&gt;
 
-&lt;h3 id=&#34;乱数の生成:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;乱数の生成&lt;/h3&gt;
+&lt;h3 id=&#34;乱数の生成&#34;&gt;乱数の生成&lt;/h3&gt;
 
 &lt;p&gt;Metalではシェーダ上で使える乱数の関数は準備されていない為、使いたい場合はシェーダ上で自前で実装するかCPU側で生成したものを渡して使うかになる。今回はCPU側でほとんど処理しないので、シェーダ上で実装する方を選択した。&lt;/p&gt;
 
@@ -1582,14 +1582,14 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 
 &lt;p&gt;得られる結果は&lt;code&gt;uint&lt;/code&gt;なので、実際のコード内では使いやすいよう&lt;code&gt;(float)rnd / UINT_MAX&lt;/code&gt;として正規化してから使っている。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;乱数のアルゴリズムの解説記事&lt;br /&gt;
 &lt;a href=&#34;https://blog.visvirial.com/articles/575&#34;&gt;Google Chromeが採用した、擬似乱数生成アルゴリズム「xorshift」の数理&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Xcode 7.2&lt;/li&gt;
@@ -1597,7 +1597,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalImage&#34;&gt;こちら&lt;/a&gt;(&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>
@@ -1611,9 +1611,9 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
       <guid>https://mike-neko.github.io/blog/metal-function/</guid>
       <description>
 
-&lt;h2 id=&#34;metalのシェーダで利用できる関数のまとめ:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;Metalのシェーダで利用できる関数のまとめ&lt;/h2&gt;
+&lt;h2 id=&#34;metalのシェーダで利用できる関数のまとめ&#34;&gt;Metalのシェーダで利用できる関数のまとめ&lt;/h2&gt;
 
-&lt;h4 id=&#34;hlsl-glslは各言語との対比:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;HLSL/GLSLは各言語との対比&lt;/h4&gt;
+&lt;h4 id=&#34;hlsl-glslは各言語との対比&#34;&gt;HLSL/GLSLは各言語との対比&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;(空白) : 同じ&lt;/li&gt;
@@ -1622,7 +1622,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;li&gt;(関数名) : 挙動は同じだが、名前が別の関数がある&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;共通関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;共通関数&lt;/h2&gt;
+&lt;h2 id=&#34;共通関数&#34;&gt;共通関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
@@ -1683,7 +1683,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;整数関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;整数関数&lt;/h2&gt;
+&lt;h2 id=&#34;整数関数&#34;&gt;整数関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は整数のスカラーかベクター&lt;/li&gt;
@@ -1801,7 +1801,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;関係関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;関係関数&lt;/h2&gt;
+&lt;h2 id=&#34;関係関数&#34;&gt;関係関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
@@ -1899,7 +1899,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;数学関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;数学関数&lt;/h2&gt;
+&lt;h2 id=&#34;数学関数&#34;&gt;数学関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
@@ -2220,7 +2220,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;行列関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;行列関数&lt;/h2&gt;
+&lt;h2 id=&#34;行列関数&#34;&gt;行列関数&lt;/h2&gt;
 
 &lt;table&gt;
 &lt;thead&gt;
@@ -2249,7 +2249,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;幾何関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;幾何関数&lt;/h2&gt;
+&lt;h2 id=&#34;幾何関数&#34;&gt;幾何関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数(floatn / halfn)のベクター&lt;/li&gt;
@@ -2339,9 +2339,9 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;グラフィック関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;グラフィック関数&lt;/h2&gt;
+&lt;h2 id=&#34;グラフィック関数&#34;&gt;グラフィック関数&lt;/h2&gt;
 
-&lt;h3 id=&#34;フラグメントシェーダ:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;フラグメントシェーダ&lt;/h3&gt;
+&lt;h3 id=&#34;フラグメントシェーダ&#34;&gt;フラグメントシェーダ&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T はfloat, float2, float3, float4, half, half2, half3, half4&lt;/li&gt;
@@ -2381,11 +2381,11 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;感想:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;さすが後発なだけあって、全部入り。GLSLをベースにHLSLやらOpenCLからありったけ詰め込んだような感じ。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Metal/Reference/MetalShadingLanguageGuide/std-lib/std-lib.html&#34;&gt;Metal Standard Library&lt;/a&gt;&lt;/li&gt;
@@ -2403,22 +2403,22 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
       <guid>https://mike-neko.github.io/blog/metal-noise/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:c76c02a9716918700fc6ffc19450c1da&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。&lt;/p&gt;
 
 &lt;p&gt;パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
 デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。&lt;/p&gt;
 
-&lt;h2 id=&#34;動作イメージ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;動作イメージ&lt;/h2&gt;
+&lt;h2 id=&#34;動作イメージ&#34;&gt;動作イメージ&lt;/h2&gt;
 
 &lt;p&gt;&lt;blockquote class=&#34;instagram-media&#34; data-instgrm-captioned data-instgrm-version=&#34;6&#34; style=&#34; background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);&#34;&gt;&lt;div style=&#34;padding:8px;&#34;&gt; &lt;div style=&#34; background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;&#34;&gt; &lt;div style=&#34; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;&#34;&gt;&lt;/div&gt;&lt;/div&gt; &lt;p style=&#34; margin:8px 0 0 0; padding:0 4px;&#34;&gt; &lt;a href=&#34;https://www.instagram.com/p/BBATaXDFQW1/&#34; style=&#34; color:#000; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none; word-wrap:break-word;&#34; target=&#34;_blank&#34;&gt;ノイズ生成デモ&lt;/a&gt;&lt;/p&gt; &lt;p style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;&#34;&gt;@m_ike__が投稿した動画 - &lt;time style=&#34; font-family:Arial,sans-serif; font-size:14px; line-height:17px;&#34; datetime=&#34;2016-01-26T13:57:16+00:00&#34;&gt;2016 1月 26 5:57午前 PST&lt;/time&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt; &lt;script async defer src=&#34;//platform.instagram.com/en_US/embeds.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
 &lt;p&gt;ソース自体はGPUGemsのサンプルをほぼほぼ書き換えただけなので、ノイズ生成のアルゴリズムなどは参考リンクの方で。。。&lt;/p&gt;
 
-&lt;h3 id=&#34;ノイズ生成の流れ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;ノイズ生成の流れ&lt;/h3&gt;
+&lt;h3 id=&#34;ノイズ生成の流れ&#34;&gt;ノイズ生成の流れ&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;初期化時に順列テーブル&lt;code&gt;permBuffer&lt;/code&gt;を生成&lt;br /&gt;
@@ -2431,14 +2431,14 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;li&gt;&lt;p&gt;2のテクスチャを板ポリに貼って描画する&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;computeshader用の設定:c76c02a9716918700fc6ffc19450c1da&#34;&gt;ComputeShader用の設定&lt;/h3&gt;
+&lt;h3 id=&#34;computeshader用の設定&#34;&gt;ComputeShader用の設定&lt;/h3&gt;
 
-&lt;h4 id=&#34;mtkviewの設定:c76c02a9716918700fc6ffc19450c1da&#34;&gt;MTKViewの設定&lt;/h4&gt;
+&lt;h4 id=&#34;mtkviewの設定&#34;&gt;MTKViewの設定&lt;/h4&gt;
 
 &lt;p&gt;ComputeShaderを利用する場合は、&lt;code&gt;MTKView&lt;/code&gt;の&lt;code&gt;framebufferOnly&lt;/code&gt;を&lt;code&gt;false&lt;/code&gt;にしておくこと。&lt;br /&gt;
 ただし、パフォーマンスに影響を与えるので、利用しない時は触らないこと。&lt;/p&gt;
 
-&lt;h4 id=&#34;waituntilcompleted:c76c02a9716918700fc6ffc19450c1da&#34;&gt;waitUntilCompleted()&lt;/h4&gt;
+&lt;h4 id=&#34;waituntilcompleted&#34;&gt;waitUntilCompleted()&lt;/h4&gt;
 
 &lt;p&gt;各種コマンドの実行の終了するまで待機するメソッド。&lt;br /&gt;
 以下のように&lt;code&gt;commandBuffer.commit()&lt;/code&gt;より後に置く。&lt;br /&gt;
@@ -2452,7 +2452,7 @@ commandBuffer.waitUntilCompleted()
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;スレッド:c76c02a9716918700fc6ffc19450c1da&#34;&gt;スレッド&lt;/h3&gt;
+&lt;h3 id=&#34;スレッド&#34;&gt;スレッド&lt;/h3&gt;
 
 &lt;p&gt;GPGPUは大量のスレッドを並列動作させて圧倒的な処理を行うのが特徴だが、モバイルのGPUのため、スレッドグループ毎の最大のスレッド数は512までになっている(&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Miscellaneous/Conceptual/MetalProgrammingGuide/MetalFeatureSetTables/MetalFeatureSetTables.html&#34;&gt;公式&lt;/a&gt;)。&lt;/p&gt;
 
@@ -2478,7 +2478,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 &lt;p&gt;同じスレッドグループ内であれば、メモリの共有ができたりするのだが、そのあたりも公式のサンプル&lt;a href=&#34;https://developer.apple.com/library/ios/samplecode/Metal_NBody_Simulation/Introduction/Intro.html&#34;&gt;Metal N-Body&lt;/a&gt;が参考になる。&lt;/p&gt;
 
-&lt;h3 id=&#34;デバッグ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;デバッグ&lt;/h3&gt;
+&lt;h3 id=&#34;デバッグ&#34;&gt;デバッグ&lt;/h3&gt;
 
 &lt;p&gt;Xcodeの&lt;code&gt;Capture GPU Frame&lt;/code&gt;がとても便利。&lt;/p&gt;
 
@@ -2487,7 +2487,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 &lt;p&gt;また、プロファイル機能も充実していてどこがボトルネックがわかりやすい。&lt;/p&gt;
 
-&lt;h2 id=&#34;感想:c76c02a9716918700fc6ffc19450c1da&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;Metalの発表を聞いて一番ワクワクして触りたかったのが、このGPGPUだった。これまでMacでは統合開発環境でGPGPUが組めなかった（普通のシェーダだけならUnityがあった）ので、使い慣れたXcodeで触れるのは楽しみだった。&lt;/p&gt;
 
@@ -2497,7 +2497,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 &lt;p&gt;にしても、シェーダ関係は環境毎に用語が微妙に変わるのは何とかしてほしい。。。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:c76c02a9716918700fc6ffc19450c1da&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;日本語の解説：&lt;a href=&#34;http://postd.cc/understanding-perlin-noise/&#34;&gt;パーリンノイズを理解する(POSTD)&lt;/a&gt;&lt;/li&gt;
@@ -2507,7 +2507,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 &lt;li&gt;FragmentShaderで実装や応用例：&lt;a href=&#34;http://www.sci.utah.edu/~leenak/IndStudy_reportfall/Perlin%20Noise%20on%20GPU.html&#34;&gt;Perlin Noise on GPU&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:c76c02a9716918700fc6ffc19450c1da&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Xcode 7.2&lt;/li&gt;
@@ -2515,7 +2515,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:c76c02a9716918700fc6ffc19450c1da&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalCompute&#34;&gt;こちら&lt;/a&gt; (&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>
@@ -2529,21 +2529,21 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
       <guid>https://mike-neko.github.io/blog/metal-model/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:6a6245d2d174e54873361b2ccb73e605&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;元ネタのApple公式の&lt;a href=&#34;https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html&#34;&gt;MetalKitEssentials&lt;/a&gt;をSwiftで書き直し＋αしたもの。
 内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
 シェーダもいたってシンプルでライトもなし。&lt;br /&gt;
 ちなみに、MetalKitは&lt;strong&gt;iOS9以降&lt;/strong&gt;でしか使えないので注意。&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:6a6245d2d174e54873361b2ccb73e605&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
-&lt;h3 id=&#34;はじめに:6a6245d2d174e54873361b2ccb73e605&#34;&gt;はじめに&lt;/h3&gt;
+&lt;h3 id=&#34;はじめに&#34;&gt;はじめに&lt;/h3&gt;
 
 &lt;p&gt;一番最初につまずいたのは、ビルド自体が通らず、Metalのフレームワークのインポートでエラーになる！ってこと。当然、コードを書く時にも自動補完は効かないしエラーでまくるし・・・&lt;br /&gt;
 で、原因はターゲットでシュミレータを選択していたこと。実行できないのは知っていたけど、まさかビルドすら通らないのは予想外。。。&lt;/p&gt;
 
-&lt;h3 id=&#34;バッファへのアクセス:6a6245d2d174e54873361b2ccb73e605&#34;&gt;バッファへのアクセス&lt;/h3&gt;
+&lt;h3 id=&#34;バッファへのアクセス&#34;&gt;バッファへのアクセス&lt;/h3&gt;
 
 &lt;p&gt;今回、一番書き方が判らなくて苦労したのがこれ。単にVertexBufferへのポインタを取得して、中のデータを読み書きしたいだけなのだが、当然、Swiftがメモリへの直アクセスを許してくれるわけはなく・・・&lt;/p&gt;
 
@@ -2557,19 +2557,19 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 &lt;p&gt;ちょっと面倒だけど、暗黙的な「わかる人にはわかる」といった曖昧さを排除し、ポインタの状態やメモリにアクセスしていることを明示させているのは、Swiftの良さの一つだと思う。&lt;/p&gt;
 
-&lt;h3 id=&#34;シェーダ用の構造体:6a6245d2d174e54873361b2ccb73e605&#34;&gt;シェーダ用の構造体&lt;/h3&gt;
+&lt;h3 id=&#34;シェーダ用の構造体&#34;&gt;シェーダ用の構造体&lt;/h3&gt;
 
 &lt;p&gt;今回、シェーダにデータを渡す時の型（構造体）を、シェーダのファイルとSwift上でそれぞれ同じ宣言をしている。これは、Swiftから直接Cのファイルを見に行けない為。ブリッジヘッダを使ったりすれば重複して宣言しなくてよさそうだけど、未検証。Swift上ではSwiftの構造体を使えた方が便利かなと思ったので（結局使わなかったけど）&lt;/p&gt;
 
 &lt;p&gt;なお、当然ながら&lt;strong&gt;メモリのアライメントには注意が必要&lt;/strong&gt;(&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Metal/Reference/MetalShadingLanguageGuide/data-types/data-types.html#//apple_ref/doc/uid/TP40014364-CH2-SW15&#34;&gt;公式:アライメント一覧&lt;/a&gt;)なので、必要に応じてパディングすること。ちなみに忘れると画面が心霊現象みたくなったり表示されなかったり・・・&lt;/p&gt;
 
-&lt;h3 id=&#34;simd:6a6245d2d174e54873361b2ccb73e605&#34;&gt;SIMD&lt;/h3&gt;
+&lt;h3 id=&#34;simd&#34;&gt;SIMD&lt;/h3&gt;
 
 &lt;p&gt;Xcode7からようやくSIMDがサポート。これでvectorやmatrixのベタなコードを書く or 持ってくる必要がなくなった。（でも移動や回転とかはやっぱり自前が必要）&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;import simd&lt;/code&gt;で使えるようになる。&lt;code&gt;MetalKit&lt;/code&gt;のインポートでも良い。&lt;/p&gt;
 
-&lt;h2 id=&#34;感想:6a6245d2d174e54873361b2ccb73e605&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;正直なところ、Unityとかに慣れてしまった身にとって、Metalは結構大変だった。。。日本語の資料も少ないし、公式の資料もまだまだObjective-Cが多い感じ。&lt;br /&gt;
 といっても、DirectXのダラダラとした初期化とかに比べると、機種依存がなく簡潔で楽。久々に3Dの基礎を振り返る良い機会になったと思う。&lt;br /&gt;
@@ -2578,7 +2578,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 &lt;p&gt;触っていて、良い！と思ったのは、バグで描画がおかしくなったりしても、影響が端末だけに限られて作業しているMacは無事なこと。&lt;br /&gt;
 昔々のDirectXでしょっちゅうブルースクリーンを出してしまい、コードが消えたりPC不安定になっていた人なので、これはとても助かった。&lt;/p&gt;
 
-&lt;h1 id=&#34;開発環境:6a6245d2d174e54873361b2ccb73e605&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Xcode 7.2&lt;/li&gt;
@@ -2586,7 +2586,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:6a6245d2d174e54873361b2ccb73e605&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalModel&#34;&gt;こちら&lt;/a&gt; (&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>

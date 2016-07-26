@@ -102,13 +102,13 @@
     </span>
     
 
-<h2 id="概要:e823dad6a53c6c55cc48d4a6d6460216">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p>サーバーサイドSwiftフレームワークの<a href="https://perfect.org/">Perfect</a>の使い方のメモその1</p>
 
 <p>導入編ではベースとなるプロジェクトを一から作るあたりまで</p>
 
-<h2 id="きっかけ:e823dad6a53c6c55cc48d4a6d6460216">きっかけ</h2>
+<h2 id="きっかけ">きっかけ</h2>
 
 <p>Perfectがついに1.0になったというのを聞きつけてGitHubのREADMEを見てると、、、</p>
 
@@ -122,15 +122,15 @@
 
 <p>ちょうど、Push通知周りの実験をしたかったこともあり、さっそく手を出すことに〜</p>
 
-<h2 id="手順:e823dad6a53c6c55cc48d4a6d6460216">手順</h2>
+<h2 id="手順">手順</h2>
 
-<h3 id="下準備:e823dad6a53c6c55cc48d4a6d6460216">下準備</h3>
+<h3 id="下準備">下準備</h3>
 
-<h4 id="github-https-github-com-perfectlysoft-perfect-からperfectをダウンロードする:e823dad6a53c6c55cc48d4a6d6460216"><a href="https://github.com/PerfectlySoft/Perfect">GitHub</a>からPerfectをダウンロードする</h4>
+<h4 id="github-https-github-com-perfectlysoft-perfect-からperfectをダウンロードする"><a href="https://github.com/PerfectlySoft/Perfect">GitHub</a>からPerfectをダウンロードする</h4>
 
 <p>ダウンロードしたら適当な場所に展開しておく</p>
 
-<h4 id="xcodeにテンプレートを追加:e823dad6a53c6c55cc48d4a6d6460216">Xcodeにテンプレートを追加</h4>
+<h4 id="xcodeにテンプレートを追加">Xcodeにテンプレートを追加</h4>
 
 <ol>
 <li><code>~/Library/Developer/Xcode</code>をFinderで開く</li>
@@ -140,13 +140,13 @@
 <li>3で作ったフォルダに4のフォルダを貼り付け</li>
 </ol>
 
-<h3 id="プロジェクトの作成:e823dad6a53c6c55cc48d4a6d6460216">プロジェクトの作成</h3>
+<h3 id="プロジェクトの作成">プロジェクトの作成</h3>
 
 <p><em>ワークスペース名：<code>SmapleBasePerfect</code><br />
  プロジェクト名：<code>SampleServer</code></em><br />
 で作成する前提での手順</p>
 
-<h4 id="ワークスペースの作成:e823dad6a53c6c55cc48d4a6d6460216">ワークスペースの作成</h4>
+<h4 id="ワークスペースの作成">ワークスペースの作成</h4>
 
 <ol>
 <li>Xcodeのメニューの<code>File</code>-<code>New</code>-<code>Workspace...</code>を選択</li>
@@ -156,7 +156,7 @@
 
 <p>自動で空のワークスペースの画面が開かれるので、そのままの状態で次の手順へ</p>
 
-<h4 id="プロジェクトの作成-1:e823dad6a53c6c55cc48d4a6d6460216">プロジェクトの作成</h4>
+<h4 id="プロジェクトの作成-1">プロジェクトの作成</h4>
 
 <ol>
 <li>Xcodeのメニューの<code>File</code>-<code>New</code>-<code>Project...</code>を選択</li>
@@ -177,7 +177,7 @@
 </figure>
 </p>
 
-<h4 id="perfectを追加:e823dad6a53c6c55cc48d4a6d6460216">Perfectを追加</h4>
+<h4 id="perfectを追加">Perfectを追加</h4>
 
 <ol>
 <li>ダウンロードしておいたPerfectのプロジェクト直下にある<code>PerfectLib</code>と<code>PerfectServer</code>のフォルダを丸ごとコピー</li>
@@ -191,7 +191,7 @@
 <li><code>PerfectServer.xcodeproj</code>についても3からの同じ手順で追加</li>
 </ol>
 
-<h4 id="スキームの設定:e823dad6a53c6c55cc48d4a6d6460216">スキームの設定</h4>
+<h4 id="スキームの設定">スキームの設定</h4>
 
 <ol>
 <li>Xcodeのメニューの<code>Product</code>-<code>Scheme</code>-<code>Manage Schemes...</code>を選択</li>
@@ -202,7 +202,7 @@
 <li><code>Close</code>で閉じる</li>
 </ol>
 
-<h4 id="フレームワークの追加:e823dad6a53c6c55cc48d4a6d6460216">フレームワークの追加</h4>
+<h4 id="フレームワークの追加">フレームワークの追加</h4>
 
 <ol>
 <li>作成したプロジェクトを選択</li>
@@ -215,7 +215,7 @@
 </li>
 </ol>
 
-<h4 id="ドキュメントを配置:e823dad6a53c6c55cc48d4a6d6460216">ドキュメントを配置</h4>
+<h4 id="ドキュメントを配置">ドキュメントを配置</h4>
 
 <ol>
 <li><code>Build Phases</code>タブを選択</li>
@@ -225,31 +225,31 @@
 <li><code>Name</code>の下の方にある<code>＋</code>をクリックし、<code>index.mustache</code>を選択して<code>Add</code><br /></li>
 </ol>
 
-<h2 id="動作確認:e823dad6a53c6c55cc48d4a6d6460216">動作確認</h2>
+<h2 id="動作確認">動作確認</h2>
 
 <p>Xcodeで<code>SampleServer</code>のスキームで<code>Run</code>して、GUIが立ち上がるとサーバが動作した状態となる。</p>
 
 <p>その状態で<code>http://0.0.0.0:8181/</code>にアクセスして、「Hello, world!」と出ればひとまずOK。</p>
 
-<h1 id="感想:e823dad6a53c6c55cc48d4a6d6460216">感想</h1>
+<h1 id="感想">感想</h1>
 
 <p>意外に日本語の、特にMac上で動かす場合の資料が少なくて苦労した。<br />
 それとこういうのを触る度にサーバ周りの知識が足りないのを痛感する・・・</p>
 
-<h1 id="参考リンク:e823dad6a53c6c55cc48d4a6d6460216">参考リンク</h1>
+<h1 id="参考リンク">参考リンク</h1>
 
 <ul>
 <li><a href="http://code-me-dirty.blogspot.jp/2016/02/creating-perfect-swift-server.html">Create a Perfect Swift Server Project(from scratch) in Xcode</a></li>
 </ul>
 
-<h1 id="開発環境:e823dad6a53c6c55cc48d4a6d6460216">開発環境</h1>
+<h1 id="開発環境">開発環境</h1>
 
 <ul>
 <li>OS X 10.11.4</li>
 <li>Xcode 7.3</li>
 </ul>
 
-<h1 id="ソース:e823dad6a53c6c55cc48d4a6d6460216">ソース</h1>
+<h1 id="ソース">ソース</h1>
 
 <p><a href="https://github.com/mike-neko/SmapleBasePerfect">こちら</a></p>
 

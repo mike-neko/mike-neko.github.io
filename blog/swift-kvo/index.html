@@ -102,17 +102,17 @@
     </span>
     
 
-<h2 id="概要:2d62b24ac35a6aa9b350e669016ea483">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p><code>Swift</code>で<code>KVO</code>を利用する方法について。特に<code>context</code>を一意の識別子として使いたい場合の方法。</p>
 
-<h2 id="サンプルコード:2d62b24ac35a6aa9b350e669016ea483">サンプルコード</h2>
+<h2 id="サンプルコード">サンプルコード</h2>
 
 <script type="text/javascript" src="https://gist.github.com/5f00c1927b3cede0376c575147956112.js"></script>
 
-<h2 id="ポイント:2d62b24ac35a6aa9b350e669016ea483">ポイント</h2>
+<h2 id="ポイント">ポイント</h2>
 
-<h3 id="nsobject-を継承する:2d62b24ac35a6aa9b350e669016ea483"><code>NSObject</code>を継承する</h3>
+<h3 id="nsobject-を継承する"><code>NSObject</code>を継承する</h3>
 
 <p>監視対象も監視するクラスも両方とも<code>NSObject</code>のサブクラスであることが必要。</p>
 
@@ -125,7 +125,7 @@
 
 <p>監視する側だとそもそも<code>addObserver</code>などが利用できない。</p>
 
-<h3 id="プロパティには-dynamic-をつける:2d62b24ac35a6aa9b350e669016ea483">プロパティには<code>dynamic</code>をつける</h3>
+<h3 id="プロパティには-dynamic-をつける">プロパティには<code>dynamic</code>をつける</h3>
 
 <p>監視対象のプロパティ（<code>addObserver</code>で追加するプロパティ）は必ず<code>dynamic</code>をつけること。</p>
 
@@ -133,7 +133,7 @@
 （＝変更されても<code>observeValueForKeyPath</code>が呼ばれない）
 という判りにくいバグになってしまう。</p>
 
-<h3 id="アクセスコントロールに注意:2d62b24ac35a6aa9b350e669016ea483">アクセスコントロールに注意</h3>
+<h3 id="アクセスコントロールに注意">アクセスコントロールに注意</h3>
 
 <p>プロパティが別クラスのオブジェクト?の場合、<code>private</code>にすると</p>
 
@@ -148,7 +148,7 @@
 <p><code>String</code>や<code>Int</code>ではエラーにならないのは確認したが、具体的な条件は未調査・・・</p>
 </blockquote>
 
-<h3 id="識別子としての-context-の指定:2d62b24ac35a6aa9b350e669016ea483">識別子としての<code>context</code>の指定</h3>
+<h3 id="識別子としての-context-の指定">識別子としての<code>context</code>の指定</h3>
 
 <p>通常の指定方法は参考リンクの通り（<code>private var myContext = 0</code>）。
 ただ、今回のサンプルでは、キー値の指定とまとめて以下のようにしている。</p>
@@ -174,21 +174,21 @@ class ViewController: UIViewController {
 
 <p>と言った書き方でも同じ。</p>
 
-<h3 id="通知の登録-解除:2d62b24ac35a6aa9b350e669016ea483">通知の登録 / 解除</h3>
+<h3 id="通知の登録-解除">通知の登録 / 解除</h3>
 
-<h4 id="呼び出しタイミング:2d62b24ac35a6aa9b350e669016ea483">呼び出しタイミング</h4>
+<h4 id="呼び出しタイミング">呼び出しタイミング</h4>
 
-<h5 id="登録時:2d62b24ac35a6aa9b350e669016ea483">登録時</h5>
+<h5 id="登録時">登録時</h5>
 
 <p>サンプルでは<code>UIViewController</code>なので、<code>viewWillAppear</code>で登録しているが、
 通常は<code>init</code>での登録が良さげ。</p>
 
-<h5 id="解除時:2d62b24ac35a6aa9b350e669016ea483">解除時</h5>
+<h5 id="解除時">解除時</h5>
 
 <p>サンプルでは登録が<code>viewWillAppear</code>なので、対となる<code>viewWillDisappear</code>で解除しているが、
 通常は<code>deinit</code>での登録が良い。</p>
 
-<h4 id="登録方法:2d62b24ac35a6aa9b350e669016ea483">登録方法</h4>
+<h4 id="登録方法">登録方法</h4>
 
 <pre><code>addObserver(self, forKeyPath: KeyContext.value1, options: .New, context: &amp;KeyContext.value1)
 </code></pre>
@@ -203,7 +203,7 @@ class ViewController: UIViewController {
 
 <p>といったあたり。</p>
 
-<h3 id="通知の受信:2d62b24ac35a6aa9b350e669016ea483">通知の受信</h3>
+<h3 id="通知の受信">通知の受信</h3>
 
 <p>今回は、<code>context</code>を識別子として利用しているので、<code>switch</code>でまとめて比較しているが、<code>defalut</code>の時にちゃんと</p>
 
@@ -220,7 +220,7 @@ class ViewController: UIViewController {
 
 <p>の実行時エラーとなる。</p>
 
-<h4 id="値の取得:2d62b24ac35a6aa9b350e669016ea483">値の取得</h4>
+<h4 id="値の取得">値の取得</h4>
 
 <pre><code>// Change Dictionary Keys: 
 // NSKeyValueChangeNewKeyとかNSKeyValueChangeOldKeyとか
@@ -231,13 +231,13 @@ let value = change?[&quot;Change Dictionary Keys&quot;] as? &quot;データ型&q
 <code>NSNull</code>や型が違う場合などは、最終的に<code>nil</code>が入るのでサンプルのように
 <code>guard</code>ではじいておくとスマート。</p>
 
-<h1 id="参考リンク:2d62b24ac35a6aa9b350e669016ea483">参考リンク</h1>
+<h1 id="参考リンク">参考リンク</h1>
 
 <ul>
 <li>公式：<a href="https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/AdoptingCocoaDesignPatterns.html#//apple_ref/doc/uid/TP40014216-CH7-ID12">Using Swift with Cocoa and Objective-C (Swift 2.2)</a></li>
 </ul>
 
-<h1 id="開発環境:2d62b24ac35a6aa9b350e669016ea483">開発環境</h1>
+<h1 id="開発環境">開発環境</h1>
 
 <ul>
 <li>Xcode 7.3.1</li>

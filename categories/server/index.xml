@@ -17,7 +17,7 @@
       <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:6214d744b42492b1045fac72bc277c04&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
 
@@ -25,7 +25,7 @@
 &lt;p&gt;過去の記事（&lt;a href=&#34;../docker/&#34;&gt;Dockerでの開発環境&lt;/a&gt;）&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;環境:6214d744b42492b1045fac72bc277c04&#34;&gt;環境&lt;/h3&gt;
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
 
 &lt;p&gt;ベースは前回構築したnginx+Dockerで通信はオレオレ証明書によるSSLを前提。&lt;/p&gt;
 
@@ -40,9 +40,9 @@
 
 &lt;p&gt;なお、iOSは&lt;strong&gt;iOS9&lt;/strong&gt;からhttp2へ対応している。&lt;/p&gt;
 
-&lt;h2 id=&#34;手順:6214d744b42492b1045fac72bc277c04&#34;&gt;手順&lt;/h2&gt;
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
-&lt;h3 id=&#34;事前準備:6214d744b42492b1045fac72bc277c04&#34;&gt;事前準備&lt;/h3&gt;
+&lt;h3 id=&#34;事前準備&#34;&gt;事前準備&lt;/h3&gt;
 
 &lt;p&gt;http2での通信かどうかの確認用に以下のChromeのプラグインを入れておく。&lt;/p&gt;
 
@@ -51,7 +51,7 @@
 
 &lt;p&gt;http2での通信だと稲妻が青色になるので確認が楽。&lt;/p&gt;
 
-&lt;h3 id=&#34;macでの作業:6214d744b42492b1045fac72bc277c04&#34;&gt;Macでの作業&lt;/h3&gt;
+&lt;h3 id=&#34;macでの作業&#34;&gt;Macでの作業&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;OpenSSLを最新にあげる&lt;br /&gt;
@@ -82,13 +82,13 @@ listen  443 ssl http2;
 &lt;li&gt;&lt;p&gt;ChromeからMacへアクセスしてみて青い稲妻になっていれば&lt;code&gt;nginx&lt;/code&gt;の設定は成功&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;ios端末での通信:6214d744b42492b1045fac72bc277c04&#34;&gt;iOS端末での通信&lt;/h3&gt;
+&lt;h3 id=&#34;ios端末での通信&#34;&gt;iOS端末での通信&lt;/h3&gt;
 
 &lt;p&gt;iOS9以降の&lt;code&gt;NSURLSession&lt;/code&gt;での通信であれば、特に設定など不要で自動で&lt;code&gt;http2&lt;/code&gt;になる。&lt;/p&gt;
 
 &lt;p&gt;なお、規格上は&lt;code&gt;http&lt;/code&gt;のみでも対応しているがiOSでどうかは未検証。&lt;/p&gt;
 
-&lt;h3 id=&#34;ログ設定:6214d744b42492b1045fac72bc277c04&#34;&gt;ログ設定&lt;/h3&gt;
+&lt;h3 id=&#34;ログ設定&#34;&gt;ログ設定&lt;/h3&gt;
 
 &lt;p&gt;iOS端末からの通信も&lt;code&gt;http2&lt;/code&gt;になっているかの確認は、&lt;code&gt;nginx&lt;/code&gt;のログで判別する。&lt;/p&gt;
 
@@ -96,14 +96,14 @@ listen  443 ssl http2;
 詳細は以下のページを参考に&lt;br /&gt;
 &lt;a href=&#34;http://d.hatena.ne.jp/ASnoKaze/20150818/1439896998&#34;&gt;nginxでアクセスログにhttp2の通信か出力する&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;過去情報:6214d744b42492b1045fac72bc277c04&#34;&gt;過去情報&lt;/h2&gt;
+&lt;h2 id=&#34;過去情報&#34;&gt;過去情報&lt;/h2&gt;
 
 &lt;p&gt;標準の&lt;code&gt;nginx&lt;/code&gt;に&lt;code&gt;http2&lt;/code&gt;モジュールがないと思っていたら、
 実はちゃんとあったので訂正。&lt;/p&gt;
 
 &lt;p&gt;もったいないので、&lt;code&gt;nginx-full&lt;/code&gt;の情報を残しておく。&lt;/p&gt;
 
-&lt;h3 id=&#34;nginx-full:6214d744b42492b1045fac72bc277c04&#34;&gt;nginx-full&lt;/h3&gt;
+&lt;h3 id=&#34;nginx-full&#34;&gt;nginx-full&lt;/h3&gt;
 
 &lt;p&gt;通常の&lt;code&gt;Homebrew&lt;/code&gt;の&lt;code&gt;nginx&lt;/code&gt;ではオプションのモジュールが少ないので、
 標準では足りないモジュールをインストールしたい時は&lt;code&gt;nginx-full&lt;/code&gt;をインストールする。&lt;/p&gt;
@@ -120,13 +120,13 @@ brew install nginx-full --with-http2
 &lt;pre&gt;&lt;code&gt;brew info nginx-full
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h1 id=&#34;参考リンク:6214d744b42492b1045fac72bc277c04&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://kannokanno.hatenablog.com/entry/2014/02/10/134920&#34;&gt;Mac - homebrewでnginxを入れるときはnginx-fullを入れよう&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:6214d744b42492b1045fac72bc277c04&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.5&lt;/li&gt;
@@ -145,7 +145,7 @@ brew install nginx-full --with-http2
       <guid>https://mike-neko.github.io/blog/perfect-push/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:895c24bcebc238bc55d3833602dde15b&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその3&lt;/p&gt;
 
@@ -154,7 +154,7 @@ brew install nginx-full --with-http2
 &lt;p&gt;Perfectは最新のAPNsの通信形式に対応していて、細かなエラーレスポンスを取れるのがメリット。
 なので、開発用としては大変使いやすい。&lt;/p&gt;
 
-&lt;h2 id=&#34;手順:895c24bcebc238bc55d3833602dde15b&#34;&gt;手順&lt;/h2&gt;
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
 &lt;p&gt;Push通知はサーバ側で微妙に必要とされる証明書が変わったりするのがややこしいところ。
 PerfectでPush通知を送るのに必要なものは以下の通り。&lt;/p&gt;
@@ -173,7 +173,7 @@ PerfectでPush通知を送るのに必要なものは以下の通り。&lt;/p&gt
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;登録-プロビジョニングプロファイルと証明書の作成:895c24bcebc238bc55d3833602dde15b&#34;&gt;登録〜プロビジョニングプロファイルと証明書の作成&lt;/h3&gt;
+&lt;h3 id=&#34;登録-プロビジョニングプロファイルと証明書の作成&#34;&gt;登録〜プロビジョニングプロファイルと証明書の作成&lt;/h3&gt;
 
 &lt;p&gt;証明書の取得には&lt;code&gt;AppID&lt;/code&gt;の登録やら結構手順があって大変だが、まずは以下のリンク先の通りに作業をすればOK。&lt;/p&gt;
 
@@ -183,9 +183,9 @@ PerfectでPush通知を送るのに必要なものは以下の通り。&lt;/p&gt
 
 &lt;p&gt;なお、最後の手順の&lt;code&gt;APNs用証明書(.p12)&lt;/code&gt;を書き出す時のファイル名は&lt;code&gt;apns.p12&lt;/code&gt;とする&lt;/p&gt;
 
-&lt;h3 id=&#34;サーバ用の証明書の準備:895c24bcebc238bc55d3833602dde15b&#34;&gt;サーバ用の証明書の準備&lt;/h3&gt;
+&lt;h3 id=&#34;サーバ用の証明書の準備&#34;&gt;サーバ用の証明書の準備&lt;/h3&gt;
 
-&lt;h4 id=&#34;apns用証明書-pem:895c24bcebc238bc55d3833602dde15b&#34;&gt;APNs用証明書(.pem)&lt;/h4&gt;
+&lt;h4 id=&#34;apns用証明書-pem&#34;&gt;APNs用証明書(.pem)&lt;/h4&gt;
 
 &lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_cert.pem&lt;/code&gt;を作成する&lt;/p&gt;
 
@@ -193,7 +193,7 @@ PerfectでPush通知を送るのに必要なものは以下の通り。&lt;/p&gt
 openssl pkcs12 -clcerts -nokeys -out apns_dev_cert.pem -in apns.p12
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;秘密鍵-pem:895c24bcebc238bc55d3833602dde15b&#34;&gt;秘密鍵(.pem)&lt;/h4&gt;
+&lt;h4 id=&#34;秘密鍵-pem&#34;&gt;秘密鍵(.pem)&lt;/h4&gt;
 
 &lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_key.pem&lt;/code&gt;を作成する&lt;/p&gt;
 
@@ -204,7 +204,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;p&gt;&lt;code&gt;Enter PEM pass phrase:&lt;/code&gt;と秘密鍵のパスフレーズを聞かれるので、適当なものを入れる。
 後でサーバに設定するので忘れないように・・・&lt;/p&gt;
 
-&lt;h4 id=&#34;caルート証明書:895c24bcebc238bc55d3833602dde15b&#34;&gt;CAルート証明書&lt;/h4&gt;
+&lt;h4 id=&#34;caルート証明書&#34;&gt;CAルート証明書&lt;/h4&gt;
 
 &lt;p&gt;APNsとサーバで接続する為に&lt;code&gt;Entrust&lt;/code&gt;の証明書が必要なので、以下からダウンロードする。&lt;/p&gt;
 
@@ -212,12 +212,12 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;a href=&#34;https://www.entrust.com/root-certificates/entrust_2048_ca.cer&#34;&gt;entrust_2048_ca.cer&lt;/a&gt;&lt;br /&gt;
 （&lt;a href=&#34;https://www.entrust.com/get-support/ssl-certificate-support/root-certificate-downloads/&#34;&gt;Entrustの証明書DLページ&lt;/a&gt; - Entrust.net Certificate Authority (2048) - Download）&lt;/p&gt;
 
-&lt;h3 id=&#34;iosアプリの作成:895c24bcebc238bc55d3833602dde15b&#34;&gt;iOSアプリの作成&lt;/h3&gt;
+&lt;h3 id=&#34;iosアプリの作成&#34;&gt;iOSアプリの作成&lt;/h3&gt;
 
 &lt;p&gt;とりあえず、必要最低限でPush通知を受信できる状態にする。
 デバイストークンの更新等には未対応なので注意。&lt;/p&gt;
 
-&lt;h4 id=&#34;プロジェクトの設定:895c24bcebc238bc55d3833602dde15b&#34;&gt;プロジェクトの設定&lt;/h4&gt;
+&lt;h4 id=&#34;プロジェクトの設定&#34;&gt;プロジェクトの設定&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;ダウンロードしたプロビジョニングプロファイルをダブルクリックしてインストール&lt;/li&gt;
@@ -225,7 +225,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;&lt;code&gt;Provisioning Profile&lt;/code&gt;をインストールしたプロビジョニングプロファイルにする&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;アプリの実装:895c24bcebc238bc55d3833602dde15b&#34;&gt;アプリの実装&lt;/h4&gt;
+&lt;h4 id=&#34;アプリの実装&#34;&gt;アプリの実装&lt;/h4&gt;
 
 &lt;p&gt;&lt;code&gt;AppDelegate&lt;/code&gt;に以下の実装をする&lt;/p&gt;
 
@@ -244,7 +244,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;また、マルチタスクから終了させても届かない場合があるので、注意&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;サーバへ証明書の設置:895c24bcebc238bc55d3833602dde15b&#34;&gt;サーバへ証明書の設置&lt;/h3&gt;
+&lt;h3 id=&#34;サーバへ証明書の設置&#34;&gt;サーバへ証明書の設置&lt;/h3&gt;
 
 &lt;p&gt;基礎編の&lt;a href=&#34;../perfect-2/&#34;&gt;ビルドでファイルを配置する&lt;/a&gt;の方法で証明書を配置する&lt;/p&gt;
 
@@ -266,7 +266,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;（&lt;code&gt;webroot&lt;/code&gt;へのドキュメントの配置とは別に&lt;code&gt;Copy Files&lt;/code&gt;を設定する）&lt;/p&gt;
 
-&lt;h3 id=&#34;サーバの実装:895c24bcebc238bc55d3833602dde15b&#34;&gt;サーバの実装&lt;/h3&gt;
+&lt;h3 id=&#34;サーバの実装&#34;&gt;サーバの実装&lt;/h3&gt;
 
 &lt;p&gt;サーバ側での実装は主に2つ。
 ひとつは証明書を&lt;code&gt;NotificationPusher&lt;/code&gt;に初期設定するのと、
@@ -284,7 +284,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;p&gt;この実装でサーバにアクセスする度に、Push通知が端末へ送られる。
 送信時の結果は、ブラウザに表示される（エラーであればエラー内容）。&lt;/p&gt;
 
-&lt;h2 id=&#34;感想:895c24bcebc238bc55d3833602dde15b&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;今回の一番大変だったのはEntrustの証明書の置き場が変わっていたこと。。。
 逆に言えばそれ以外はとても簡単にPush通知を送れる環境を作れた感じ。&lt;/p&gt;
@@ -296,13 +296,13 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;もちろん、商用はAWSとかがオススメだけど。。。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:895c24bcebc238bc55d3833602dde15b&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:895c24bcebc238bc55d3833602dde15b&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.4&lt;/li&gt;
@@ -326,13 +326,13 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
       <guid>https://mike-neko.github.io/blog/perfect-2/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその2&lt;/p&gt;
 
 &lt;p&gt;基礎編ではルーティングやリクエストの処理方法のあたりまで&lt;/p&gt;
 
-&lt;h2 id=&#34;urlルーティング:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;URLルーティング&lt;/h2&gt;
+&lt;h2 id=&#34;urlルーティング&#34;&gt;URLルーティング&lt;/h2&gt;
 
 &lt;p&gt;サンプルを見ると、ルーティングは大きくわけて&lt;/p&gt;
 
@@ -345,14 +345,14 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;設定はいずれも&lt;code&gt;PerfectServerModuleInit()&lt;/code&gt;の中で行う。&lt;/p&gt;
 
-&lt;h3 id=&#34;pagehandlerでのルーティング:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;PageHandlerでのルーティング&lt;/h3&gt;
+&lt;h3 id=&#34;pagehandlerでのルーティング&#34;&gt;PageHandlerでのルーティング&lt;/h3&gt;
 
 &lt;p&gt;Webアプリなどでの固定ページの表示向け。&lt;br /&gt;
 公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/PerfectExamples/blob/master/Sources/Authenticator/#authenticator&#34;&gt;Authenticator&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;例えば、&lt;code&gt;http://0.0.0.0:8181/admin/&lt;/code&gt;というページを表示させたい時の流れとしては、&lt;/p&gt;
 
-&lt;h4 id=&#34;表示するページを-mustache-のテンプレートで作成:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;表示するページを&lt;code&gt;mustache&lt;/code&gt;のテンプレートで作成&lt;/h4&gt;
+&lt;h4 id=&#34;表示するページを-mustache-のテンプレートで作成&#34;&gt;表示するページを&lt;code&gt;mustache&lt;/code&gt;のテンプレートで作成&lt;/h4&gt;
 
 &lt;p&gt;例だと&lt;code&gt;admin.mustache&lt;/code&gt;というファイル名にし、先頭のところで&lt;code&gt;handler:AdminHandler&lt;/code&gt;と指定する。&lt;br /&gt;
 ポイントは、&lt;/p&gt;
@@ -362,11 +362,11 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;ファイル名がアクセスする際のディレクトリと対応&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;テンプレートをプロジェクトへ追加:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;テンプレートをプロジェクトへ追加&lt;/h4&gt;
+&lt;h4 id=&#34;テンプレートをプロジェクトへ追加&#34;&gt;テンプレートをプロジェクトへ追加&lt;/h4&gt;
 
 &lt;p&gt;後述の小ネタにある「ドキュメントの配置」の方法で、&lt;code&gt;admin.mustache&lt;/code&gt;がドキュメントルートへ配置されるように設定する。&lt;/p&gt;
 
-&lt;h4 id=&#34;pagehandler-を作成:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;&lt;code&gt;PageHandler&lt;/code&gt;を作成&lt;/h4&gt;
+&lt;h4 id=&#34;pagehandler-を作成&#34;&gt;&lt;code&gt;PageHandler&lt;/code&gt;を作成&lt;/h4&gt;
 
 &lt;p&gt;ページにアクセスがあった時の処理を行う為の&lt;code&gt;PageHandler&lt;/code&gt;を継承したクラスを作る。&lt;br /&gt;
 （クラス名は任意だが、わかりやすいように&lt;code&gt;AdminHandler&lt;/code&gt;としておく）&lt;/p&gt;
@@ -388,14 +388,14 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;&lt;code&gt;PageHandler&lt;/code&gt;の中では、テンプレートに流し込む変数のDictionaryを生成する。&lt;/p&gt;
 
-&lt;h3 id=&#34;requesthandlerでのルーティング:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;RequestHandlerでのルーティング&lt;/h3&gt;
+&lt;h3 id=&#34;requesthandlerでのルーティング&#34;&gt;RequestHandlerでのルーティング&lt;/h3&gt;
 
 &lt;p&gt;APIとかブログのような動的なページ向け。&lt;br /&gt;
 公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/PerfectExamples/blob/master/Sources/URL%20Routing/#url-routing&#34;&gt;URL Routing&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;例えば、REST APIで&lt;code&gt;http://0.0.0.0:8181/user/mike&lt;/code&gt;の&lt;code&gt;GET&lt;/code&gt;でmikeというユーザの情報を取得したい時の流れとしては、&lt;/p&gt;
 
-&lt;h4 id=&#34;ルーティングを設定:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;ルーティングを設定&lt;/h4&gt;
+&lt;h4 id=&#34;ルーティングを設定&#34;&gt;ルーティングを設定&lt;/h4&gt;
 
 &lt;p&gt;&lt;code&gt;Routing&lt;/code&gt;でルーティングのルール（HTTPのメソッドやURLなど）を&lt;code&gt;RouteMap&lt;/code&gt;を使って設定する。&lt;/p&gt;
 
@@ -415,7 +415,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;クロージャで対応する&lt;code&gt;RequestHandler&lt;/code&gt;を指定する&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;requesthandler-を作成:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;&lt;code&gt;RequestHandler&lt;/code&gt;を作成&lt;/h4&gt;
+&lt;h4 id=&#34;requesthandler-を作成&#34;&gt;&lt;code&gt;RequestHandler&lt;/code&gt;を作成&lt;/h4&gt;
 
 &lt;p&gt;クライアントへ返すレスポンスを生成する為の&lt;code&gt;RequestHandler&lt;/code&gt;を継承したクラスを作る。&lt;br /&gt;
 （クラス名は任意だが、わかりやすいように&lt;code&gt;UserHandler&lt;/code&gt;としておく）&lt;/p&gt;
@@ -425,11 +425,11 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;これで、&lt;code&gt;http://0.0.0.0:8181/user/mike&lt;/code&gt;にアクセスすると&lt;code&gt;{ user: &amp;quot;mike&amp;quot; }&lt;/code&gt;と返ってくる。&lt;/p&gt;
 
-&lt;h4 id=&#34;ルーティング設定の確認:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;ルーティング設定の確認&lt;/h4&gt;
+&lt;h4 id=&#34;ルーティング設定の確認&#34;&gt;ルーティング設定の確認&lt;/h4&gt;
 
 &lt;p&gt;&lt;code&gt;Routing.Routes.description&lt;/code&gt;で設定をダンプできる。これ、かなり便利！&lt;/p&gt;
 
-&lt;h2 id=&#34;リクエストの処理:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;リクエストの処理&lt;/h2&gt;
+&lt;h2 id=&#34;リクエストの処理&#34;&gt;リクエストの処理&lt;/h2&gt;
 
 &lt;p&gt;URLパラメータやPOSTのボディの中身は、&lt;code&gt;WebRequest&lt;/code&gt;の中に格納されている。&lt;/p&gt;
 
@@ -453,19 +453,19 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;といった感じで取得できる。&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
-&lt;h3 id=&#34;ドキュメントの配置:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;ドキュメントの配置&lt;/h3&gt;
+&lt;h3 id=&#34;ドキュメントの配置&#34;&gt;ドキュメントの配置&lt;/h3&gt;
 
 &lt;p&gt;Xcode経由で起動している時に、サーバからドキュメントへアクセスできるようにする方法。なお、ドキュメントルートはデフォルトで&lt;code&gt;./webroot/&lt;/code&gt;が設定されている。&lt;/p&gt;
 
-&lt;h4 id=&#34;documentrootのパスを変更する:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;DocumentRootのパスを変更する&lt;/h4&gt;
+&lt;h4 id=&#34;documentrootのパスを変更する&#34;&gt;DocumentRootのパスを変更する&lt;/h4&gt;
 
 &lt;p&gt;状況によってはソースから改変するのもアリだが、起動時に立ち上がるGUIから変更するのが手軽。&lt;code&gt;Choose...&lt;/code&gt;でフォルダ位置を選択できる。ただし、注意すべきなのは&lt;code&gt;Document Root&lt;/code&gt;のテキストフィールド内でキー操作(return)しないと変更と認識されずに保存されない点（これにはまってソースまで見てようやく気付いた・・・）。変更後はサーバの再起動が必要（というか勝手にされるはず）。&lt;/p&gt;
 
 &lt;p&gt;この方法だとサーバを起動したままでもドキュメントを変更できるが、一方でパスの設定が必要となる。&lt;/p&gt;
 
-&lt;h4 id=&#34;ビルドでファイルを配置する:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;ビルドでファイルを配置する&lt;/h4&gt;
+&lt;h4 id=&#34;ビルドでファイルを配置する&#34;&gt;ビルドでファイルを配置する&lt;/h4&gt;
 
 &lt;p&gt;前回の導入編で使った方法で、デフォルトの&lt;code&gt;./webroot/&lt;/code&gt;を使いたい場合用。&lt;/p&gt;
 
@@ -479,7 +479,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 （プロジェクトに未追加のファイルの場合は&lt;code&gt;Add Other...&lt;/code&gt;からで）&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;同一lan内からのアクセス:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;同一LAN内からのアクセス&lt;/h3&gt;
+&lt;h3 id=&#34;同一lan内からのアクセス&#34;&gt;同一LAN内からのアクセス&lt;/h3&gt;
 
 &lt;p&gt;例えば同じルータに繋がっているiPhoneから、Mac上で動いているPerfectのサーバに接続する方法。&lt;/p&gt;
 
@@ -489,7 +489,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;（今回は既に&lt;a href=&#34;../docker/&#34;&gt;Docker+nginxを構築&lt;/a&gt;してあったので、nginxのリバースプロキシの設定でさくっと対応）&lt;/p&gt;
 
-&lt;h1 id=&#34;感想:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;感想&lt;/h1&gt;
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
 
 &lt;p&gt;普段、クライアント（iOSアプリ）側で使っている開発環境と全く同じ環境でサーバの開発が出来るというのは、
 想像以上に便利というかストレスフリーな感じ。&lt;/p&gt;
@@ -498,13 +498,13 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;ただ、そのあたりのカバーを目指しての&lt;code&gt;Perfect&lt;/code&gt;という命名なんだろうと勝手に想像。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://www.chrismanahan.com/creating-a-web-service-swift-perfect&#34;&gt;Creating a Web Service for Your App in Swift with Perfect&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:421c6f0fa67c2dade0dfb3230a5c0297&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.4&lt;/li&gt;
@@ -526,13 +526,13 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
       <guid>https://mike-neko.github.io/blog/perfect-1/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその1&lt;/p&gt;
 
 &lt;p&gt;導入編ではベースとなるプロジェクトを一から作るあたりまで&lt;/p&gt;
 
-&lt;h2 id=&#34;きっかけ:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;きっかけ&lt;/h2&gt;
+&lt;h2 id=&#34;きっかけ&#34;&gt;きっかけ&lt;/h2&gt;
 
 &lt;p&gt;Perfectがついに1.0になったというのを聞きつけてGitHubのREADMEを見てると、、、&lt;/p&gt;
 
@@ -546,15 +546,15 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;ちょうど、Push通知周りの実験をしたかったこともあり、さっそく手を出すことに〜&lt;/p&gt;
 
-&lt;h2 id=&#34;手順:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;手順&lt;/h2&gt;
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
-&lt;h3 id=&#34;下準備:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;下準備&lt;/h3&gt;
+&lt;h3 id=&#34;下準備&#34;&gt;下準備&lt;/h3&gt;
 
-&lt;h4 id=&#34;github-https-github-com-perfectlysoft-perfect-からperfectをダウンロードする:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;&lt;a href=&#34;https://github.com/PerfectlySoft/Perfect&#34;&gt;GitHub&lt;/a&gt;からPerfectをダウンロードする&lt;/h4&gt;
+&lt;h4 id=&#34;github-https-github-com-perfectlysoft-perfect-からperfectをダウンロードする&#34;&gt;&lt;a href=&#34;https://github.com/PerfectlySoft/Perfect&#34;&gt;GitHub&lt;/a&gt;からPerfectをダウンロードする&lt;/h4&gt;
 
 &lt;p&gt;ダウンロードしたら適当な場所に展開しておく&lt;/p&gt;
 
-&lt;h4 id=&#34;xcodeにテンプレートを追加:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;Xcodeにテンプレートを追加&lt;/h4&gt;
+&lt;h4 id=&#34;xcodeにテンプレートを追加&#34;&gt;Xcodeにテンプレートを追加&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;~/Library/Developer/Xcode&lt;/code&gt;をFinderで開く&lt;/li&gt;
@@ -564,13 +564,13 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;3で作ったフォルダに4のフォルダを貼り付け&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;プロジェクトの作成:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;プロジェクトの作成&lt;/h3&gt;
+&lt;h3 id=&#34;プロジェクトの作成&#34;&gt;プロジェクトの作成&lt;/h3&gt;
 
 &lt;p&gt;&lt;em&gt;ワークスペース名：&lt;code&gt;SmapleBasePerfect&lt;/code&gt;&lt;br /&gt;
  プロジェクト名：&lt;code&gt;SampleServer&lt;/code&gt;&lt;/em&gt;&lt;br /&gt;
 で作成する前提での手順&lt;/p&gt;
 
-&lt;h4 id=&#34;ワークスペースの作成:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;ワークスペースの作成&lt;/h4&gt;
+&lt;h4 id=&#34;ワークスペースの作成&#34;&gt;ワークスペースの作成&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Xcodeのメニューの&lt;code&gt;File&lt;/code&gt;-&lt;code&gt;New&lt;/code&gt;-&lt;code&gt;Workspace...&lt;/code&gt;を選択&lt;/li&gt;
@@ -580,7 +580,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;p&gt;自動で空のワークスペースの画面が開かれるので、そのままの状態で次の手順へ&lt;/p&gt;
 
-&lt;h4 id=&#34;プロジェクトの作成-1:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;プロジェクトの作成&lt;/h4&gt;
+&lt;h4 id=&#34;プロジェクトの作成-1&#34;&gt;プロジェクトの作成&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Xcodeのメニューの&lt;code&gt;File&lt;/code&gt;-&lt;code&gt;New&lt;/code&gt;-&lt;code&gt;Project...&lt;/code&gt;を選択&lt;/li&gt;
@@ -601,7 +601,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;/figure&gt;
 &lt;/p&gt;
 
-&lt;h4 id=&#34;perfectを追加:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;Perfectを追加&lt;/h4&gt;
+&lt;h4 id=&#34;perfectを追加&#34;&gt;Perfectを追加&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;ダウンロードしておいたPerfectのプロジェクト直下にある&lt;code&gt;PerfectLib&lt;/code&gt;と&lt;code&gt;PerfectServer&lt;/code&gt;のフォルダを丸ごとコピー&lt;/li&gt;
@@ -615,7 +615,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;&lt;code&gt;PerfectServer.xcodeproj&lt;/code&gt;についても3からの同じ手順で追加&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h4 id=&#34;スキームの設定:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;スキームの設定&lt;/h4&gt;
+&lt;h4 id=&#34;スキームの設定&#34;&gt;スキームの設定&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Xcodeのメニューの&lt;code&gt;Product&lt;/code&gt;-&lt;code&gt;Scheme&lt;/code&gt;-&lt;code&gt;Manage Schemes...&lt;/code&gt;を選択&lt;/li&gt;
@@ -626,7 +626,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;&lt;code&gt;Close&lt;/code&gt;で閉じる&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h4 id=&#34;フレームワークの追加:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;フレームワークの追加&lt;/h4&gt;
+&lt;h4 id=&#34;フレームワークの追加&#34;&gt;フレームワークの追加&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;作成したプロジェクトを選択&lt;/li&gt;
@@ -639,7 +639,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h4 id=&#34;ドキュメントを配置:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;ドキュメントを配置&lt;/h4&gt;
+&lt;h4 id=&#34;ドキュメントを配置&#34;&gt;ドキュメントを配置&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;Build Phases&lt;/code&gt;タブを選択&lt;/li&gt;
@@ -649,31 +649,31 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;&lt;code&gt;Name&lt;/code&gt;の下の方にある&lt;code&gt;＋&lt;/code&gt;をクリックし、&lt;code&gt;index.mustache&lt;/code&gt;を選択して&lt;code&gt;Add&lt;/code&gt;&lt;br /&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;動作確認:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;動作確認&lt;/h2&gt;
+&lt;h2 id=&#34;動作確認&#34;&gt;動作確認&lt;/h2&gt;
 
 &lt;p&gt;Xcodeで&lt;code&gt;SampleServer&lt;/code&gt;のスキームで&lt;code&gt;Run&lt;/code&gt;して、GUIが立ち上がるとサーバが動作した状態となる。&lt;/p&gt;
 
 &lt;p&gt;その状態で&lt;code&gt;http://0.0.0.0:8181/&lt;/code&gt;にアクセスして、「Hello, world!」と出ればひとまずOK。&lt;/p&gt;
 
-&lt;h1 id=&#34;感想:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;感想&lt;/h1&gt;
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
 
 &lt;p&gt;意外に日本語の、特にMac上で動かす場合の資料が少なくて苦労した。&lt;br /&gt;
 それとこういうのを触る度にサーバ周りの知識が足りないのを痛感する・・・&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://code-me-dirty.blogspot.jp/2016/02/creating-perfect-swift-server.html&#34;&gt;Create a Perfect Swift Server Project(from scratch) in Xcode&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.4&lt;/li&gt;
 &lt;li&gt;Xcode 7.3&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:e823dad6a53c6c55cc48d4a6d6460216&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/SmapleBasePerfect&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 
@@ -692,13 +692,13 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
       <guid>https://mike-neko.github.io/blog/docker/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;なお、ローカルの開発用ということでセキュリティは考慮していないので注意&lt;/em&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;要件:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;要件&lt;/h3&gt;
+&lt;h3 id=&#34;要件&#34;&gt;要件&lt;/h3&gt;
 
 &lt;p&gt;主にAPIでサーバとやりとりするアプリの開発用なので以下の感じ&lt;/p&gt;
 
@@ -708,9 +708,9 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;SSLが使えること（iOS用）&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;環境:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;環境&lt;/h3&gt;
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
 
-&lt;h4 id=&#34;構成イメージ:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;構成イメージ&lt;/h4&gt;
+&lt;h4 id=&#34;構成イメージ&#34;&gt;構成イメージ&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;Mac   (192.168.0.2) == ルータ(192.168.0.1) == iPhone(192.168.0.3)  
 ｜  
@@ -723,7 +723,7 @@ Docker(192.168.99.100)
 
 &lt;p&gt;ゴールは、iPhone上から&lt;code&gt;https://192.168.0.2&lt;/code&gt;へアクセスするとページが表示(APIの通信)できればOK。&lt;/p&gt;
 
-&lt;h4 id=&#34;mac上-ホストos:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Mac上(ホストOS)&lt;/h4&gt;
+&lt;h4 id=&#34;mac上-ホストos&#34;&gt;Mac上(ホストOS)&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;MacOS 10.11.3(El Capitan)&lt;/li&gt;
@@ -732,7 +732,7 @@ Docker(192.168.99.100)
 &lt;li&gt;nginx 1.8.1&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;docker上-ゲストos:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Docker上(ゲストOS)&lt;/h4&gt;
+&lt;h4 id=&#34;docker上-ゲストos&#34;&gt;Docker上(ゲストOS)&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Apache&lt;/li&gt;
@@ -742,9 +742,9 @@ Docker(192.168.99.100)
 (phpmyadmin)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;手順:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;手順&lt;/h1&gt;
+&lt;h1 id=&#34;手順&#34;&gt;手順&lt;/h1&gt;
 
-&lt;h3 id=&#34;dockerのインストール:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Dockerのインストール&lt;/h3&gt;
+&lt;h3 id=&#34;dockerのインストール&#34;&gt;Dockerのインストール&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.docker.com/products/docker-toolbox&#34;&gt;公式&lt;/a&gt;から&lt;code&gt;DockerToolBox&lt;/code&gt;をダウンロードしてインストールを実行&lt;br /&gt;&lt;/li&gt;
@@ -753,7 +753,7 @@ Docker(192.168.99.100)
 &lt;li&gt;すると勝手にVM作成やらネットワーク設定をしてくれる親切設計なのでクジラが出てくるまで待つ&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;dockercomposeの設定:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;DockerComposeの設定&lt;/h3&gt;
+&lt;h3 id=&#34;dockercomposeの設定&#34;&gt;DockerComposeの設定&lt;/h3&gt;
 
 &lt;p&gt;Dockerはコンテナをパーツのように組み合わせて環境を作っていく。&lt;/p&gt;
 
@@ -774,7 +774,7 @@ Docker(192.168.99.100)
 &lt;p&gt;ただ、この方法だと引数の指定が多かったり複数のコンテナを利用する場合は大変なので、
 &lt;code&gt;DockerCompose&lt;/code&gt;を用いて管理する。&lt;/p&gt;
 
-&lt;h4 id=&#34;事前準備:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;事前準備&lt;/h4&gt;
+&lt;h4 id=&#34;事前準備&#34;&gt;事前準備&lt;/h4&gt;
 
 &lt;p&gt;まずは適当な場所に、コンテナ毎の&lt;code&gt;Dockerfile&lt;/code&gt;や設定ファイルなどを
 まとめておくディレクトリを作ってカレントディレクトリとする。
@@ -791,7 +791,7 @@ Docker(192.168.99.100)
      └─ index.html       # 動作確認用のHTML
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;apache-php:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Apache+PHP&lt;/h4&gt;
+&lt;h4 id=&#34;apache-php&#34;&gt;Apache+PHP&lt;/h4&gt;
 
 &lt;p&gt;ApacheはPHPに同梱されているものを使うのが便利なので、&lt;code&gt;apache&lt;/code&gt;がついているタグのものを使う。
 今回は&lt;a href=&#34;https://hub.docker.com/_/php/&#34;&gt;公式&lt;/a&gt;で5系の一番新しいバージョンの&lt;code&gt;5.6.18-apache&lt;/code&gt;を選択。&lt;/p&gt;
@@ -814,7 +814,7 @@ Docker(192.168.99.100)
 &lt;p&gt;これでMac上からは、&lt;code&gt;http://192.168.99.100/index.html&lt;/code&gt;へアクセスすると、
 &lt;code&gt;www/index.html&lt;/code&gt;が表示される。&lt;/p&gt;
 
-&lt;h4 id=&#34;mariadb-phpmyadmin:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;MariaDB+phpMyAdmin&lt;/h4&gt;
+&lt;h4 id=&#34;mariadb-phpmyadmin&#34;&gt;MariaDB+phpMyAdmin&lt;/h4&gt;
 
 &lt;p&gt;特に変更点もないのでイメージは公式の最新をそのままを使う。&lt;/p&gt;
 
@@ -845,14 +845,14 @@ phpmyadmin:
 
 &lt;p&gt;&lt;em&gt;注意点としてこの状態ではDBの永続化はできていないので、コンテナを削除するとDBの内容も消える&lt;/em&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;ios端末からのアクセス:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;iOS端末からのアクセス&lt;/h3&gt;
+&lt;h3 id=&#34;ios端末からのアクセス&#34;&gt;iOS端末からのアクセス&lt;/h3&gt;
 
 &lt;p&gt;ここまでの状態だとMacからしかアクセスできないので、Mac上で&lt;code&gt;nginx&lt;/code&gt;をリバースプロキシとして動かし、
 他のiOS端末からアクセスできるようにする。&lt;/p&gt;
 
 &lt;p&gt;また、iOS9のATSへ対応する為にSSLでアクセスできるようにする。ただしローカル環境なのでオレオレ証明書を利用する。&lt;/p&gt;
 
-&lt;h4 id=&#34;nginxのインストール:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;nginxのインストール&lt;/h4&gt;
+&lt;h4 id=&#34;nginxのインストール&#34;&gt;nginxのインストール&lt;/h4&gt;
 
 &lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;でインストールする。&lt;/p&gt;
 
@@ -881,7 +881,7 @@ brew install nginx
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;sslの証明書について:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;SSLの証明書について&lt;/h4&gt;
+&lt;h4 id=&#34;sslの証明書について&#34;&gt;SSLの証明書について&lt;/h4&gt;
 
 &lt;p&gt;今回はnginx部分だけSSLに対応させる。（dockerはHTTPのまま）&lt;/p&gt;
 
@@ -898,7 +898,7 @@ brew install nginx
 &lt;p&gt;もし、上の条件が満たせない場合は、ATSの設定を変えるとか個別に認証処理を書くなどして回避する必要がある。
 （回避できないのもあるけど）&lt;/p&gt;
 
-&lt;h4 id=&#34;sslの証明書の作成:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;SSLの証明書の作成&lt;/h4&gt;
+&lt;h4 id=&#34;sslの証明書の作成&#34;&gt;SSLの証明書の作成&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;openssl genrsa -out server.key 2048 -sha256
 openssl req -new -sha256 -key server.key &amp;gt; server.csr
@@ -927,7 +927,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;vmの設定:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;VMの設定&lt;/h4&gt;
+&lt;h4 id=&#34;vmの設定&#34;&gt;VMの設定&lt;/h4&gt;
 
 &lt;p&gt;DockerはVirtualBox上で動いているので、VMのポートフォワードを設定が必要となる。
 設定は、&lt;/p&gt;
@@ -937,7 +937,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 
 &lt;p&gt;とする。VirtualBoxを起動して、&lt;code&gt;default-設定-ネットワーク-アダプター1-ポートフォワーディング&lt;/code&gt;からでもOK。&lt;/p&gt;
 
-&lt;h2 id=&#34;起動:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;起動&lt;/h2&gt;
+&lt;h2 id=&#34;起動&#34;&gt;起動&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Dockerを起動させる&lt;/li&gt;
@@ -950,7 +950,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 &lt;code&gt;www/index.html&lt;/code&gt;が表示される。
 （ただし、オレオレ証明書なので認証の警告などは出る）&lt;/p&gt;
 
-&lt;h1 id=&#34;追記:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;追記&lt;/h1&gt;
+&lt;h1 id=&#34;追記&#34;&gt;追記&lt;/h1&gt;
 
 &lt;p&gt;Docker起動時に&lt;/p&gt;
 
@@ -964,14 +964,14 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 
 &lt;p&gt;をしてから起動し直すと大丈夫っぽい。なお、原因は不明・・・&lt;/p&gt;
 
-&lt;h1 id=&#34;感想:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;感想&lt;/h1&gt;
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
 
 &lt;p&gt;開発環境をプラグインみたいな感じで構築していけるのと構築内容がテキストで残るのはあとあと楽。&lt;/p&gt;
 
 &lt;p&gt;ただ、サーバ環境とまるまる同じものを構築するならVagrantの方が良いのかも・・・
 でも、Dockerはいろいろな環境を次々に試すのには便利なので、使い分けが大事そう。&lt;/p&gt;
 
-&lt;h1 id=&#34;ファイル一式:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;ファイル一式&lt;/h1&gt;
+&lt;h1 id=&#34;ファイル一式&#34;&gt;ファイル一式&lt;/h1&gt;
 
 &lt;p&gt;実際の各イメージのDockerfileや設定ファイルをまとめたものは
 &lt;a href=&#34;https://github.com/mike-neko/Docker/tree/master/SSLWebServer&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
@@ -986,47 +986,47 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
       <guid>https://mike-neko.github.io/blog/docker-cmd/</guid>
       <description>
 
-&lt;h2 id=&#34;dockerでよく使うコマンド:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;Dockerでよく使うコマンド&lt;/h2&gt;
+&lt;h2 id=&#34;dockerでよく使うコマンド&#34;&gt;Dockerでよく使うコマンド&lt;/h2&gt;
 
-&lt;h3 id=&#34;イメージ操作:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージ操作&lt;/h3&gt;
+&lt;h3 id=&#34;イメージ操作&#34;&gt;イメージ操作&lt;/h3&gt;
 
-&lt;h4 id=&#34;イメージのリスト表示:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージのリスト表示&lt;/h4&gt;
+&lt;h4 id=&#34;イメージのリスト表示&#34;&gt;イメージのリスト表示&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker images
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;指定したイメージの削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;指定したイメージの削除&lt;/h4&gt;
+&lt;h4 id=&#34;指定したイメージの削除&#34;&gt;指定したイメージの削除&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker rmi [イメージの名前かID]
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;イメージの指定は&lt;code&gt;IMAGE ID&lt;/code&gt;の先頭数文字での特定が便利&lt;/p&gt;
 
-&lt;h4 id=&#34;イメージの全削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージの全削除&lt;/h4&gt;
+&lt;h4 id=&#34;イメージの全削除&#34;&gt;イメージの全削除&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker rmi $(docker images -a -q)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;コンテナ操作:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;コンテナ操作&lt;/h3&gt;
+&lt;h3 id=&#34;コンテナ操作&#34;&gt;コンテナ操作&lt;/h3&gt;
 
-&lt;h4 id=&#34;コンテナのリスト表示:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;コンテナのリスト表示&lt;/h4&gt;
+&lt;h4 id=&#34;コンテナのリスト表示&#34;&gt;コンテナのリスト表示&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker ps
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;全部停止:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;全部停止&lt;/h4&gt;
+&lt;h4 id=&#34;全部停止&#34;&gt;全部停止&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker stop $(docker ps -a -q)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;全部削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;全部削除&lt;/h4&gt;
+&lt;h4 id=&#34;全部削除&#34;&gt;全部削除&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker rm $(docker ps -a -q) 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;dockercompose:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;DockerCompose&lt;/h3&gt;
+&lt;h3 id=&#34;dockercompose&#34;&gt;DockerCompose&lt;/h3&gt;
 
-&lt;h4 id=&#34;起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;起動&lt;/h4&gt;
+&lt;h4 id=&#34;起動&#34;&gt;起動&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;cd [docker-copose.ymlを置いてる場所]
 docker-compose up -d
@@ -1034,35 +1034,35 @@ docker-compose up -d
 
 &lt;p&gt;これだけで&lt;code&gt;build&lt;/code&gt;と&lt;code&gt;pull&lt;/code&gt;と&lt;code&gt;run&lt;/code&gt;を一気にしてくれる&lt;/p&gt;
 
-&lt;h4 id=&#34;停止:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;停止&lt;/h4&gt;
+&lt;h4 id=&#34;停止&#34;&gt;停止&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker-compose stop
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;nginx:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;nginx&lt;/h3&gt;
+&lt;h3 id=&#34;nginx&#34;&gt;nginx&lt;/h3&gt;
 
 &lt;p&gt;&lt;em&gt;80ポートを使う場合はsudoが必要&lt;/em&gt;&lt;/p&gt;
 
-&lt;h4 id=&#34;起動-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;起動&lt;/h4&gt;
+&lt;h4 id=&#34;起動-1&#34;&gt;起動&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;nginx
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;停止-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;停止&lt;/h4&gt;
+&lt;h4 id=&#34;停止-1&#34;&gt;停止&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;nginx -s stop
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;再起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;再起動&lt;/h4&gt;
+&lt;h4 id=&#34;再起動&#34;&gt;再起動&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;nginx -s reload
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;php:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;PHP&lt;/h2&gt;
+&lt;h2 id=&#34;php&#34;&gt;PHP&lt;/h2&gt;
 
-&lt;h3 id=&#34;オプション:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;オプション&lt;/h3&gt;
+&lt;h3 id=&#34;オプション&#34;&gt;オプション&lt;/h3&gt;
 
-&lt;h4 id=&#34;docker-php-ext-installで指定できるもの:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;docker-php-ext-installで指定できるもの&lt;/h4&gt;
+&lt;h4 id=&#34;docker-php-ext-installで指定できるもの&#34;&gt;docker-php-ext-installで指定できるもの&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;bcmath bz2 calendar ctype curl dba dom enchant exif fileinfo filter ftp gd gettext gmp hash iconv imap interbase intl json ldap mbstring mcrypt mssql mysql mysqli oci8 odbc opcache pcntl pdo pdo_dblib pdo_firebird pdo_mysql pdo_oci pdo_odbc pdo_pgsql pdo_sqlite pgsql phar posix pspell readline recode reflection session shmop simplexml snmp soap sockets spl standard sybase_ct sysvmsg sysvsem sysvshm tidy tokenizer wddx xml xmlreader xmlrpc xmlwriter xsl zip
 &lt;/code&gt;&lt;/pre&gt;

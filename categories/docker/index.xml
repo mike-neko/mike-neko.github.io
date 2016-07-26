@@ -17,13 +17,13 @@
       <guid>https://mike-neko.github.io/blog/docker/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;なお、ローカルの開発用ということでセキュリティは考慮していないので注意&lt;/em&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;要件:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;要件&lt;/h3&gt;
+&lt;h3 id=&#34;要件&#34;&gt;要件&lt;/h3&gt;
 
 &lt;p&gt;主にAPIでサーバとやりとりするアプリの開発用なので以下の感じ&lt;/p&gt;
 
@@ -33,9 +33,9 @@
 &lt;li&gt;SSLが使えること（iOS用）&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;環境:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;環境&lt;/h3&gt;
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
 
-&lt;h4 id=&#34;構成イメージ:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;構成イメージ&lt;/h4&gt;
+&lt;h4 id=&#34;構成イメージ&#34;&gt;構成イメージ&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;Mac   (192.168.0.2) == ルータ(192.168.0.1) == iPhone(192.168.0.3)  
 ｜  
@@ -48,7 +48,7 @@ Docker(192.168.99.100)
 
 &lt;p&gt;ゴールは、iPhone上から&lt;code&gt;https://192.168.0.2&lt;/code&gt;へアクセスするとページが表示(APIの通信)できればOK。&lt;/p&gt;
 
-&lt;h4 id=&#34;mac上-ホストos:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Mac上(ホストOS)&lt;/h4&gt;
+&lt;h4 id=&#34;mac上-ホストos&#34;&gt;Mac上(ホストOS)&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;MacOS 10.11.3(El Capitan)&lt;/li&gt;
@@ -57,7 +57,7 @@ Docker(192.168.99.100)
 &lt;li&gt;nginx 1.8.1&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;docker上-ゲストos:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Docker上(ゲストOS)&lt;/h4&gt;
+&lt;h4 id=&#34;docker上-ゲストos&#34;&gt;Docker上(ゲストOS)&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Apache&lt;/li&gt;
@@ -67,9 +67,9 @@ Docker(192.168.99.100)
 (phpmyadmin)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;手順:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;手順&lt;/h1&gt;
+&lt;h1 id=&#34;手順&#34;&gt;手順&lt;/h1&gt;
 
-&lt;h3 id=&#34;dockerのインストール:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Dockerのインストール&lt;/h3&gt;
+&lt;h3 id=&#34;dockerのインストール&#34;&gt;Dockerのインストール&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.docker.com/products/docker-toolbox&#34;&gt;公式&lt;/a&gt;から&lt;code&gt;DockerToolBox&lt;/code&gt;をダウンロードしてインストールを実行&lt;br /&gt;&lt;/li&gt;
@@ -78,7 +78,7 @@ Docker(192.168.99.100)
 &lt;li&gt;すると勝手にVM作成やらネットワーク設定をしてくれる親切設計なのでクジラが出てくるまで待つ&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;dockercomposeの設定:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;DockerComposeの設定&lt;/h3&gt;
+&lt;h3 id=&#34;dockercomposeの設定&#34;&gt;DockerComposeの設定&lt;/h3&gt;
 
 &lt;p&gt;Dockerはコンテナをパーツのように組み合わせて環境を作っていく。&lt;/p&gt;
 
@@ -99,7 +99,7 @@ Docker(192.168.99.100)
 &lt;p&gt;ただ、この方法だと引数の指定が多かったり複数のコンテナを利用する場合は大変なので、
 &lt;code&gt;DockerCompose&lt;/code&gt;を用いて管理する。&lt;/p&gt;
 
-&lt;h4 id=&#34;事前準備:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;事前準備&lt;/h4&gt;
+&lt;h4 id=&#34;事前準備&#34;&gt;事前準備&lt;/h4&gt;
 
 &lt;p&gt;まずは適当な場所に、コンテナ毎の&lt;code&gt;Dockerfile&lt;/code&gt;や設定ファイルなどを
 まとめておくディレクトリを作ってカレントディレクトリとする。
@@ -116,7 +116,7 @@ Docker(192.168.99.100)
      └─ index.html       # 動作確認用のHTML
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;apache-php:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;Apache+PHP&lt;/h4&gt;
+&lt;h4 id=&#34;apache-php&#34;&gt;Apache+PHP&lt;/h4&gt;
 
 &lt;p&gt;ApacheはPHPに同梱されているものを使うのが便利なので、&lt;code&gt;apache&lt;/code&gt;がついているタグのものを使う。
 今回は&lt;a href=&#34;https://hub.docker.com/_/php/&#34;&gt;公式&lt;/a&gt;で5系の一番新しいバージョンの&lt;code&gt;5.6.18-apache&lt;/code&gt;を選択。&lt;/p&gt;
@@ -139,7 +139,7 @@ Docker(192.168.99.100)
 &lt;p&gt;これでMac上からは、&lt;code&gt;http://192.168.99.100/index.html&lt;/code&gt;へアクセスすると、
 &lt;code&gt;www/index.html&lt;/code&gt;が表示される。&lt;/p&gt;
 
-&lt;h4 id=&#34;mariadb-phpmyadmin:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;MariaDB+phpMyAdmin&lt;/h4&gt;
+&lt;h4 id=&#34;mariadb-phpmyadmin&#34;&gt;MariaDB+phpMyAdmin&lt;/h4&gt;
 
 &lt;p&gt;特に変更点もないのでイメージは公式の最新をそのままを使う。&lt;/p&gt;
 
@@ -170,14 +170,14 @@ phpmyadmin:
 
 &lt;p&gt;&lt;em&gt;注意点としてこの状態ではDBの永続化はできていないので、コンテナを削除するとDBの内容も消える&lt;/em&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;ios端末からのアクセス:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;iOS端末からのアクセス&lt;/h3&gt;
+&lt;h3 id=&#34;ios端末からのアクセス&#34;&gt;iOS端末からのアクセス&lt;/h3&gt;
 
 &lt;p&gt;ここまでの状態だとMacからしかアクセスできないので、Mac上で&lt;code&gt;nginx&lt;/code&gt;をリバースプロキシとして動かし、
 他のiOS端末からアクセスできるようにする。&lt;/p&gt;
 
 &lt;p&gt;また、iOS9のATSへ対応する為にSSLでアクセスできるようにする。ただしローカル環境なのでオレオレ証明書を利用する。&lt;/p&gt;
 
-&lt;h4 id=&#34;nginxのインストール:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;nginxのインストール&lt;/h4&gt;
+&lt;h4 id=&#34;nginxのインストール&#34;&gt;nginxのインストール&lt;/h4&gt;
 
 &lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;でインストールする。&lt;/p&gt;
 
@@ -206,7 +206,7 @@ brew install nginx
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;sslの証明書について:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;SSLの証明書について&lt;/h4&gt;
+&lt;h4 id=&#34;sslの証明書について&#34;&gt;SSLの証明書について&lt;/h4&gt;
 
 &lt;p&gt;今回はnginx部分だけSSLに対応させる。（dockerはHTTPのまま）&lt;/p&gt;
 
@@ -223,7 +223,7 @@ brew install nginx
 &lt;p&gt;もし、上の条件が満たせない場合は、ATSの設定を変えるとか個別に認証処理を書くなどして回避する必要がある。
 （回避できないのもあるけど）&lt;/p&gt;
 
-&lt;h4 id=&#34;sslの証明書の作成:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;SSLの証明書の作成&lt;/h4&gt;
+&lt;h4 id=&#34;sslの証明書の作成&#34;&gt;SSLの証明書の作成&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;openssl genrsa -out server.key 2048 -sha256
 openssl req -new -sha256 -key server.key &amp;gt; server.csr
@@ -252,7 +252,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;vmの設定:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;VMの設定&lt;/h4&gt;
+&lt;h4 id=&#34;vmの設定&#34;&gt;VMの設定&lt;/h4&gt;
 
 &lt;p&gt;DockerはVirtualBox上で動いているので、VMのポートフォワードを設定が必要となる。
 設定は、&lt;/p&gt;
@@ -262,7 +262,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 
 &lt;p&gt;とする。VirtualBoxを起動して、&lt;code&gt;default-設定-ネットワーク-アダプター1-ポートフォワーディング&lt;/code&gt;からでもOK。&lt;/p&gt;
 
-&lt;h2 id=&#34;起動:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;起動&lt;/h2&gt;
+&lt;h2 id=&#34;起動&#34;&gt;起動&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Dockerを起動させる&lt;/li&gt;
@@ -275,7 +275,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 &lt;code&gt;www/index.html&lt;/code&gt;が表示される。
 （ただし、オレオレ証明書なので認証の警告などは出る）&lt;/p&gt;
 
-&lt;h1 id=&#34;追記:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;追記&lt;/h1&gt;
+&lt;h1 id=&#34;追記&#34;&gt;追記&lt;/h1&gt;
 
 &lt;p&gt;Docker起動時に&lt;/p&gt;
 
@@ -289,14 +289,14 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 
 &lt;p&gt;をしてから起動し直すと大丈夫っぽい。なお、原因は不明・・・&lt;/p&gt;
 
-&lt;h1 id=&#34;感想:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;感想&lt;/h1&gt;
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
 
 &lt;p&gt;開発環境をプラグインみたいな感じで構築していけるのと構築内容がテキストで残るのはあとあと楽。&lt;/p&gt;
 
 &lt;p&gt;ただ、サーバ環境とまるまる同じものを構築するならVagrantの方が良いのかも・・・
 でも、Dockerはいろいろな環境を次々に試すのには便利なので、使い分けが大事そう。&lt;/p&gt;
 
-&lt;h1 id=&#34;ファイル一式:9f4de33edfbe837dbb3e37ebe79037f8&#34;&gt;ファイル一式&lt;/h1&gt;
+&lt;h1 id=&#34;ファイル一式&#34;&gt;ファイル一式&lt;/h1&gt;
 
 &lt;p&gt;実際の各イメージのDockerfileや設定ファイルをまとめたものは
 &lt;a href=&#34;https://github.com/mike-neko/Docker/tree/master/SSLWebServer&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
@@ -311,47 +311,47 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
       <guid>https://mike-neko.github.io/blog/docker-cmd/</guid>
       <description>
 
-&lt;h2 id=&#34;dockerでよく使うコマンド:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;Dockerでよく使うコマンド&lt;/h2&gt;
+&lt;h2 id=&#34;dockerでよく使うコマンド&#34;&gt;Dockerでよく使うコマンド&lt;/h2&gt;
 
-&lt;h3 id=&#34;イメージ操作:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージ操作&lt;/h3&gt;
+&lt;h3 id=&#34;イメージ操作&#34;&gt;イメージ操作&lt;/h3&gt;
 
-&lt;h4 id=&#34;イメージのリスト表示:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージのリスト表示&lt;/h4&gt;
+&lt;h4 id=&#34;イメージのリスト表示&#34;&gt;イメージのリスト表示&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker images
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;指定したイメージの削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;指定したイメージの削除&lt;/h4&gt;
+&lt;h4 id=&#34;指定したイメージの削除&#34;&gt;指定したイメージの削除&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker rmi [イメージの名前かID]
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;イメージの指定は&lt;code&gt;IMAGE ID&lt;/code&gt;の先頭数文字での特定が便利&lt;/p&gt;
 
-&lt;h4 id=&#34;イメージの全削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;イメージの全削除&lt;/h4&gt;
+&lt;h4 id=&#34;イメージの全削除&#34;&gt;イメージの全削除&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker rmi $(docker images -a -q)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;コンテナ操作:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;コンテナ操作&lt;/h3&gt;
+&lt;h3 id=&#34;コンテナ操作&#34;&gt;コンテナ操作&lt;/h3&gt;
 
-&lt;h4 id=&#34;コンテナのリスト表示:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;コンテナのリスト表示&lt;/h4&gt;
+&lt;h4 id=&#34;コンテナのリスト表示&#34;&gt;コンテナのリスト表示&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker ps
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;全部停止:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;全部停止&lt;/h4&gt;
+&lt;h4 id=&#34;全部停止&#34;&gt;全部停止&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker stop $(docker ps -a -q)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;全部削除:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;全部削除&lt;/h4&gt;
+&lt;h4 id=&#34;全部削除&#34;&gt;全部削除&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker rm $(docker ps -a -q) 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;dockercompose:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;DockerCompose&lt;/h3&gt;
+&lt;h3 id=&#34;dockercompose&#34;&gt;DockerCompose&lt;/h3&gt;
 
-&lt;h4 id=&#34;起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;起動&lt;/h4&gt;
+&lt;h4 id=&#34;起動&#34;&gt;起動&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;cd [docker-copose.ymlを置いてる場所]
 docker-compose up -d
@@ -359,35 +359,35 @@ docker-compose up -d
 
 &lt;p&gt;これだけで&lt;code&gt;build&lt;/code&gt;と&lt;code&gt;pull&lt;/code&gt;と&lt;code&gt;run&lt;/code&gt;を一気にしてくれる&lt;/p&gt;
 
-&lt;h4 id=&#34;停止:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;停止&lt;/h4&gt;
+&lt;h4 id=&#34;停止&#34;&gt;停止&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;docker-compose stop
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;nginx:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;nginx&lt;/h3&gt;
+&lt;h3 id=&#34;nginx&#34;&gt;nginx&lt;/h3&gt;
 
 &lt;p&gt;&lt;em&gt;80ポートを使う場合はsudoが必要&lt;/em&gt;&lt;/p&gt;
 
-&lt;h4 id=&#34;起動-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;起動&lt;/h4&gt;
+&lt;h4 id=&#34;起動-1&#34;&gt;起動&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;nginx
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;停止-1:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;停止&lt;/h4&gt;
+&lt;h4 id=&#34;停止-1&#34;&gt;停止&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;nginx -s stop
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;再起動:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;再起動&lt;/h4&gt;
+&lt;h4 id=&#34;再起動&#34;&gt;再起動&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;nginx -s reload
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;php:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;PHP&lt;/h2&gt;
+&lt;h2 id=&#34;php&#34;&gt;PHP&lt;/h2&gt;
 
-&lt;h3 id=&#34;オプション:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;オプション&lt;/h3&gt;
+&lt;h3 id=&#34;オプション&#34;&gt;オプション&lt;/h3&gt;
 
-&lt;h4 id=&#34;docker-php-ext-installで指定できるもの:1c4ea1d59e18285c6c3ba7b5bb3a3b42&#34;&gt;docker-php-ext-installで指定できるもの&lt;/h4&gt;
+&lt;h4 id=&#34;docker-php-ext-installで指定できるもの&#34;&gt;docker-php-ext-installで指定できるもの&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;bcmath bz2 calendar ctype curl dba dom enchant exif fileinfo filter ftp gd gettext gmp hash iconv imap interbase intl json ldap mbstring mcrypt mssql mysql mysqli oci8 odbc opcache pcntl pdo pdo_dblib pdo_firebird pdo_mysql pdo_oci pdo_odbc pdo_pgsql pdo_sqlite pgsql phar posix pspell readline recode reflection session shmop simplexml snmp soap sockets spl standard sybase_ct sysvmsg sysvsem sysvshm tidy tokenizer wddx xml xmlreader xmlrpc xmlwriter xsl zip
 &lt;/code&gt;&lt;/pre&gt;

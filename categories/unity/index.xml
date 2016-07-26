@@ -17,7 +17,7 @@
       <guid>https://mike-neko.github.io/blog/unity-opencv/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:571ed67a2af601d4cff30db4980e4e99&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;UnityからiOSのネイティブプラグイン経由で&lt;code&gt;OpenCV&lt;/code&gt;でカメラを利用するサンプル。&lt;/p&gt;
 
@@ -32,9 +32,9 @@
 
 &lt;p&gt;といった流れになる。&lt;/p&gt;
 
-&lt;h2 id=&#34;手順:571ed67a2af601d4cff30db4980e4e99&#34;&gt;手順&lt;/h2&gt;
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
-&lt;h3 id=&#34;opencvのフレームワークの準備:571ed67a2af601d4cff30db4980e4e99&#34;&gt;OpenCVのフレームワークの準備&lt;/h3&gt;
+&lt;h3 id=&#34;opencvのフレームワークの準備&#34;&gt;OpenCVのフレームワークの準備&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://opencv.org/downloads.html&#34;&gt;公式のダウンロードページ&lt;/a&gt;から&lt;code&gt;for iOS&lt;/code&gt;の&lt;strong&gt;Ver.2系&lt;/strong&gt;をダウンロードする&lt;br /&gt;
@@ -46,7 +46,7 @@
 &lt;p&gt;なお、Ver.2を利用したのは、作成時点ではVer.3だとエラーが出てしまったので。
 多分ソースからビルドするかバージョン上がれば、Ver.3系でも問題ないかと。&lt;/p&gt;
 
-&lt;h3 id=&#34;iosネイティブ部分のソースを作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;iOSネイティブ部分のソースを作成&lt;/h3&gt;
+&lt;h3 id=&#34;iosネイティブ部分のソースを作成&#34;&gt;iOSネイティブ部分のソースを作成&lt;/h3&gt;
 
 &lt;p&gt;OpenCVがC++なので、言語は&lt;code&gt;Objective-C++&lt;/code&gt;を利用する。&lt;br /&gt;
 (残念ながらSwiftはC++を扱うことができないのでObjC一択)&lt;/p&gt;
@@ -75,7 +75,7 @@ C#でDLLimportして呼び出し
 &lt;p&gt;ネイティブ側のソースの全文は以下の通り。
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bf258536e5414e25b1e147c8b5e7834d.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
 
-&lt;h4 id=&#34;通常のopencv周りの処理-4-51行目あたり:571ed67a2af601d4cff30db4980e4e99&#34;&gt;通常のOpenCV周りの処理（4〜51行目あたり）&lt;/h4&gt;
+&lt;h4 id=&#34;通常のopencv周りの処理-4-51行目あたり&#34;&gt;通常のOpenCV周りの処理（4〜51行目あたり）&lt;/h4&gt;
 
 &lt;p&gt;ややこしいのが、C++はARC管理外の為、手動でメモリ管理が必要。
 今回はメモリの確保/破棄をラッパークラスの初期化/破棄と合わせて、
@@ -88,7 +88,7 @@ C#でDLLimportして呼び出し
 最終的にUnityのテクスチャのサイズとフォーマット&lt;code&gt;RGBA&lt;/code&gt;に変換してUnity側へ渡す。&lt;br /&gt;
 （Unity側では&lt;code&gt;ARGB&lt;/code&gt;の表記なので、最初それで変換してハマってた・・・）&lt;/p&gt;
 
-&lt;h4 id=&#34;プラグインのエントリポイントを用意-54-77行目あたり:571ed67a2af601d4cff30db4980e4e99&#34;&gt;プラグインのエントリポイントを用意（54〜77行目あたり）&lt;/h4&gt;
+&lt;h4 id=&#34;プラグインのエントリポイントを用意-54-77行目あたり&#34;&gt;プラグインのエントリポイントを用意（54〜77行目あたり）&lt;/h4&gt;
 
 &lt;p&gt;用意するのはラッパークラス&lt;code&gt;VideoCapture&lt;/code&gt;の生成、毎フレーム呼び出す用、破棄の3つのCの関数。&lt;/p&gt;
 
@@ -98,9 +98,9 @@ C#でDLLimportして呼び出し
 
 &lt;p&gt;関数の本体は61行目以降にあるように、単純にブリッジしているだけ。&lt;/p&gt;
 
-&lt;h3 id=&#34;unityでネイティブプラグイン作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;Unityでネイティブプラグイン作成&lt;/h3&gt;
+&lt;h3 id=&#34;unityでネイティブプラグイン作成&#34;&gt;Unityでネイティブプラグイン作成&lt;/h3&gt;
 
-&lt;h4 id=&#34;unityにネイティブのソース類を組み込む:571ed67a2af601d4cff30db4980e4e99&#34;&gt;Unityにネイティブのソース類を組み込む&lt;/h4&gt;
+&lt;h4 id=&#34;unityにネイティブのソース類を組み込む&#34;&gt;Unityにネイティブのソース類を組み込む&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;Assets&lt;/code&gt;直下に&lt;code&gt;Plugins&lt;/code&gt;フォルダを作る&lt;/li&gt;
@@ -115,7 +115,7 @@ Unityのエディタ上のインスペクタの設定を念のため確認
 Unity上ではフォルダとして認識されて、中にいろいろあればOK&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h4 id=&#34;コンポーネントの作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;コンポーネントの作成&lt;/h4&gt;
+&lt;h4 id=&#34;コンポーネントの作成&#34;&gt;コンポーネントの作成&lt;/h4&gt;
 
 &lt;p&gt;ネイティブの画像データからテクスチャを生成し、
 そのテクスチャを指定した&lt;code&gt;Renderer&lt;/code&gt;のマテリアルにセットするコンポーネントを作成。&lt;/p&gt;
@@ -137,7 +137,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 
 &lt;p&gt;後は、コンポーネントのライフサイクルと、キャプチャ用とテクスチャのオブジェクトのライフサイクルを一致させればOK。&lt;/p&gt;
 
-&lt;h4 id=&#34;シーン作成:571ed67a2af601d4cff30db4980e4e99&#34;&gt;シーン作成&lt;/h4&gt;
+&lt;h4 id=&#34;シーン作成&#34;&gt;シーン作成&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;キャプチャしたテクスチャ用の&lt;code&gt;Material&lt;/code&gt;を作成
@@ -160,14 +160,14 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h1 id=&#34;感想:571ed67a2af601d4cff30db4980e4e99&#34;&gt;感想&lt;/h1&gt;
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
 
 &lt;p&gt;サンプルでは出てこないけど、C#のアンマネージドの辺りが、ObjCやSwiftに比べると結構大変な気がした。
 慣れてないからかも知れないけど、特にメモリ周りやマーシャリングはいずれちゃんと勉強しないと。&lt;/p&gt;
 
 &lt;p&gt;あと、OpenCV周りの細かい挙動もまだ把握しきれていないので調べたい。&lt;/p&gt;
 
-&lt;h1 id=&#34;開発環境:571ed67a2af601d4cff30db4980e4e99&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.5&lt;/li&gt;
@@ -177,7 +177,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:571ed67a2af601d4cff30db4980e4e99&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/UnityOpenCV&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 
@@ -196,7 +196,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
       <guid>https://mike-neko.github.io/blog/sprite-shader/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:5faa08a3423ea1353ad8985880ae422e&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;Unity公式のスプライトシェーダをベースにした、スプライトにエフェクトをつけるシェーダ2本。&lt;/p&gt;
 
@@ -205,12 +205,12 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;li&gt;指定色でアウトラインと影をつけるシェーダ：&lt;code&gt;SpriteOutline&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;ベタ塗りシェーダ:5faa08a3423ea1353ad8985880ae422e&#34;&gt;ベタ塗りシェーダ&lt;/h3&gt;
+&lt;h3 id=&#34;ベタ塗りシェーダ&#34;&gt;ベタ塗りシェーダ&lt;/h3&gt;
 
 &lt;p&gt;未取得のアイテムをシルエット表示にしておきたいといった場合に、
 わざわざ画像を別に用意しなくても良いように作ったシェーダ&lt;/p&gt;
 
-&lt;h4 id=&#34;プロパティ:5faa08a3423ea1353ad8985880ae422e&#34;&gt;プロパティ&lt;/h4&gt;
+&lt;h4 id=&#34;プロパティ&#34;&gt;プロパティ&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;Mask Color&lt;/code&gt;：ベタ塗りにする時の色&lt;/li&gt;
@@ -223,7 +223,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;/figure&gt;
 
 
-&lt;h3 id=&#34;アウトラインシェーダ:5faa08a3423ea1353ad8985880ae422e&#34;&gt;アウトラインシェーダ&lt;/h3&gt;
+&lt;h3 id=&#34;アウトラインシェーダ&#34;&gt;アウトラインシェーダ&lt;/h3&gt;
 
 &lt;p&gt;枠をつけてちょっと目立たせたいとか簡単な影を落としたいといった場合に、
 画像を別に用意しなくても良い＆ある程度動的に変化できるように作ったシェーダ&lt;/p&gt;
@@ -233,7 +233,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;/figure&gt;
 
 
-&lt;h4 id=&#34;プロパティ-1:5faa08a3423ea1353ad8985880ae422e&#34;&gt;プロパティ&lt;/h4&gt;
+&lt;h4 id=&#34;プロパティ-1&#34;&gt;プロパティ&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;OutLine Spread&lt;/code&gt;：アウトラインの幅&lt;/li&gt;
@@ -246,7 +246,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;em&gt;スプライト全体のαを変化させたい時は、SpriteRendererではなくこの値を使って変化させる&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id=&#34;制約事項:5faa08a3423ea1353ad8985880ae422e&#34;&gt;制約事項&lt;/h4&gt;
+&lt;h4 id=&#34;制約事項&#34;&gt;制約事項&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;&lt;em&gt;本来のスプライトのサイズより小さくなるので注意&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
@@ -256,7 +256,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 
 &lt;p&gt;※手抜きしたい時用なので、特に3つ目などの場合は画像自体を作るか2パスとかの正攻法での対応を。。。&lt;/p&gt;
 
-&lt;h4 id=&#34;説明:5faa08a3423ea1353ad8985880ae422e&#34;&gt;説明&lt;/h4&gt;
+&lt;h4 id=&#34;説明&#34;&gt;説明&lt;/h4&gt;
 
 &lt;p&gt;スプライトにアウトラインや影を簡単につけるには、参考リンクにあるような方法があるが、uGUIでしか使えないのと、太めの線をつけることができなかったので、自作した。&lt;/p&gt;
 
@@ -279,11 +279,11 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 
 &lt;p&gt;ただ、それが逆に制約事項につながってしまっている。Multiple Spriteについては、隣のスプライトとの距離が近すぎるとそれが表示されてしまう場合があるし、ポリゴンがトゲトゲの様な感じの形状だとその部分が途切れてしまう。（が、自分の環境では特に問題にならないので&lt;del&gt;放置&lt;/del&gt;今後の課題に）&lt;/p&gt;
 
-&lt;h2 id=&#34;感想:5faa08a3423ea1353ad8985880ae422e&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;今回のサンプルに使わせてもらったこのキャラってなんて言うんだろう？？&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:5faa08a3423ea1353ad8985880ae422e&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;公式：&lt;a href=&#34;http://unity3d.com/jp/get-unity/download/archive&#34;&gt;シェーダ置き場&lt;/a&gt;&lt;br /&gt;
@@ -291,13 +291,13 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;li&gt;お手軽なuGUIでの方法：&lt;a href=&#34;http://tsubakit1.hateblo.jp/entry/2014/09/10/224446&#34;&gt;テラシュールブログ&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:5faa08a3423ea1353ad8985880ae422e&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Unity 5.3&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:5faa08a3423ea1353ad8985880ae422e&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/mike-neko/SpriteShaderSample&#34;&gt;プロジェクト一式&lt;/a&gt;&lt;/li&gt;
@@ -305,10 +305,10 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 &lt;li&gt;アウトラインシェーダ(&lt;a href=&#34;https://github.com/mike-neko/SpriteShaderSample/blob/master/Assets/Shaders/SpriteOutline.shader&#34;&gt;ソースのみ&lt;/a&gt;)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;div&gt;
+&lt;div&gt;
 	&lt;img src=&#34;http://unity-chan.com/images/imageLicenseLogo.png&#34; alt=&#34;ユニティちゃんライセンス&#34;&gt;
 	&lt;p&gt;この作品は&lt;a href=&#34;http://unity-chan.com/contents/license_jp/&#34; target=&#34;_blank&#34;&gt;ユニティちゃんライセンス条項&lt;/a&gt;の元に提供されています&lt;/p&gt;
-&lt;/div&gt;&lt;/p&gt;
+&lt;/div&gt;
 </description>
     </item>
     

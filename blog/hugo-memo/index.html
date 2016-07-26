@@ -105,9 +105,9 @@
 <p>初めはOctopressを使ってたものの、シンタックスハイライトがどうもうまく好みにならなかったので、結局、１週間ほどでHugoに乗り換え。Octopressに比べると構成もわかりやすいし、最新の資料が多くてよかった。<br />
 テーマはなるべくシンプル、かつ、スマホでも見やすい<a href="http://themes.gohugo.io/hyde-x/">Hyde-X</a>を選定。以下はHyde-Xの場合の設定なので、他のテーマでは変わることがあるので注意。</p>
 
-<h2 id="初期設定:8d244dac89903f7d90007c69acaf707d">初期設定</h2>
+<h2 id="初期設定">初期設定</h2>
 
-<h3 id="ローカルにディレクトリ作成:8d244dac89903f7d90007c69acaf707d">ローカルにディレクトリ作成</h3>
+<h3 id="ローカルにディレクトリ作成">ローカルにディレクトリ作成</h3>
 
 <ol>
 <li><code>hugo new site &lt;site-name&gt;</code>で作業用のローカルディレクトリを作成</li>
@@ -120,7 +120,7 @@ git remote add origin https://github.com/&lt;github name&gt;/&lt;github name&gt;
 <li><code>.gitignore</code>を<a href="https://github.com/github/gitignore">https://github.com/github/gitignore</a> から落としてきて、2の<code>public</code>の中に置く。</li>
 </ol>
 
-<h3 id="記事のテンプレを作成:8d244dac89903f7d90007c69acaf707d">記事のテンプレを作成</h3>
+<h3 id="記事のテンプレを作成">記事のテンプレを作成</h3>
 
 <p><code>&lt;site-name&gt;/archetypes</code>に<code>default.md</code>を作成する。<br />
 内容は以下の感じ。</p>
@@ -132,12 +132,12 @@ title = &quot;&quot;
 categories = []
 </code></pre>
 
-<h3 id="configを編集:8d244dac89903f7d90007c69acaf707d">configを編集</h3>
+<h3 id="configを編集">configを編集</h3>
 
 <p><code>&lt;site-name&gt;/config.toml</code>を環境に合わせて編集する。<br />
 （設定方法はテーマのREADME.mdを参照）</p>
 
-<h3 id="highlight-jsをカスタマイズ:8d244dac89903f7d90007c69acaf707d">highlight.jsをカスタマイズ</h3>
+<h3 id="highlight-jsをカスタマイズ">highlight.jsをカスタマイズ</h3>
 
 <p>デフォルトで入っていた分ではSwiftが未対応。。。まぁ基本的にはGistを使う予定だけど、一応使えるように。</p>
 
@@ -150,7 +150,7 @@ categories = []
 
 <p>これで、無事Swiftもハイライトされるようになった。</p>
 
-<h3 id="gist埋め込みコードを設定:8d244dac89903f7d90007c69acaf707d">Gist埋め込みコードを設定</h3>
+<h3 id="gist埋め込みコードを設定">Gist埋め込みコードを設定</h3>
 
 <p>普通にリンクをコピペしても良いのだけれども（<del>GistBoxを使い出したら逆にハッシュだけコピペするのが面倒だったり</del>）、せっかくMarkdownで書いているのだから、あまりタグを入れて表記が揺らぐのも微妙なので。</p>
 
@@ -170,15 +170,15 @@ categories = []
 といった感じで埋め込まれる</li>
 </ol>
 
-<h2 id="記事の作成:8d244dac89903f7d90007c69acaf707d">記事の作成</h2>
+<h2 id="記事の作成">記事の作成</h2>
 
 <p><code>&lt;site-name&gt;</code>直下で<code>hugo new post/&lt;file-name&gt;.md</code>を実行する。</p>
 
 <p>プレビューは<code>hugo server -t Hyde-X -D -w</code>を実行した後に、<a href="http://localhost:1313/">http://localhost:1313/</a> へアクセス。</p>
 
-<h2 id="公開手順:8d244dac89903f7d90007c69acaf707d">公開手順</h2>
+<h2 id="公開手順">公開手順</h2>
 
-<h3 id="流れ:8d244dac89903f7d90007c69acaf707d">流れ</h3>
+<h3 id="流れ">流れ</h3>
 
 <ol>
 <li><code>hugo -t Hyde-X</code>でサイトを生成<br />
@@ -188,16 +188,16 @@ categories = []
 
 <p>ただ、毎回これをやるのは面倒なので、シェルスクリプトにしておく。</p>
 
-<h3 id="デプロイ用スクリプト:8d244dac89903f7d90007c69acaf707d">デプロイ用スクリプト</h3>
+<h3 id="デプロイ用スクリプト">デプロイ用スクリプト</h3>
 
 <script type="text/javascript" src="https://gist.github.com/3159af7dd05c6278a778.js"></script>
 
-<h1 id="githubでの書き方:8d244dac89903f7d90007c69acaf707d">GitHubでの書き方</h1>
+<h1 id="githubでの書き方">GitHubでの書き方</h1>
 
 <p>参考リンク
 <a href="https://help.github.com/articles/github-flavored-markdown/">GitHub専用(公式)</a></p>
 
-<h1 id="参考リンク:8d244dac89903f7d90007c69acaf707d">参考リンク</h1>
+<h1 id="参考リンク">参考リンク</h1>
 
 <ul>
 <li><a href="http://www.kotazi.com/blog/post/2015111301/">【Hugo】Hosting on GitHub Pages【翻訳】</a></li>

@@ -102,15 +102,15 @@
     </span>
     
 
-<h2 id="概要:48e0e9453a88119590499cbf57bbeabc">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p>昔に<code>UIWebView</code>でやっていたものを最新の<code>WKWebView</code>+<code>Swift</code>で書き換えた時のメモ。</p>
 
 <p>内容は大したことないのだけれど、検索で引っかかるWebの資料がiOS9の実機で動かなかったので残しておく。</p>
 
-<h2 id="小ネタ:48e0e9453a88119590499cbf57bbeabc">小ネタ</h2>
+<h2 id="小ネタ">小ネタ</h2>
 
-<h3 id="内容全体の取得:48e0e9453a88119590499cbf57bbeabc">内容全体の取得</h3>
+<h3 id="内容全体の取得">内容全体の取得</h3>
 
 <p>今回は<code>WebView</code>の中身全体をPDF化したいので、PDF化する時に表示中のコンテンツがビュー内に収まるように、
 コンテンツの表示位置（<code>scrollView.contentOffset</code>）を初期位置に戻し、
@@ -130,7 +130,7 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
 
 <p>なお、端末によっても状況が異なるようで、対処方法は未調査。。。</p>
 
-<h3 id="pdfへの書き出し:48e0e9453a88119590499cbf57bbeabc">PDFへの書き出し</h3>
+<h3 id="pdfへの書き出し">PDFへの書き出し</h3>
 
 <p>今回は、</p>
 
@@ -152,7 +152,7 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
 わざわざコンテキストの取得がいらなくなったのがありがたい。
 （よく書く場所を間違えて取得に失敗する凡ミスをしていたので）</p>
 
-<h3 id="pdfのファイル保存:48e0e9453a88119590499cbf57bbeabc">PDFのファイル保存</h3>
+<h3 id="pdfのファイル保存">PDFのファイル保存</h3>
 
 <p>PDFをファイルとして保存したい場合は、<code>UIGraphicsBeginPDFContextToFile</code>を利用するが、
 このメソッドは既存のファイルを問答無用で上書きするので注意すること。</p>
@@ -160,7 +160,7 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
 <p>もし、サーバへ送信などでデータが欲しい場合は、<code>UIGraphicsBeginPDFContextToData</code>を利用すれば、
 <code>NSData</code>で取得できる。</p>
 
-<h1 id="開発環境:48e0e9453a88119590499cbf57bbeabc">開発環境</h1>
+<h1 id="開発環境">開発環境</h1>
 
 <ul>
 <li>OS X 10.11.5</li>
@@ -169,7 +169,7 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
 <li>iPhone 6+</li>
 </ul>
 
-<h1 id="ソース:48e0e9453a88119590499cbf57bbeabc">ソース</h1>
+<h1 id="ソース">ソース</h1>
 
 <p><a href="https://github.com/mike-neko/WebView2PDF">こちら</a></p>
 

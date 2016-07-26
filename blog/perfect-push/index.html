@@ -102,7 +102,7 @@
     </span>
     
 
-<h2 id="概要:895c24bcebc238bc55d3833602dde15b">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p>サーバーサイドSwiftフレームワークの<a href="https://perfect.org/">Perfect</a>の使い方のメモその3</p>
 
@@ -111,7 +111,7 @@
 <p>Perfectは最新のAPNsの通信形式に対応していて、細かなエラーレスポンスを取れるのがメリット。
 なので、開発用としては大変使いやすい。</p>
 
-<h2 id="手順:895c24bcebc238bc55d3833602dde15b">手順</h2>
+<h2 id="手順">手順</h2>
 
 <p>Push通知はサーバ側で微妙に必要とされる証明書が変わったりするのがややこしいところ。
 PerfectでPush通知を送るのに必要なものは以下の通り。</p>
@@ -130,7 +130,7 @@ PerfectでPush通知を送るのに必要なものは以下の通り。</p>
 </ul></li>
 </ul>
 
-<h3 id="登録-プロビジョニングプロファイルと証明書の作成:895c24bcebc238bc55d3833602dde15b">登録〜プロビジョニングプロファイルと証明書の作成</h3>
+<h3 id="登録-プロビジョニングプロファイルと証明書の作成">登録〜プロビジョニングプロファイルと証明書の作成</h3>
 
 <p>証明書の取得には<code>AppID</code>の登録やら結構手順があって大変だが、まずは以下のリンク先の通りに作業をすればOK。</p>
 
@@ -140,9 +140,9 @@ PerfectでPush通知を送るのに必要なものは以下の通り。</p>
 
 <p>なお、最後の手順の<code>APNs用証明書(.p12)</code>を書き出す時のファイル名は<code>apns.p12</code>とする</p>
 
-<h3 id="サーバ用の証明書の準備:895c24bcebc238bc55d3833602dde15b">サーバ用の証明書の準備</h3>
+<h3 id="サーバ用の証明書の準備">サーバ用の証明書の準備</h3>
 
-<h4 id="apns用証明書-pem:895c24bcebc238bc55d3833602dde15b">APNs用証明書(.pem)</h4>
+<h4 id="apns用証明書-pem">APNs用証明書(.pem)</h4>
 
 <p>ターミナルで以下を実行して<code>apns_dev_cert.pem</code>を作成する</p>
 
@@ -150,7 +150,7 @@ PerfectでPush通知を送るのに必要なものは以下の通り。</p>
 openssl pkcs12 -clcerts -nokeys -out apns_dev_cert.pem -in apns.p12
 </code></pre>
 
-<h4 id="秘密鍵-pem:895c24bcebc238bc55d3833602dde15b">秘密鍵(.pem)</h4>
+<h4 id="秘密鍵-pem">秘密鍵(.pem)</h4>
 
 <p>ターミナルで以下を実行して<code>apns_dev_key.pem</code>を作成する</p>
 
@@ -161,7 +161,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 <p><code>Enter PEM pass phrase:</code>と秘密鍵のパスフレーズを聞かれるので、適当なものを入れる。
 後でサーバに設定するので忘れないように・・・</p>
 
-<h4 id="caルート証明書:895c24bcebc238bc55d3833602dde15b">CAルート証明書</h4>
+<h4 id="caルート証明書">CAルート証明書</h4>
 
 <p>APNsとサーバで接続する為に<code>Entrust</code>の証明書が必要なので、以下からダウンロードする。</p>
 
@@ -169,12 +169,12 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 <a href="https://www.entrust.com/root-certificates/entrust_2048_ca.cer">entrust_2048_ca.cer</a><br />
 （<a href="https://www.entrust.com/get-support/ssl-certificate-support/root-certificate-downloads/">Entrustの証明書DLページ</a> - Entrust.net Certificate Authority (2048) - Download）</p>
 
-<h3 id="iosアプリの作成:895c24bcebc238bc55d3833602dde15b">iOSアプリの作成</h3>
+<h3 id="iosアプリの作成">iOSアプリの作成</h3>
 
 <p>とりあえず、必要最低限でPush通知を受信できる状態にする。
 デバイストークンの更新等には未対応なので注意。</p>
 
-<h4 id="プロジェクトの設定:895c24bcebc238bc55d3833602dde15b">プロジェクトの設定</h4>
+<h4 id="プロジェクトの設定">プロジェクトの設定</h4>
 
 <ul>
 <li>ダウンロードしたプロビジョニングプロファイルをダブルクリックしてインストール</li>
@@ -182,7 +182,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 <li><code>Provisioning Profile</code>をインストールしたプロビジョニングプロファイルにする</li>
 </ul>
 
-<h4 id="アプリの実装:895c24bcebc238bc55d3833602dde15b">アプリの実装</h4>
+<h4 id="アプリの実装">アプリの実装</h4>
 
 <p><code>AppDelegate</code>に以下の実装をする</p>
 
@@ -201,7 +201,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 <p><strong><em>また、マルチタスクから終了させても届かない場合があるので、注意</em></strong></p>
 
-<h3 id="サーバへ証明書の設置:895c24bcebc238bc55d3833602dde15b">サーバへ証明書の設置</h3>
+<h3 id="サーバへ証明書の設置">サーバへ証明書の設置</h3>
 
 <p>基礎編の<a href="../perfect-2/">ビルドでファイルを配置する</a>の方法で証明書を配置する</p>
 
@@ -223,7 +223,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 <p>（<code>webroot</code>へのドキュメントの配置とは別に<code>Copy Files</code>を設定する）</p>
 
-<h3 id="サーバの実装:895c24bcebc238bc55d3833602dde15b">サーバの実装</h3>
+<h3 id="サーバの実装">サーバの実装</h3>
 
 <p>サーバ側での実装は主に2つ。
 ひとつは証明書を<code>NotificationPusher</code>に初期設定するのと、
@@ -241,7 +241,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 <p>この実装でサーバにアクセスする度に、Push通知が端末へ送られる。
 送信時の結果は、ブラウザに表示される（エラーであればエラー内容）。</p>
 
-<h2 id="感想:895c24bcebc238bc55d3833602dde15b">感想</h2>
+<h2 id="感想">感想</h2>
 
 <p>今回の一番大変だったのはEntrustの証明書の置き場が変わっていたこと。。。
 逆に言えばそれ以外はとても簡単にPush通知を送れる環境を作れた感じ。</p>
@@ -253,13 +253,13 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 <p>もちろん、商用はAWSとかがオススメだけど。。。</p>
 
-<h1 id="参考リンク:895c24bcebc238bc55d3833602dde15b">参考リンク</h1>
+<h1 id="参考リンク">参考リンク</h1>
 
 <ul>
 <li><a href="http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb">プッシュ通知に必要な証明書の作り方2016</a></li>
 </ul>
 
-<h1 id="開発環境:895c24bcebc238bc55d3833602dde15b">開発環境</h1>
+<h1 id="開発環境">開発環境</h1>
 
 <ul>
 <li>OS X 10.11.4</li>

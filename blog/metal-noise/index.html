@@ -102,22 +102,22 @@
     </span>
     
 
-<h2 id="概要:c76c02a9716918700fc6ffc19450c1da">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p>GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。</p>
 
 <p>パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
 デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。</p>
 
-<h2 id="動作イメージ:c76c02a9716918700fc6ffc19450c1da">動作イメージ</h2>
+<h2 id="動作イメージ">動作イメージ</h2>
 
 <p><blockquote class="instagram-media" data-instgrm-captioned data-instgrm-version="6" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:8px;"> <div style=" background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;"> <div style=" background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;"></div></div> <p style=" margin:8px 0 0 0; padding:0 4px;"> <a href="https://www.instagram.com/p/BBATaXDFQW1/" style=" color:#000; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none; word-wrap:break-word;" target="_blank">ノイズ生成デモ</a></p> <p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;">@m_ike__が投稿した動画 - <time style=" font-family:Arial,sans-serif; font-size:14px; line-height:17px;" datetime="2016-01-26T13:57:16+00:00">2016 1月 26 5:57午前 PST</time></p></div></blockquote> <script async defer src="//platform.instagram.com/en_US/embeds.js"></script></p>
 
-<h2 id="小ネタ:c76c02a9716918700fc6ffc19450c1da">小ネタ</h2>
+<h2 id="小ネタ">小ネタ</h2>
 
 <p>ソース自体はGPUGemsのサンプルをほぼほぼ書き換えただけなので、ノイズ生成のアルゴリズムなどは参考リンクの方で。。。</p>
 
-<h3 id="ノイズ生成の流れ:c76c02a9716918700fc6ffc19450c1da">ノイズ生成の流れ</h3>
+<h3 id="ノイズ生成の流れ">ノイズ生成の流れ</h3>
 
 <ol>
 <li><p>初期化時に順列テーブル<code>permBuffer</code>を生成<br />
@@ -130,14 +130,14 @@
 <li><p>2のテクスチャを板ポリに貼って描画する</p></li>
 </ol>
 
-<h3 id="computeshader用の設定:c76c02a9716918700fc6ffc19450c1da">ComputeShader用の設定</h3>
+<h3 id="computeshader用の設定">ComputeShader用の設定</h3>
 
-<h4 id="mtkviewの設定:c76c02a9716918700fc6ffc19450c1da">MTKViewの設定</h4>
+<h4 id="mtkviewの設定">MTKViewの設定</h4>
 
 <p>ComputeShaderを利用する場合は、<code>MTKView</code>の<code>framebufferOnly</code>を<code>false</code>にしておくこと。<br />
 ただし、パフォーマンスに影響を与えるので、利用しない時は触らないこと。</p>
 
-<h4 id="waituntilcompleted:c76c02a9716918700fc6ffc19450c1da">waitUntilCompleted()</h4>
+<h4 id="waituntilcompleted">waitUntilCompleted()</h4>
 
 <p>各種コマンドの実行の終了するまで待機するメソッド。<br />
 以下のように<code>commandBuffer.commit()</code>より後に置く。<br />
@@ -151,7 +151,7 @@ commandBuffer.waitUntilCompleted()
 </code></pre>
 </blockquote>
 
-<h3 id="スレッド:c76c02a9716918700fc6ffc19450c1da">スレッド</h3>
+<h3 id="スレッド">スレッド</h3>
 
 <p>GPGPUは大量のスレッドを並列動作させて圧倒的な処理を行うのが特徴だが、モバイルのGPUのため、スレッドグループ毎の最大のスレッド数は512までになっている(<a href="https://developer.apple.com/library/ios/documentation/Miscellaneous/Conceptual/MetalProgrammingGuide/MetalFeatureSetTables/MetalFeatureSetTables.html">公式</a>)。</p>
 
@@ -177,7 +177,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 <p>同じスレッドグループ内であれば、メモリの共有ができたりするのだが、そのあたりも公式のサンプル<a href="https://developer.apple.com/library/ios/samplecode/Metal_NBody_Simulation/Introduction/Intro.html">Metal N-Body</a>が参考になる。</p>
 
-<h3 id="デバッグ:c76c02a9716918700fc6ffc19450c1da">デバッグ</h3>
+<h3 id="デバッグ">デバッグ</h3>
 
 <p>Xcodeの<code>Capture GPU Frame</code>がとても便利。</p>
 
@@ -186,7 +186,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 <p>また、プロファイル機能も充実していてどこがボトルネックがわかりやすい。</p>
 
-<h2 id="感想:c76c02a9716918700fc6ffc19450c1da">感想</h2>
+<h2 id="感想">感想</h2>
 
 <p>Metalの発表を聞いて一番ワクワクして触りたかったのが、このGPGPUだった。これまでMacでは統合開発環境でGPGPUが組めなかった（普通のシェーダだけならUnityがあった）ので、使い慣れたXcodeで触れるのは楽しみだった。</p>
 
@@ -196,7 +196,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 <p>にしても、シェーダ関係は環境毎に用語が微妙に変わるのは何とかしてほしい。。。</p>
 
-<h1 id="参考リンク:c76c02a9716918700fc6ffc19450c1da">参考リンク</h1>
+<h1 id="参考リンク">参考リンク</h1>
 
 <ul>
 <li>日本語の解説：<a href="http://postd.cc/understanding-perlin-noise/">パーリンノイズを理解する(POSTD)</a></li>
@@ -206,7 +206,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 <li>FragmentShaderで実装や応用例：<a href="http://www.sci.utah.edu/~leenak/IndStudy_reportfall/Perlin%20Noise%20on%20GPU.html">Perlin Noise on GPU</a></li>
 </ul>
 
-<h1 id="開発環境:c76c02a9716918700fc6ffc19450c1da">開発環境</h1>
+<h1 id="開発環境">開発環境</h1>
 
 <ul>
 <li>Xcode 7.2</li>
@@ -214,7 +214,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 <li>iPhone 6+</li>
 </ul>
 
-<h1 id="ソース:c76c02a9716918700fc6ffc19450c1da">ソース</h1>
+<h1 id="ソース">ソース</h1>
 
 <p><a href="https://github.com/mike-neko/MetalCompute">こちら</a> (<em>iOS9 A7以降搭載機種のみ</em>)</p>
 

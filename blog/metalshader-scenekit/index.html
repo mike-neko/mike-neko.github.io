@@ -102,7 +102,7 @@
     </span>
     
 
-<h2 id="概要:abea6ba6b17ed17b65ca175add2d4d3a">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p><code>Metal</code>を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
 なので、その面倒な部分を<code>SceneKit</code>に任せたいという時の話。</p>
@@ -126,12 +126,12 @@
 
 <p>という訳で、WWDCのセッションの資料にあった<code>SCNProgram</code>を使って実装。</p>
 
-<h2 id="下準備:abea6ba6b17ed17b65ca175add2d4d3a">下準備</h2>
+<h2 id="下準備">下準備</h2>
 
 <p>プロジェクトはXcodeのデフォルトのテンプレートの<code>Game</code>を流用している。
 作成時の<code>Game Technology</code>では<code>SceneKit</code>を選択する。</p>
 
-<h3 id="scenekitの設定:abea6ba6b17ed17b65ca175add2d4d3a">SceneKitの設定</h3>
+<h3 id="scenekitの設定">SceneKitの設定</h3>
 
 <ul>
 <li><p><code>Main.storeyboard</code>を開き、<code>Game View Controller</code>の<code>SceneKit View</code>の
@@ -141,7 +141,7 @@
 （今回のシェーダはライトを使わないもので不必要なので消す）</p></li>
 </ul>
 
-<h3 id="scnprogramの作成:abea6ba6b17ed17b65ca175add2d4d3a">SCNProgramの作成</h3>
+<h3 id="scnprogramの作成">SCNProgramの作成</h3>
 
 <p>以下のようにして<code>SCNProgram</code>を生成してシェーダの関数名を設定する</p>
 
@@ -156,7 +156,7 @@ program.fragmentFunctionName = &quot;textureFragment&quot;
 material.program = program
 </code></pre>
 
-<h3 id="シェーダの準備:abea6ba6b17ed17b65ca175add2d4d3a">シェーダの準備</h3>
+<h3 id="シェーダの準備">シェーダの準備</h3>
 
 <p>通常どおり<code>Metal</code>のファイルを追加した後に、</p>
 
@@ -166,14 +166,14 @@ material.program = program
 <p>とする。
 これは後述の<code>SceneKit</code>とデータのやりとりに必要。</p>
 
-<h2 id="データの渡し方:abea6ba6b17ed17b65ca175add2d4d3a">データの渡し方</h2>
+<h2 id="データの渡し方">データの渡し方</h2>
 
 <p><code>SceneKit</code>から描画に必要なデータ（座標や変換行列、テクスチャなど）を
 シェーダへ渡す方法</p>
 
-<h3 id="vertexshader側:abea6ba6b17ed17b65ca175add2d4d3a">VertexShader側</h3>
+<h3 id="vertexshader側">VertexShader側</h3>
 
-<h4 id="頂点属性-位置とか法線とかuv座標とか:abea6ba6b17ed17b65ca175add2d4d3a">頂点属性（位置とか法線とかuv座標とか）</h4>
+<h4 id="頂点属性-位置とか法線とかuv座標とか">頂点属性（位置とか法線とかuv座標とか）</h4>
 
 <p>まずは、</p>
 
@@ -192,7 +192,7 @@ material.program = program
 SceneKit Vertex Attribute Qualifiers for Metal Shaders</code>を参照</p>
 </blockquote>
 
-<h4 id="フレーム定数-ビューの変換行列など:abea6ba6b17ed17b65ca175add2d4d3a">フレーム定数（ビューの変換行列など）</h4>
+<h4 id="フレーム定数-ビューの変換行列など">フレーム定数（ビューの変換行列など）</h4>
 
 <p>あらかじめ<code>SCNSceneBuffer</code>という構造体が用意されており、これらはその中に入っている。
 このデータは<code>[[buffer(0)]]</code>にバインドされて渡されてくる。</p>
@@ -201,7 +201,7 @@ SceneKit Vertex Attribute Qualifiers for Metal Shaders</code>を参照</p>
 <p>構造体の定義はドキュメントの<code>Frame-Constant Data</code>の項目を参照</p>
 </blockquote>
 
-<h4 id="ノード毎のデータ-モデルの変換行列など:abea6ba6b17ed17b65ca175add2d4d3a">ノード毎のデータ（モデルの変換行列など）</h4>
+<h4 id="ノード毎のデータ-モデルの変換行列など">ノード毎のデータ（モデルの変換行列など）</h4>
 
 <p>これは、あらかじめ用意された構造体がなく、代わりに必要なものをピックアップして
 以下のように自分で構造体を定義する。</p>
@@ -218,12 +218,12 @@ SceneKit Vertex Attribute Qualifiers for Metal Shaders</code>を参照</p>
 Available Fields for Per-Node Shader Data</code>を参照</p>
 </blockquote>
 
-<h4 id="カスタム変数:abea6ba6b17ed17b65ca175add2d4d3a">カスタム変数</h4>
+<h4 id="カスタム変数">カスタム変数</h4>
 
 <p>上記以外の変数は構造体として定義が必要。定義自体は通常通りに行う。
 ただし、バインドされるバッファは2以降になる。</p>
 
-<h4 id="実装:abea6ba6b17ed17b65ca175add2d4d3a">実装</h4>
+<h4 id="実装">実装</h4>
 
 <p>まとめると、<code>VertexShader</code>の宣言部分は以下の通り</p>
 
@@ -241,9 +241,9 @@ Available Fields for Per-Node Shader Data</code>を参照</p>
 <p>中での処理は必要な計算をして、それを<code>FragmentShader</code>に渡すという、
 通常の<code>Metal</code>のシェーダと同じ実装を行う。</p>
 
-<h3 id="fragmentshader側:abea6ba6b17ed17b65ca175add2d4d3a">FragmentShader側</h3>
+<h3 id="fragmentshader側">FragmentShader側</h3>
 
-<h4 id="テクスチャ:abea6ba6b17ed17b65ca175add2d4d3a">テクスチャ</h4>
+<h4 id="テクスチャ">テクスチャ</h4>
 
 <p>テクスチャを利用したい場合は、特に事前の定義などは不要で通常通り宣言する</p>
 
@@ -253,12 +253,12 @@ Available Fields for Per-Node Shader Data</code>を参照</p>
 
 <p>ただしここでも重要なポイントは<strong>引数名</strong>（詳細は後述）。</p>
 
-<h3 id="scenekit側:abea6ba6b17ed17b65ca175add2d4d3a">SceneKit側</h3>
+<h3 id="scenekit側">SceneKit側</h3>
 
 <p>カスタム変数とテクスチャ以外は自動でバインドされる<br />
 （＝SceneKit側の処理は特にない）</p>
 
-<h4 id="カスタム変数-1:abea6ba6b17ed17b65ca175add2d4d3a">カスタム変数</h4>
+<h4 id="カスタム変数-1">カスタム変数</h4>
 
 <p>シェーダ側と同じ構造体のデータを準備する辺りは通常通り。</p>
 
@@ -272,7 +272,7 @@ material.setValue(NSData(bytes: &amp;custom, length:sizeof(CustomBuffer)),
 <p><code>setValue</code>は<code>SCNProgram</code>をセットしたのと同じ対象（今回は<code>material</code>）に行う。<br />
 また、<code>value</code>は<code>NSData</code>としてバイナリで渡し、<code>key</code>はシェーダでの宣言と同じ名前にする。</p>
 
-<h4 id="テクスチャ-1:abea6ba6b17ed17b65ca175add2d4d3a">テクスチャ</h4>
+<h4 id="テクスチャ-1">テクスチャ</h4>
 
 <p>今回のモデルではマテリアルの<code>diffuse</code>にテクスチャが設定されているので、まずそれを取得する。
 その後、<code>SCNMaterialProperty</code>の形式にしてから変数と同様に<code>setValue</code>する</p>
@@ -285,7 +285,7 @@ material.setValue(SCNMaterialProperty(contents: contents),
 <p>ポイントは、<code>SCNMaterialProperty</code>を生成しなおしてからセットすること。<br />
 直接<code>diffuse</code>の中のデータを<code>setValue</code>すると正しくデータが渡されない。</p>
 
-<h4 id="命名の注意点:abea6ba6b17ed17b65ca175add2d4d3a">命名の注意点</h4>
+<h4 id="命名の注意点">命名の注意点</h4>
 
 <p>シェーダの引数名と<code>SceneKit</code>側で<code>setValue</code>の<code>key</code>は一致させる必要がある。</p>
 
@@ -293,7 +293,7 @@ material.setValue(SCNMaterialProperty(contents: contents),
 命名時にはオブジェクトのプロパティとかぶる様な名前をつけてはいけない。<br />
 （例えば<code>color</code>などは実行時にエラーログが出て連携ができない）</p>
 
-<h2 id="感想:abea6ba6b17ed17b65ca175add2d4d3a">感想</h2>
+<h2 id="感想">感想</h2>
 
 <p>今回はサンプルもなくとても苦戦した。。。特にシェーダとSceneKit間のデータのやりとり辺りは、
 ドキュメントにも細かく書いてなくて苦労した。<br />
@@ -306,13 +306,13 @@ material.setValue(SCNMaterialProperty(contents: contents),
 <p>ただ、Metalのバインドの辺りの仕組みはどうなっているのか興味深いので、
 もっといろいろ触ってみたい。</p>
 
-<h1 id="参考リンク:abea6ba6b17ed17b65ca175add2d4d3a">参考リンク</h1>
+<h1 id="参考リンク">参考リンク</h1>
 
 <ul>
 <li>Apple公式ドキュメント(<a href="https://developer.apple.com/reference/scenekit/scnprogram">SCNProgram</a>)</li>
 </ul>
 
-<h1 id="開発環境:abea6ba6b17ed17b65ca175add2d4d3a">開発環境</h1>
+<h1 id="開発環境">開発環境</h1>
 
 <ul>
 <li>OS X 10.11.5</li>
@@ -321,7 +321,7 @@ material.setValue(SCNMaterialProperty(contents: contents),
 <li>iPhone 6+</li>
 </ul>
 
-<h1 id="ソース:abea6ba6b17ed17b65ca175add2d4d3a">ソース</h1>
+<h1 id="ソース">ソース</h1>
 
 <p><a href="https://github.com/mike-neko/MetalShaderSceneKit">こちら</a></p>
 

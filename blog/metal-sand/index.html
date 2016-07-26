@@ -102,27 +102,27 @@
     </span>
     
 
-<h2 id="概要:41585ab4c2e78900081a05c039c1f55d">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p>MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
 パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。</p>
 
 <p>なお、これも約26万パーティクルで60FPSを維持している。</p>
 
-<h2 id="動作イメージ:41585ab4c2e78900081a05c039c1f55d">動作イメージ</h2>
+<h2 id="動作イメージ">動作イメージ</h2>
 
 <p><blockquote class="instagram-media" data-instgrm-version="6" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:8px;"> <div style=" background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;"> <div style=" background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;"></div></div><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/p/BCX1ylEFQd_/" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">@m_ike__が投稿した動画</a> - <time style=" font-family:Arial,sans-serif; font-size:14px; line-height:17px;" datetime="2016-02-29T13:51:35+00:00">2016 2月 29 5:51午前 PST</time></p></div></blockquote> <script async defer src="//platform.instagram.com/en_US/embeds.js"></script></p>
 
 <p>（2色にして拡大してみたけど、動画だとイマイチになってしまった・・・）</p>
 
-<h2 id="小ネタ:41585ab4c2e78900081a05c039c1f55d">小ネタ</h2>
+<h2 id="小ネタ">小ネタ</h2>
 
-<h3 id="砂の動き:41585ab4c2e78900081a05c039c1f55d">砂の動き</h3>
+<h3 id="砂の動き">砂の動き</h3>
 
 <p>タイトルに「もどき」とある通り、砂の動きは粒子法などのちゃんとした物理計算をしているわけではないが、GameGems本の中の地形生成の粒子堆積を参考にしている。</p>
 
 <blockquote>
-<h4 id="フラクタル地形生成-粒子堆積:41585ab4c2e78900081a05c039c1f55d">フラクタル地形生成-粒子堆積</h4>
+<h4 id="フラクタル地形生成-粒子堆積">フラクタル地形生成-粒子堆積</h4>
 
 <p><figure>
 	<img src="/media/2016-02-25-metal-sand/gems4-19-3.png" />
@@ -143,7 +143,7 @@
 
 <p>という動きをGPUで計算している。</p>
 
-<h3 id="コンピュートシェーダのコード:41585ab4c2e78900081a05c039c1f55d">コンピュートシェーダのコード</h3>
+<h3 id="コンピュートシェーダのコード">コンピュートシェーダのコード</h3>
 
 <script type="text/javascript" src="https://gist.github.com/c6997165804cbaa25402.js"></script>
 
@@ -157,7 +157,7 @@
 
 <p>となる。</p>
 
-<h4 id="地面との衝突判定:41585ab4c2e78900081a05c039c1f55d">地面との衝突判定</h4>
+<h4 id="地面との衝突判定">地面との衝突判定</h4>
 
 <p>今回は地面との衝突の判定のみで、粒子間の衝突などは考慮しない。よって、512*512のバッファ<code>laminateBuffer</code>を地面に見立てて、各座標の高さを記録している。ここでテクスチャを使っていないのは、コンピュートシェーダではテクスチャの読み書きを同時に行うことができない為。</p>
 
@@ -179,7 +179,7 @@
 
 <p>あとはこれをひたすら繰り返していくと山のように積み重なっていく。</p>
 
-<h2 id="感想:41585ab4c2e78900081a05c039c1f55d">感想</h2>
+<h2 id="感想">感想</h2>
 
 <p>パラメータの調整とかバッファへの書き込みの精度を上げたりするなど、まだまだ改良の余地はありそう。。。</p>
 
@@ -187,7 +187,7 @@
 
 <p>あと、GameGemsの1以外も電子書籍で出ないかなぁ。内容的には古くても色々参考になるし、紙版は置く場所考えるとどうしても買いづらいので</p>
 
-<h1 id="開発環境:41585ab4c2e78900081a05c039c1f55d">開発環境</h1>
+<h1 id="開発環境">開発環境</h1>
 
 <ul>
 <li>Xcode 7.2</li>
@@ -195,7 +195,7 @@
 <li>iPhone 6+</li>
 </ul>
 
-<h1 id="ソース:41585ab4c2e78900081a05c039c1f55d">ソース</h1>
+<h1 id="ソース">ソース</h1>
 
 <p><a href="https://github.com/mike-neko/MetalSand">こちら</a>(<em>iOS9 A7以降搭載機種のみ</em>)</p>
 

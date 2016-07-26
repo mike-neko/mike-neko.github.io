@@ -102,7 +102,7 @@
     </span>
     
 
-<h2 id="概要:6214d744b42492b1045fac72bc277c04">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p>以前に構築したDockerでの開発環境で使ったnginxを<code>http2</code>に対応させた時のメモ。</p>
 
@@ -110,7 +110,7 @@
 <p>過去の記事（<a href="../docker/">Dockerでの開発環境</a>）</p>
 </blockquote>
 
-<h3 id="環境:6214d744b42492b1045fac72bc277c04">環境</h3>
+<h3 id="環境">環境</h3>
 
 <p>ベースは前回構築したnginx+Dockerで通信はオレオレ証明書によるSSLを前提。</p>
 
@@ -125,9 +125,9 @@
 
 <p>なお、iOSは<strong>iOS9</strong>からhttp2へ対応している。</p>
 
-<h2 id="手順:6214d744b42492b1045fac72bc277c04">手順</h2>
+<h2 id="手順">手順</h2>
 
-<h3 id="事前準備:6214d744b42492b1045fac72bc277c04">事前準備</h3>
+<h3 id="事前準備">事前準備</h3>
 
 <p>http2での通信かどうかの確認用に以下のChromeのプラグインを入れておく。</p>
 
@@ -136,7 +136,7 @@
 
 <p>http2での通信だと稲妻が青色になるので確認が楽。</p>
 
-<h3 id="macでの作業:6214d744b42492b1045fac72bc277c04">Macでの作業</h3>
+<h3 id="macでの作業">Macでの作業</h3>
 
 <ol>
 <li><p>OpenSSLを最新にあげる<br />
@@ -167,13 +167,13 @@ listen  443 ssl http2;
 <li><p>ChromeからMacへアクセスしてみて青い稲妻になっていれば<code>nginx</code>の設定は成功</p></li>
 </ol>
 
-<h3 id="ios端末での通信:6214d744b42492b1045fac72bc277c04">iOS端末での通信</h3>
+<h3 id="ios端末での通信">iOS端末での通信</h3>
 
 <p>iOS9以降の<code>NSURLSession</code>での通信であれば、特に設定など不要で自動で<code>http2</code>になる。</p>
 
 <p>なお、規格上は<code>http</code>のみでも対応しているがiOSでどうかは未検証。</p>
 
-<h3 id="ログ設定:6214d744b42492b1045fac72bc277c04">ログ設定</h3>
+<h3 id="ログ設定">ログ設定</h3>
 
 <p>iOS端末からの通信も<code>http2</code>になっているかの確認は、<code>nginx</code>のログで判別する。</p>
 
@@ -181,14 +181,14 @@ listen  443 ssl http2;
 詳細は以下のページを参考に<br />
 <a href="http://d.hatena.ne.jp/ASnoKaze/20150818/1439896998">nginxでアクセスログにhttp2の通信か出力する</a></p>
 
-<h2 id="過去情報:6214d744b42492b1045fac72bc277c04">過去情報</h2>
+<h2 id="過去情報">過去情報</h2>
 
 <p>標準の<code>nginx</code>に<code>http2</code>モジュールがないと思っていたら、
 実はちゃんとあったので訂正。</p>
 
 <p>もったいないので、<code>nginx-full</code>の情報を残しておく。</p>
 
-<h3 id="nginx-full:6214d744b42492b1045fac72bc277c04">nginx-full</h3>
+<h3 id="nginx-full">nginx-full</h3>
 
 <p>通常の<code>Homebrew</code>の<code>nginx</code>ではオプションのモジュールが少ないので、
 標準では足りないモジュールをインストールしたい時は<code>nginx-full</code>をインストールする。</p>
@@ -205,13 +205,13 @@ brew install nginx-full --with-http2
 <pre><code>brew info nginx-full
 </code></pre>
 
-<h1 id="参考リンク:6214d744b42492b1045fac72bc277c04">参考リンク</h1>
+<h1 id="参考リンク">参考リンク</h1>
 
 <ul>
 <li><a href="http://kannokanno.hatenablog.com/entry/2014/02/10/134920">Mac - homebrewでnginxを入れるときはnginx-fullを入れよう</a></li>
 </ul>
 
-<h1 id="開発環境:6214d744b42492b1045fac72bc277c04">開発環境</h1>
+<h1 id="開発環境">開発環境</h1>
 
 <ul>
 <li>OS X 10.11.5</li>

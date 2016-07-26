@@ -17,27 +17,27 @@
       <guid>https://mike-neko.github.io/blog/metal-sand/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:41585ab4c2e78900081a05c039c1f55d&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
 パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。&lt;/p&gt;
 
 &lt;p&gt;なお、これも約26万パーティクルで60FPSを維持している。&lt;/p&gt;
 
-&lt;h2 id=&#34;動作イメージ:41585ab4c2e78900081a05c039c1f55d&#34;&gt;動作イメージ&lt;/h2&gt;
+&lt;h2 id=&#34;動作イメージ&#34;&gt;動作イメージ&lt;/h2&gt;
 
 &lt;p&gt;&lt;blockquote class=&#34;instagram-media&#34; data-instgrm-version=&#34;6&#34; style=&#34; background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);&#34;&gt;&lt;div style=&#34;padding:8px;&#34;&gt; &lt;div style=&#34; background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;&#34;&gt; &lt;div style=&#34; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;&#34;&gt;&lt;/div&gt;&lt;/div&gt;&lt;p style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;&#34;&gt;&lt;a href=&#34;https://www.instagram.com/p/BCX1ylEFQd_/&#34; style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;&#34; target=&#34;_blank&#34;&gt;@m_ike__が投稿した動画&lt;/a&gt; - &lt;time style=&#34; font-family:Arial,sans-serif; font-size:14px; line-height:17px;&#34; datetime=&#34;2016-02-29T13:51:35+00:00&#34;&gt;2016 2月 29 5:51午前 PST&lt;/time&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt; &lt;script async defer src=&#34;//platform.instagram.com/en_US/embeds.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
 
 &lt;p&gt;（2色にして拡大してみたけど、動画だとイマイチになってしまった・・・）&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:41585ab4c2e78900081a05c039c1f55d&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
-&lt;h3 id=&#34;砂の動き:41585ab4c2e78900081a05c039c1f55d&#34;&gt;砂の動き&lt;/h3&gt;
+&lt;h3 id=&#34;砂の動き&#34;&gt;砂の動き&lt;/h3&gt;
 
 &lt;p&gt;タイトルに「もどき」とある通り、砂の動きは粒子法などのちゃんとした物理計算をしているわけではないが、GameGems本の中の地形生成の粒子堆積を参考にしている。&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;h4 id=&#34;フラクタル地形生成-粒子堆積:41585ab4c2e78900081a05c039c1f55d&#34;&gt;フラクタル地形生成-粒子堆積&lt;/h4&gt;
+&lt;h4 id=&#34;フラクタル地形生成-粒子堆積&#34;&gt;フラクタル地形生成-粒子堆積&lt;/h4&gt;
 
 &lt;p&gt;&lt;figure&gt;
 	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-25-metal-sand/gems4-19-3.png&#34; /&gt;
@@ -58,7 +58,7 @@
 
 &lt;p&gt;という動きをGPUで計算している。&lt;/p&gt;
 
-&lt;h3 id=&#34;コンピュートシェーダのコード:41585ab4c2e78900081a05c039c1f55d&#34;&gt;コンピュートシェーダのコード&lt;/h3&gt;
+&lt;h3 id=&#34;コンピュートシェーダのコード&#34;&gt;コンピュートシェーダのコード&lt;/h3&gt;
 
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/c6997165804cbaa25402.js&#34;&gt;&lt;/script&gt;
 
@@ -72,7 +72,7 @@
 
 &lt;p&gt;となる。&lt;/p&gt;
 
-&lt;h4 id=&#34;地面との衝突判定:41585ab4c2e78900081a05c039c1f55d&#34;&gt;地面との衝突判定&lt;/h4&gt;
+&lt;h4 id=&#34;地面との衝突判定&#34;&gt;地面との衝突判定&lt;/h4&gt;
 
 &lt;p&gt;今回は地面との衝突の判定のみで、粒子間の衝突などは考慮しない。よって、512*512のバッファ&lt;code&gt;laminateBuffer&lt;/code&gt;を地面に見立てて、各座標の高さを記録している。ここでテクスチャを使っていないのは、コンピュートシェーダではテクスチャの読み書きを同時に行うことができない為。&lt;/p&gt;
 
@@ -94,7 +94,7 @@
 
 &lt;p&gt;あとはこれをひたすら繰り返していくと山のように積み重なっていく。&lt;/p&gt;
 
-&lt;h2 id=&#34;感想:41585ab4c2e78900081a05c039c1f55d&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;パラメータの調整とかバッファへの書き込みの精度を上げたりするなど、まだまだ改良の余地はありそう。。。&lt;/p&gt;
 
@@ -102,7 +102,7 @@
 
 &lt;p&gt;あと、GameGemsの1以外も電子書籍で出ないかなぁ。内容的には古くても色々参考になるし、紙版は置く場所考えるとどうしても買いづらいので&lt;/p&gt;
 
-&lt;h1 id=&#34;開発環境:41585ab4c2e78900081a05c039c1f55d&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Xcode 7.2&lt;/li&gt;
@@ -110,7 +110,7 @@
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:41585ab4c2e78900081a05c039c1f55d&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalSand&#34;&gt;こちら&lt;/a&gt;(&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>
@@ -124,7 +124,7 @@
       <guid>https://mike-neko.github.io/blog/metal-image/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。&lt;/p&gt;
 
@@ -132,14 +132,14 @@
 
 &lt;p&gt;そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。&lt;/p&gt;
 
-&lt;h2 id=&#34;動作イメージ:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;動作イメージ&lt;/h2&gt;
+&lt;h2 id=&#34;動作イメージ&#34;&gt;動作イメージ&lt;/h2&gt;
 
 &lt;p&gt;&lt;blockquote class=&#34;instagram-media&#34; data-instgrm-version=&#34;6&#34; style=&#34; background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);&#34;&gt;&lt;div style=&#34;padding:8px;&#34;&gt; &lt;div style=&#34; background:#F8F8F8; line-height:0; margin-top:40px; padding:62.3366013072% 0; text-align:center; width:100%;&#34;&gt; &lt;div style=&#34; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;&#34;&gt;&lt;/div&gt;&lt;/div&gt;&lt;p style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;&#34;&gt;&lt;a href=&#34;https://www.instagram.com/p/BBn2nSclQZi/&#34; style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;&#34; target=&#34;_blank&#34;&gt;@m_ike__が投稿した動画&lt;/a&gt; - &lt;time style=&#34; font-family:Arial,sans-serif; font-size:14px; line-height:17px;&#34; datetime=&#34;2016-02-10T22:35:15+00:00&#34;&gt;2016  2月 10 2:35午後 PST&lt;/time&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;
 &lt;script async defer src=&#34;//platform.instagram.com/en_US/embeds.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
 
 &lt;p&gt;ちなみに実機で見るともっとキレイ&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
 &lt;p&gt;処理はおおまかにわけて、&lt;/p&gt;
 
@@ -161,9 +161,9 @@
 
 &lt;p&gt;注意点として、画像の座標とMetalでの座標軸は違うので、x軸とy軸に−1のスケールをかけて補正している。テクスチャ読み込み時に何かできるかは未調査だが、そもそもこういうテクスチャの使い方は普通しないと思うのでそのまま。&lt;/p&gt;
 
-&lt;h3 id=&#34;テクスチャからパーティクルを生成:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;テクスチャからパーティクルを生成&lt;/h3&gt;
+&lt;h3 id=&#34;テクスチャからパーティクルを生成&#34;&gt;テクスチャからパーティクルを生成&lt;/h3&gt;
 
-&lt;h4 id=&#34;パーティクルの位置の計算:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;パーティクルの位置の計算&lt;/h4&gt;
+&lt;h4 id=&#34;パーティクルの位置の計算&#34;&gt;パーティクルの位置の計算&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;// ImagePiece* particles [[ buffer(0) ]]
 // uint2 id [[ thread_position_in_grid ]]
@@ -174,7 +174,7 @@ particles[index].position = float4(id.x / (float)size.x, id.y / (float)size.y, 0
 
 &lt;p&gt;イメージとしては1*1の板ポリの中にすべてのパーティクルを配置する感じで、各パーティクルのローカル座標が(0, 0)から(1, 1)の中に収まるようにする。&lt;/p&gt;
 
-&lt;h4 id=&#34;画像の対応するピクセルの色を取得:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;画像の対応するピクセルの色を取得&lt;/h4&gt;
+&lt;h4 id=&#34;画像の対応するピクセルの色を取得&#34;&gt;画像の対応するピクセルの色を取得&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;// texture2d&amp;lt;float, access::read&amp;gt; image [[ texture(0) ]]
 particles[index].color = image.read(id);
@@ -182,7 +182,7 @@ particles[index].color = image.read(id);
 
 &lt;p&gt;今回は1ピクセル=1パーティクル、スレッドも同じように分割しているので、テクスチャの対応するピクセルの座標は、そのままグリッド内のスレッド位置と同じになる。&lt;/p&gt;
 
-&lt;h4 id=&#34;動きのパラメータの初期設定:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;動きのパラメータの初期設定&lt;/h4&gt;
+&lt;h4 id=&#34;動きのパラメータの初期設定&#34;&gt;動きのパラメータの初期設定&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;// param.time.w : y方向のdelay
 // rnd : 乱数
@@ -194,9 +194,9 @@ particles[index].acc = float4(param.delta.x, param.delta.y, param.delta.z, rnd_d
 
 &lt;p&gt;下の方から順にパーティクルが落ちるように、画像の上の方ほど遅れて落ち始めるようにで遅延を設定する(2の&lt;code&gt;rnd_d * id.y&lt;/code&gt;部分)。また落ち方がそれっぽく見えるように、遅延時間は元の指定の100%〜90%の間でばらつくように乱数を使う(1の部分)。&lt;/p&gt;
 
-&lt;h3 id=&#34;パーティクルに動きをつける:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;パーティクルに動きをつける&lt;/h3&gt;
+&lt;h3 id=&#34;パーティクルに動きをつける&#34;&gt;パーティクルに動きをつける&lt;/h3&gt;
 
-&lt;h4 id=&#34;位置の更新:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;位置の更新&lt;/h4&gt;
+&lt;h4 id=&#34;位置の更新&#34;&gt;位置の更新&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;// particles[index].acc.w : delay
 // param.time.x : スタートからの経過時間
@@ -207,7 +207,7 @@ particles[index].position += t * particles[index].acc;
 
 &lt;p&gt;パーティクルの位置は、スムーズに見えるように&lt;code&gt;前回からの経過時間*時間あたりの移動量&lt;/code&gt;で計算する。ただし、各パーティクルには遅延時間があるので、それを経過するまでは経過時間は0として動かないようにする(&lt;code&gt;fmax(0.f, param.time.x - particles[index].acc.w)&lt;/code&gt;の部分)。さらに、こちらも乱数で落ち方にばらつきを与える。&lt;/p&gt;
 
-&lt;h4 id=&#34;消滅処理:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;消滅処理&lt;/h4&gt;
+&lt;h4 id=&#34;消滅処理&#34;&gt;消滅処理&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code&gt;float4 f = step(param.delta.w, particles[index].position + t * particles[index].acc);
 particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
@@ -220,7 +220,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 
 &lt;p&gt;ポイントとなるのは、フラグメントシェーダ内の&lt;code&gt;if (in.color.a &amp;lt; 0.1) discard_fragment();&lt;/code&gt;という見えなくなったピクセルの破棄処理。なくてもパーティクルは消えてくれるが、この処理を行うことで若干フレームレートが改善するので入れた（&lt;del&gt;単に使ってみたかっただけ&lt;/del&gt;）。&lt;/p&gt;
 
-&lt;h3 id=&#34;乱数の生成:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;乱数の生成&lt;/h3&gt;
+&lt;h3 id=&#34;乱数の生成&#34;&gt;乱数の生成&lt;/h3&gt;
 
 &lt;p&gt;Metalではシェーダ上で使える乱数の関数は準備されていない為、使いたい場合はシェーダ上で自前で実装するかCPU側で生成したものを渡して使うかになる。今回はCPU側でほとんど処理しないので、シェーダ上で実装する方を選択した。&lt;/p&gt;
 
@@ -236,14 +236,14 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 
 &lt;p&gt;得られる結果は&lt;code&gt;uint&lt;/code&gt;なので、実際のコード内では使いやすいよう&lt;code&gt;(float)rnd / UINT_MAX&lt;/code&gt;として正規化してから使っている。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;乱数のアルゴリズムの解説記事&lt;br /&gt;
 &lt;a href=&#34;https://blog.visvirial.com/articles/575&#34;&gt;Google Chromeが採用した、擬似乱数生成アルゴリズム「xorshift」の数理&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Xcode 7.2&lt;/li&gt;
@@ -251,7 +251,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:ee598c9d217a1971ba9d28d3419c0378&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalImage&#34;&gt;こちら&lt;/a&gt;(&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>
@@ -265,9 +265,9 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
       <guid>https://mike-neko.github.io/blog/metal-function/</guid>
       <description>
 
-&lt;h2 id=&#34;metalのシェーダで利用できる関数のまとめ:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;Metalのシェーダで利用できる関数のまとめ&lt;/h2&gt;
+&lt;h2 id=&#34;metalのシェーダで利用できる関数のまとめ&#34;&gt;Metalのシェーダで利用できる関数のまとめ&lt;/h2&gt;
 
-&lt;h4 id=&#34;hlsl-glslは各言語との対比:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;HLSL/GLSLは各言語との対比&lt;/h4&gt;
+&lt;h4 id=&#34;hlsl-glslは各言語との対比&#34;&gt;HLSL/GLSLは各言語との対比&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;(空白) : 同じ&lt;/li&gt;
@@ -276,7 +276,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;li&gt;(関数名) : 挙動は同じだが、名前が別の関数がある&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;共通関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;共通関数&lt;/h2&gt;
+&lt;h2 id=&#34;共通関数&#34;&gt;共通関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
@@ -337,7 +337,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;整数関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;整数関数&lt;/h2&gt;
+&lt;h2 id=&#34;整数関数&#34;&gt;整数関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は整数のスカラーかベクター&lt;/li&gt;
@@ -455,7 +455,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;関係関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;関係関数&lt;/h2&gt;
+&lt;h2 id=&#34;関係関数&#34;&gt;関係関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
@@ -553,7 +553,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;数学関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;数学関数&lt;/h2&gt;
+&lt;h2 id=&#34;数学関数&#34;&gt;数学関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数のスカラーかベクター&lt;/li&gt;
@@ -874,7 +874,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;行列関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;行列関数&lt;/h2&gt;
+&lt;h2 id=&#34;行列関数&#34;&gt;行列関数&lt;/h2&gt;
 
 &lt;table&gt;
 &lt;thead&gt;
@@ -903,7 +903,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;幾何関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;幾何関数&lt;/h2&gt;
+&lt;h2 id=&#34;幾何関数&#34;&gt;幾何関数&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T は浮動小数点数(floatn / halfn)のベクター&lt;/li&gt;
@@ -993,9 +993,9 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;グラフィック関数:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;グラフィック関数&lt;/h2&gt;
+&lt;h2 id=&#34;グラフィック関数&#34;&gt;グラフィック関数&lt;/h2&gt;
 
-&lt;h3 id=&#34;フラグメントシェーダ:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;フラグメントシェーダ&lt;/h3&gt;
+&lt;h3 id=&#34;フラグメントシェーダ&#34;&gt;フラグメントシェーダ&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;T はfloat, float2, float3, float4, half, half2, half3, half4&lt;/li&gt;
@@ -1035,11 +1035,11 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;h2 id=&#34;感想:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;さすが後発なだけあって、全部入り。GLSLをベースにHLSLやらOpenCLからありったけ詰め込んだような感じ。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:4dfc7da6cd3b1c47c8c108751f0fee0c&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Metal/Reference/MetalShadingLanguageGuide/std-lib/std-lib.html&#34;&gt;Metal Standard Library&lt;/a&gt;&lt;/li&gt;
@@ -1057,22 +1057,22 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
       <guid>https://mike-neko.github.io/blog/metal-noise/</guid>
       <description>
 
-&lt;h2 id=&#34;概要:c76c02a9716918700fc6ffc19450c1da&#34;&gt;概要&lt;/h2&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。&lt;/p&gt;
 
 &lt;p&gt;パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
 デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。&lt;/p&gt;
 
-&lt;h2 id=&#34;動作イメージ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;動作イメージ&lt;/h2&gt;
+&lt;h2 id=&#34;動作イメージ&#34;&gt;動作イメージ&lt;/h2&gt;
 
 &lt;p&gt;&lt;blockquote class=&#34;instagram-media&#34; data-instgrm-captioned data-instgrm-version=&#34;6&#34; style=&#34; background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);&#34;&gt;&lt;div style=&#34;padding:8px;&#34;&gt; &lt;div style=&#34; background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;&#34;&gt; &lt;div style=&#34; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;&#34;&gt;&lt;/div&gt;&lt;/div&gt; &lt;p style=&#34; margin:8px 0 0 0; padding:0 4px;&#34;&gt; &lt;a href=&#34;https://www.instagram.com/p/BBATaXDFQW1/&#34; style=&#34; color:#000; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none; word-wrap:break-word;&#34; target=&#34;_blank&#34;&gt;ノイズ生成デモ&lt;/a&gt;&lt;/p&gt; &lt;p style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;&#34;&gt;@m_ike__が投稿した動画 - &lt;time style=&#34; font-family:Arial,sans-serif; font-size:14px; line-height:17px;&#34; datetime=&#34;2016-01-26T13:57:16+00:00&#34;&gt;2016 1月 26 5:57午前 PST&lt;/time&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt; &lt;script async defer src=&#34;//platform.instagram.com/en_US/embeds.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;小ネタ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;小ネタ&lt;/h2&gt;
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
 
 &lt;p&gt;ソース自体はGPUGemsのサンプルをほぼほぼ書き換えただけなので、ノイズ生成のアルゴリズムなどは参考リンクの方で。。。&lt;/p&gt;
 
-&lt;h3 id=&#34;ノイズ生成の流れ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;ノイズ生成の流れ&lt;/h3&gt;
+&lt;h3 id=&#34;ノイズ生成の流れ&#34;&gt;ノイズ生成の流れ&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;初期化時に順列テーブル&lt;code&gt;permBuffer&lt;/code&gt;を生成&lt;br /&gt;
@@ -1085,14 +1085,14 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;li&gt;&lt;p&gt;2のテクスチャを板ポリに貼って描画する&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;computeshader用の設定:c76c02a9716918700fc6ffc19450c1da&#34;&gt;ComputeShader用の設定&lt;/h3&gt;
+&lt;h3 id=&#34;computeshader用の設定&#34;&gt;ComputeShader用の設定&lt;/h3&gt;
 
-&lt;h4 id=&#34;mtkviewの設定:c76c02a9716918700fc6ffc19450c1da&#34;&gt;MTKViewの設定&lt;/h4&gt;
+&lt;h4 id=&#34;mtkviewの設定&#34;&gt;MTKViewの設定&lt;/h4&gt;
 
 &lt;p&gt;ComputeShaderを利用する場合は、&lt;code&gt;MTKView&lt;/code&gt;の&lt;code&gt;framebufferOnly&lt;/code&gt;を&lt;code&gt;false&lt;/code&gt;にしておくこと。&lt;br /&gt;
 ただし、パフォーマンスに影響を与えるので、利用しない時は触らないこと。&lt;/p&gt;
 
-&lt;h4 id=&#34;waituntilcompleted:c76c02a9716918700fc6ffc19450c1da&#34;&gt;waitUntilCompleted()&lt;/h4&gt;
+&lt;h4 id=&#34;waituntilcompleted&#34;&gt;waitUntilCompleted()&lt;/h4&gt;
 
 &lt;p&gt;各種コマンドの実行の終了するまで待機するメソッド。&lt;br /&gt;
 以下のように&lt;code&gt;commandBuffer.commit()&lt;/code&gt;より後に置く。&lt;br /&gt;
@@ -1106,7 +1106,7 @@ commandBuffer.waitUntilCompleted()
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;スレッド:c76c02a9716918700fc6ffc19450c1da&#34;&gt;スレッド&lt;/h3&gt;
+&lt;h3 id=&#34;スレッド&#34;&gt;スレッド&lt;/h3&gt;
 
 &lt;p&gt;GPGPUは大量のスレッドを並列動作させて圧倒的な処理を行うのが特徴だが、モバイルのGPUのため、スレッドグループ毎の最大のスレッド数は512までになっている(&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Miscellaneous/Conceptual/MetalProgrammingGuide/MetalFeatureSetTables/MetalFeatureSetTables.html&#34;&gt;公式&lt;/a&gt;)。&lt;/p&gt;
 
@@ -1132,7 +1132,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 &lt;p&gt;同じスレッドグループ内であれば、メモリの共有ができたりするのだが、そのあたりも公式のサンプル&lt;a href=&#34;https://developer.apple.com/library/ios/samplecode/Metal_NBody_Simulation/Introduction/Intro.html&#34;&gt;Metal N-Body&lt;/a&gt;が参考になる。&lt;/p&gt;
 
-&lt;h3 id=&#34;デバッグ:c76c02a9716918700fc6ffc19450c1da&#34;&gt;デバッグ&lt;/h3&gt;
+&lt;h3 id=&#34;デバッグ&#34;&gt;デバッグ&lt;/h3&gt;
 
 &lt;p&gt;Xcodeの&lt;code&gt;Capture GPU Frame&lt;/code&gt;がとても便利。&lt;/p&gt;
 
@@ -1141,7 +1141,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 &lt;p&gt;また、プロファイル機能も充実していてどこがボトルネックがわかりやすい。&lt;/p&gt;
 
-&lt;h2 id=&#34;感想:c76c02a9716918700fc6ffc19450c1da&#34;&gt;感想&lt;/h2&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;Metalの発表を聞いて一番ワクワクして触りたかったのが、このGPGPUだった。これまでMacでは統合開発環境でGPGPUが組めなかった（普通のシェーダだけならUnityがあった）ので、使い慣れたXcodeで触れるのは楽しみだった。&lt;/p&gt;
 
@@ -1151,7 +1151,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 
 &lt;p&gt;にしても、シェーダ関係は環境毎に用語が微妙に変わるのは何とかしてほしい。。。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク:c76c02a9716918700fc6ffc19450c1da&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;日本語の解説：&lt;a href=&#34;http://postd.cc/understanding-perlin-noise/&#34;&gt;パーリンノイズを理解する(POSTD)&lt;/a&gt;&lt;/li&gt;
@@ -1161,7 +1161,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 &lt;li&gt;FragmentShaderで実装や応用例：&lt;a href=&#34;http://www.sci.utah.edu/~leenak/IndStudy_reportfall/Perlin%20Noise%20on%20GPU.html&#34;&gt;Perlin Noise on GPU&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;開発環境:c76c02a9716918700fc6ffc19450c1da&#34;&gt;開発環境&lt;/h1&gt;
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Xcode 7.2&lt;/li&gt;
@@ -1169,7 +1169,7 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ソース:c76c02a9716918700fc6ffc19450c1da&#34;&gt;ソース&lt;/h1&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalCompute&#34;&gt;こちら&lt;/a&gt; (&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>

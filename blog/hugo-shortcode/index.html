@@ -104,7 +104,7 @@
 
 <p>Hugoの<code>shortcode</code>を使って、記事の中でHTMLのタグをべた書きしなくて良い様にする方法のメモ。あと、おまけで<code>shortcode</code>をMarkdownの中でエスケープして表示する方法。</p>
 
-<h2 id="画像を貼り付けるshortcode:82b443db7a6a95ed9bb9f499c6e51b27">画像を貼り付けるshortcode</h2>
+<h2 id="画像を貼り付けるshortcode">画像を貼り付けるshortcode</h2>
 
 <p>Hugoで画像を表示するには、<code>static</code>の中に置く必要がある。この中は全サイト共通になっているので、整理しやすいように以下のディレクトリ構成にした。</p>
 
@@ -124,7 +124,7 @@
 
 <p>これを毎回書くのは面倒だが<code>shortcode</code>を使うと、<code>{{&lt; img &quot;sample.jpg&quot; &gt;}}</code>とだけ書けばよい。</p>
 
-<h3 id="作り方:82b443db7a6a95ed9bb9f499c6e51b27">作り方</h3>
+<h3 id="作り方">作り方</h3>
 
 <ol>
 <li><code>&lt;site-name&gt;/layouts/shortcodes/img.html</code>を作成</li>
@@ -134,7 +134,7 @@
 <li>あとは使いたい場所で<code>{{&lt; img &quot;ファイル名&quot; &gt;}}</code>とすればOK</li>
 </ol>
 
-<h2 id="エスケープ方法:82b443db7a6a95ed9bb9f499c6e51b27">エスケープ方法</h2>
+<h2 id="エスケープ方法">エスケープ方法</h2>
 
 <p>記事の中で、<code>shortcode</code>などを表示させたい場合に、そのまま書くと当然ながらそのコードが実行されてしまうので、エスケープが必要となる。</p>
 
@@ -151,7 +151,7 @@
 
 <p>で、一番おすすめなのは3の方法。他の方法だと``で囲った時にうまく表示されないので。</p>
 
-<h1 id="参考リンク:82b443db7a6a95ed9bb9f499c6e51b27">参考リンク</h1>
+<h1 id="参考リンク">参考リンク</h1>
 
 <ul>
 <li>公式：<a href="https://gohugo.io/extras/shortcodes/">Hugo - Shortcodes</a></li>

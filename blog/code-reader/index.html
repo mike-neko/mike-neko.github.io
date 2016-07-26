@@ -102,7 +102,7 @@
     </span>
     
 
-<h2 id="概要:a5cf36e06059d329ad01bad1fdbb45c5">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p>iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル。</p>
 
@@ -112,15 +112,15 @@
 
 <p>コード認識自体はもっと詳しい説明がいろんなとこにあるので、ここは他で説明していなそうなところだけ。</p>
 
-<h2 id="小ネタ:a5cf36e06059d329ad01bad1fdbb45c5">小ネタ</h2>
+<h2 id="小ネタ">小ネタ</h2>
 
-<h3 id="シリアルキューの利用:a5cf36e06059d329ad01bad1fdbb45c5">シリアルキューの利用</h3>
+<h3 id="シリアルキューの利用">シリアルキューの利用</h3>
 
 <p>カメラの起動や画像認識は処理が重いので、それぞれ専用のシリアルキューを作成して利用している。</p>
 
 <p>カメラの設定周りはフリーズ状態になるのを防ぐためだが、最近の端末は起動が早いらしく、キューを使わなくても特に問題無い感じ。</p>
 
-<h3 id="avmetadatamachinereadablecodeobject:a5cf36e06059d329ad01bad1fdbb45c5">AVMetadataMachineReadableCodeObject</h3>
+<h3 id="avmetadatamachinereadablecodeobject">AVMetadataMachineReadableCodeObject</h3>
 
 <p>認識されたコードは<code>AVMetadataMachineReadableCodeObject</code>のオブジェクトの配列で渡される。</p>
 
@@ -130,7 +130,7 @@
 <li><code>stringValue</code>：コードに含まれるデータ</li>
 </ul>
 
-<h3 id="プレビュー画面上に認識したコードの枠を表示する:a5cf36e06059d329ad01bad1fdbb45c5">プレビュー画面上に認識したコードの枠を表示する</h3>
+<h3 id="プレビュー画面上に認識したコードの枠を表示する">プレビュー画面上に認識したコードの枠を表示する</h3>
 
 <p><code>AVMetadataMachineReadableCodeObject</code>の中の<code>corners</code>にコードの座標位置が含まれているが、これはプレビューのViewの座標系とは異なるので、そのままでは使えない。</p>
 
@@ -138,7 +138,7 @@
 
 <p>（以前は手動でちゃんとプレビュー画面上の座標に変換していたが、今回、この簡単に変換できるメソッドを発見！<code>AVCaptureVideoPreviewLayer</code>の方もちゃんと調べていれば・・・）</p>
 
-<h2 id="感想:a5cf36e06059d329ad01bad1fdbb45c5">感想</h2>
+<h2 id="感想">感想</h2>
 
 <p>昔iOS7で使えるようになった時に試したものを、Swiftで書き直し＋αしたコード。やはりSwiftはわかりやすく、かつエラー処理もしっかり書いても、Objective-Cよりコードが少ないので良い。</p>
 
@@ -147,13 +147,13 @@
 <p><del>あと、カメラをわざわざ起動しなくても画像を直接認識してくれるようになって欲しい。</del>
 (6/17追記：方法が判ったので<a href="../qr-reader/">その2</a>を作成した)</p>
 
-<h1 id="参考リンク:a5cf36e06059d329ad01bad1fdbb45c5">参考リンク</h1>
+<h1 id="参考リンク">参考リンク</h1>
 
 <ul>
 <li>公式：<a href="https://developer.apple.com/library/prerelease/ios/technotes/tn2325/_index.html">AV Foundation iOS Machine Readable Code Detection FAQ</a></li>
 </ul>
 
-<h1 id="開発環境:a5cf36e06059d329ad01bad1fdbb45c5">開発環境</h1>
+<h1 id="開発環境">開発環境</h1>
 
 <ul>
 <li>Xcode 7.3</li>
@@ -161,7 +161,7 @@
 <li>iPhone 6+</li>
 </ul>
 
-<h1 id="ソース:a5cf36e06059d329ad01bad1fdbb45c5">ソース</h1>
+<h1 id="ソース">ソース</h1>
 
 <p><a href="https://github.com/mike-neko/CodeReader/">こちら</a></p>
 

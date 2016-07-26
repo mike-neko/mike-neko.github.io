@@ -102,13 +102,13 @@
     </span>
     
 
-<h2 id="概要:9f4de33edfbe837dbb3e37ebe79037f8">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p>iOS用のサーバ環境をDockerでローカルに構築した時のメモ。</p>
 
 <p><em>なお、ローカルの開発用ということでセキュリティは考慮していないので注意</em></p>
 
-<h3 id="要件:9f4de33edfbe837dbb3e37ebe79037f8">要件</h3>
+<h3 id="要件">要件</h3>
 
 <p>主にAPIでサーバとやりとりするアプリの開発用なので以下の感じ</p>
 
@@ -118,9 +118,9 @@
 <li>SSLが使えること（iOS用）</li>
 </ul>
 
-<h3 id="環境:9f4de33edfbe837dbb3e37ebe79037f8">環境</h3>
+<h3 id="環境">環境</h3>
 
-<h4 id="構成イメージ:9f4de33edfbe837dbb3e37ebe79037f8">構成イメージ</h4>
+<h4 id="構成イメージ">構成イメージ</h4>
 
 <pre><code>Mac   (192.168.0.2) == ルータ(192.168.0.1) == iPhone(192.168.0.3)  
 ｜  
@@ -133,7 +133,7 @@ Docker(192.168.99.100)
 
 <p>ゴールは、iPhone上から<code>https://192.168.0.2</code>へアクセスするとページが表示(APIの通信)できればOK。</p>
 
-<h4 id="mac上-ホストos:9f4de33edfbe837dbb3e37ebe79037f8">Mac上(ホストOS)</h4>
+<h4 id="mac上-ホストos">Mac上(ホストOS)</h4>
 
 <ul>
 <li>MacOS 10.11.3(El Capitan)</li>
@@ -142,7 +142,7 @@ Docker(192.168.99.100)
 <li>nginx 1.8.1</li>
 </ul>
 
-<h4 id="docker上-ゲストos:9f4de33edfbe837dbb3e37ebe79037f8">Docker上(ゲストOS)</h4>
+<h4 id="docker上-ゲストos">Docker上(ゲストOS)</h4>
 
 <ul>
 <li>Apache</li>
@@ -152,9 +152,9 @@ Docker(192.168.99.100)
 (phpmyadmin)</li>
 </ul>
 
-<h1 id="手順:9f4de33edfbe837dbb3e37ebe79037f8">手順</h1>
+<h1 id="手順">手順</h1>
 
-<h3 id="dockerのインストール:9f4de33edfbe837dbb3e37ebe79037f8">Dockerのインストール</h3>
+<h3 id="dockerのインストール">Dockerのインストール</h3>
 
 <ol>
 <li><a href="https://www.docker.com/products/docker-toolbox">公式</a>から<code>DockerToolBox</code>をダウンロードしてインストールを実行<br /></li>
@@ -163,7 +163,7 @@ Docker(192.168.99.100)
 <li>すると勝手にVM作成やらネットワーク設定をしてくれる親切設計なのでクジラが出てくるまで待つ</li>
 </ol>
 
-<h3 id="dockercomposeの設定:9f4de33edfbe837dbb3e37ebe79037f8">DockerComposeの設定</h3>
+<h3 id="dockercomposeの設定">DockerComposeの設定</h3>
 
 <p>Dockerはコンテナをパーツのように組み合わせて環境を作っていく。</p>
 
@@ -184,7 +184,7 @@ Docker(192.168.99.100)
 <p>ただ、この方法だと引数の指定が多かったり複数のコンテナを利用する場合は大変なので、
 <code>DockerCompose</code>を用いて管理する。</p>
 
-<h4 id="事前準備:9f4de33edfbe837dbb3e37ebe79037f8">事前準備</h4>
+<h4 id="事前準備">事前準備</h4>
 
 <p>まずは適当な場所に、コンテナ毎の<code>Dockerfile</code>や設定ファイルなどを
 まとめておくディレクトリを作ってカレントディレクトリとする。
@@ -201,7 +201,7 @@ Docker(192.168.99.100)
      └─ index.html       # 動作確認用のHTML
 </code></pre>
 
-<h4 id="apache-php:9f4de33edfbe837dbb3e37ebe79037f8">Apache+PHP</h4>
+<h4 id="apache-php">Apache+PHP</h4>
 
 <p>ApacheはPHPに同梱されているものを使うのが便利なので、<code>apache</code>がついているタグのものを使う。
 今回は<a href="https://hub.docker.com/_/php/">公式</a>で5系の一番新しいバージョンの<code>5.6.18-apache</code>を選択。</p>
@@ -224,7 +224,7 @@ Docker(192.168.99.100)
 <p>これでMac上からは、<code>http://192.168.99.100/index.html</code>へアクセスすると、
 <code>www/index.html</code>が表示される。</p>
 
-<h4 id="mariadb-phpmyadmin:9f4de33edfbe837dbb3e37ebe79037f8">MariaDB+phpMyAdmin</h4>
+<h4 id="mariadb-phpmyadmin">MariaDB+phpMyAdmin</h4>
 
 <p>特に変更点もないのでイメージは公式の最新をそのままを使う。</p>
 
@@ -255,14 +255,14 @@ phpmyadmin:
 
 <p><em>注意点としてこの状態ではDBの永続化はできていないので、コンテナを削除するとDBの内容も消える</em></p>
 
-<h3 id="ios端末からのアクセス:9f4de33edfbe837dbb3e37ebe79037f8">iOS端末からのアクセス</h3>
+<h3 id="ios端末からのアクセス">iOS端末からのアクセス</h3>
 
 <p>ここまでの状態だとMacからしかアクセスできないので、Mac上で<code>nginx</code>をリバースプロキシとして動かし、
 他のiOS端末からアクセスできるようにする。</p>
 
 <p>また、iOS9のATSへ対応する為にSSLでアクセスできるようにする。ただしローカル環境なのでオレオレ証明書を利用する。</p>
 
-<h4 id="nginxのインストール:9f4de33edfbe837dbb3e37ebe79037f8">nginxのインストール</h4>
+<h4 id="nginxのインストール">nginxのインストール</h4>
 
 <p><code>Homebrew</code>でインストールする。</p>
 
@@ -291,7 +291,7 @@ brew install nginx
 }
 </code></pre>
 
-<h4 id="sslの証明書について:9f4de33edfbe837dbb3e37ebe79037f8">SSLの証明書について</h4>
+<h4 id="sslの証明書について">SSLの証明書について</h4>
 
 <p>今回はnginx部分だけSSLに対応させる。（dockerはHTTPのまま）</p>
 
@@ -308,7 +308,7 @@ brew install nginx
 <p>もし、上の条件が満たせない場合は、ATSの設定を変えるとか個別に認証処理を書くなどして回避する必要がある。
 （回避できないのもあるけど）</p>
 
-<h4 id="sslの証明書の作成:9f4de33edfbe837dbb3e37ebe79037f8">SSLの証明書の作成</h4>
+<h4 id="sslの証明書の作成">SSLの証明書の作成</h4>
 
 <pre><code>openssl genrsa -out server.key 2048 -sha256
 openssl req -new -sha256 -key server.key &gt; server.csr
@@ -337,7 +337,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &lt; server.csr &gt; se
 }
 </code></pre>
 
-<h4 id="vmの設定:9f4de33edfbe837dbb3e37ebe79037f8">VMの設定</h4>
+<h4 id="vmの設定">VMの設定</h4>
 
 <p>DockerはVirtualBox上で動いているので、VMのポートフォワードを設定が必要となる。
 設定は、</p>
@@ -347,7 +347,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &lt; server.csr &gt; se
 
 <p>とする。VirtualBoxを起動して、<code>default-設定-ネットワーク-アダプター1-ポートフォワーディング</code>からでもOK。</p>
 
-<h2 id="起動:9f4de33edfbe837dbb3e37ebe79037f8">起動</h2>
+<h2 id="起動">起動</h2>
 
 <ol>
 <li>Dockerを起動させる</li>
@@ -360,7 +360,7 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &lt; server.csr &gt; se
 <code>www/index.html</code>が表示される。
 （ただし、オレオレ証明書なので認証の警告などは出る）</p>
 
-<h1 id="追記:9f4de33edfbe837dbb3e37ebe79037f8">追記</h1>
+<h1 id="追記">追記</h1>
 
 <p>Docker起動時に</p>
 
@@ -374,14 +374,14 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &lt; server.csr &gt; se
 
 <p>をしてから起動し直すと大丈夫っぽい。なお、原因は不明・・・</p>
 
-<h1 id="感想:9f4de33edfbe837dbb3e37ebe79037f8">感想</h1>
+<h1 id="感想">感想</h1>
 
 <p>開発環境をプラグインみたいな感じで構築していけるのと構築内容がテキストで残るのはあとあと楽。</p>
 
 <p>ただ、サーバ環境とまるまる同じものを構築するならVagrantの方が良いのかも・・・
 でも、Dockerはいろいろな環境を次々に試すのには便利なので、使い分けが大事そう。</p>
 
-<h1 id="ファイル一式:9f4de33edfbe837dbb3e37ebe79037f8">ファイル一式</h1>
+<h1 id="ファイル一式">ファイル一式</h1>
 
 <p>実際の各イメージのDockerfileや設定ファイルをまとめたものは
 <a href="https://github.com/mike-neko/Docker/tree/master/SSLWebServer">こちら</a></p>

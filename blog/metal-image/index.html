@@ -102,7 +102,7 @@
     </span>
     
 
-<h2 id="概要:ee598c9d217a1971ba9d28d3419c0378">概要</h2>
+<h2 id="概要">概要</h2>
 
 <p>読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。</p>
 
@@ -110,14 +110,14 @@
 
 <p>そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。</p>
 
-<h2 id="動作イメージ:ee598c9d217a1971ba9d28d3419c0378">動作イメージ</h2>
+<h2 id="動作イメージ">動作イメージ</h2>
 
 <p><blockquote class="instagram-media" data-instgrm-version="6" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:8px;"> <div style=" background:#F8F8F8; line-height:0; margin-top:40px; padding:62.3366013072% 0; text-align:center; width:100%;"> <div style=" background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;"></div></div><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/p/BBn2nSclQZi/" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">@m_ike__が投稿した動画</a> - <time style=" font-family:Arial,sans-serif; font-size:14px; line-height:17px;" datetime="2016-02-10T22:35:15+00:00">2016  2月 10 2:35午後 PST</time></p></div></blockquote>
 <script async defer src="//platform.instagram.com/en_US/embeds.js"></script></p>
 
 <p>ちなみに実機で見るともっとキレイ</p>
 
-<h2 id="小ネタ:ee598c9d217a1971ba9d28d3419c0378">小ネタ</h2>
+<h2 id="小ネタ">小ネタ</h2>
 
 <p>処理はおおまかにわけて、</p>
 
@@ -139,9 +139,9 @@
 
 <p>注意点として、画像の座標とMetalでの座標軸は違うので、x軸とy軸に−1のスケールをかけて補正している。テクスチャ読み込み時に何かできるかは未調査だが、そもそもこういうテクスチャの使い方は普通しないと思うのでそのまま。</p>
 
-<h3 id="テクスチャからパーティクルを生成:ee598c9d217a1971ba9d28d3419c0378">テクスチャからパーティクルを生成</h3>
+<h3 id="テクスチャからパーティクルを生成">テクスチャからパーティクルを生成</h3>
 
-<h4 id="パーティクルの位置の計算:ee598c9d217a1971ba9d28d3419c0378">パーティクルの位置の計算</h4>
+<h4 id="パーティクルの位置の計算">パーティクルの位置の計算</h4>
 
 <pre><code>// ImagePiece* particles [[ buffer(0) ]]
 // uint2 id [[ thread_position_in_grid ]]
@@ -152,7 +152,7 @@ particles[index].position = float4(id.x / (float)size.x, id.y / (float)size.y, 0
 
 <p>イメージとしては1*1の板ポリの中にすべてのパーティクルを配置する感じで、各パーティクルのローカル座標が(0, 0)から(1, 1)の中に収まるようにする。</p>
 
-<h4 id="画像の対応するピクセルの色を取得:ee598c9d217a1971ba9d28d3419c0378">画像の対応するピクセルの色を取得</h4>
+<h4 id="画像の対応するピクセルの色を取得">画像の対応するピクセルの色を取得</h4>
 
 <pre><code>// texture2d&lt;float, access::read&gt; image [[ texture(0) ]]
 particles[index].color = image.read(id);
@@ -160,7 +160,7 @@ particles[index].color = image.read(id);
 
 <p>今回は1ピクセル=1パーティクル、スレッドも同じように分割しているので、テクスチャの対応するピクセルの座標は、そのままグリッド内のスレッド位置と同じになる。</p>
 
-<h4 id="動きのパラメータの初期設定:ee598c9d217a1971ba9d28d3419c0378">動きのパラメータの初期設定</h4>
+<h4 id="動きのパラメータの初期設定">動きのパラメータの初期設定</h4>
 
 <pre><code>// param.time.w : y方向のdelay
 // rnd : 乱数
@@ -172,9 +172,9 @@ particles[index].acc = float4(param.delta.x, param.delta.y, param.delta.z, rnd_d
 
 <p>下の方から順にパーティクルが落ちるように、画像の上の方ほど遅れて落ち始めるようにで遅延を設定する(2の<code>rnd_d * id.y</code>部分)。また落ち方がそれっぽく見えるように、遅延時間は元の指定の100%〜90%の間でばらつくように乱数を使う(1の部分)。</p>
 
-<h3 id="パーティクルに動きをつける:ee598c9d217a1971ba9d28d3419c0378">パーティクルに動きをつける</h3>
+<h3 id="パーティクルに動きをつける">パーティクルに動きをつける</h3>
 
-<h4 id="位置の更新:ee598c9d217a1971ba9d28d3419c0378">位置の更新</h4>
+<h4 id="位置の更新">位置の更新</h4>
 
 <pre><code>// particles[index].acc.w : delay
 // param.time.x : スタートからの経過時間
@@ -185,7 +185,7 @@ particles[index].position += t * particles[index].acc;
 
 <p>パーティクルの位置は、スムーズに見えるように<code>前回からの経過時間*時間あたりの移動量</code>で計算する。ただし、各パーティクルには遅延時間があるので、それを経過するまでは経過時間は0として動かないようにする(<code>fmax(0.f, param.time.x - particles[index].acc.w)</code>の部分)。さらに、こちらも乱数で落ち方にばらつきを与える。</p>
 
-<h4 id="消滅処理:ee598c9d217a1971ba9d28d3419c0378">消滅処理</h4>
+<h4 id="消滅処理">消滅処理</h4>
 
 <pre><code>float4 f = step(param.delta.w, particles[index].position + t * particles[index].acc);
 particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
@@ -198,7 +198,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 
 <p>ポイントとなるのは、フラグメントシェーダ内の<code>if (in.color.a &lt; 0.1) discard_fragment();</code>という見えなくなったピクセルの破棄処理。なくてもパーティクルは消えてくれるが、この処理を行うことで若干フレームレートが改善するので入れた（<del>単に使ってみたかっただけ</del>）。</p>
 
-<h3 id="乱数の生成:ee598c9d217a1971ba9d28d3419c0378">乱数の生成</h3>
+<h3 id="乱数の生成">乱数の生成</h3>
 
 <p>Metalではシェーダ上で使える乱数の関数は準備されていない為、使いたい場合はシェーダ上で自前で実装するかCPU側で生成したものを渡して使うかになる。今回はCPU側でほとんど処理しないので、シェーダ上で実装する方を選択した。</p>
 
@@ -214,14 +214,14 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 
 <p>得られる結果は<code>uint</code>なので、実際のコード内では使いやすいよう<code>(float)rnd / UINT_MAX</code>として正規化してから使っている。</p>
 
-<h1 id="参考リンク:ee598c9d217a1971ba9d28d3419c0378">参考リンク</h1>
+<h1 id="参考リンク">参考リンク</h1>
 
 <ul>
 <li>乱数のアルゴリズムの解説記事<br />
 <a href="https://blog.visvirial.com/articles/575">Google Chromeが採用した、擬似乱数生成アルゴリズム「xorshift」の数理</a></li>
 </ul>
 
-<h1 id="開発環境:ee598c9d217a1971ba9d28d3419c0378">開発環境</h1>
+<h1 id="開発環境">開発環境</h1>
 
 <ul>
 <li>Xcode 7.2</li>
@@ -229,7 +229,7 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 <li>iPhone 6+</li>
 </ul>
 
-<h1 id="ソース:ee598c9d217a1971ba9d28d3419c0378">ソース</h1>
+<h1 id="ソース">ソース</h1>
 
 <p><a href="https://github.com/mike-neko/MetalImage">こちら</a>(<em>iOS9 A7以降搭載機種のみ</em>)</p>
 
