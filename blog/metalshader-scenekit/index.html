@@ -247,7 +247,7 @@ Available Fields for Per-Node Shader Data</code>を参照</p>
 
 <p>テクスチャを利用したい場合は、特に事前の定義などは不要で通常通り宣言する</p>
 
-<pre><code>fragment half4 textureFragment(outout in [[ stage_in ]],
+<pre><code>fragment half4 textureFragment(VertexOut in [[ stage_in ]],
                                texture2d&lt;float&gt; texture [[ texture(0) ]]) {
 </code></pre>
 

@@ -313,7 +313,7 @@ Available Fields for Per-Node Shader Data&lt;/code&gt;を参照&lt;/p&gt;
 
 &lt;p&gt;テクスチャを利用したい場合は、特に事前の定義などは不要で通常通り宣言する&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;fragment half4 textureFragment(outout in [[ stage_in ]],
+&lt;pre&gt;&lt;code&gt;fragment half4 textureFragment(VertexOut in [[ stage_in ]],
                                texture2d&amp;lt;float&amp;gt; texture [[ texture(0) ]]) {
 &lt;/code&gt;&lt;/pre&gt;
 
