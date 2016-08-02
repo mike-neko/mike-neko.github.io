@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Perfect &middot; M.Ike</title>
+  <title>GitHubにタグ付けする &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -26,7 +26,7 @@
   
   
   
-  <link href="https://mike-neko.github.io/categories/perfect/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
+  
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -92,82 +92,82 @@
 </div>
 
 
-
-
-
-
 <div class="content container">
-  <h1>Category: " perfect "</h1>
-  <div class="posts">
+  <div class="post">
+    <h1>GitHubにタグ付けする</h1>
+    <span class="post-date">Aug 2, 2016 
     
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/categories/github">github</a><a class="label" href="https://mike-neko.github.io/categories/memo">memo</a>
+    </span>
     
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/perfect-push/">Perfect APNs編</a>
-      </h1>
-      <span class="post-date">Apr 11, 2016
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/categories/perfect">perfect</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a><a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
-      </span>
-      
-      <h2 id="概要">概要</h2>
 
-<p>サーバーサイドSwiftフレームワークの<a href="https://perfect.org/">Perfect</a>の使い方のメモその3</p>
+<h2 id="概要">概要</h2>
 
-<p>今回はiOSのプッシュ通知を送信する方法について</p>
+<p>GitHubにタグを付ける方法。
+<code>GitHub Desktop</code>はブランチ周りはサポートしているけどタグ関係はサポートしていないのでメモしておく。</p>
 
-<p>Perfectは最新のAPNsの通信形式に対応していて、細かなエラーレスポンスを取れるのがメリット。
-なので、開発用としては大変使いやすい。</p>
+<h2 id="手順">手順</h2>
 
-      <a href="https://mike-neko.github.io/blog/perfect-push/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/perfect-2/">Perfect 基礎編</a>
-      </h1>
-      <span class="post-date">Apr 10, 2016
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/categories/perfect">perfect</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
-      </span>
-      
-      <h2 id="概要">概要</h2>
+<ol>
+<li><code>GitHub Desktop</code>でタグ付けしたいリポジトリを選択する<br /></li>
+<li>タグをつけたいコミットを選択し、チェックサムをコピーする<br />
+（下図の赤枠で囲んだ部分だけでOK）
+<figure>
+	<img src="/media/2016-08-02-gittag/checksum.png" />
+</figure>
+</li>
+<li>メニューの<code>Repository</code>から<code>Open in Terminal</code>を選択してターミナルを開く</li>
 
-<p>サーバーサイドSwiftフレームワークの<a href="https://perfect.org/">Perfect</a>の使い方のメモその2</p>
+<li><p>ターミナルで以下を実行しタグを付ける</p>
 
-<p>基礎編ではルーティングやリクエストの処理方法のあたりまで</p>
+<pre><code>git tag -a [タグ名] -m &quot;メッセージ&quot; [タグ付けするコミットのチェックサム]
+</code></pre>
 
-      <a href="https://mike-neko.github.io/blog/perfect-2/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/perfect-1/">Perfect 導入編</a>
-      </h1>
-      <span class="post-date">Apr 8, 2016
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/categories/perfect">perfect</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
-      </span>
-      
-      <h2 id="概要">概要</h2>
+<p>例）<code>git tag -a v1.0 -m &quot;drop only&quot; 2a49b78</code></p></li>
 
-<p>サーバーサイドSwiftフレームワークの<a href="https://perfect.org/">Perfect</a>の使い方のメモその1</p>
+<li><p>ターミナルで以下を実行しタグが付いたか確認する</p>
 
-<p>導入編ではベースとなるプロジェクトを一から作るあたりまで</p>
+<pre><code>git show [タグ名]
+</code></pre>
 
-      <a href="https://mike-neko.github.io/blog/perfect-1/">Read On &rarr;</a>
-      
-    </div>
-    
-    
-    
+<p>例）<code>git show v1.0</code><br />
+（タグの一覧を見たい場合は<code>git tag</code>）</p></li>
+
+<li><p>タグをプッシュする</p>
+
+<pre><code>// 特定のタグだけ
+git push origin [タグ名]
+// プッシュされていない全てのタグ
+git push origin --tags
+</code></pre></li>
+</ol>
+
+<h2 id="githubの状態">GitHubの状態</h2>
+
+<p>タグをプッシュすると、GitHub上でも確認できるようになる。<br />
+GitHubではタグは主にリリースと関連づける前提の様子。</p>
+
+<p>例だと、以下のような感じで反映される。</p>
+
+<figure>
+	<img src="/media/2016-08-02-gittag/github.png" />
+</figure>
+
+
+<p>タグをつけておくと、zipで直接落とせるので便利！</p>
+
+<h1 id="参考リンク">参考リンク</h1>
+
+<ul>
+<li><a href="https://git-scm.com/book/ja/v2/Git-%E3%81%AE%E5%9F%BA%E6%9C%AC-%E3%82%BF%E3%82%B0">Git の基本 - タグ</a></li>
+</ul>
+
   </div>
+  
 </div>
+
+
 
 
 <script src="https://mike-neko.github.io/js/highlight.pack.js"></script>

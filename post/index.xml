@@ -6,8 +6,79 @@
     <description>Recent content in Posts on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Mon, 25 Jul 2016 22:55:03 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 02 Aug 2016 21:36:00 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>GitHubにタグ付けする</title>
+      <link>https://mike-neko.github.io/blog/gittag/</link>
+      <pubDate>Tue, 02 Aug 2016 21:36:00 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/gittag/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;GitHubにタグを付ける方法。
+&lt;code&gt;GitHub Desktop&lt;/code&gt;はブランチ周りはサポートしているけどタグ関係はサポートしていないのでメモしておく。&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;GitHub Desktop&lt;/code&gt;でタグ付けしたいリポジトリを選択する&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;タグをつけたいコミットを選択し、チェックサムをコピーする&lt;br /&gt;
+（下図の赤枠で囲んだ部分だけでOK）
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-08-02-gittag/checksum.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li&gt;メニューの&lt;code&gt;Repository&lt;/code&gt;から&lt;code&gt;Open in Terminal&lt;/code&gt;を選択してターミナルを開く&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ターミナルで以下を実行しタグを付ける&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git tag -a [タグ名] -m &amp;quot;メッセージ&amp;quot; [タグ付けするコミットのチェックサム]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例）&lt;code&gt;git tag -a v1.0 -m &amp;quot;drop only&amp;quot; 2a49b78&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ターミナルで以下を実行しタグが付いたか確認する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git show [タグ名]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例）&lt;code&gt;git show v1.0&lt;/code&gt;&lt;br /&gt;
+（タグの一覧を見たい場合は&lt;code&gt;git tag&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;タグをプッシュする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 特定のタグだけ
+git push origin [タグ名]
+// プッシュされていない全てのタグ
+git push origin --tags
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;githubの状態&#34;&gt;GitHubの状態&lt;/h2&gt;
+
+&lt;p&gt;タグをプッシュすると、GitHub上でも確認できるようになる。&lt;br /&gt;
+GitHubではタグは主にリリースと関連づける前提の様子。&lt;/p&gt;
+
+&lt;p&gt;例だと、以下のような感じで反映される。&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-08-02-gittag/github.png&#34; /&gt;
+&lt;/figure&gt;
+
+
+&lt;p&gt;タグをつけておくと、zipで直接落とせるので便利！&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://git-scm.com/book/ja/v2/Git-%E3%81%AE%E5%9F%BA%E6%9C%AC-%E3%82%BF%E3%82%B0&#34;&gt;Git の基本 - タグ&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>KVOを利用する(Swift)</title>
@@ -2081,137 +2152,6 @@ docker-compose up -d
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalSand&#34;&gt;こちら&lt;/a&gt;(&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>SwiftでNSExceptionを処理する</title>
-      <link>https://mike-neko.github.io/blog/objc-exception/</link>
-      <pubDate>Sat, 20 Feb 2016 08:10:44 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/objc-exception/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;ObjectiveCで書かれた&lt;code&gt;NSException&lt;/code&gt;を発生させるソースをSwiftから利用したい時の処理方法。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;NSException&lt;/code&gt;は、ObjectiveCの&lt;code&gt;@try ~ @catch ~ @finally&lt;/code&gt;でしか例外処理を行えない。例外処理を書いていない時は、実行時エラーとして処理される。つまり、Swiftから&lt;code&gt;NSException&lt;/code&gt;を発生させるコードを呼び出して例外が起きると、問答無用でアプリが落ちてしまう・・・&lt;/p&gt;
-
-&lt;p&gt;対応策としては、&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;元のコードもSwiftで書き換えてしまう&lt;/li&gt;
-&lt;li&gt;そもそも例外は起きるはずがないので&lt;del&gt;落ちていい&lt;/del&gt;無視する&lt;/li&gt;
-&lt;li&gt;該当のメソッドを呼び出す部分をブリッジするラッパを作る&lt;/li&gt;
-&lt;li&gt;なんとかしてSwiftで&lt;code&gt;NSException&lt;/code&gt;の例外を処理する&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;といった感じになると思うが、サードパーティのライブラリとかだと1や2の方法が取れない場合がある。
-3も該当のメソッドが多ければ作業量が多くなるし、ソースの見通しも悪くなる。&lt;/p&gt;
-
-&lt;p&gt;なので、今回は4の方法で例外を処理する方法についてメモしておく。&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;p&gt;基本的な考えた方は3と同じで、ObjectiveCでしか処理できない部分だけラップしてしまえ〜となる。
-まずは以下の様なブリッジ用のObjectiveCのクラスを作る。（&lt;code&gt;Bridging-Header&lt;/code&gt;への追加も忘れずに）&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5add082e4f51059161ce.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;中は見ての通り、例外処理のそれぞれの中身をクロージャ（ブロック）でブリッジ用のクラスに渡している。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;nonnull&lt;/code&gt;や&lt;code&gt;nullable&lt;/code&gt;をつけているのは、Swift側から呼び出す時に&lt;code&gt;Optional&lt;/code&gt;になるかどうかを制御する為。&lt;code&gt;finally&lt;/code&gt;は不要なことも多々あるので&lt;code&gt;nil&lt;/code&gt;を渡せる様に&lt;code&gt;nullable&lt;/code&gt;にしている。&lt;/p&gt;
-
-&lt;p&gt;（意図して処理がないことを明示させる為に空ブロックではなく&lt;code&gt;nil&lt;/code&gt;を渡せる様にしている）&lt;/p&gt;
-
-&lt;h3 id=&#34;使い方&#34;&gt;使い方&lt;/h3&gt;
-
-&lt;p&gt;Swiftから呼び出す時は以下の感じ。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ObjC_Exception.objC_try({ _ in
-  // NSExceptionが起きるかもしれない処理
-},
-
-objC_catch: { (NSException) in
-  // 例外発生時の処理
-},
-
-objC_finally: { _ in
-  // 後処理とか...
-})
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;finally&lt;/code&gt;が不要であれば、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ObjC_Exception.objC_try({ _ in
-  // NSExceptionが起きるかもしれない処理
-},
-
-objC_catch: { (NSException) in
-  // 例外発生時の処理
-},
-
-objC_finally: nil)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;もし複数の&lt;code&gt;catch&lt;/code&gt;が使いたい場合は、これを元に拡張すればOK。&lt;/p&gt;
-
-&lt;h3 id=&#34;nonnullやnullableのアノテーションについて&#34;&gt;nonnullやnullableのアノテーションについて&lt;/h3&gt;
-
-&lt;p&gt;ObjectiveC側でアノテーションを指定すると、Swiftとの連携時のメソッドの型にも反映される。&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th align=&#34;center&#34;&gt;ObjC&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;Swift&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;変換前(ObjC)&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;変換後(Swift)&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td align=&#34;center&#34;&gt;未指定&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;(型)!&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge*&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge!&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td align=&#34;center&#34;&gt;nonull&lt;br&gt;_Nonnull&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;(型)&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge* _Nonnull&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td align=&#34;center&#34;&gt;nullable&lt;br&gt;_Nullable&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;(型)?&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge* _Nullable&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge?&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;例えば、今回のメソッドをSwiftから呼び出す時は&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ObjC_Exception.objC_try(objC_try: () -&amp;gt; Void, objC_catch: (NSException) -&amp;gt; Void, objC_finally: (() -&amp;gt; Void)?)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;という形式になっていて、&lt;code&gt;objC_finally&lt;/code&gt;を&lt;code&gt;nullable&lt;/code&gt;にしたので、ちゃんと&lt;code&gt;?&lt;/code&gt;のついた&lt;code&gt;Optional&lt;/code&gt;になっているし、それ以外は&lt;code&gt;nonnull&lt;/code&gt;なので型がそのまま使われている。&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 7.2&lt;/li&gt;
-&lt;li&gt;iOS 9.2&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/ObjC_Exception&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

@@ -6,8 +6,79 @@
     <description>Recent content in Memo on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Fri, 03 Jun 2016 21:29:36 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 02 Aug 2016 21:36:00 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/memo/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>GitHubにタグ付けする</title>
+      <link>https://mike-neko.github.io/blog/gittag/</link>
+      <pubDate>Tue, 02 Aug 2016 21:36:00 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/gittag/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;GitHubにタグを付ける方法。
+&lt;code&gt;GitHub Desktop&lt;/code&gt;はブランチ周りはサポートしているけどタグ関係はサポートしていないのでメモしておく。&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;GitHub Desktop&lt;/code&gt;でタグ付けしたいリポジトリを選択する&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;タグをつけたいコミットを選択し、チェックサムをコピーする&lt;br /&gt;
+（下図の赤枠で囲んだ部分だけでOK）
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-08-02-gittag/checksum.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li&gt;メニューの&lt;code&gt;Repository&lt;/code&gt;から&lt;code&gt;Open in Terminal&lt;/code&gt;を選択してターミナルを開く&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ターミナルで以下を実行しタグを付ける&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git tag -a [タグ名] -m &amp;quot;メッセージ&amp;quot; [タグ付けするコミットのチェックサム]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例）&lt;code&gt;git tag -a v1.0 -m &amp;quot;drop only&amp;quot; 2a49b78&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ターミナルで以下を実行しタグが付いたか確認する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git show [タグ名]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例）&lt;code&gt;git show v1.0&lt;/code&gt;&lt;br /&gt;
+（タグの一覧を見たい場合は&lt;code&gt;git tag&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;タグをプッシュする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 特定のタグだけ
+git push origin [タグ名]
+// プッシュされていない全てのタグ
+git push origin --tags
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;githubの状態&#34;&gt;GitHubの状態&lt;/h2&gt;
+
+&lt;p&gt;タグをプッシュすると、GitHub上でも確認できるようになる。&lt;br /&gt;
+GitHubではタグは主にリリースと関連づける前提の様子。&lt;/p&gt;
+
+&lt;p&gt;例だと、以下のような感じで反映される。&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-08-02-gittag/github.png&#34; /&gt;
+&lt;/figure&gt;
+
+
+&lt;p&gt;タグをつけておくと、zipで直接落とせるので便利！&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://git-scm.com/book/ja/v2/Git-%E3%81%AE%E5%9F%BA%E6%9C%AC-%E3%82%BF%E3%82%B0&#34;&gt;Git の基本 - タグ&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>nginxをhttp2に対応させる</title>
