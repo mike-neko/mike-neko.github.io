@@ -44,7 +44,7 @@
 
 &lt;p&gt;監視対象のプロパティ（&lt;code&gt;addObserver&lt;/code&gt;で追加するプロパティ）は必ず&lt;code&gt;dynamic&lt;/code&gt;をつけること。&lt;/p&gt;
 
-&lt;p&gt;もしつけ忘れると、エラーにはならないが、通知も来ない状態
+&lt;p&gt;もし、これをつけ忘れると、エラーにはならないが、通知も来ない状態
 （＝変更されても&lt;code&gt;observeValueForKeyPath&lt;/code&gt;が呼ばれない）
 という判りにくいバグになってしまう。&lt;/p&gt;
 
@@ -144,7 +144,7 @@ let value = change?[&amp;quot;Change Dictionary Keys&amp;quot;] as? &amp;quot;�
 
 &lt;p&gt;と書けば希望のデータ型へ変換して取得できる。
 &lt;code&gt;NSNull&lt;/code&gt;や型が違う場合などは、最終的に&lt;code&gt;nil&lt;/code&gt;が入るのでサンプルのように
-&lt;code&gt;guard&lt;/code&gt;ではじいておくとスマート。&lt;/p&gt;
+&lt;code&gt;guard&lt;/code&gt;ではじくのがスマート。&lt;/p&gt;
 
 &lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 

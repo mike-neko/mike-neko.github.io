@@ -129,7 +129,7 @@
 
 <p>監視対象のプロパティ（<code>addObserver</code>で追加するプロパティ）は必ず<code>dynamic</code>をつけること。</p>
 
-<p>もしつけ忘れると、エラーにはならないが、通知も来ない状態
+<p>もし、これをつけ忘れると、エラーにはならないが、通知も来ない状態
 （＝変更されても<code>observeValueForKeyPath</code>が呼ばれない）
 という判りにくいバグになってしまう。</p>
 
@@ -229,7 +229,7 @@ let value = change?[&quot;Change Dictionary Keys&quot;] as? &quot;データ型&q
 
 <p>と書けば希望のデータ型へ変換して取得できる。
 <code>NSNull</code>や型が違う場合などは、最終的に<code>nil</code>が入るのでサンプルのように
-<code>guard</code>ではじいておくとスマート。</p>
+<code>guard</code>ではじくのがスマート。</p>
 
 <h1 id="参考リンク">参考リンク</h1>
 
