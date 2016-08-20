@@ -1068,7 +1068,7 @@ PerfectでPush通知を送るのに必要なものは以下の通り。&lt;/p&gt
 &lt;p&gt;証明書の取得には&lt;code&gt;AppID&lt;/code&gt;の登録やら結構手順があって大変だが、まずは以下のリンク先の通りに作業をすればOK。&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;Qiita:&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb#7-apns%E7%94%A8%E8%A8%BC%E6%98%8E%E6%9B%B8p12%E3%81%AE%E4%BD%9C%E6%88%90&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Qiita:&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;なお、最後の手順の&lt;code&gt;APNs用証明書(.p12)&lt;/code&gt;を書き出す時のファイル名は&lt;code&gt;apns.p12&lt;/code&gt;とする&lt;/p&gt;
@@ -1190,6 +1190,8 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Perfect 導入編&lt;a href=&#34;../perfect-1/&#34;&gt;その1&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Perfect 基礎編&lt;a href=&#34;../perfect-2/&#34;&gt;その2&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
@@ -1198,12 +1200,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;OS X 10.11.4&lt;/li&gt;
 &lt;li&gt;Xcode 7.3&lt;/li&gt;
 &lt;li&gt;iOS 9.3.2&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;iPhone 6+&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Perfect 導入編&lt;a href=&#34;../perfect-1/&#34;&gt;その1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Perfect 基礎編&lt;a href=&#34;../perfect-2/&#34;&gt;その2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
