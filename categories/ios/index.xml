@@ -6,8 +6,127 @@
     <description>Recent content in Ios on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Mon, 25 Jul 2016 22:55:03 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 11 Aug 2016 17:16:16 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>APNs Provider API(http2)を利用する(Node.js)</title>
+      <link>https://mike-neko.github.io/blog/http2apns/</link>
+      <pubDate>Thu, 11 Aug 2016 17:16:16 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/http2apns/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;iOSのAPNsをAPI経由で使う方法。
+サーバサイドは&lt;code&gt;Node.js&lt;/code&gt;を利用。&lt;/p&gt;
+
+&lt;h3 id=&#34;apns-provider-api&#34;&gt;APNs Provider API&lt;/h3&gt;
+
+&lt;p&gt;利用するために必要なのは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;http2のPOST送信&lt;/li&gt;
+&lt;li&gt;クライアント認証用の証明書&lt;/li&gt;
+&lt;li&gt;CAルート証明書（必要な場合のみ）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;となる。
+なお、&lt;code&gt;http2&lt;/code&gt;対応が必要なのは送信のみなので、サーバ自体はhttp2対応にしなくてもOK。&lt;/p&gt;
+
+&lt;p&gt;従来のソケット通信経由でAPNsを送信するのと比較すると、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;実装が簡単&lt;/li&gt;
+&lt;li&gt;1つのデバイストークン毎に結果が取得できる&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;というのが大きなメリット。&lt;/p&gt;
+
+&lt;p&gt;特に以前は、環境の異なるトークンを送信すると、いきなりソケットの接続自体が切断される・・・
+みたいな挙動があって確実に全件送信させるのは結構大変だったけど、API方式ではそういったのはなさそう。&lt;/p&gt;
+
+&lt;p&gt;パフォーマンス的にどうなのかは不明。&lt;/p&gt;
+
+&lt;h3 id=&#34;送信形式&#34;&gt;送信形式&lt;/h3&gt;
+
+&lt;p&gt;環境毎のAppleのサーバへPOSTリクエストを送ることでPush通知が送信される。&lt;br /&gt;
+指定する内容自体は従来のものと同じなので、詳細な内容は公式を参照のこと。&lt;/p&gt;
+
+&lt;h4 id=&#34;アドレス&#34;&gt;アドレス&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;開発 : &lt;code&gt;https://api.development.push.apple.com/3/device/&amp;lt;デバイストークン&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;商用 : &lt;code&gt;https://api.push.apple.com/3/device/&amp;lt;デバイストークン&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;ヘッダ&#34;&gt;ヘッダ&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;apns-topic&lt;/code&gt; : 送信対象のアプリのバンドルID（必須）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apns-id&lt;/code&gt; : 通知ID。指定しなければAPNs側で自動生成&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apns-expiration&lt;/code&gt; : 通知が無効になり破棄できるようになる有効期限&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apns-priority&lt;/code&gt; : 優先度&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;ボディ&#34;&gt;ボディ&lt;/h4&gt;
+
+&lt;p&gt;JSON形式の通知ペイロード&lt;/p&gt;
+
+&lt;h4 id=&#34;レスポンス&#34;&gt;レスポンス&lt;/h4&gt;
+
+&lt;p&gt;送信の受付に成功した場合はステータスコードが&lt;code&gt;200&lt;/code&gt;で返ってくる。&lt;/p&gt;
+
+&lt;p&gt;失敗した場合は、それ以外のステータスコードと、コードに応じてより詳細なエラー内容がボディで返ってくる。&lt;/p&gt;
+
+&lt;h2 id=&#34;環境構築&#34;&gt;環境構築&lt;/h2&gt;
+
+&lt;p&gt;もしかすると、&lt;code&gt;OpenSSL&lt;/code&gt;は最新に上げておいた方がいいかも知れない。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Node.js&lt;/code&gt;は現時点(6.3.1)では&lt;code&gt;http2&lt;/code&gt;には対応していないので、
+&lt;a href=&#34;https://www.npmjs.com/package/http2&#34;&gt;http2&lt;/a&gt;というモジュールをインストールしておく。&lt;/p&gt;
+
+&lt;h3 id=&#34;証明書&#34;&gt;証明書&lt;/h3&gt;
+
+&lt;p&gt;証明書の準備方法は、以前の&lt;a href=&#34;../perfect-push/&#34;&gt;Perfect APNs編&lt;/a&gt;と同じ。
+ただし、今回はMacに直接インストールした&lt;code&gt;Node.js&lt;/code&gt;を使うので、CAルート証明書は不要。&lt;/p&gt;
+
+&lt;h2 id=&#34;実装&#34;&gt;実装&lt;/h2&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/2f2f9f9130ef1d46872894b115a4b0c3.js&#34;&gt;&lt;/script&gt;
+
+&lt;h3 id=&#34;クライアント証明書の指定&#34;&gt;クライアント証明書の指定&lt;/h3&gt;
+
+&lt;p&gt;22,23行目にあるように、クライアント証明書と鍵を読み込んで指定する。
+（もちろん各ファイルを同じフォルダ内に置いておくのを忘れないように）&lt;/p&gt;
+
+&lt;p&gt;もし、証明書の秘密鍵のパスフレーズを設定している時は、25行目のように設定が必要。&lt;/p&gt;
+
+&lt;h3 id=&#34;通知内容の設定&#34;&gt;通知内容の設定&lt;/h3&gt;
+
+&lt;p&gt;送信形式の項目で述べたように、ヘッダにバンドルIDを設定(10−12,21行目)する。&lt;/p&gt;
+
+&lt;p&gt;デバイストークンは、URLの一部として設定する(20行目)。&lt;/p&gt;
+
+&lt;p&gt;通知ペイロードは、44行目にあるようにボディとして書き出す。&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html&#34;&gt;APNs Provider API&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/jp/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW1&#34;&gt;日本語ドキュメント&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.12 Beta&lt;/li&gt;
+&lt;li&gt;Node.js 6.3.1&lt;/li&gt;
+&lt;li&gt;OpenSSL 1.0.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>KVOを利用する(Swift)</title>
@@ -2515,77 +2634,6 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalCompute&#34;&gt;こちら&lt;/a&gt; (&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>MetalKitのSwift版サンプル</title>
-      <link>https://mike-neko.github.io/blog/metal-model/</link>
-      <pubDate>Fri, 22 Jan 2016 00:23:56 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/metal-model/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;元ネタのApple公式の&lt;a href=&#34;https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html&#34;&gt;MetalKitEssentials&lt;/a&gt;をSwiftで書き直し＋αしたもの。
-内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
-シェーダもいたってシンプルでライトもなし。&lt;br /&gt;
-ちなみに、MetalKitは&lt;strong&gt;iOS9以降&lt;/strong&gt;でしか使えないので注意。&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;h3 id=&#34;はじめに&#34;&gt;はじめに&lt;/h3&gt;
-
-&lt;p&gt;一番最初につまずいたのは、ビルド自体が通らず、Metalのフレームワークのインポートでエラーになる！ってこと。当然、コードを書く時にも自動補完は効かないしエラーでまくるし・・・&lt;br /&gt;
-で、原因はターゲットでシュミレータを選択していたこと。実行できないのは知っていたけど、まさかビルドすら通らないのは予想外。。。&lt;/p&gt;
-
-&lt;h3 id=&#34;バッファへのアクセス&#34;&gt;バッファへのアクセス&lt;/h3&gt;
-
-&lt;p&gt;今回、一番書き方が判らなくて苦労したのがこれ。単にVertexBufferへのポインタを取得して、中のデータを読み書きしたいだけなのだが、当然、Swiftがメモリへの直アクセスを許してくれるわけはなく・・・&lt;/p&gt;
-
-&lt;p&gt;上がObjective-Cで書いた場合で下がSwiftの場合：&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/1a7595b9b8cbe769a74d.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;Swiftでは、まずポインタ&lt;code&gt;p&lt;/code&gt;を明示的に取得し、それから&lt;code&gt;memory()&lt;/code&gt;で&lt;code&gt;VertexUniforms&lt;/code&gt;の型へ変換し、それを通して中のデータへアクセスするという手間が必要。やはりSwiftは型にうるさい。&lt;/p&gt;
-
-&lt;p&gt;なお、このサンプルでは配列ではないので&lt;code&gt;p.memory()&lt;/code&gt;だが、バッファの内容が配列になっていてインデックスでアクセスしたい場合は、&lt;code&gt;p.advancedBy(i).memory()&lt;/code&gt;(iがインデックス)とする。&lt;/p&gt;
-
-&lt;p&gt;ちょっと面倒だけど、暗黙的な「わかる人にはわかる」といった曖昧さを排除し、ポインタの状態やメモリにアクセスしていることを明示させているのは、Swiftの良さの一つだと思う。&lt;/p&gt;
-
-&lt;h3 id=&#34;シェーダ用の構造体&#34;&gt;シェーダ用の構造体&lt;/h3&gt;
-
-&lt;p&gt;今回、シェーダにデータを渡す時の型（構造体）を、シェーダのファイルとSwift上でそれぞれ同じ宣言をしている。これは、Swiftから直接Cのファイルを見に行けない為。ブリッジヘッダを使ったりすれば重複して宣言しなくてよさそうだけど、未検証。Swift上ではSwiftの構造体を使えた方が便利かなと思ったので（結局使わなかったけど）&lt;/p&gt;
-
-&lt;p&gt;なお、当然ながら&lt;strong&gt;メモリのアライメントには注意が必要&lt;/strong&gt;(&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Metal/Reference/MetalShadingLanguageGuide/data-types/data-types.html#//apple_ref/doc/uid/TP40014364-CH2-SW15&#34;&gt;公式:アライメント一覧&lt;/a&gt;)なので、必要に応じてパディングすること。ちなみに忘れると画面が心霊現象みたくなったり表示されなかったり・・・&lt;/p&gt;
-
-&lt;h3 id=&#34;simd&#34;&gt;SIMD&lt;/h3&gt;
-
-&lt;p&gt;Xcode7からようやくSIMDがサポート。これでvectorやmatrixのベタなコードを書く or 持ってくる必要がなくなった。（でも移動や回転とかはやっぱり自前が必要）&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;import simd&lt;/code&gt;で使えるようになる。&lt;code&gt;MetalKit&lt;/code&gt;のインポートでも良い。&lt;/p&gt;
-
-&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
-
-&lt;p&gt;正直なところ、Unityとかに慣れてしまった身にとって、Metalは結構大変だった。。。日本語の資料も少ないし、公式の資料もまだまだObjective-Cが多い感じ。&lt;br /&gt;
-といっても、DirectXのダラダラとした初期化とかに比べると、機種依存がなく簡潔で楽。久々に3Dの基礎を振り返る良い機会になったと思う。&lt;br /&gt;
-結局まあ、Unityとかが偉大すぎるという当たり前の結論に到達。&lt;/p&gt;
-
-&lt;p&gt;触っていて、良い！と思ったのは、バグで描画がおかしくなったりしても、影響が端末だけに限られて作業しているMacは無事なこと。&lt;br /&gt;
-昔々のDirectXでしょっちゅうブルースクリーンを出してしまい、コードが消えたりPC不安定になっていた人なので、これはとても助かった。&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 7.2&lt;/li&gt;
-&lt;li&gt;iOS 9.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalModel&#34;&gt;こちら&lt;/a&gt; (&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>
     </item>
     
