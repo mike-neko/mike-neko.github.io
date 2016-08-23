@@ -544,7 +544,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/SmapleBasePerfect&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/SampleBasePerfect&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Perfect 基礎編&lt;a href=&#34;../perfect-2/&#34;&gt;その2&lt;/a&gt;&lt;/li&gt;
