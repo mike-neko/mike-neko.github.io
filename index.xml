@@ -64,7 +64,7 @@
 &lt;h4 id=&#34;ヘッダ&#34;&gt;ヘッダ&lt;/h4&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;apns-topic&lt;/code&gt; : 送信対象のアプリのバンドルID（必須）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apns-topic&lt;/code&gt; : 送信対象のアプリのバンドルID&lt;del&gt;（必須）&lt;/del&gt;&lt;br /&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;apns-id&lt;/code&gt; : 通知ID。指定しなければAPNs側で自動生成&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;apns-expiration&lt;/code&gt; : 通知が無効になり破棄できるようになる有効期限&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;apns-priority&lt;/code&gt; : 優先度&lt;/li&gt;
@@ -102,6 +102,11 @@
 （もちろん各ファイルを同じフォルダ内に置いておくのを忘れないように）&lt;/p&gt;
 
 &lt;p&gt;もし、証明書の秘密鍵のパスフレーズを設定している時は、25行目のように設定が必要。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;（8/24 追記）&lt;/em&gt;&lt;/strong&gt;
+証明書の中が送信対象アプリ単独のもの（他の証明書や鍵を含んでいない）であれば、
+&lt;code&gt;apns-topic&lt;/code&gt;は指定しなくても送信可能。&lt;br /&gt;
+通常の手順で生成した場合は単独のはずなので、指定は不要。&lt;/p&gt;
 
 &lt;h3 id=&#34;通知内容の設定&#34;&gt;通知内容の設定&lt;/h3&gt;
 
