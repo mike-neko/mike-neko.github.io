@@ -6,8 +6,98 @@
     <description>Recent content on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Thu, 25 Aug 2016 23:00:38 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 03 Sep 2016 00:12:14 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>jazzyの使い方 その1</title>
+      <link>https://mike-neko.github.io/blog/jazzy-cmd/</link>
+      <pubDate>Sat, 03 Sep 2016 00:12:14 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/jazzy-cmd/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;Swiftのドキュメント生成ツールの&lt;a href=&#34;https://github.com/realm/jazzy&#34;&gt;jazzy&lt;/a&gt;の使い方。
+その1はコマンド周りのメモ。&lt;/p&gt;
+
+&lt;h2 id=&#34;ドキュメント生成時のコマンド&#34;&gt;ドキュメント生成時のコマンド&lt;/h2&gt;
+
+&lt;p&gt;主に自分個人で使う時のコマンドは以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;jazzy -o Documents --min-acl internal --skip-undocumented -a M.Ike -x SYMROOT=/private/tmp/jazzy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;o-documents&#34;&gt;&amp;rdquo;-o Documents&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;-o [フォルダ]&lt;/code&gt;でドキュメントを出力するフォルダを指定する。&lt;br /&gt;
+なお、フォルダが存在しない場合は自動で作成される。&lt;/p&gt;
+
+&lt;p&gt;今回の指定だと以下の場所にフォルダが生成される&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Sample                 # 対象のプロジェクトのフォルダ
+  ├─ Sample            # Xcodeのソースなど一式
+  ├─ Sample.xcodeproj  # Xcodeのプロジェクトファイル
+  └─ Documents         # この中に生成されたドキュメント一式が入る
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;min-acl-internal&#34;&gt;&amp;rdquo;&amp;ndash;min-acl internal&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;--min-acl [private | internal | public]&lt;/code&gt;で出力の対象を指定する。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Swift2.x&lt;/code&gt;では&lt;code&gt;public&lt;/code&gt;は使わずに、明示的な&lt;code&gt;private&lt;/code&gt;か暗黙的な&lt;code&gt;internal&lt;/code&gt;しか使わない
+（※複数のモジュールを利用しない場合）
+ので、&lt;code&gt;internal&lt;/code&gt;以上で設定している。&lt;/p&gt;
+
+&lt;h3 id=&#34;skip-undocumented&#34;&gt;&amp;rdquo;&amp;ndash;skip-undocumented&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;この設定をすると、ドキュメントコメントのないソースからはドキュメントを生成しなくなる。&lt;/p&gt;
+
+&lt;p&gt;さらに&lt;code&gt;documentation-coverage&lt;/code&gt;の対象からも除外される。&lt;/p&gt;
+
+&lt;h3 id=&#34;a&#34;&gt;&amp;rdquo;-a&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;作者名の指定。
+別に個人用なので必要もないが、ないと見栄えが悪いのでつけている。&lt;/p&gt;
+
+&lt;h3 id=&#34;x-symroot-private-tmp-jazzy&#34;&gt;&amp;rdquo;-x SYMROOT=/private/tmp/jazzy&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;-x arg1,arg2,…argN,&lt;/code&gt;で&lt;code&gt;xcodebuild&lt;/code&gt;時のビルドオプションを指定できる。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;jazzy&lt;/code&gt;を使うと&lt;code&gt;build&lt;/code&gt;というビルドの一時ファイルの入ったディレクトリが
+プロジェクトのフォルダ内に生成されてしまう。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;.gitignore&lt;/code&gt;でちゃんと指定しているので実害はないが、一時ファイルが生成されるのは気持ち悪い。。。&lt;/p&gt;
+
+&lt;p&gt;という訳で、これを指定すれば&lt;code&gt;jazzy&lt;/code&gt;利用時の一時ファイルを
+&lt;code&gt;/private/tmp/jazzy&lt;/code&gt;(テンポラリフォルダ)へ出力させることができ、
+同じフォルダ内に&lt;code&gt;build&lt;/code&gt;フォルダが生成されなくなる。
+（テンポラリフォルダは再起動時に消去される）&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;ただしXcodeのプロジェクトの設定によっては、別の環境変数を書き換える必要あり&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;使っていないもの&#34;&gt;使っていないもの&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;-c&lt;/code&gt;をつけると、ドキュメント作成前に元のデータを全部消してくれるので、
+本来はつけておいた方が良いオプション。&lt;/p&gt;
+
+&lt;p&gt;が、ヘルプにもあるように、指定した出力先のフォルダが&lt;strong&gt;問答無用で削除&lt;/strong&gt;されてしまう。。。&lt;br /&gt;
+開発中はターミナルから手打ち（コピペ）して使うことが多いので、
+間違って指定してしまった！という悲劇を防ぐ為、これは指定していない&lt;/p&gt;
+
+&lt;p&gt;（確実に作りたい時は手動で削除で対応。
+ビルド用のシェルスクリプトを組んでいる場合はつけている）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.6&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;jazzy version: 0.7.0&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>APNs Provider API(http2)を利用する(iOS)</title>
@@ -2123,99 +2213,6 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 
 &lt;p&gt;実際の各イメージのDockerfileや設定ファイルをまとめたものは
 &lt;a href=&#34;https://github.com/mike-neko/Docker/tree/master/SSLWebServer&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Dockerのコマンド備忘録</title>
-      <link>https://mike-neko.github.io/blog/docker-cmd/</link>
-      <pubDate>Sat, 02 Apr 2016 14:00:57 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/docker-cmd/</guid>
-      <description>
-
-&lt;h2 id=&#34;dockerでよく使うコマンド&#34;&gt;Dockerでよく使うコマンド&lt;/h2&gt;
-
-&lt;h3 id=&#34;イメージ操作&#34;&gt;イメージ操作&lt;/h3&gt;
-
-&lt;h4 id=&#34;イメージのリスト表示&#34;&gt;イメージのリスト表示&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker images
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;指定したイメージの削除&#34;&gt;指定したイメージの削除&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker rmi [イメージの名前かID]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;イメージの指定は&lt;code&gt;IMAGE ID&lt;/code&gt;の先頭数文字での特定が便利&lt;/p&gt;
-
-&lt;h4 id=&#34;イメージの全削除&#34;&gt;イメージの全削除&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker rmi $(docker images -a -q)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;コンテナ操作&#34;&gt;コンテナ操作&lt;/h3&gt;
-
-&lt;h4 id=&#34;コンテナのリスト表示&#34;&gt;コンテナのリスト表示&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker ps
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;全部停止&#34;&gt;全部停止&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker stop $(docker ps -a -q)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;全部削除&#34;&gt;全部削除&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker rm $(docker ps -a -q) 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;dockercompose&#34;&gt;DockerCompose&lt;/h3&gt;
-
-&lt;h4 id=&#34;起動&#34;&gt;起動&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;cd [docker-copose.ymlを置いてる場所]
-docker-compose up -d
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これだけで&lt;code&gt;build&lt;/code&gt;と&lt;code&gt;pull&lt;/code&gt;と&lt;code&gt;run&lt;/code&gt;を一気にしてくれる&lt;/p&gt;
-
-&lt;h4 id=&#34;停止&#34;&gt;停止&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker-compose stop
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;nginx&#34;&gt;nginx&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;80ポートを使う場合はsudoが必要&lt;/em&gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;起動-1&#34;&gt;起動&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;nginx
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;停止-1&#34;&gt;停止&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;nginx -s stop
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;再起動&#34;&gt;再起動&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;nginx -s reload
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;php&#34;&gt;PHP&lt;/h2&gt;
-
-&lt;h3 id=&#34;オプション&#34;&gt;オプション&lt;/h3&gt;
-
-&lt;h4 id=&#34;docker-php-ext-installで指定できるもの&#34;&gt;docker-php-ext-installで指定できるもの&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;bcmath bz2 calendar ctype curl dba dom enchant exif fileinfo filter ftp gd gettext gmp hash iconv imap interbase intl json ldap mbstring mcrypt mssql mysql mysqli oci8 odbc opcache pcntl pdo pdo_dblib pdo_firebird pdo_mysql pdo_oci pdo_odbc pdo_pgsql pdo_sqlite pgsql phar posix pspell readline recode reflection session shmop simplexml snmp soap sockets spl standard sybase_ct sysvmsg sysvsem sysvshm tidy tokenizer wddx xml xmlreader xmlrpc xmlwriter xsl zip
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;(デフォルトのPHPイメージは最低限の状態なのでDockerfileで指定して追加する)&lt;/p&gt;
 </description>
     </item>
     
