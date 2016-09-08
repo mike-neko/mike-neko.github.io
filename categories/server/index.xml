@@ -1021,8 +1021,8 @@ brew install nginx
 
 &lt;h4 id=&#34;sslの証明書の作成&#34;&gt;SSLの証明書の作成&lt;/h4&gt;
 
-&lt;pre&gt;&lt;code&gt;openssl genrsa -out server.key 2048 -sha256
-openssl req -new -sha256 -key server.key &amp;gt; server.csr
+&lt;pre&gt;&lt;code&gt;openssl genrsa -out server.key 2048
+openssl req -new -key server.key &amp;gt; server.csr
 openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &amp;gt; server.crt
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -1031,7 +1031,9 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 &lt;p&gt;生成された&lt;code&gt;server.key&lt;/code&gt;と&lt;code&gt;server.crt&lt;/code&gt;をnginxの設定ファイルと同じディレクトリに置く。&lt;/p&gt;
 
 &lt;p&gt;iOS端末へは&lt;code&gt;server.crt&lt;/code&gt;をインストールする。
-（メール添付か適当なWEB上に置いてインストール）&lt;/p&gt;
+&lt;del&gt;（メール添付か適当なWEB上に置いてインストール）&lt;/del&gt;&lt;br /&gt;
+※環境によってうまくいかないことがあったので、より確実な構成プロファイル経由にすること
+（手順は&lt;a href=&#34;../ios-cert/&#34;&gt;ATS有効の状態でオレオレ証明書を使って通信する(iOS9)&lt;/a&gt;を参照）&lt;/p&gt;
 
 &lt;p&gt;nginxの設定ファイルに以下を追加する。&lt;/p&gt;
 
