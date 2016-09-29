@@ -25,8 +25,7 @@
 &lt;p&gt;かといって、そんなに使わない環境をわざわざローカルに構築するのも面倒なので、
 さっくりとお手軽に速攻で構築してしまおうという時のメモ。&lt;/p&gt;
 
-&lt;p&gt;ちなみに、お手軽なのでターミナルでコマンドを叩くことすらしない。&lt;br /&gt;
-&lt;code&gt;PhpStorm&lt;/code&gt;は接続確認や&lt;code&gt;phpMyAdmin&lt;/code&gt;の代わりに使うので、なくてもDB構築には支障ない&lt;/p&gt;
+&lt;p&gt;ちなみに、お手軽なのでターミナルでコマンドを叩くことすらしない。&lt;/p&gt;
 
 &lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
@@ -40,6 +39,8 @@
 &lt;blockquote&gt;
 &lt;p&gt;参考：&lt;a href=&#34;../docker/&#34;&gt;Docker構築メモ&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
+
+&lt;p&gt;※&lt;code&gt;PhpStorm&lt;/code&gt;は接続確認や&lt;code&gt;phpMyAdmin&lt;/code&gt;の代わりに使うので、なくてもDB構築には支障ない&lt;/p&gt;
 
 &lt;h3 id=&#34;mysqlの構築&#34;&gt;MySQLの構築&lt;/h3&gt;
 
@@ -171,14 +172,16 @@ CREATEボタンの左にある&lt;code&gt;・・・&lt;/code&gt; - &lt;code&gt;S
 
 &lt;p&gt;4. &lt;code&gt;Test Connection&lt;/code&gt;を押して&lt;code&gt;Successful&lt;/code&gt;と出れば接続OK&lt;br /&gt;
 5. &lt;code&gt;Options&lt;/code&gt;タブを選択&lt;br /&gt;
-6. &lt;code&gt;Resolve ...&lt;/code&gt;の欄でDB名にチェックを入れる
+6. &lt;code&gt;Resolve ...&lt;/code&gt;の欄でDB名にチェックを入れる&lt;br /&gt;
 7. &lt;code&gt;OK&lt;/code&gt;で閉じるとツールウィンドウ内にDBが表示される&lt;/p&gt;
 
 &lt;p&gt;あとはPHPStormのGUIで、DB内のデータを表示させたり、SQLを実行したり自由にできる&lt;/p&gt;
 
 &lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
-&lt;p&gt;&lt;code&gt;PhpStorm&lt;/code&gt;のおかげで実際の開発環境でDBの確認や操作が楽にできるのが今回のポイント&lt;/p&gt;
+&lt;p&gt;頻繁に使うものならともかく、使い捨てやまれなものは、やっぱりGUIで操作できると助かる&lt;/p&gt;
+
+&lt;p&gt;で、今回は&lt;code&gt;PhpStorm&lt;/code&gt;を使って、実際の開発環境でDBの確認や操作が楽にするのがポイント&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;PhpStorm&lt;/code&gt;はアップデートも早いし機能も豊富で素晴らしいツール！
 ただ、もうちょっと日本語の資料が多いとありがたい（他力本願）&lt;/p&gt;
