@@ -6,8 +6,191 @@
     <description>Recent content in Memo on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Tue, 06 Sep 2016 00:35:57 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 29 Sep 2016 01:44:58 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/memo/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Docker(Kitematic)&#43;PHPStormでMySQL環境をお手軽構築</title>
+      <link>https://mike-neko.github.io/blog/docker-db/</link>
+      <pubDate>Thu, 29 Sep 2016 01:44:58 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/docker-db/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;個人的には&lt;code&gt;MariaDB&lt;/code&gt;を使っているが、レンタルサーバや既存開発のものだと
+まだまだ&lt;code&gt;MySQL&lt;/code&gt;の環境が必要なこともしばしば。。。&lt;/p&gt;
+
+&lt;p&gt;かといって、そんなに使わない環境をわざわざローカルに構築するのも面倒なので、
+さっくりとお手軽に速攻で構築してしまおうという時のメモ。&lt;/p&gt;
+
+&lt;p&gt;ちなみに、お手軽なのでターミナルでコマンドを叩くことすらしない。&lt;br /&gt;
+&lt;code&gt;PhpStorm&lt;/code&gt;は接続確認や&lt;code&gt;phpMyAdmin&lt;/code&gt;の代わりに使うので、なくてもDB構築には支障ない&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;前提条件&#34;&gt;前提条件&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Docker&lt;/code&gt;と&lt;code&gt;Kitematic&lt;/code&gt;をインストールしておく&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;PhpStorm&lt;/code&gt;をインストールしておく&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;参考：&lt;a href=&#34;../docker/&#34;&gt;Docker構築メモ&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;mysqlの構築&#34;&gt;MySQLの構築&lt;/h3&gt;
+
+&lt;h4 id=&#34;コンテナの生成&#34;&gt;コンテナの生成&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Kitematic&lt;/code&gt;を起動する&lt;/li&gt;
+&lt;li&gt;検索窓(&lt;code&gt;Serach for Docker ...&lt;/code&gt;とあるところ)にmysqlで検索し、
+作者が&lt;code&gt;official&lt;/code&gt;になっている&lt;code&gt;mysql&lt;/code&gt;のイメージを見つける&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;（バージョンを指定したい時のみ）&lt;/em&gt;&lt;br /&gt;
+CREATEボタンの左にある&lt;code&gt;・・・&lt;/code&gt; - &lt;code&gt;SELECTED TAG&lt;/code&gt;から任意のバージョンを選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;CREATE&lt;/code&gt;を実行してしばらく待つとコンテナが生成される&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;※この段階ではパスワードなど必要な設定がまだなのでエラーで起動しない&lt;/p&gt;
+
+&lt;h4 id=&#34;mysqlの設定&#34;&gt;MySQLの設定&lt;/h4&gt;
+
+&lt;p&gt;DBの設定は、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;rootパスワード:&lt;code&gt;root&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;データベース名:testdb&lt;/li&gt;
+&lt;li&gt;ユーザ名:user&lt;/li&gt;
+&lt;li&gt;パスワード:pass&lt;/li&gt;
+&lt;li&gt;ポート:32768&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という前提のため適宜読み替えること&lt;/p&gt;
+
+&lt;p&gt;1. &lt;code&gt;Settings&lt;/code&gt;のタブを選択&lt;br /&gt;
+2. &lt;code&gt;Environment Variables&lt;/code&gt;に以下のように設定値を追加&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;KEY&lt;/th&gt;
+&lt;th&gt;VALUE&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;MYSQL_ROOT_PASSWORD&lt;/td&gt;
+&lt;td&gt;root&lt;/td&gt;
+&lt;td&gt;rootパスワード&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;MYSQL_DATABASE&lt;/td&gt;
+&lt;td&gt;testdb&lt;/td&gt;
+&lt;td&gt;データベース名&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;MYSQL_USER&lt;/td&gt;
+&lt;td&gt;user&lt;/td&gt;
+&lt;td&gt;ユーザ名&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;MYSQL_PASSWORD&lt;/td&gt;
+&lt;td&gt;pass&lt;/td&gt;
+&lt;td&gt;パスワード&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;3. &lt;code&gt;SAVE&lt;/code&gt;を押す（&lt;strong&gt;忘れないこと&lt;/strong&gt;）&lt;br /&gt;
+4. &lt;code&gt;Ports&lt;/code&gt;のタブを選択&lt;br /&gt;
+5. &lt;code&gt;MAC IP:PORT&lt;/code&gt;の項目の下に&lt;code&gt;Docker&lt;/code&gt;のIPアドレスが表示されているので、
+&lt;code&gt;:&lt;/code&gt;の後ろにポート番号を入れる&lt;br /&gt;
+6. &lt;code&gt;SAVE&lt;/code&gt;を押す（&lt;strong&gt;忘れないこと&lt;/strong&gt;）&lt;br /&gt;
+7. 再起動がかかるはずなので、&lt;code&gt;Home&lt;/code&gt;のタブを選択&lt;br /&gt;
+8. ログに&lt;code&gt;mysqld: ready for connections.&lt;/code&gt;と出ていればOK
+9. 右側の&lt;code&gt;ACCESS URL&lt;/code&gt;のIPアドレスを確認しておく&lt;/p&gt;
+
+&lt;p&gt;※ポートの指定をしない場合は、適当なポートが割り振られ、
+起動毎にポートが変わる可能性があるので指定しておくこと&lt;/p&gt;
+
+&lt;h3 id=&#34;接続確認&#34;&gt;接続確認&lt;/h3&gt;
+
+&lt;p&gt;1. &lt;code&gt;PhpStorm&lt;/code&gt;で適当なプロジェクトを作って起動&lt;br /&gt;
+2. メニューの&lt;code&gt;View&lt;/code&gt; - &lt;code&gt;Tool Windows&lt;/code&gt; - &lt;code&gt;Database&lt;/code&gt;を選択&lt;br /&gt;
+3. ツールウィンドウの左上の&lt;code&gt;+&lt;/code&gt; - &lt;code&gt;Data Source&lt;/code&gt; - &lt;code&gt;MySQL&lt;/code&gt;を選択&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;項目&lt;/th&gt;
+&lt;th&gt;設定値&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Host&lt;/td&gt;
+&lt;td&gt;192.168.99.100&lt;/td&gt;
+&lt;td&gt;前項9で確認したIPアドレス&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Port&lt;/td&gt;
+&lt;td&gt;32768&lt;/td&gt;
+&lt;td&gt;前項5で指定したポート&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Database&lt;/td&gt;
+&lt;td&gt;testdb&lt;/td&gt;
+&lt;td&gt;データベース名&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;User&lt;/td&gt;
+&lt;td&gt;user&lt;/td&gt;
+&lt;td&gt;ユーザ名&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Password&lt;/td&gt;
+&lt;td&gt;pass&lt;/td&gt;
+&lt;td&gt;パスワード&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;4. &lt;code&gt;Test Connection&lt;/code&gt;を押して&lt;code&gt;Successful&lt;/code&gt;と出れば接続OK&lt;br /&gt;
+5. &lt;code&gt;Options&lt;/code&gt;タブを選択&lt;br /&gt;
+6. &lt;code&gt;Resolve ...&lt;/code&gt;の欄でDB名にチェックを入れる
+7. &lt;code&gt;OK&lt;/code&gt;で閉じるとツールウィンドウ内にDBが表示される&lt;/p&gt;
+
+&lt;p&gt;あとはPHPStormのGUIで、DB内のデータを表示させたり、SQLを実行したり自由にできる&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;PhpStorm&lt;/code&gt;のおかげで実際の開発環境でDBの確認や操作が楽にできるのが今回のポイント&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;PhpStorm&lt;/code&gt;はアップデートも早いし機能も豊富で素晴らしいツール！
+ただ、もうちょっと日本語の資料が多いとありがたい（他力本願）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.12.0&lt;/li&gt;
+&lt;li&gt;PhpStorm 2016.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>ATS有効の状態でオレオレ証明書を使って通信する(iOS9)</title>

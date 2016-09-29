@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Docker(Kitematic)&#43;PHPStormでMySQL環境をお手軽構築 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      <li>
+        
+          &nbsp;<a href="/categories/code">code&nbsp;(17)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/docker">docker&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/github">github&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/ios">ios&nbsp;(19)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/memo">memo&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/metal">metal&nbsp;(6)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/perfect">perfect&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/server">server&nbsp;(9)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/unity">unity&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2016
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Docker(Kitematic)&#43;PHPStormでMySQL環境をお手軽構築</h1>
+    <span class="post-date">Sep 29, 2016 
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/categories/memo">memo</a><a class="label" href="https://mike-neko.github.io/categories/docker">docker</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
+    </span>
+    
+
+<h2 id="概要">概要</h2>
+
+<p>個人的には<code>MariaDB</code>を使っているが、レンタルサーバや既存開発のものだと
+まだまだ<code>MySQL</code>の環境が必要なこともしばしば。。。</p>
+
+<p>かといって、そんなに使わない環境をわざわざローカルに構築するのも面倒なので、
+さっくりとお手軽に速攻で構築してしまおうという時のメモ。</p>
+
+<p>ちなみに、お手軽なのでターミナルでコマンドを叩くことすらしない。<br />
+<code>PhpStorm</code>は接続確認や<code>phpMyAdmin</code>の代わりに使うので、なくてもDB構築には支障ない</p>
+
+<h2 id="手順">手順</h2>
+
+<h3 id="前提条件">前提条件</h3>
+
+<ul>
+<li><code>Docker</code>と<code>Kitematic</code>をインストールしておく</li>
+<li><code>PhpStorm</code>をインストールしておく</li>
+</ul>
+
+<blockquote>
+<p>参考：<a href="../docker/">Docker構築メモ</a></p>
+</blockquote>
+
+<h3 id="mysqlの構築">MySQLの構築</h3>
+
+<h4 id="コンテナの生成">コンテナの生成</h4>
+
+<ol>
+<li><code>Kitematic</code>を起動する</li>
+<li>検索窓(<code>Serach for Docker ...</code>とあるところ)にmysqlで検索し、
+作者が<code>official</code>になっている<code>mysql</code>のイメージを見つける</li>
+<li><em>（バージョンを指定したい時のみ）</em><br />
+CREATEボタンの左にある<code>・・・</code> - <code>SELECTED TAG</code>から任意のバージョンを選択</li>
+<li><code>CREATE</code>を実行してしばらく待つとコンテナが生成される</li>
+</ol>
+
+<p>※この段階ではパスワードなど必要な設定がまだなのでエラーで起動しない</p>
+
+<h4 id="mysqlの設定">MySQLの設定</h4>
+
+<p>DBの設定は、</p>
+
+<ul>
+<li>rootパスワード:<code>root</code></li>
+<li>データベース名:testdb</li>
+<li>ユーザ名:user</li>
+<li>パスワード:pass</li>
+<li>ポート:32768</li>
+</ul>
+
+<p>という前提のため適宜読み替えること</p>
+
+<p>1. <code>Settings</code>のタブを選択<br />
+2. <code>Environment Variables</code>に以下のように設定値を追加</p>
+
+<table>
+<thead>
+<tr>
+<th>KEY</th>
+<th>VALUE</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>MYSQL_ROOT_PASSWORD</td>
+<td>root</td>
+<td>rootパスワード</td>
+</tr>
+
+<tr>
+<td>MYSQL_DATABASE</td>
+<td>testdb</td>
+<td>データベース名</td>
+</tr>
+
+<tr>
+<td>MYSQL_USER</td>
+<td>user</td>
+<td>ユーザ名</td>
+</tr>
+
+<tr>
+<td>MYSQL_PASSWORD</td>
+<td>pass</td>
+<td>パスワード</td>
+</tr>
+</tbody>
+</table>
+
+<p>3. <code>SAVE</code>を押す（<strong>忘れないこと</strong>）<br />
+4. <code>Ports</code>のタブを選択<br />
+5. <code>MAC IP:PORT</code>の項目の下に<code>Docker</code>のIPアドレスが表示されているので、
+<code>:</code>の後ろにポート番号を入れる<br />
+6. <code>SAVE</code>を押す（<strong>忘れないこと</strong>）<br />
+7. 再起動がかかるはずなので、<code>Home</code>のタブを選択<br />
+8. ログに<code>mysqld: ready for connections.</code>と出ていればOK
+9. 右側の<code>ACCESS URL</code>のIPアドレスを確認しておく</p>
+
+<p>※ポートの指定をしない場合は、適当なポートが割り振られ、
+起動毎にポートが変わる可能性があるので指定しておくこと</p>
+
+<h3 id="接続確認">接続確認</h3>
+
+<p>1. <code>PhpStorm</code>で適当なプロジェクトを作って起動<br />
+2. メニューの<code>View</code> - <code>Tool Windows</code> - <code>Database</code>を選択<br />
+3. ツールウィンドウの左上の<code>+</code> - <code>Data Source</code> - <code>MySQL</code>を選択</p>
+
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>設定値</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Host</td>
+<td>192.168.99.100</td>
+<td>前項9で確認したIPアドレス</td>
+</tr>
+
+<tr>
+<td>Port</td>
+<td>32768</td>
+<td>前項5で指定したポート</td>
+</tr>
+
+<tr>
+<td>Database</td>
+<td>testdb</td>
+<td>データベース名</td>
+</tr>
+
+<tr>
+<td>User</td>
+<td>user</td>
+<td>ユーザ名</td>
+</tr>
+
+<tr>
+<td>Password</td>
+<td>pass</td>
+<td>パスワード</td>
+</tr>
+</tbody>
+</table>
+
+<p>4. <code>Test Connection</code>を押して<code>Successful</code>と出れば接続OK<br />
+5. <code>Options</code>タブを選択<br />
+6. <code>Resolve ...</code>の欄でDB名にチェックを入れる
+7. <code>OK</code>で閉じるとツールウィンドウ内にDBが表示される</p>
+
+<p>あとはPHPStormのGUIで、DB内のデータを表示させたり、SQLを実行したり自由にできる</p>
+
+<h2 id="感想">感想</h2>
+
+<p><code>PhpStorm</code>のおかげで実際の開発環境でDBの確認や操作が楽にできるのが今回のポイント</p>
+
+<p><code>PhpStorm</code>はアップデートも早いし機能も豊富で素晴らしいツール！
+ただ、もうちょっと日本語の資料が多いとありがたい（他力本願）</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>OS X 10.12.0</li>
+<li>PhpStorm 2016.2</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+
