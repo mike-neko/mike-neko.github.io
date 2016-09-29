@@ -181,7 +181,7 @@ CREATEボタンの左にある&lt;code&gt;・・・&lt;/code&gt; - &lt;code&gt;S
 
 &lt;p&gt;頻繁に使うものならともかく、使い捨てやまれなものは、やっぱりGUIで操作できると助かる&lt;/p&gt;
 
-&lt;p&gt;で、今回は&lt;code&gt;PhpStorm&lt;/code&gt;を使って、実際の開発環境でDBの確認や操作が楽にするのがポイント&lt;/p&gt;
+&lt;p&gt;特に今回は&lt;code&gt;PhpStorm&lt;/code&gt;を使って、実際の開発環境でDBの確認や操作が楽にするのがポイント&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;PhpStorm&lt;/code&gt;はアップデートも早いし機能も豊富で素晴らしいツール！
 ただ、もうちょっと日本語の資料が多いとありがたい（他力本願）&lt;/p&gt;
