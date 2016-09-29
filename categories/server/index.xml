@@ -175,7 +175,7 @@ CREATEボタンの左にある&lt;code&gt;・・・&lt;/code&gt; - &lt;code&gt;S
 6. &lt;code&gt;Resolve ...&lt;/code&gt;の欄でDB名にチェックを入れる&lt;br /&gt;
 7. &lt;code&gt;OK&lt;/code&gt;で閉じるとツールウィンドウ内にDBが表示される&lt;/p&gt;
 
-&lt;p&gt;あとはPHPStormのGUIで、DB内のデータを表示させたり、SQLを実行したり自由にできる&lt;/p&gt;
+&lt;p&gt;あとはPhpStormのGUIでDB内のデータを表示や操作させたり、SQLを実行したり自由にできる&lt;/p&gt;
 
 &lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
