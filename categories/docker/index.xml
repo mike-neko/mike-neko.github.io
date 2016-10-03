@@ -55,7 +55,7 @@ CREATEボタンの左にある&lt;code&gt;・・・&lt;/code&gt; - &lt;code&gt;S
 &lt;li&gt;&lt;code&gt;CREATE&lt;/code&gt;を実行してしばらく待つとコンテナが生成される&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;※この段階ではパスワードなど必要な設定がまだなのでエラーで起動しない&lt;/p&gt;
+&lt;p&gt;※この段階ではパスワードなど必要な設定がまだの為、エラーで起動しない&lt;/p&gt;
 
 &lt;h4 id=&#34;mysqlの設定&#34;&gt;MySQLの設定&lt;/h4&gt;
 
@@ -116,7 +116,7 @@ CREATEボタンの左にある&lt;code&gt;・・・&lt;/code&gt; - &lt;code&gt;S
 &lt;code&gt;:&lt;/code&gt;の後ろにポート番号を入れる&lt;br /&gt;
 6. &lt;code&gt;SAVE&lt;/code&gt;を押す（&lt;strong&gt;忘れないこと&lt;/strong&gt;）&lt;br /&gt;
 7. 再起動がかかるはずなので、&lt;code&gt;Home&lt;/code&gt;のタブを選択&lt;br /&gt;
-8. ログに&lt;code&gt;mysqld: ready for connections.&lt;/code&gt;と出ていればOK
+8. ログに&lt;code&gt;mysqld: ready for connections.&lt;/code&gt;と出ていればOK&lt;br /&gt;
 9. 右側の&lt;code&gt;ACCESS URL&lt;/code&gt;のIPアドレスを確認しておく&lt;/p&gt;
 
 &lt;p&gt;※ポートの指定をしない場合は、適当なポートが割り振られ、
