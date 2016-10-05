@@ -6,8 +6,202 @@
     <description>Recent content in Server on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Thu, 29 Sep 2016 01:44:58 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 06 Oct 2016 00:27:56 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/server/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Laravelをさくらのレンタルサーバへデプロイ</title>
+      <link>https://mike-neko.github.io/blog/laravel-sakura/</link>
+      <pubDate>Thu, 06 Oct 2016 00:27:56 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/laravel-sakura/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;ローカルで開発した&lt;code&gt;Laravel5&lt;/code&gt;のプロジェクトをさくらのレンタルサーバ（スタンダード）で公開する時のメモ&lt;/p&gt;
+
+&lt;h2 id=&#34;環境&#34;&gt;環境&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;macOS 10.12.0&lt;/li&gt;
+&lt;li&gt;Laravel 5.1&lt;/li&gt;
+&lt;li&gt;さくらのレンタルサーバ（スタンダード）
+
+&lt;ul&gt;
+&lt;li&gt;PHP 5.6&lt;/li&gt;
+&lt;li&gt;MySQL 5.5&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ちなみにローカルでは&lt;code&gt;PhpStorm&lt;/code&gt;で開発している&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;www.アカウント名.sakura.ne.jp/hoge&lt;/code&gt;とアクセスすると表示させる前提の手順&lt;br /&gt;
+（アカウント名は○○○○.sakura.ne.jpの○○○○部分）&lt;/p&gt;
+
+&lt;p&gt;流れとしては、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Gitの&lt;code&gt;export&lt;/code&gt;でアップするファイルを準備&lt;/li&gt;
+&lt;li&gt;FTPで1をアップロード&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;composer&lt;/code&gt;をインストール&lt;/li&gt;
+&lt;li&gt;プロジェクトの設定&lt;/li&gt;
+&lt;li&gt;公開&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;今回はGitのリモートサーバは外部に公開していない為、1〜2の手順が必要。
+GitHubとかで管理しているならcloneしてくればOK&lt;/p&gt;
+
+&lt;h3 id=&#34;ファイルの準備&#34;&gt;ファイルの準備&lt;/h3&gt;
+
+&lt;h4 id=&#34;任意-除外ファイルの設定&#34;&gt;（任意）除外ファイルの設定&lt;/h4&gt;
+
+&lt;p&gt;&lt;em&gt;※普段はGit管理しているがサーバへアップしたくないファイルがある場合のみ&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;今回は&lt;code&gt;PhpStorm&lt;/code&gt;のプロジェクトファイルをアップロード対象外としたい
+=エクスポートさせたくないので、&lt;code&gt;.gitattributes&lt;/code&gt;に設定を追加する&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;プロジェクトのルートフォルダの&lt;code&gt;.gitattributes&lt;/code&gt;を開く&lt;br /&gt;
+（無い場合は作成）&lt;/li&gt;
+&lt;li&gt;除外対象を&lt;code&gt;.idea/ export-ignore&lt;/code&gt;として追記する&lt;br /&gt;
+（.ideaフォルダ以下をエクスポート時に除外する設定）&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;エクスポート&#34;&gt;エクスポート&lt;/h4&gt;
+
+&lt;p&gt;ターミナルでエクスポートする。エクスポート先はプロジェクトのフォルダと同じ階層にしている&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd （プロジェクトのルート）
+mkdir ../export
+git archive master --worktree-attributes | tar -x -C ../export
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（回線によってはここで圧縮しておき、サーバ上で展開した方が良いかも）&lt;/p&gt;
+
+&lt;h3 id=&#34;サーバへアップロード&#34;&gt;サーバへアップロード&lt;/h3&gt;
+
+&lt;p&gt;FTPソフトで一つ前の手順でエクスポートしたフォルダの中身を丸ごとアップロードする&lt;br /&gt;
+アップロード先は&lt;code&gt;/home/アカウント名/laravel&lt;/code&gt;とする&lt;br /&gt;
+&lt;em&gt;&lt;code&gt;www&lt;/code&gt;以下にはアップロードしないこと！&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;composerをインストール&#34;&gt;composerをインストール&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;SSHでログインする&lt;br /&gt;
+ターミナルで&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh アカウント名@アカウント名.sakura.ne.jp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;鍵認証をしていなければ、パスワードを聞かれるので入力する&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;bin&lt;/code&gt;ディレクトリを作成し、そこへ&lt;code&gt;composer&lt;/code&gt;をインストールする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% mkdir bin
+% curl -sS https://getcomposer.org/installer | php -- --install-dir=bin --filename=composer
+% chmod 755 bin/composer
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;一旦ログアウトしてログインする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% exit
+ssh アカウント名@アカウント名.sakura.ne.jp
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Laravel&lt;/code&gt;プロジェクトにパッケージをインストールする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% cd laravel
+% composer install
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;プロジェクトの設定&#34;&gt;プロジェクトの設定&lt;/h3&gt;
+
+&lt;h4 id=&#34;dbの準備&#34;&gt;DBの準備&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;サーバのコントロールパネルへログイン&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;データベースの設定&lt;/code&gt;を開き、DBサーバとユーザ名を確認&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;データベースの新規作成&lt;/code&gt;からプロジェクト用のデータベースを作成&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;laravelへ設定&#34;&gt;Laravelへ設定&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;.env&lt;/code&gt;ファイルを設定する&lt;br /&gt;
+&lt;code&gt;DB_〜&lt;/code&gt;の各項目はコントロールパネルで確認・設定したものを記述しておく&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/7ae29213feac486174f86ebe8e8c534c.js&#34;&gt;&lt;/script&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;.env&lt;/code&gt;ファイルの&lt;code&gt;APP_KEY&lt;/code&gt;を生成&lt;br /&gt;
+（ターミナルの状態は前回の続き）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% php artisan key:generate  
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;DBのマイグレーションを実施&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% php artisan migrate  
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;公開&#34;&gt;公開&lt;/h3&gt;
+
+&lt;h4 id=&#34;公開用フォルダの設定&#34;&gt;公開用フォルダの設定&lt;/h4&gt;
+
+&lt;p&gt;さくらのレンタルサーバは&lt;code&gt;DocumentRoot&lt;/code&gt;を変更できないので、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% ln -s ~/laravel/public ~/www/hoge
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として&lt;code&gt;Laravel&lt;/code&gt;の&lt;code&gt;public&lt;/code&gt;へのシンボリックリンクを&lt;code&gt;www&lt;/code&gt;の中へ置く&lt;/p&gt;
+
+&lt;p&gt;これで&lt;code&gt;www.アカウント名.sakura.ne.jp/hoge&lt;/code&gt;へのアクセスで、
+プロジェクトの公開用フォルダ&lt;code&gt;public&lt;/code&gt;へアクセスできるようになる。&lt;br /&gt;
+（ただしまだこの段階ではエラー）&lt;/p&gt;
+
+&lt;h4 id=&#34;htaccessの編集&#34;&gt;.htaccessの編集&lt;/h4&gt;
+
+&lt;p&gt;さくらのレンタルサーバは&lt;code&gt;.htaccess&lt;/code&gt;で&lt;code&gt;Options&lt;/code&gt;を使えないので、
+&lt;code&gt;laravel/public&lt;/code&gt;の中の&lt;code&gt;.htaccess&lt;/code&gt;を開き、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;IfModule mod_negotiation.c&amp;gt;
+  Options -MultiViews
+&amp;lt;/IfModule&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;の部分を削除する。&lt;br /&gt;
+これで無事公開が完了！&lt;/p&gt;
+
+&lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;
+
+&lt;p&gt;サーバ上のファイル構成は以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/home/アカウント名
+  ├─ laravel
+  |    ├─ .env
+  |    ├─ public
+  |    |  ├─ .htaccess
+  |    |  └─ ...
+  |    └─ ...
+  ├─ www
+  |    ├─ hoge          # シンボリックリンク
+  |    └─ ...
+  └─ ...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://c-rtx.com/2015/09/22/laravel-on-sakura-rental-server/&#34;&gt;Laravel5をさくらのレンタルサーバで動かす&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Docker(Kitematic)&#43;PHPStormでMySQL環境をお手軽構築</title>
@@ -189,7 +383,7 @@ CREATEボタンの左にある&lt;code&gt;・・・&lt;/code&gt; - &lt;code&gt;S
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;OS X 10.12.0&lt;/li&gt;
+&lt;li&gt;macOS 10.12.0&lt;/li&gt;
 &lt;li&gt;PhpStorm 2016.2&lt;/li&gt;
 &lt;/ul&gt;
 </description>
