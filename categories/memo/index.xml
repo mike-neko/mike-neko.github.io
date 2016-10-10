@@ -6,8 +6,205 @@
     <description>Recent content in Memo on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Thu, 06 Oct 2016 00:27:56 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 10 Oct 2016 02:03:14 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/memo/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>PhpStormからさくらのレンタルサーバを使う</title>
+      <link>https://mike-neko.github.io/blog/phpstorm-sakura/</link>
+      <pubDate>Mon, 10 Oct 2016 02:03:14 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/phpstorm-sakura/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;さくらのレンタルサーバ（スタンダード）をPhpStormから使うにあたっての便利な小ネタ&lt;/p&gt;
+
+&lt;h2 id=&#34;さくらのdbに接続する&#34;&gt;さくらのDBに接続する&lt;/h2&gt;
+
+&lt;h3 id=&#34;設定情報&#34;&gt;設定情報&lt;/h3&gt;
+
+&lt;p&gt;接続したいさくらのDBは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;DBサーバ:mysql***.db.sakura.ne.jp&lt;/li&gt;
+&lt;li&gt;データベース名:アカウント名_testdb&lt;/li&gt;
+&lt;li&gt;ユーザ名:アカウント名&lt;/li&gt;
+&lt;li&gt;パスワード:pass&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;とし、事前に作成済みとする。&lt;/p&gt;
+
+&lt;h3 id=&#34;phpstormでの設定&#34;&gt;PhpStormでの設定&lt;/h3&gt;
+
+&lt;p&gt;1. &lt;code&gt;PhpStorm&lt;/code&gt;で適当なプロジェクトを作って起動&lt;br /&gt;
+2. メニューの&lt;code&gt;View&lt;/code&gt; - &lt;code&gt;Tool Windows&lt;/code&gt; - &lt;code&gt;Database&lt;/code&gt;を選択&lt;br /&gt;
+3. ツールウィンドウの左上の&lt;code&gt;+&lt;/code&gt; - &lt;code&gt;Data Source&lt;/code&gt; - &lt;code&gt;MySQL&lt;/code&gt;を選択&lt;br /&gt;
+4. &lt;code&gt;SSH/SSL&lt;/code&gt;のタブを選択&lt;br /&gt;
+5. &lt;code&gt;Use SSH tunnel&lt;/code&gt;にチェック&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;項目&lt;/th&gt;
+&lt;th&gt;設定値&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Proxy host&lt;/td&gt;
+&lt;td&gt;アカウント名.sakura.ne.jp&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Port&lt;/td&gt;
+&lt;td&gt;22&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Proxy user&lt;/td&gt;
+&lt;td&gt;アカウント名&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Auth type&lt;/td&gt;
+&lt;td&gt;Password&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Proxy password&lt;/td&gt;
+&lt;td&gt;サーバのパスワード&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;6. &lt;code&gt;Test Connection&lt;/code&gt;を押して&lt;code&gt;Error&lt;/code&gt;と出なければ接続OK&lt;br /&gt;
+7. &lt;code&gt;General&lt;/code&gt;のタブを選択&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;項目&lt;/th&gt;
+&lt;th&gt;設定値&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Host&lt;/td&gt;
+&lt;td&gt;mysql***.db.sakura.ne.jp&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Port&lt;/td&gt;
+&lt;td&gt;3306&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Database&lt;/td&gt;
+&lt;td&gt;アカウント名_testdb&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;User&lt;/td&gt;
+&lt;td&gt;アカウント名&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Password&lt;/td&gt;
+&lt;td&gt;pass&lt;/td&gt;
+&lt;td&gt;DBのパスワード&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;8. &lt;code&gt;Test Connection&lt;/code&gt;を押して&lt;code&gt;Successful&lt;/code&gt;と出れば接続OK&lt;br /&gt;
+9. &lt;code&gt;Options&lt;/code&gt;タブを選択&lt;br /&gt;
+10. &lt;code&gt;Resolve ...&lt;/code&gt;の欄でDB名にチェックを入れる&lt;br /&gt;
+11. &lt;code&gt;OK&lt;/code&gt;で閉じるとツールウィンドウ内にDBが表示される&lt;/p&gt;
+
+&lt;h2 id=&#34;サーバの中を見る-ftp&#34;&gt;サーバの中を見る（FTP）&lt;/h2&gt;
+
+&lt;p&gt;PhpStorm内蔵のFTPの設定方法。
+ファイルのアップロードには制約があるが、代わりにローカルファイルとの差分を表示や同期ができるなど結構便利。&lt;/p&gt;
+
+&lt;p&gt;1. &lt;code&gt;PhpStorm&lt;/code&gt;で適当なプロジェクトを作って起動&lt;br /&gt;
+2. メニューの&lt;code&gt;View&lt;/code&gt; - &lt;code&gt;Tool Windows&lt;/code&gt; - &lt;code&gt;Remote Host&lt;/code&gt;を選択&lt;br /&gt;
+3. ツールウィンドウの&lt;code&gt;...&lt;/code&gt;を選択&lt;br /&gt;
+4. &lt;code&gt;Name&lt;/code&gt;に適当な名前をつける&lt;br /&gt;
+5. &lt;code&gt;Type&lt;/code&gt;で&lt;code&gt;SFTP&lt;/code&gt;を選択&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;項目&lt;/th&gt;
+&lt;th&gt;設定値&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;SFTP host&lt;/td&gt;
+&lt;td&gt;アカウント名.sakura.ne.jp&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Port&lt;/td&gt;
+&lt;td&gt;22&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Root path&lt;/td&gt;
+&lt;td&gt;/home/アカウント名/&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;User name&lt;/td&gt;
+&lt;td&gt;アカウント名&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Auth type&lt;/td&gt;
+&lt;td&gt;Password&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Password&lt;/td&gt;
+&lt;td&gt;サーバのパスワード&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;6. &lt;code&gt;Test SFTP connection&lt;/code&gt;を押して&lt;code&gt;Successful&lt;/code&gt;と出れば接続OK&lt;/p&gt;
+
+&lt;p&gt;ここまで設定すればサーバ内のファイルの閲覧や削除などが行える。
+さらに、アップロードやローカルファイルとの比較などがしたい場合は、ローカルとの紐付けが必要。&lt;/p&gt;
+
+&lt;p&gt;7. &lt;code&gt;Mappings&lt;/code&gt;のタブを選択&lt;br /&gt;
+8. &lt;code&gt;Loacal path&lt;/code&gt;に既存プロジェクトのパスが入っていることを確認&lt;br /&gt;
+9. &lt;code&gt;Deployment path on server 〜&lt;/code&gt;に対応するサーバのパスを選択&lt;/p&gt;
+
+&lt;p&gt;これでツールウィンドウの中にサーバ上のファイルが表示され、右クリックでいろいろできるようになる。&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PhpStorm 2016.2&lt;/li&gt;
+&lt;li&gt;さくらのレンタルサーバ（スタンダード）
+
+&lt;ul&gt;
+&lt;li&gt;MySQL 5.5&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Laravelをさくらのレンタルサーバへデプロイ</title>

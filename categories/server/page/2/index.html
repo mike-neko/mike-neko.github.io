@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Dockerのコマンド備忘録 &middot; M.Ike</title>
+  <title>Server &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -26,7 +26,7 @@
   
   
   
-  
+  <link href="https://mike-neko.github.io/categories/server/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -92,104 +92,63 @@
 </div>
 
 
+
+
+
+
 <div class="content container">
-  <div class="post">
-    <h1>Dockerのコマンド備忘録</h1>
-    <span class="post-date">Apr 2, 2016 
+  <h1>Category: " server "</h1>
+  <div class="posts">
     
-    <br/>
-    <a class="label" href="https://mike-neko.github.io/categories/memo">memo</a><a class="label" href="https://mike-neko.github.io/categories/docker">docker</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
-    </span>
     
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/docker-cmd/">Dockerのコマンド備忘録</a>
+      </h1>
+      <span class="post-date">Apr 2, 2016
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/categories/memo">memo</a><a class="label" href="https://mike-neko.github.io/categories/docker">docker</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
+      </span>
+      
+      <h2 id="dockerでよく使うコマンド">Dockerでよく使うコマンド</h2>
 
-<h2 id="dockerでよく使うコマンド">Dockerでよく使うコマンド</h2>
-
-<h3 id="イメージ操作">イメージ操作</h3>
-
-<h4 id="イメージのリスト表示">イメージのリスト表示</h4>
-
-<pre><code>docker images
-</code></pre>
-
-<h4 id="指定したイメージの削除">指定したイメージの削除</h4>
-
-<pre><code>docker rmi [イメージの名前かID]
-</code></pre>
-
-<p>イメージの指定は<code>IMAGE ID</code>の先頭数文字での特定が便利</p>
-
-<h4 id="イメージの全削除">イメージの全削除</h4>
-
-<pre><code>docker rmi $(docker images -a -q)
-</code></pre>
-
-<h3 id="コンテナ操作">コンテナ操作</h3>
-
-<h4 id="コンテナのリスト表示">コンテナのリスト表示</h4>
-
-<pre><code>docker ps
-</code></pre>
-
-<h4 id="全部停止">全部停止</h4>
-
-<pre><code>docker stop $(docker ps -a -q)
-</code></pre>
-
-<h4 id="全部削除">全部削除</h4>
-
-<pre><code>docker rm $(docker ps -a -q) 
-</code></pre>
-
-<h3 id="dockercompose">DockerCompose</h3>
-
-<h4 id="起動">起動</h4>
-
-<pre><code>cd [docker-copose.ymlを置いてる場所]
-docker-compose up -d
-</code></pre>
-
-<p>これだけで<code>build</code>と<code>pull</code>と<code>run</code>を一気にしてくれる</p>
-
-<h4 id="停止">停止</h4>
-
-<pre><code>docker-compose stop
-</code></pre>
-
-<h3 id="nginx">nginx</h3>
-
-<p><em>80ポートを使う場合はsudoが必要</em></p>
-
-<h4 id="起動-1">起動</h4>
-
-<pre><code>nginx
-</code></pre>
-
-<h4 id="停止-1">停止</h4>
-
-<pre><code>nginx -s stop
-</code></pre>
-
-<h4 id="再起動">再起動</h4>
-
-<pre><code>nginx -s reload
-</code></pre>
-
-<h2 id="php">PHP</h2>
-
-<h3 id="オプション">オプション</h3>
-
-<h4 id="docker-php-ext-installで指定できるもの">docker-php-ext-installで指定できるもの</h4>
-
-<pre><code>bcmath bz2 calendar ctype curl dba dom enchant exif fileinfo filter ftp gd gettext gmp hash iconv imap interbase intl json ldap mbstring mcrypt mssql mysql mysqli oci8 odbc opcache pcntl pdo pdo_dblib pdo_firebird pdo_mysql pdo_oci pdo_odbc pdo_pgsql pdo_sqlite pgsql phar posix pspell readline recode reflection session shmop simplexml snmp soap sockets spl standard sybase_ct sysvmsg sysvsem sysvshm tidy tokenizer wddx xml xmlreader xmlrpc xmlwriter xsl zip
-</code></pre>
-
-<p>(デフォルトのPHPイメージは最低限の状態なのでDockerfileで指定して追加する)</p>
-
+      <a href="https://mike-neko.github.io/blog/docker-cmd/">Read On &rarr;</a>
+      
+    </div>
+    
+    
+    
+    <ul class="pagination">
+        
+        <li>
+            <a href="/categories/server/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        </li>
+        
+        <li
+        >
+        <a href="/categories/server/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        
+        <li
+        ><a href="/categories/server/">1</a></li>
+        
+        <li
+        class="active"><a href="/categories/server/page/2/">2</a></li>
+        
+        <li
+        class="disabled">
+        <a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+        
+        <li>
+            <a href="/categories/server/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        </li>
+        
+    </ul>
+    
   </div>
-  
 </div>
-
-
 
 
 <script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
