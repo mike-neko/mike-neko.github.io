@@ -6,8 +6,115 @@
     <description>Recent content in Server on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sat, 15 Oct 2016 02:03:14 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 15 Oct 2016 21:53:49 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/server/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>さくらのレンタルサーバでredisを使う</title>
+      <link>https://mike-neko.github.io/blog/redis-sakura/</link>
+      <pubDate>Sat, 15 Oct 2016 21:53:49 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/redis-sakura/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;さくらのレンタルサーバ（スタンダード）に&lt;a href=&#34;http://redis.io/&#34;&gt;redis&lt;/a&gt;をインストールする方法のメモ&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Laravel&lt;/code&gt;のキューを使うついでに、せっかくなので&lt;code&gt;redis&lt;/code&gt;を使えるようにしてみる。
+&lt;code&gt;Laravel&lt;/code&gt;をさくらで使うあたりは&lt;a href=&#34;../laravel-sakura/&#34;&gt;以前の記事&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h2 id=&#34;インストール&#34;&gt;インストール&lt;/h2&gt;
+
+&lt;h3 id=&#34;ソースを展開&#34;&gt;ソースを展開&lt;/h3&gt;
+
+&lt;p&gt;SSHでログインして公式の手順通り以下の様にする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% wget http://download.redis.io/releases/redis-3.2.0.tar.gz
+% tar xzf redis-3.2.0.tar.gz
+% cd redis-3.2.0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最新版(Ver.3.2.4)では、権限絡みで&lt;code&gt;make&lt;/code&gt;に失敗する為、少し古いバージョンを使っているのがポイント&lt;/p&gt;
+
+&lt;h3 id=&#34;インストール先の変更&#34;&gt;インストール先の変更&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;src/Makefile&lt;/code&gt;を開く
+（&lt;code&gt;redis-3.2.0&lt;/code&gt;直下にも&lt;code&gt;Makefile&lt;/code&gt;があるので間違わないこと）&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;PREFIX?=&lt;/code&gt;という行を以下の様に書き換えて保存する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PREFIX?=/home/アカウント名
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;make&#34;&gt;make&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;% gmake
+% gmake install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;さくらのサーバはBSD系なので&lt;code&gt;gmake&lt;/code&gt;を使ってインストールを実行。
+これで、&lt;code&gt;~/bin&lt;/code&gt;に&lt;code&gt;redis&lt;/code&gt;関連がインストールされる&lt;/p&gt;
+
+&lt;p&gt;もし、&lt;code&gt;~/bin&lt;/code&gt;にパスが通っていなければ通しておくと便利&lt;/p&gt;
+
+&lt;h3 id=&#34;実行&#34;&gt;実行&lt;/h3&gt;
+
+&lt;p&gt;一旦、SSHをログアウトしてログインしなおしてから&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% nohup redis-server &amp;lt; /dev/null &amp;gt;&amp;amp; /dev/null &amp;amp;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として、&lt;code&gt;redis&lt;/code&gt;サーバをバックグラウンド起動する&lt;/p&gt;
+
+&lt;p&gt;確認のため、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% redis-cli
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;127.0.0.1:6379&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というようになればOK。失敗している時は&lt;code&gt;not connected&amp;gt;&lt;/code&gt;となる&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;この時に表示されているサーバのIPとポート番号を覚えておくこと&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;確認が終了すれば、&lt;code&gt;exit&lt;/code&gt;で抜ける（&lt;code&gt;shatdown&lt;/code&gt;にするとサーバまで止まるのでNG）&lt;/p&gt;
+
+&lt;h2 id=&#34;laravelの設定&#34;&gt;Laravelの設定&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;config/database.php&lt;/code&gt;の中の&lt;code&gt;redis&lt;/code&gt;を設定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&#39;redis&#39; =&amp;gt; [
+
+  &#39;cluster&#39; =&amp;gt; false,
+
+  &#39;default&#39; =&amp;gt; [
+    &#39;host&#39;     =&amp;gt; &#39;127.0.0.1&#39;,      // redis-cliで確認したIP
+    &#39;port&#39;     =&amp;gt; 6379,             // redis-cliで確認したポート
+    &#39;database&#39; =&amp;gt; 0,
+  ],
+],
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;なお&lt;code&gt;.env&lt;/code&gt;を使う場合、&lt;code&gt;database&lt;/code&gt;の部分は&lt;code&gt;intval(env(&#39;REDIS_DATABASE&#39;, 0))&lt;/code&gt;というように明示的にintにしないとエラーになるので注意&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;以上で、&lt;code&gt;Laravel&lt;/code&gt;からも&lt;code&gt;redis&lt;/code&gt;が使える様になる&lt;/p&gt;
+
+&lt;h2 id=&#34;環境&#34;&gt;環境&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Laravel 5.1&lt;/li&gt;
+&lt;li&gt;さくらのレンタルサーバ（スタンダード）
+
+&lt;ul&gt;
+&lt;li&gt;redis 3.2.0&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>さくらのレンタルサーバでeasy_installを使う</title>
