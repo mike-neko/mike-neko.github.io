@@ -6,8 +6,60 @@
     <description>Recent content in Server on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Mon, 10 Oct 2016 02:03:14 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 15 Oct 2016 02:03:14 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/server/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>さくらのレンタルサーバでeasy_installを使う</title>
+      <link>https://mike-neko.github.io/blog/easyinstall-sakura/</link>
+      <pubDate>Sat, 15 Oct 2016 02:03:14 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/easyinstall-sakura/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;さくらのレンタルサーバ（スタンダード）でいつのまにか
+&lt;a href=&#34;http://setuptools.readthedocs.io/en/latest/easy_install.html&#34;&gt;easy_install&lt;/a&gt;
+が使えるようになっていたので使い方のメモ&lt;/p&gt;
+
+&lt;p&gt;レンタルサーバなので、当然そのまま実行すると&lt;code&gt;[Errno 13] Permission denied&lt;/code&gt;で怒られるのでその対策&lt;/p&gt;
+
+&lt;h2 id=&#34;準備&#34;&gt;準備&lt;/h2&gt;
+
+&lt;h3 id=&#34;インストール先の変更&#34;&gt;インストール先の変更&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;(無ければ)&lt;code&gt;~/.pydistutils.cfg&lt;/code&gt;を作成&lt;/li&gt;
+&lt;li&gt;ファイルの中に以下を追記&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code&gt;[install]
+user=1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;パスの追加&#34;&gt;パスの追加&lt;/h3&gt;
+
+&lt;p&gt;ついでにパスを通しておく。
+&lt;code&gt;csh&lt;/code&gt;の場合は、&lt;code&gt;~/.cshrc&lt;/code&gt;の中の&lt;code&gt;set path&lt;/code&gt;の行に&lt;code&gt;$HOME/.local/bin&lt;/code&gt;を追加する&lt;/p&gt;
+
+&lt;h2 id=&#34;使い方&#34;&gt;使い方&lt;/h2&gt;
+
+&lt;p&gt;インストール時はそのまま実行すればOK。&lt;/p&gt;
+
+&lt;p&gt;例えば、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% easy_install pip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とすれば、&lt;code&gt;~/.local/bin&lt;/code&gt;に&lt;code&gt;pip&lt;/code&gt;がインストールされる。&lt;/p&gt;
+
+&lt;p&gt;実行したい時は、パスが通っているので&lt;code&gt;pip&lt;/code&gt;とだけで実行できる。&lt;/p&gt;
+
+&lt;p&gt;なお、インストールしたのに、&lt;code&gt;Command not found.&lt;/code&gt;と出る場合は、
+SSHにログインしなおすと良い&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>PhpStormからさくらのレンタルサーバを使う</title>

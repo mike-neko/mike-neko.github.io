@@ -6,8 +6,60 @@
     <description>Recent content on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Mon, 10 Oct 2016 02:03:14 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 15 Oct 2016 02:03:14 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>さくらのレンタルサーバでeasy_installを使う</title>
+      <link>https://mike-neko.github.io/blog/easyinstall-sakura/</link>
+      <pubDate>Sat, 15 Oct 2016 02:03:14 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/easyinstall-sakura/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;さくらのレンタルサーバ（スタンダード）でいつのまにか
+&lt;a href=&#34;http://setuptools.readthedocs.io/en/latest/easy_install.html&#34;&gt;easy_install&lt;/a&gt;
+が使えるようになっていたので使い方のメモ&lt;/p&gt;
+
+&lt;p&gt;レンタルサーバなので、当然そのまま実行すると&lt;code&gt;[Errno 13] Permission denied&lt;/code&gt;で怒られるのでその対策&lt;/p&gt;
+
+&lt;h2 id=&#34;準備&#34;&gt;準備&lt;/h2&gt;
+
+&lt;h3 id=&#34;インストール先の変更&#34;&gt;インストール先の変更&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;(無ければ)&lt;code&gt;~/.pydistutils.cfg&lt;/code&gt;を作成&lt;/li&gt;
+&lt;li&gt;ファイルの中に以下を追記&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code&gt;[install]
+user=1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;パスの追加&#34;&gt;パスの追加&lt;/h3&gt;
+
+&lt;p&gt;ついでにパスを通しておく。
+&lt;code&gt;csh&lt;/code&gt;の場合は、&lt;code&gt;~/.cshrc&lt;/code&gt;の中の&lt;code&gt;set path&lt;/code&gt;の行に&lt;code&gt;$HOME/.local/bin&lt;/code&gt;を追加する&lt;/p&gt;
+
+&lt;h2 id=&#34;使い方&#34;&gt;使い方&lt;/h2&gt;
+
+&lt;p&gt;インストール時はそのまま実行すればOK。&lt;/p&gt;
+
+&lt;p&gt;例えば、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% easy_install pip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とすれば、&lt;code&gt;~/.local/bin&lt;/code&gt;に&lt;code&gt;pip&lt;/code&gt;がインストールされる。&lt;/p&gt;
+
+&lt;p&gt;実行したい時は、パスが通っているので&lt;code&gt;pip&lt;/code&gt;とだけで実行できる。&lt;/p&gt;
+
+&lt;p&gt;なお、インストールしたのに、&lt;code&gt;Command not found.&lt;/code&gt;と出る場合は、
+SSHにログインしなおすと良い&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>PhpStormからさくらのレンタルサーバを使う</title>
@@ -1926,134 +1978,6 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 （Githubの100MB制限にかかってしまったので）&lt;br /&gt;
 動かすには、&lt;code&gt;OpenCVのフレームワークの準備&lt;/code&gt;の項目で準備した
 &lt;code&gt;opencv2.framework&lt;/code&gt;を手動で&lt;code&gt;UnityOpenCV/Assets/Plugins/&lt;/code&gt;直下に追加する必要がある。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>nginxをhttp2に対応させる</title>
-      <link>https://mike-neko.github.io/blog/nginx-http2/</link>
-      <pubDate>Fri, 03 Jun 2016 21:29:36 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;過去の記事（&lt;a href=&#34;../docker/&#34;&gt;Dockerでの開発環境&lt;/a&gt;）&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
-
-&lt;p&gt;ベースは前回構築したnginx+Dockerで通信はオレオレ証明書によるSSLを前提。&lt;/p&gt;
-
-&lt;p&gt;主な変更点は以下の通り&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OpenSSL 1.0.2&lt;/li&gt;
-&lt;li&gt;nginx 1.10.0&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;いずれもhttp2対応させる為にバージョンアップが必要。&lt;/p&gt;
-
-&lt;p&gt;なお、iOSは&lt;strong&gt;iOS9&lt;/strong&gt;からhttp2へ対応している。&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;h3 id=&#34;事前準備&#34;&gt;事前準備&lt;/h3&gt;
-
-&lt;p&gt;http2での通信かどうかの確認用に以下のChromeのプラグインを入れておく。&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://chrome.google.com/webstore/detail/http2-and-spdy-indicator/mpbpobfflnpcgagjijhmgnchggcjblin/related?hl=ja&#34;&gt;HTTP/2 and SPDY indicator&lt;/a&gt;&lt;br /&gt;
-（Firefox用もあるみたいなのでお好きな方で）&lt;/p&gt;
-
-&lt;p&gt;http2での通信だと稲妻が青色になるので確認が楽。&lt;/p&gt;
-
-&lt;h3 id=&#34;macでの作業&#34;&gt;Macでの作業&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;OpenSSLを最新にあげる&lt;br /&gt;
-OpenSSLの更新方法：&lt;a href=&#34;http://qiita.com/Chrowa3/items/b04e772be959cdda9ac3&#34;&gt;Mac OS X の openssl を最新の状態にする&lt;/a&gt;&lt;br /&gt;
-ポイントは&lt;code&gt;upgrade&lt;/code&gt;にすること（普段使う&lt;code&gt;update&lt;/code&gt;ではない）&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;nginxをアンイストールする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew uninstall nginx
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;nginxをhttp2モジュール付きでインストールする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew install nginx --with-http2
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;nginxのconfを編集&lt;br /&gt;
-&lt;code&gt;HTTPS server&lt;/code&gt;の設定が&lt;code&gt;listen  443 ssl;&lt;/code&gt;となっているはずなので、&lt;code&gt;http2&lt;/code&gt;を追加する。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;server {
-listen  443 ssl http2;
-...
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;追加したらnginxを再起動する&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;ChromeからMacへアクセスしてみて青い稲妻になっていれば&lt;code&gt;nginx&lt;/code&gt;の設定は成功&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;ios端末での通信&#34;&gt;iOS端末での通信&lt;/h3&gt;
-
-&lt;p&gt;iOS9以降の&lt;code&gt;NSURLSession&lt;/code&gt;での通信であれば、特に設定など不要で自動で&lt;code&gt;http2&lt;/code&gt;になる。&lt;/p&gt;
-
-&lt;p&gt;なお、規格上は&lt;code&gt;http&lt;/code&gt;のみでも対応しているがiOSでどうかは未検証。&lt;/p&gt;
-
-&lt;h3 id=&#34;ログ設定&#34;&gt;ログ設定&lt;/h3&gt;
-
-&lt;p&gt;iOS端末からの通信も&lt;code&gt;http2&lt;/code&gt;になっているかの確認は、&lt;code&gt;nginx&lt;/code&gt;のログで判別する。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;http2&lt;/code&gt;の場合は、&lt;code&gt;log_format&lt;/code&gt;の&lt;code&gt;$http2&lt;/code&gt;に&lt;code&gt;h2&lt;/code&gt;と入ってくる。&lt;br /&gt;
-詳細は以下のページを参考に&lt;br /&gt;
-&lt;a href=&#34;http://d.hatena.ne.jp/ASnoKaze/20150818/1439896998&#34;&gt;nginxでアクセスログにhttp2の通信か出力する&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;過去情報&#34;&gt;過去情報&lt;/h2&gt;
-
-&lt;p&gt;標準の&lt;code&gt;nginx&lt;/code&gt;に&lt;code&gt;http2&lt;/code&gt;モジュールがないと思っていたら、
-実はちゃんとあったので訂正。&lt;/p&gt;
-
-&lt;p&gt;もったいないので、&lt;code&gt;nginx-full&lt;/code&gt;の情報を残しておく。&lt;/p&gt;
-
-&lt;h3 id=&#34;nginx-full&#34;&gt;nginx-full&lt;/h3&gt;
-
-&lt;p&gt;通常の&lt;code&gt;Homebrew&lt;/code&gt;の&lt;code&gt;nginx&lt;/code&gt;ではオプションのモジュールが少ないので、
-標準では足りないモジュールをインストールしたい時は&lt;code&gt;nginx-full&lt;/code&gt;をインストールする。&lt;/p&gt;
-
-&lt;p&gt;例） nginxをhttp2モジュール付きでインストールする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew tap homebrew/nginx
-brew install nginx-full --with-http2
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;モジュールの一覧は以下で確認すること。
-（&lt;a href=&#34;https://nginx.org/en/docs/http/ngx_http_v2_module.html&#34;&gt;公式&lt;/a&gt;のモジュールの情報?とは違うようなのでこれで確認）&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew info nginx-full
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://kannokanno.hatenablog.com/entry/2014/02/10/134920&#34;&gt;Mac - homebrewでnginxを入れるときはnginx-fullを入れよう&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.5&lt;/li&gt;
-&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     
