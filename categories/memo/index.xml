@@ -83,7 +83,13 @@
 
 &lt;p&gt;確認が終了すれば、&lt;code&gt;exit&lt;/code&gt;で抜ける（&lt;code&gt;shatdown&lt;/code&gt;にするとサーバまで止まるのでNG）&lt;/p&gt;
 
-&lt;h2 id=&#34;laravelの設定&#34;&gt;Laravelの設定&lt;/h2&gt;
+&lt;h2 id=&#34;laravelで使う&#34;&gt;Laravelで使う&lt;/h2&gt;
+
+&lt;h3 id=&#34;パッケージの準備&#34;&gt;パッケージの準備&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;Laravel&lt;/code&gt;で&lt;code&gt;redis&lt;/code&gt;を使うには&lt;code&gt;predis/predis&lt;/code&gt;が必要なので、&lt;code&gt;Composer&lt;/code&gt;でインストールしておく&lt;/p&gt;
+
+&lt;h3 id=&#34;設定&#34;&gt;設定&lt;/h3&gt;
 
 &lt;p&gt;&lt;code&gt;config/database.php&lt;/code&gt;の中の&lt;code&gt;redis&lt;/code&gt;を設定する&lt;/p&gt;
 
@@ -110,6 +116,7 @@
 &lt;li&gt;さくらのレンタルサーバ（スタンダード）
 
 &lt;ul&gt;
+&lt;li&gt;PHP 5.6&lt;/li&gt;
 &lt;li&gt;redis 3.2.0&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
