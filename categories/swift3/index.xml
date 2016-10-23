@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Swift3 on M.Ikeの小ネタ集</title>
+    <link>https://mike-neko.github.io/categories/swift3/</link>
+    <description>Recent content in Swift3 on M.Ikeの小ネタ集</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>jp</language>
+    <lastBuildDate>Sun, 23 Oct 2016 18:30:34 +0900</lastBuildDate>
+    <atom:link href="https://mike-neko.github.io/categories/swift3/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>NotificationCenter(Swift3)の使い方</title>
+      <link>https://mike-neko.github.io/blog/notification/</link>
+      <pubDate>Sun, 23 Oct 2016 18:30:34 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/notification/</guid>
+      <description>
+
+&lt;p&gt;旧&lt;code&gt;NSNotification&lt;/code&gt;がSwift3でちょっと変更が入ったので使い方と＋αのエクステンションのまとめ&lt;/p&gt;
+
+&lt;h2 id=&#34;使い方&#34;&gt;使い方&lt;/h2&gt;
+
+&lt;h3 id=&#34;通知の送信&#34;&gt;通知の送信&lt;/h3&gt;
+
+&lt;p&gt;&amp;ldquo;Change&amp;rdquo;という名前の通知を送信するときは以下の2パターン&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;NotificationCenter.default.post(
+    Notification(name: Notification.Name(&amp;quot;Change&amp;quot;)))
+
+NotificationCenter.default.post(name: Notification.Name(&amp;quot;Change&amp;quot;),
+                                object: nil)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;通知の受信&#34;&gt;通知の受信&lt;/h3&gt;
+
+&lt;p&gt;上述の通知を受信したい場合は、&lt;/p&gt;
+
+&lt;h4 id=&#34;受信先の登録&#34;&gt;受信先の登録&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;NotificationCenter.default.addObserver(self,
+    selector: #selector(recieveHoge),
+    name: Notification.Name(&amp;quot;Change&amp;quot;),
+    object: nil)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なお、登録した場合は解除も忘れずにすること！&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;参考: UIKeyboardWillShowNotificationとかは&lt;/em&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;NotificationCenter.default.addObserver(self,
+    selector: #selector(keyboardWillShow),
+    name: .UIKeyboardWillShow,
+    object: nil)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という感じに名前が定義されているので省略形で良い&lt;/p&gt;
+
+&lt;h4 id=&#34;受信するメソッド&#34;&gt;受信するメソッド&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;func recieveHoge(notification: NSNotification) {
+    // ここで処理
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;アクセス制限は&lt;code&gt;internal&lt;/code&gt;以上が必要（&lt;code&gt;private&lt;/code&gt;/&lt;code&gt;fileprivate&lt;/code&gt;は不可）&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;post&lt;/code&gt;時に送った&lt;code&gt;object&lt;/code&gt;を利用したい場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;guard let hoge = notification.object as? Hoge else { return }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というように変換して使う&lt;/p&gt;
+
+&lt;p&gt;また、特に指定をしないとメイン以外のスレッドで呼び出されることがあるので、
+UI絡みの部分は&lt;code&gt;DispatchQueue.main.async&lt;/code&gt;を使った方が良い&lt;/p&gt;
+
+&lt;h4 id=&#34;受信の解除&#34;&gt;受信の解除&lt;/h4&gt;
+
+&lt;p&gt;特定の通知のみ解除する場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;NotificationCenter.default.removeObserver(self,
+                                          name: Notification.Name(&amp;quot;Change&amp;quot;),
+                                          object: nil)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;自身が登録している受信を全て解除する場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;NotificationCenter.default.removeObserver(self)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;エクステンション&#34;&gt;エクステンション&lt;/h2&gt;
+
+&lt;p&gt;今回のSwift3から&lt;code&gt;Notification.Name&lt;/code&gt;の部分で、以前と比べて手間がかかるようになってしまった
+（元からOSで用意されているものは逆に楽）&lt;/p&gt;
+
+&lt;p&gt;それとは別に、名前がアプリの他とかぶらないようになるべく一元管理をしたいので、以下のようなエクステンションと&lt;code&gt;enum&lt;/code&gt;を利用する&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5c92a36705ebcc3c49022a534d4df157.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;&lt;em&gt;※&lt;code&gt;enum&lt;/code&gt;はガイドライン的には小文字が良いが文字定数を強調したいので大文字になっている&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;特にエクステンションといっても特別なことはしていなくて単に専用の&lt;code&gt;enum&lt;/code&gt;を使えるようにしただけ。&lt;br /&gt;
+でも、これを実際に使うと、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 通知の送信
+NotificationCenter.default.post(key: .ChangeStatus)
+
+// 通知の受信先の登録
+NotificationCenter.default.addObserver(self,
+    selector: #selector(recieveHoge),
+    key: .ChangeStatus)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;って感じですっきりする&lt;/p&gt;
+
+&lt;p&gt;本来は、&lt;code&gt;Notification.Name&lt;/code&gt;をエクステンションして使うのが想定されているようだが、
+&lt;code&gt;enum&lt;/code&gt;により一意になることが保証されるのと、リテラルが出てこないので、個人的にはこっちがお気に入り&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.12.0&lt;/li&gt;
+&lt;li&gt;Xcode 8.0 / Swift3&lt;/li&gt;
+&lt;li&gt;iOS 10.0.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

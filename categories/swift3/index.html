@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>さくらのレンタルサーバでeasy_installを使う &middot; M.Ike</title>
+  <title>Swift3 &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -26,7 +26,7 @@
   
   
   
-  
+  <link href="https://mike-neko.github.io/categories/swift3/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -94,63 +94,35 @@
 </div>
 
 
+
+
+
+
 <div class="content container">
-  <div class="post">
-    <h1>さくらのレンタルサーバでeasy_installを使う</h1>
-    <span class="post-date">Oct 15, 2016 
+  <h1>Category: " swift3 "</h1>
+  <div class="posts">
     
-    <br/>
-    <a class="label" href="https://mike-neko.github.io/categories/memo">memo</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
-    </span>
     
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/notification/">NotificationCenter(Swift3)の使い方</a>
+      </h1>
+      <span class="post-date">Oct 23, 2016
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a><a class="label" href="https://mike-neko.github.io/categories/swift3">Swift3</a>
+      </span>
+      
+      <p>旧<code>NSNotification</code>がSwift3でちょっと変更が入ったので使い方と＋αのエクステンションのまとめ</p>
 
-<h2 id="概要">概要</h2>
-
-<p>さくらのレンタルサーバ（スタンダード）でいつのまにか
-<a href="http://setuptools.readthedocs.io/en/latest/easy_install.html">easy_install</a>
-が使えるようになっていたので使い方のメモ</p>
-
-<p>レンタルサーバなので、当然そのまま実行すると<code>[Errno 13] Permission denied</code>で怒られるのでその対策</p>
-
-<h2 id="準備">準備</h2>
-
-<h3 id="インストール先の変更">インストール先の変更</h3>
-
-<ol>
-<li>(無ければ)<code>~/.pydistutils.cfg</code>を作成</li>
-<li>ファイルの中に以下を追記<br /></li>
-</ol>
-
-<pre><code>[install]
-user=1
-</code></pre>
-
-<h3 id="パスの追加">パスの追加</h3>
-
-<p>ついでにパスを通しておく。
-<code>csh</code>の場合は、<code>~/.cshrc</code>の中の<code>set path</code>の行に<code>$HOME/.local/bin</code>を追加する</p>
-
-<h2 id="使い方">使い方</h2>
-
-<p>インストール時はそのまま実行すればOK。</p>
-
-<p>例えば、</p>
-
-<pre><code>% easy_install pip
-</code></pre>
-
-<p>とすれば、<code>~/.local/bin</code>に<code>pip</code>がインストールされる。</p>
-
-<p>実行したい時は、パスが通っているので<code>pip</code>とだけで実行できる。</p>
-
-<p>なお、インストールしたのに、<code>Command not found.</code>と出る場合は、
-SSHにログインしなおすと良い</p>
-
+      <a href="https://mike-neko.github.io/blog/notification/">Read On &rarr;</a>
+      
+    </div>
+    
+    
+    
   </div>
-  
 </div>
-
-
 
 
 <script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
