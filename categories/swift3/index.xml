@@ -6,8 +6,102 @@
     <description>Recent content in Swift3 on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sun, 23 Oct 2016 18:30:34 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 23 Oct 2016 22:28:33 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/swift3/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>UIScrollViewのAutoLayoutをStoryboardのみで設定</title>
+      <link>https://mike-neko.github.io/blog/scrollview/</link>
+      <pubDate>Sun, 23 Oct 2016 22:28:33 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/scrollview/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;Storyboard上だけでUIScrollViewのAutoLayoutを完結させる方法。
+中のUIを動的に追加や削除しないのであればコードを書く必要もないし、
+&lt;code&gt;UILabel&lt;/code&gt;のようにコンテンツに応じて動的に高さが変わるようなものにも対応可能&lt;/p&gt;
+
+&lt;p&gt;ポイントは&lt;code&gt;ContainerView&lt;/code&gt;を利用してScrollViewを別のViewControllerに持っていくこと&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;p&gt;サンプルとしてViewControllerの全画面に縦スクロールするScrollViewを配置する例を考える&lt;/p&gt;
+
+&lt;h4 id=&#34;1-viewcontrollerのscrollviewを置きたい場所に-containerview-を置き制約を設定する&#34;&gt;1. ViewControllerのScrollViewを置きたい場所に&lt;code&gt;ContainerView&lt;/code&gt;を置き制約を設定する&lt;/h4&gt;
+
+&lt;p&gt;（サンプル）全画面にしたいのでViewに対して&lt;code&gt;0&lt;/code&gt;で設定
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-10-23-scrollview/step1.png&#34; /&gt;
+&lt;/figure&gt;
+
+&lt;em&gt;&lt;code&gt;Layout Guide&lt;/code&gt;に対して制約を設定するとステータスバーなどに合わせて位置が変わる&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;2-1で追加した子viewcontrollerをアウトライン上で選択し-viewcontrollerのサイズを-freeform-へ変更する&#34;&gt;2. 1で追加した子ViewControllerをアウトライン上で選択し、ViewControllerのサイズを&lt;code&gt;Freeform&lt;/code&gt;へ変更する&lt;/h4&gt;
+
+&lt;p&gt;変更すると&lt;code&gt;Height&lt;/code&gt;の部分が変更できるようになるので、
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-10-23-scrollview/step2.png&#34; /&gt;
+&lt;/figure&gt;
+
+ScrollViewの&lt;code&gt;ContentSize&lt;/code&gt;の高さがあらかじめ決まっているのであれば同じに、
+そうでないなら余裕を持った数字に変えておく&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;サイズを変更しなくても組めるが変更した方がスクロールせずに作業が行えるので楽&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;3-1で追加した子viewcontrollerのviewにscrollviewを追加し任意の制約を設定する&#34;&gt;3. 1で追加した子ViewControllerのViewにScrollViewを追加し任意の制約を設定する&lt;/h4&gt;
+
+&lt;p&gt;（サンプル）全画面にしたいのでViewに対して今回も&lt;code&gt;0&lt;/code&gt;で設定
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-10-23-scrollview/step1.png&#34; /&gt;
+&lt;/figure&gt;
+
+&lt;em&gt;もしスクロールしないヘッダとつけたりしたいなら、この子ViewControllerのViewに対して追加しておくと便利&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;4-3で追加したscrollviewにviewを追加し制約を設定する&#34;&gt;4. 3で追加したScrollViewにViewを追加し制約を設定する&lt;/h4&gt;
+
+&lt;p&gt;（サンプル）縦スクロールにしたいので制約は以下の通り
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-10-23-scrollview/step4.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;縦と横はそれぞれ親(Scrollview)に対して&lt;code&gt;0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;横幅は親(Scrollview)と同じ&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;ここで追加したViewがいわば&lt;code&gt;ContentView&lt;/code&gt;となる&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;5-4のviewに各パーツを配置していく&#34;&gt;5. 4のviewに各パーツを配置していく&lt;/h4&gt;
+
+&lt;p&gt;この工程は普段通りのAutoLayoutの設定でOK。
+&lt;code&gt;UILabel&lt;/code&gt;の高さをコンテンツに応じて変えたいなら高さを設定せずにマージンだけを設定する&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Scrollviewの中身の高さが固定でないなら&lt;code&gt;height&lt;/code&gt;は設定しないこと&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;参考-viewの階層&#34;&gt;参考：Viewの階層&lt;/h3&gt;
+
+&lt;p&gt;子ViewControllerのアウトライン
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-10-23-scrollview/view.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;AutoLayout&lt;/code&gt;って使い方のコツを見つけるまでが大変だけど、このサンプルみたいにやり方を見つけてしまうと楽すぎ〜〜&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.12.0&lt;/li&gt;
+&lt;li&gt;Xcode 8.0 / Swift3&lt;/li&gt;
+&lt;li&gt;iOS 10.0.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>NotificationCenter(Swift3)の使い方</title>
