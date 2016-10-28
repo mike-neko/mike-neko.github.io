@@ -794,6 +794,8 @@ CREATEボタンの左にある&lt;code&gt;・・・&lt;/code&gt; - &lt;code&gt;S
 
 &lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
+&lt;p&gt;前提：サーバへのオレオレ証明書は設定済みの状態&lt;/p&gt;
+
 &lt;h3 id=&#34;準備&#34;&gt;準備&lt;/h3&gt;
 
 &lt;ul&gt;
