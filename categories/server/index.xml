@@ -79,6 +79,13 @@
 &lt;p&gt;つまり、例えばあるページにアクセスした時にバックグラウンドの非同期でダウンロードを行うといったことはできない。
 そういったことをしたい場合は、&lt;code&gt;Laravel&lt;/code&gt;の&lt;a href=&#34;https://readouble.com/laravel/5.1/ja/queues.html&#34;&gt;キュー&lt;/a&gt;なんかがおすすめ&lt;/p&gt;
 
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;debug&#39; =&amp;gt; true]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;としておくと細かな通信状況が出力されるので便利&lt;/p&gt;
+
 &lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
