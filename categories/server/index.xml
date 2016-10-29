@@ -6,8 +6,94 @@
     <description>Recent content in Server on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sat, 15 Oct 2016 21:53:49 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 29 Oct 2016 16:50:33 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/server/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Guzzleで非同期の並列リクエストを行う</title>
+      <link>https://mike-neko.github.io/blog/guzzle/</link>
+      <pubDate>Sat, 29 Oct 2016 16:50:33 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/guzzle/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;PHP&lt;/code&gt;のHTTPクライアント(&lt;a href=&#34;http://docs.guzzlephp.org/en/latest/&#34;&gt;Guzzle&lt;/a&gt;)で非同期の並列リクエストを行う方法&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;は内部では&lt;code&gt;curl&lt;/code&gt;を使っており、便利な&lt;code&gt;curl&lt;/code&gt;を面倒な設定をせずに使えるというありがたいもの
+（なお&lt;code&gt;curl&lt;/code&gt;がなくても動くがその場合は非同期が使えないなど機能が制限されるらしい）&lt;/p&gt;
+
+&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
+
+&lt;p&gt;動作環境は以下のとおり&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP 5.5.0以上&lt;/li&gt;
+&lt;li&gt;curl 7.19.4以上
+(要openSSL/zlib)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;インストール&#34;&gt;インストール&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;composer&lt;/code&gt;で&lt;code&gt;guzzlehttp/guzzle&lt;/code&gt;を入れる&lt;br /&gt;
+(&lt;code&gt;guzzle/guzzle&lt;/code&gt;は古いバージョンなので注意)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;composer&lt;/code&gt;を使っているので、使う時は&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;require &#39;vendor/autoload.php&#39;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を忘れないこと&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;php-iniの設定&#34;&gt;php.iniの設定&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;allow_url_fopen = ON
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を設定しておく&lt;/p&gt;
+
+&lt;h2 id=&#34;使い方&#34;&gt;使い方&lt;/h2&gt;
+
+&lt;p&gt;複数のURLに並列に非同期にリクエストをかける方法は以下のとおり&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/07e16ffece9ecfbffa4959f875897418.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;まずは、&lt;code&gt;$requests&lt;/code&gt;に実際のリクエストを生成する処理をクロージャとして登録する。&lt;br /&gt;
+今回であれば、URLのリストから単純にURLを取り出し、&lt;code&gt;$client-&amp;gt;getAsync($url)&lt;/code&gt;としてリクエストを生成している&lt;br /&gt;
+（URLのエンドポイントだけが違うような場合は&lt;code&gt;base_uri&lt;/code&gt;を指定した方がスマート）&lt;/p&gt;
+
+&lt;p&gt;ポイントは&lt;code&gt;yield&lt;/code&gt;でジェネレータを使っていること。&lt;br /&gt;
+通常は&lt;code&gt;foreach&lt;/code&gt;をした時点でそのループの回数分中の処理が実行されてメモリなどのリソースを消費するが、
+ジェネレータを使うと実際に必要になる（今回であれば&lt;code&gt;Pool&lt;/code&gt;で順次実行される時）まで実行されずリソースを消費しないメリットがある&lt;/p&gt;
+
+&lt;p&gt;リクエストの生成処理ができれば、&lt;code&gt;Pool&lt;/code&gt;オブジェクトに渡して&lt;code&gt;Promise&lt;/code&gt;を生成する。
+その際、&lt;code&gt;concurrency&lt;/code&gt;で同時リクエスト数を、&lt;code&gt;fulfilled&lt;/code&gt;で成功時の処理、&lt;code&gt;rejected&lt;/code&gt;で失敗時の処理が行われる。
+非同期の場合、リクエストは生成順に実行されるが、当然、処理結果は順不同で返ってくる。&lt;/p&gt;
+
+&lt;p&gt;ちなみに&lt;code&gt;Promise&lt;/code&gt;の&lt;code&gt;wait()&lt;/code&gt;の部分で全ての並列処理が終わるまで待機される。
+これを忘れると完了しないまま処理が終わってしまう&lt;/p&gt;
+
+&lt;p&gt;つまり、例えばあるページにアクセスした時にバックグラウンドの非同期でダウンロードを行うといったことはできない。
+そういったことをしたい場合は、&lt;code&gt;Laravel&lt;/code&gt;の&lt;a href=&#34;https://readouble.com/laravel/5.1/ja/queues.html&#34;&gt;キュー&lt;/a&gt;なんかがおすすめ&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;公式：&lt;a href=&#34;http://docs.guzzlephp.org/en/latest/&#34;&gt;Guzzle&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;ジェネレータ:&lt;a href=&#34;http://php.net/manual/ja/language.generators.overview.php&#34;&gt;PHP公式&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP 5.6&lt;/li&gt;
+&lt;li&gt;Guzzle 6.2.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>さくらのレンタルサーバでredisを使う</title>

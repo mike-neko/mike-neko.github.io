@@ -57,13 +57,13 @@
         
           &nbsp;<a href="/categories/ios">ios&nbsp;(21)</a>&nbsp;
         
-          &nbsp;<a href="/categories/memo">memo&nbsp;(16)</a>&nbsp;
+          &nbsp;<a href="/categories/memo">memo&nbsp;(17)</a>&nbsp;
         
           &nbsp;<a href="/categories/metal">metal&nbsp;(6)</a>&nbsp;
         
           &nbsp;<a href="/categories/perfect">perfect&nbsp;(3)</a>&nbsp;
         
-          &nbsp;<a href="/categories/server">server&nbsp;(13)</a>&nbsp;
+          &nbsp;<a href="/categories/server">server&nbsp;(14)</a>&nbsp;
         
           &nbsp;<a href="/categories/swift3">swift3&nbsp;(2)</a>&nbsp;
         
@@ -98,6 +98,30 @@
 <div class="content container">
   <div class="posts">
     
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/metal-image/">MetalのGPGPUによるパーティクルデモ</a>
+      </h1>
+      <span class="post-date">Feb 11, 2016
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/metal">metal</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a><a class="label" href="https://mike-neko.github.io/categories/gpgpu">gpgpu</a>
+      </span>
+      
+      <h2 id="概要">概要</h2>
+
+<p>読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。</p>
+
+<p>画像サイズが512*512、1ピクセル=1パーティクルに分解するので、約26万個のパーティクルを動かしているが、60FPSを維持している。約100万まで増やすとiPhone6+で30FPSぐらいとなる。</p>
+
+<p>そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。</p>
+
+<h2 id="動作イメージ">動作イメージ</h2>
+
+      <a href="https://mike-neko.github.io/blog/metal-image/">Read On &rarr;</a>
+      
+    </div>
     
     <div class="post">
       <h1 class="post-title">
