@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>さくらのレンタルサーバでeasy_installを使う &middot; M.Ike</title>
+  <title>Guzzle(PHP)でAPNsの同時配信を行う &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -96,55 +96,94 @@
 
 <div class="content container">
   <div class="post">
-    <h1>さくらのレンタルサーバでeasy_installを使う</h1>
-    <span class="post-date">Oct 15, 2016 
+    <h1>Guzzle(PHP)でAPNsの同時配信を行う</h1>
+    <span class="post-date">Oct 29, 2016 
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/categories/memo">memo</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
+    <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/memo">memo</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
     </span>
     
 
 <h2 id="概要">概要</h2>
 
-<p>さくらのレンタルサーバ（スタンダード）でいつのまにか
-<a href="http://setuptools.readthedocs.io/en/latest/easy_install.html">easy_install</a>
-が使えるようになっていたので使い方のメモ</p>
+<p><code>Guzzle</code>でiOSのAPNs(Push通知)をお手軽に同時配信する方法</p>
 
-<p>レンタルサーバなので、当然そのまま実行すると<code>[Errno 13] Permission denied</code>で怒られるのでその対策</p>
+<p>APNs自体については<a href="../http2apns/">APNs Provider API(http2)を利用する(Node.js)</a>を参照</p>
 
-<h2 id="準備">準備</h2>
+<h2 id="事前準備">事前準備</h2>
 
-<h3 id="インストール先の変更">インストール先の変更</h3>
+<p><code>Guzzle</code>自体は<a href="../guzzle/">以前の記事</a>を参照</p>
 
-<ol>
-<li>(無ければ)<code>~/.pydistutils.cfg</code>を作成</li>
-<li>ファイルの中に以下を追記<br /></li>
-</ol>
+<h3 id="curlの更新">curlの更新</h3>
 
-<pre><code>[install]
-user=1
+<p>APNsを使うには<code>http2</code>が必要かつ非同期で実行したいので、<code>curl</code>をインストールし直す</p>
+
+<p><code>homebrew</code>を使っている場合は以下の感じ</p>
+
+<pre><code>brew install curl --with-nghttp2 --with-openssl
+brew link curl --force
+brew reinstall php56 --with-homebrew-curl
 </code></pre>
 
-<h3 id="パスの追加">パスの追加</h3>
+<p>なお、自分で試した時は上記だけでは<code>http2</code>が有効にならなかったので、
+アンイストールした方が確実かもしれない</p>
 
-<p>ついでにパスを通しておく。
-<code>csh</code>の場合は、<code>~/.cshrc</code>の中の<code>set path</code>の行に<code>$HOME/.local/bin</code>を追加する</p>
+<p>更新後に</p>
 
-<h2 id="使い方">使い方</h2>
-
-<p>インストール時はそのまま実行すればOK。</p>
-
-<p>例えば、</p>
-
-<pre><code>% easy_install pip
+<pre><code>curl -V
 </code></pre>
 
-<p>とすれば、<code>~/.local/bin</code>に<code>pip</code>がインストールされる。</p>
+<p>として<code>http2</code>が出ていればOK</p>
 
-<p>実行したい時は、パスが通っているので<code>pip</code>とだけで実行できる。</p>
+<h2 id="guzzleの使い方">Guzzleの使い方</h2>
 
-<p>なお、インストールしたのに、<code>Command not found.</code>と出る場合は、
-SSHにログインしなおすと良い</p>
+<h3 id="http2で通信する">http2で通信する</h3>
+
+<p>オプションで指定するだけでOK</p>
+
+<pre><code>$client = new Client(['version' =&gt; 2.0]);
+</code></pre>
+
+<h3 id="post送信">POST送信</h3>
+
+<p><code>body</code>はリクエスト時のオプションとして以下の感じで指定する</p>
+
+<pre><code>$client = new Client();
+$response = $client-&gt;request('POST', $url, ['body' =&gt; $body]);
+</code></pre>
+
+<p><code>body</code>の中身を<code>JSON</code>にしたい時は、</p>
+
+<pre><code>['body' =&gt; json_encode($json])]
+</code></pre>
+
+<p>という形にして渡す</p>
+
+<h3 id="クライアント証明書をつける">クライアント証明書をつける</h3>
+
+<p>これもオプションで指定するだけでOK</p>
+
+<p>例えば同じ階層内に<code>apns_dev.pem</code>という証明書（パスフレーズ<code>0000</code>）に置いた場合は、</p>
+
+<pre><code>$client = new Client(['cert' =&gt; ['apns_dev.pem', '0000']]);
+</code></pre>
+
+<p>あえていうなら、<code>pem</code>形式の証明書を作るのがちょっと面倒</p>
+
+<h2 id="apnsの同時配信">APNsの同時配信</h2>
+
+<p>APNsは通知内容をJSONで指定することと、前回の並列リクエストを併せると、以下のコードで同時配信が実現できる</p>
+
+<script type="text/javascript" src="https://gist.github.com/dcc15bedbc4d42e4e8b1c31119f3c63a.js"></script>
+
+<p>（※配信環境はSandBox向け）</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>PHP 5.6</li>
+<li>Guzzle 6.2.2</li>
+</ul>
 
   </div>
   

@@ -6,8 +6,99 @@
     <description>Recent content in Ios on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sun, 23 Oct 2016 22:28:33 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 29 Oct 2016 22:40:57 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Guzzle(PHP)でAPNsの同時配信を行う</title>
+      <link>https://mike-neko.github.io/blog/guzzle-apns/</link>
+      <pubDate>Sat, 29 Oct 2016 22:40:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/guzzle-apns/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;でiOSのAPNs(Push通知)をお手軽に同時配信する方法&lt;/p&gt;
+
+&lt;p&gt;APNs自体については&lt;a href=&#34;../http2apns/&#34;&gt;APNs Provider API(http2)を利用する(Node.js)&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;自体は&lt;a href=&#34;../guzzle/&#34;&gt;以前の記事&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h3 id=&#34;curlの更新&#34;&gt;curlの更新&lt;/h3&gt;
+
+&lt;p&gt;APNsを使うには&lt;code&gt;http2&lt;/code&gt;が必要かつ非同期で実行したいので、&lt;code&gt;curl&lt;/code&gt;をインストールし直す&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;homebrew&lt;/code&gt;を使っている場合は以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install curl --with-nghttp2 --with-openssl
+brew link curl --force
+brew reinstall php56 --with-homebrew-curl
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なお、自分で試した時は上記だけでは&lt;code&gt;http2&lt;/code&gt;が有効にならなかったので、
+アンイストールした方が確実かもしれない&lt;/p&gt;
+
+&lt;p&gt;更新後に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -V
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として&lt;code&gt;http2&lt;/code&gt;が出ていればOK&lt;/p&gt;
+
+&lt;h2 id=&#34;guzzleの使い方&#34;&gt;Guzzleの使い方&lt;/h2&gt;
+
+&lt;h3 id=&#34;http2で通信する&#34;&gt;http2で通信する&lt;/h3&gt;
+
+&lt;p&gt;オプションで指定するだけでOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;version&#39; =&amp;gt; 2.0]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;post送信&#34;&gt;POST送信&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;body&lt;/code&gt;はリクエスト時のオプションとして以下の感じで指定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client();
+$response = $client-&amp;gt;request(&#39;POST&#39;, $url, [&#39;body&#39; =&amp;gt; $body]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;body&lt;/code&gt;の中身を&lt;code&gt;JSON&lt;/code&gt;にしたい時は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[&#39;body&#39; =&amp;gt; json_encode($json])]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という形にして渡す&lt;/p&gt;
+
+&lt;h3 id=&#34;クライアント証明書をつける&#34;&gt;クライアント証明書をつける&lt;/h3&gt;
+
+&lt;p&gt;これもオプションで指定するだけでOK&lt;/p&gt;
+
+&lt;p&gt;例えば同じ階層内に&lt;code&gt;apns_dev.pem&lt;/code&gt;という証明書（パスフレーズ&lt;code&gt;0000&lt;/code&gt;）に置いた場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;cert&#39; =&amp;gt; [&#39;apns_dev.pem&#39;, &#39;0000&#39;]]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あえていうなら、&lt;code&gt;pem&lt;/code&gt;形式の証明書を作るのがちょっと面倒&lt;/p&gt;
+
+&lt;h2 id=&#34;apnsの同時配信&#34;&gt;APNsの同時配信&lt;/h2&gt;
+
+&lt;p&gt;APNsは通知内容をJSONで指定することと、前回の並列リクエストを併せると、以下のコードで同時配信が実現できる&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/dcc15bedbc4d42e4e8b1c31119f3c63a.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;（※配信環境はSandBox向け）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP 5.6&lt;/li&gt;
+&lt;li&gt;Guzzle 6.2.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>UIScrollViewのAutoLayoutをStoryboardのみで設定</title>
@@ -1798,93 +1889,6 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;iOS 9.3.2&lt;/li&gt;
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>IPアドレス取得のサンプル(Swift)</title>
-      <link>https://mike-neko.github.io/blog/ipaddress/</link>
-      <pubDate>Mon, 07 Mar 2016 23:59:45 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/ipaddress/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;iOS端末のIPアドレスを取得するサンプル。Cの関数呼び出し周りも含めてSwiftにて実装。&lt;/p&gt;
-
-&lt;p&gt;一応、Apple公式の方法でIPv6only環境でも動作確認済。&lt;/p&gt;
-
-&lt;h3 id=&#34;実装概要&#34;&gt;実装概要&lt;/h3&gt;
-
-&lt;p&gt;アドレス取得の実装は&lt;code&gt;NetworkInfo&lt;/code&gt;にまとまっている。
-実装の中身自体はよくあるIPアドレスの取得のコード。&lt;/p&gt;
-
-&lt;p&gt;サンプルでは、IPアドレスの一覧を取得して&lt;code&gt;TableView&lt;/code&gt;に表示している。&lt;/p&gt;
-
-&lt;p&gt;細かい点は実際のソースを参照のこと。&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;h3 id=&#34;cの関数呼び出し&#34;&gt;Cの関数呼び出し&lt;/h3&gt;
-
-&lt;p&gt;端末内部のネットワーク情報を取得する為に、&lt;code&gt;getifaddrs&lt;/code&gt;や&lt;code&gt;inet_ntop&lt;/code&gt;などの関数を呼び出すが、
-通常のCであればファイルの頭で&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;#include &amp;lt;ifaddrs.h&amp;gt;
-#include &amp;lt;sys/socket.h&amp;gt;
-#include &amp;lt;netinet/in.h&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;とするが、Swiftなので&lt;code&gt;Bridging-Header.h&lt;/code&gt;を用意して、そこに&lt;code&gt;include&lt;/code&gt;を書く。&lt;/p&gt;
-
-&lt;p&gt;あと、ヘッダを追加した後にはビルド設定の&lt;code&gt;Objective-C Bridging Header&lt;/code&gt;も忘れずに変更。&lt;/p&gt;
-
-&lt;h3 id=&#34;デバイス&#34;&gt;デバイス&lt;/h3&gt;
-
-&lt;p&gt;とりあえず今回は、IPアドレスを取りたいだけなので、WiFi(&lt;code&gt;en0&lt;/code&gt;)とCellular(&lt;code&gt;pdp_ip0&lt;/code&gt;)の
-デバイスのみチェックしている。&lt;/p&gt;
-
-&lt;h3 id=&#34;swiftの言語的なこと&#34;&gt;Swiftの言語的なこと&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;defer&lt;/code&gt;がとっても便利。これのおかげでリソースの解放のような後始末が必要なコードが、
-とても簡単にかけるし処理漏れもなくなるので素晴らしい！&lt;br /&gt;
-(これが無いと今回のように処理の中でエラーで返すような場合はコードが面倒になる)&lt;/p&gt;
-
-&lt;p&gt;ポインタが見えなくなったり、型が厳格になってC系のソースの移植が面倒に思えるけど、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;対応する型への変換（特に&lt;code&gt;UnsafePointer&lt;/code&gt;）&lt;/li&gt;
-&lt;li&gt;C++の&lt;code&gt;-&amp;gt;&lt;/code&gt;に相当するのが&lt;code&gt;memory&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;同じく&lt;code&gt;[]&lt;/code&gt;に相当するのが&lt;code&gt;advancedBy&lt;/code&gt;(今回は出てこないけど)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;と言ったあたりを押さえておけばOKな気がする。&lt;/p&gt;
-
-&lt;p&gt;確かに冗長な感じは否めないが、型は書かなくても済むことが多いし、
-逆に一度正しく変換しておけば後はコンパイラで型チェックが行われるのは安心できる。&lt;/p&gt;
-
-&lt;p&gt;この辺りのバランス感覚がSwiftは絶妙だと思う。&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/UnderstandingandPreparingfortheIPv6Transition/UnderstandingandPreparingfortheIPv6Transition.html&#34;&gt;IPv6only環境の確認方法&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html&#34;&gt;CのAPIをSwiftで使う方法&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 7.2&lt;/li&gt;
-&lt;li&gt;iOS 9.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;li&gt;Mac OS 10.11.3(NAT64ネットワーク)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/NetworkInfo&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>さくらのレンタルサーバでeasy_installを使う &middot; M.Ike</title>
+  <title>Code &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -26,7 +26,7 @@
   
   
   
-  
+  <link href="https://mike-neko.github.io/categories/code/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -94,63 +94,71 @@
 </div>
 
 
+
+
+
+
 <div class="content container">
-  <div class="post">
-    <h1>さくらのレンタルサーバでeasy_installを使う</h1>
-    <span class="post-date">Oct 15, 2016 
+  <h1>Category: " code "</h1>
+  <div class="posts">
     
-    <br/>
-    <a class="label" href="https://mike-neko.github.io/categories/memo">memo</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
-    </span>
     
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/metal-model/">MetalKitのSwift版サンプル</a>
+      </h1>
+      <span class="post-date">Jan 22, 2016
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/metal">metal</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a>
+      </span>
+      
+      <h2 id="概要">概要</h2>
 
-<h2 id="概要">概要</h2>
+<p>元ネタのApple公式の<a href="https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html">MetalKitEssentials</a>をSwiftで書き直し＋αしたもの。
+内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
+シェーダもいたってシンプルでライトもなし。<br />
+ちなみに、MetalKitは<strong>iOS9以降</strong>でしか使えないので注意。</p>
 
-<p>さくらのレンタルサーバ（スタンダード）でいつのまにか
-<a href="http://setuptools.readthedocs.io/en/latest/easy_install.html">easy_install</a>
-が使えるようになっていたので使い方のメモ</p>
-
-<p>レンタルサーバなので、当然そのまま実行すると<code>[Errno 13] Permission denied</code>で怒られるのでその対策</p>
-
-<h2 id="準備">準備</h2>
-
-<h3 id="インストール先の変更">インストール先の変更</h3>
-
-<ol>
-<li>(無ければ)<code>~/.pydistutils.cfg</code>を作成</li>
-<li>ファイルの中に以下を追記<br /></li>
-</ol>
-
-<pre><code>[install]
-user=1
-</code></pre>
-
-<h3 id="パスの追加">パスの追加</h3>
-
-<p>ついでにパスを通しておく。
-<code>csh</code>の場合は、<code>~/.cshrc</code>の中の<code>set path</code>の行に<code>$HOME/.local/bin</code>を追加する</p>
-
-<h2 id="使い方">使い方</h2>
-
-<p>インストール時はそのまま実行すればOK。</p>
-
-<p>例えば、</p>
-
-<pre><code>% easy_install pip
-</code></pre>
-
-<p>とすれば、<code>~/.local/bin</code>に<code>pip</code>がインストールされる。</p>
-
-<p>実行したい時は、パスが通っているので<code>pip</code>とだけで実行できる。</p>
-
-<p>なお、インストールしたのに、<code>Command not found.</code>と出る場合は、
-SSHにログインしなおすと良い</p>
-
+      <a href="https://mike-neko.github.io/blog/metal-model/">Read On &rarr;</a>
+      
+    </div>
+    
+    
+    
+    <ul class="pagination">
+        
+        <li>
+            <a href="/categories/code/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        </li>
+        
+        <li
+        >
+        <a href="/categories/code/page/2/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        
+        <li
+        ><a href="/categories/code/">1</a></li>
+        
+        <li
+        ><a href="/categories/code/page/2/">2</a></li>
+        
+        <li
+        class="active"><a href="/categories/code/page/3/">3</a></li>
+        
+        <li
+        class="disabled">
+        <a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+        
+        <li>
+            <a href="/categories/code/page/3/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        </li>
+        
+    </ul>
+    
   </div>
-  
 </div>
-
-
 
 
 <script src="https://mike-neko.github.io/js/highlight.pack.js"></script>

@@ -6,8 +6,99 @@
     <description>Recent content in Memo on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sat, 29 Oct 2016 16:50:33 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 29 Oct 2016 22:40:57 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/memo/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Guzzle(PHP)でAPNsの同時配信を行う</title>
+      <link>https://mike-neko.github.io/blog/guzzle-apns/</link>
+      <pubDate>Sat, 29 Oct 2016 22:40:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/guzzle-apns/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;でiOSのAPNs(Push通知)をお手軽に同時配信する方法&lt;/p&gt;
+
+&lt;p&gt;APNs自体については&lt;a href=&#34;../http2apns/&#34;&gt;APNs Provider API(http2)を利用する(Node.js)&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;自体は&lt;a href=&#34;../guzzle/&#34;&gt;以前の記事&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h3 id=&#34;curlの更新&#34;&gt;curlの更新&lt;/h3&gt;
+
+&lt;p&gt;APNsを使うには&lt;code&gt;http2&lt;/code&gt;が必要かつ非同期で実行したいので、&lt;code&gt;curl&lt;/code&gt;をインストールし直す&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;homebrew&lt;/code&gt;を使っている場合は以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install curl --with-nghttp2 --with-openssl
+brew link curl --force
+brew reinstall php56 --with-homebrew-curl
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なお、自分で試した時は上記だけでは&lt;code&gt;http2&lt;/code&gt;が有効にならなかったので、
+アンイストールした方が確実かもしれない&lt;/p&gt;
+
+&lt;p&gt;更新後に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -V
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として&lt;code&gt;http2&lt;/code&gt;が出ていればOK&lt;/p&gt;
+
+&lt;h2 id=&#34;guzzleの使い方&#34;&gt;Guzzleの使い方&lt;/h2&gt;
+
+&lt;h3 id=&#34;http2で通信する&#34;&gt;http2で通信する&lt;/h3&gt;
+
+&lt;p&gt;オプションで指定するだけでOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;version&#39; =&amp;gt; 2.0]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;post送信&#34;&gt;POST送信&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;body&lt;/code&gt;はリクエスト時のオプションとして以下の感じで指定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client();
+$response = $client-&amp;gt;request(&#39;POST&#39;, $url, [&#39;body&#39; =&amp;gt; $body]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;body&lt;/code&gt;の中身を&lt;code&gt;JSON&lt;/code&gt;にしたい時は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[&#39;body&#39; =&amp;gt; json_encode($json])]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という形にして渡す&lt;/p&gt;
+
+&lt;h3 id=&#34;クライアント証明書をつける&#34;&gt;クライアント証明書をつける&lt;/h3&gt;
+
+&lt;p&gt;これもオプションで指定するだけでOK&lt;/p&gt;
+
+&lt;p&gt;例えば同じ階層内に&lt;code&gt;apns_dev.pem&lt;/code&gt;という証明書（パスフレーズ&lt;code&gt;0000&lt;/code&gt;）に置いた場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;cert&#39; =&amp;gt; [&#39;apns_dev.pem&#39;, &#39;0000&#39;]]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あえていうなら、&lt;code&gt;pem&lt;/code&gt;形式の証明書を作るのがちょっと面倒&lt;/p&gt;
+
+&lt;h2 id=&#34;apnsの同時配信&#34;&gt;APNsの同時配信&lt;/h2&gt;
+
+&lt;p&gt;APNsは通知内容をJSONで指定することと、前回の並列リクエストを併せると、以下のコードで同時配信が実現できる&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/dcc15bedbc4d42e4e8b1c31119f3c63a.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;（※配信環境はSandBox向け）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP 5.6&lt;/li&gt;
+&lt;li&gt;Guzzle 6.2.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Guzzleで非同期の並列リクエストを行う</title>
@@ -1885,71 +1976,6 @@ docker-compose up -d
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;(デフォルトのPHPイメージは最低限の状態なのでDockerfileで指定して追加する)&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Hugoのshortcodeのメモ</title>
-      <link>https://mike-neko.github.io/blog/hugo-shortcode/</link>
-      <pubDate>Tue, 16 Feb 2016 23:07:23 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/hugo-shortcode/</guid>
-      <description>
-
-&lt;p&gt;Hugoの&lt;code&gt;shortcode&lt;/code&gt;を使って、記事の中でHTMLのタグをべた書きしなくて良い様にする方法のメモ。あと、おまけで&lt;code&gt;shortcode&lt;/code&gt;をMarkdownの中でエスケープして表示する方法。&lt;/p&gt;
-
-&lt;h2 id=&#34;画像を貼り付けるshortcode&#34;&gt;画像を貼り付けるshortcode&lt;/h2&gt;
-
-&lt;p&gt;Hugoで画像を表示するには、&lt;code&gt;static&lt;/code&gt;の中に置く必要がある。この中は全サイト共通になっているので、整理しやすいように以下のディレクトリ構成にした。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;- static
-    - media
-        - 2016-02-16-sprite-shader
-            - comp.png
-            - beta.gif
-        - 2016-02-18-hugo-shortcode
-            - sample.jpg
-        ...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;media&lt;/code&gt;の中に、記事毎に&lt;code&gt;[作成日付]-[slug]&lt;/code&gt;というディレクトリを作り、その中に画像などのコンテンツを置いている。&lt;/p&gt;
-
-&lt;p&gt;この状態で記事の中で画像を表示させるには、&lt;code&gt;{{&amp;lt; figure src=&amp;quot;/media/2016-02-18-hugo-shortcode/sample.jpg&amp;quot; &amp;gt;}}&lt;/code&gt;となる。&lt;/p&gt;
-
-&lt;p&gt;これを毎回書くのは面倒だが&lt;code&gt;shortcode&lt;/code&gt;を使うと、&lt;code&gt;{{&amp;lt; img &amp;quot;sample.jpg&amp;quot; &amp;gt;}}&lt;/code&gt;とだけ書けばよい。&lt;/p&gt;
-
-&lt;h3 id=&#34;作り方&#34;&gt;作り方&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;&amp;lt;site-name&amp;gt;/layouts/shortcodes/img.html&lt;/code&gt;を作成&lt;/li&gt;
-&lt;li&gt;1のファイルに
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/593de54e0ba8f5db4c6b.js&#34;&gt;&lt;/script&gt;
-を貼り付けて保存&lt;/li&gt;
-&lt;li&gt;あとは使いたい場所で&lt;code&gt;{{&amp;lt; img &amp;quot;ファイル名&amp;quot; &amp;gt;}}&lt;/code&gt;とすればOK&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;エスケープ方法&#34;&gt;エスケープ方法&lt;/h2&gt;
-
-&lt;p&gt;記事の中で、&lt;code&gt;shortcode&lt;/code&gt;などを表示させたい場合に、そのまま書くと当然ながらそのコードが実行されてしまうので、エスケープが必要となる。&lt;/p&gt;
-
-&lt;p&gt;このエスケープ方法は幾つかある（他にもあるかも）&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;\&lt;/code&gt;をつける方法&lt;br /&gt;
-&lt;code&gt;\{\{&amp;lt; コード &amp;gt;}}&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;{&lt;/code&gt;を&lt;code&gt;&amp;amp;lt;&lt;/code&gt;と入力する方法&lt;br /&gt;
-&lt;code&gt;{{&amp;amp;lt; コード &amp;gt;}}&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;/**/&lt;/code&gt;のコメントにする方法&lt;br /&gt;
-&lt;code&gt;{{/* コード */}}&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;で、一番おすすめなのは3の方法。他の方法だと``で囲った時にうまく表示されないので。&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://gohugo.io/extras/shortcodes/&#34;&gt;Hugo - Shortcodes&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     

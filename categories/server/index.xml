@@ -6,8 +6,99 @@
     <description>Recent content in Server on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sat, 29 Oct 2016 16:50:33 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 29 Oct 2016 22:40:57 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/server/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Guzzle(PHP)でAPNsの同時配信を行う</title>
+      <link>https://mike-neko.github.io/blog/guzzle-apns/</link>
+      <pubDate>Sat, 29 Oct 2016 22:40:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/guzzle-apns/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;でiOSのAPNs(Push通知)をお手軽に同時配信する方法&lt;/p&gt;
+
+&lt;p&gt;APNs自体については&lt;a href=&#34;../http2apns/&#34;&gt;APNs Provider API(http2)を利用する(Node.js)&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;自体は&lt;a href=&#34;../guzzle/&#34;&gt;以前の記事&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h3 id=&#34;curlの更新&#34;&gt;curlの更新&lt;/h3&gt;
+
+&lt;p&gt;APNsを使うには&lt;code&gt;http2&lt;/code&gt;が必要かつ非同期で実行したいので、&lt;code&gt;curl&lt;/code&gt;をインストールし直す&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;homebrew&lt;/code&gt;を使っている場合は以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install curl --with-nghttp2 --with-openssl
+brew link curl --force
+brew reinstall php56 --with-homebrew-curl
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なお、自分で試した時は上記だけでは&lt;code&gt;http2&lt;/code&gt;が有効にならなかったので、
+アンイストールした方が確実かもしれない&lt;/p&gt;
+
+&lt;p&gt;更新後に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -V
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として&lt;code&gt;http2&lt;/code&gt;が出ていればOK&lt;/p&gt;
+
+&lt;h2 id=&#34;guzzleの使い方&#34;&gt;Guzzleの使い方&lt;/h2&gt;
+
+&lt;h3 id=&#34;http2で通信する&#34;&gt;http2で通信する&lt;/h3&gt;
+
+&lt;p&gt;オプションで指定するだけでOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;version&#39; =&amp;gt; 2.0]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;post送信&#34;&gt;POST送信&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;body&lt;/code&gt;はリクエスト時のオプションとして以下の感じで指定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client();
+$response = $client-&amp;gt;request(&#39;POST&#39;, $url, [&#39;body&#39; =&amp;gt; $body]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;body&lt;/code&gt;の中身を&lt;code&gt;JSON&lt;/code&gt;にしたい時は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[&#39;body&#39; =&amp;gt; json_encode($json])]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という形にして渡す&lt;/p&gt;
+
+&lt;h3 id=&#34;クライアント証明書をつける&#34;&gt;クライアント証明書をつける&lt;/h3&gt;
+
+&lt;p&gt;これもオプションで指定するだけでOK&lt;/p&gt;
+
+&lt;p&gt;例えば同じ階層内に&lt;code&gt;apns_dev.pem&lt;/code&gt;という証明書（パスフレーズ&lt;code&gt;0000&lt;/code&gt;）に置いた場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;cert&#39; =&amp;gt; [&#39;apns_dev.pem&#39;, &#39;0000&#39;]]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あえていうなら、&lt;code&gt;pem&lt;/code&gt;形式の証明書を作るのがちょっと面倒&lt;/p&gt;
+
+&lt;h2 id=&#34;apnsの同時配信&#34;&gt;APNsの同時配信&lt;/h2&gt;
+
+&lt;p&gt;APNsは通知内容をJSONで指定することと、前回の並列リクエストを併せると、以下のコードで同時配信が実現できる&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/dcc15bedbc4d42e4e8b1c31119f3c63a.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;（※配信環境はSandBox向け）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP 5.6&lt;/li&gt;
+&lt;li&gt;Guzzle 6.2.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Guzzleで非同期の並列リクエストを行う</title>
