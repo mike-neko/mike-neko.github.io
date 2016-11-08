@@ -6,8 +6,135 @@
     <description>Recent content in Server on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sat, 29 Oct 2016 22:40:57 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 08 Nov 2016 21:32:51 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/server/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>VagrantでCentOS6.8を使う </title>
+      <link>https://mike-neko.github.io/blog/vagrant-cent/</link>
+      <pubDate>Tue, 08 Nov 2016 21:32:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/vagrant-cent/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;野良BOXは自力で問題ないか検証するほどの腕がないので、公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Vagrantfile&lt;/code&gt;を作成&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir -p （適当なフォルダ）
+cd （上で作ったフォルダ）
+vagrant init bento/centos-6.8
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Vagrantfile&lt;/code&gt;を編集(サーバとして使いたいので以下のように編集)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# config.vm.network &amp;quot;forwarded_port&amp;quot;, guest: 80, host: 8080
+# ↓コメントを外す＋ポートは空いているものを指定
+config.vm.network &amp;quot;forwarded_port&amp;quot;, guest: 8010, host: 8010
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;# config.vm.network &amp;quot;private_network&amp;quot;, ip: &amp;quot;192.168.33.10&amp;quot;
+# ↓コメントを外す＋IPは空いているものを指定
+config.vm.network &amp;quot;private_network&amp;quot;, ip: &amp;quot;192.168.33.10&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;# Centos6.8限定で以下も追記(※1 詳細は後述)
+config.vm.provider &amp;quot;virtualbox&amp;quot; do |vb|
+vb.customize [&amp;quot;modifyvm&amp;quot;, :id, &amp;quot;--cableconnected1&amp;quot;, &amp;quot;on&amp;quot;]
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;起動する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant up
+vagrant ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;トラブルシューティング&#34;&gt;トラブルシューティング&lt;/h2&gt;
+
+&lt;h3 id=&#34;vagrant-up-で-private-key-で先に進まずエラーになる&#34;&gt;vagrant up で private key で先に進まずエラーになる&lt;/h3&gt;
+
+&lt;p&gt;エラーは以下の感じでCentOS6.8で発生(6.7は問題無し)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Timed out while waiting for the machine to boot. This means that
+Vagrant was unable to communicate with the guest machine within
+the configured (&amp;quot;config.vm.boot_timeout&amp;quot; value) time period.
+
+If you look above, you should be able to see the error(s) that
+Vagrant had when attempting to connect to the machine. These errors
+are usually good hints as to what may be wrong.
+
+If you&#39;re using a custom box, make sure that networking is properly
+working and you&#39;re able to connect to the machine. It is a common
+problem that networking isn&#39;t setup properly in these boxes.
+Verify that authentication configurations are also setup properly,
+as well.
+
+If the box appears to be booting properly, you may want to increase
+the timeout (&amp;quot;config.vm.boot_timeout&amp;quot;) value.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;対応策&#34;&gt;対応策&lt;/h4&gt;
+
+&lt;p&gt;ググると色々出てくるが、CentOS6.8で発生する場合は、前述の※1を&lt;code&gt;Vagrantfile&lt;/code&gt;に追記しておけば大丈夫。&lt;br /&gt;
+（というか他の方法は効果なしだった・・・）&lt;/p&gt;
+
+&lt;h3 id=&#34;ファイルの共有ができない&#34;&gt;ファイルの共有ができない&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;vagrant up&lt;/code&gt;で以下のエラーが出ている&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Vagrant was unable to mount VirtualBox shared folders. This is usually
+because the filesystem &amp;quot;vboxsf&amp;quot; is not available. This filesystem is
+made available via the VirtualBox Guest Additions and kernel module.
+Please verify that these guest additions are properly installed in the
+guest. This is not a bug in Vagrant and is usually caused by a faulty
+Vagrant box. For context, the command attempted was:
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;対応策-1&#34;&gt;対応策&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;まずはエラーを一旦無視してログインし、カーネルをアップデート&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant ssh
+su                     # pass:&amp;quot;vagrant&amp;quot;
+yum -y update kernel
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;アップデートが完了すれば&lt;code&gt;exit&lt;/code&gt;を2回でログアウトする&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Guest Additions&lt;/code&gt;をインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant plugin install vagrant-vbguest
+vagrant vbguest
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;リロードをかけてエラーが出なければOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant reload
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;環境&#34;&gt;環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mac 10.11&lt;/li&gt;
+&lt;li&gt;VirtualBox 5.0.28&lt;/li&gt;
+&lt;li&gt;Vagrant 1.8.6
+
+&lt;ul&gt;
+&lt;li&gt;CentOS6.7&lt;/li&gt;
+&lt;li&gt;CentOS6.8&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Guzzle(PHP)でAPNsの同時配信を行う</title>
@@ -2129,99 +2256,6 @@ openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &am
 
 &lt;p&gt;実際の各イメージのDockerfileや設定ファイルをまとめたものは
 &lt;a href=&#34;https://github.com/mike-neko/Docker/tree/master/SSLWebServer&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Dockerのコマンド備忘録</title>
-      <link>https://mike-neko.github.io/blog/docker-cmd/</link>
-      <pubDate>Sat, 02 Apr 2016 14:00:57 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/docker-cmd/</guid>
-      <description>
-
-&lt;h2 id=&#34;dockerでよく使うコマンド&#34;&gt;Dockerでよく使うコマンド&lt;/h2&gt;
-
-&lt;h3 id=&#34;イメージ操作&#34;&gt;イメージ操作&lt;/h3&gt;
-
-&lt;h4 id=&#34;イメージのリスト表示&#34;&gt;イメージのリスト表示&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker images
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;指定したイメージの削除&#34;&gt;指定したイメージの削除&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker rmi [イメージの名前かID]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;イメージの指定は&lt;code&gt;IMAGE ID&lt;/code&gt;の先頭数文字での特定が便利&lt;/p&gt;
-
-&lt;h4 id=&#34;イメージの全削除&#34;&gt;イメージの全削除&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker rmi $(docker images -a -q)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;コンテナ操作&#34;&gt;コンテナ操作&lt;/h3&gt;
-
-&lt;h4 id=&#34;コンテナのリスト表示&#34;&gt;コンテナのリスト表示&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker ps
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;全部停止&#34;&gt;全部停止&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker stop $(docker ps -a -q)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;全部削除&#34;&gt;全部削除&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker rm $(docker ps -a -q) 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;dockercompose&#34;&gt;DockerCompose&lt;/h3&gt;
-
-&lt;h4 id=&#34;起動&#34;&gt;起動&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;cd [docker-copose.ymlを置いてる場所]
-docker-compose up -d
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これだけで&lt;code&gt;build&lt;/code&gt;と&lt;code&gt;pull&lt;/code&gt;と&lt;code&gt;run&lt;/code&gt;を一気にしてくれる&lt;/p&gt;
-
-&lt;h4 id=&#34;停止&#34;&gt;停止&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;docker-compose stop
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;nginx&#34;&gt;nginx&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;80ポートを使う場合はsudoが必要&lt;/em&gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;起動-1&#34;&gt;起動&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;nginx
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;停止-1&#34;&gt;停止&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;nginx -s stop
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;再起動&#34;&gt;再起動&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;nginx -s reload
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;php&#34;&gt;PHP&lt;/h2&gt;
-
-&lt;h3 id=&#34;オプション&#34;&gt;オプション&lt;/h3&gt;
-
-&lt;h4 id=&#34;docker-php-ext-installで指定できるもの&#34;&gt;docker-php-ext-installで指定できるもの&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;bcmath bz2 calendar ctype curl dba dom enchant exif fileinfo filter ftp gd gettext gmp hash iconv imap interbase intl json ldap mbstring mcrypt mssql mysql mysqli oci8 odbc opcache pcntl pdo pdo_dblib pdo_firebird pdo_mysql pdo_oci pdo_odbc pdo_pgsql pdo_sqlite pgsql phar posix pspell readline recode reflection session shmop simplexml snmp soap sockets spl standard sybase_ct sysvmsg sysvsem sysvshm tidy tokenizer wddx xml xmlreader xmlrpc xmlwriter xsl zip
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;(デフォルトのPHPイメージは最低限の状態なのでDockerfileで指定して追加する)&lt;/p&gt;
 </description>
     </item>
     
