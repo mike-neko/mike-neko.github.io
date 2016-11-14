@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>MacからOracleへ接続 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      <li>
+        
+          &nbsp;<a href="/categories/code">code&nbsp;(21)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/docker">docker&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/github">github&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/ios">ios&nbsp;(22)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/memo">memo&nbsp;(23)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/metal">metal&nbsp;(6)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/perfect">perfect&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/server">server&nbsp;(20)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/swift3">swift3&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/unity">unity&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2016
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>MacからOracleへ接続</h1>
+    <span class="post-date">Nov 3, 2016 
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/categories/memo">memo</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
+    </span>
+    
+
+<h2 id="概要">概要</h2>
+
+<p>MacのPHP5.6から別サーバで動いているOracleのDBへ<code>oci8</code>で接続する方法</p>
+
+<p>CentOSの場合は<a href="../oracle-cent/">こちら</a></p>
+
+<h2 id="手順">手順</h2>
+
+<h3 id="oracleのドライバのインストール">Oracleのドライバのインストール</h3>
+
+<p>今回は<code>Version 12.1.0.2 (64-bit)</code>は選択。手順などはこのバージョンが前提</p>
+
+<ol>
+<li><p><a href="http://www.oracle.com/technetwork/database/features/instant-client/index.html">Oracle Instant Client</a>から<code>basic</code>と<code>SDK</code>をダウンロード<br />
+<em>公式の<a href="http://php.net/manual/ja/oci8.requirements.php">要件</a>にあるように<code>OracleDB</code>と<code>PHP</code>のバージョンに合ったものを選択</em></p></li>
+
+<li><p>1を全て同じフォルダへ解凍する</p>
+
+<pre><code>cd （ダウンロード先）
+unzip instantclient-basic-macos.x64-12.1.0.2.0.zip
+unzip instantclient-sdk-macos.x64-12.1.0.2.0.zip
+</code></pre>
+
+<p>(Ver.12であれば<code>instantclient_12_1</code>というフォルダ内に全ファイルが解凍された状態になればOK)<br />
+<strong>フォルダ名がバージョンになっているので解凍したフォルダ名をそのまま使うこと！</strong></p></li>
+
+<li><p>2をフォルダごと適当な場所に移動<br />
+（今回は<code>/Library/Oracle/</code>へ移動）</p></li>
+
+<li><p>ライブラリのシンボリックリンクを作成</p>
+
+<pre><code>cd /Library/Oracle/instantclient_12_1/
+ln -s libclntsh.dylib.12.1 libclntsh.dylib
+</code></pre></li>
+
+<li><p>パスを通す<br />
+<code>.bash_profile</code>に以下を追記</p>
+
+<pre><code>export DYLD_LIBRARY_PATH=/Library/Oracle/instantclient_12_1
+export PATH=$PATH:$DYLD_LIBRARY_PATH
+</code></pre>
+
+<p>追記したら保存し、</p>
+
+<pre><code>source ~/.bash_profile
+</code></pre>
+
+<p>で強制反映させる</p></li>
+</ol>
+
+<h3 id="oci8をインストール">OCI8をインストール</h3>
+
+<p><em>以下はすでにPHPをインストール済かつ<code>PECL</code>が使えない場合なので、
+通常はPHPインストールと同時にしてしまうか<code>PECL</code>で追加が恐らく楽</em><br />
+（手持ちの環境では<code>PECL</code>がなぜか使えなかったので以下の手順）</p>
+
+<ol>
+<li><p>OCI8（Ver.2.0.12）を<code>PECL</code>の<a href="https://pecl.php.net/package/oci8">該当ページ</a>からダウンロード</p></li>
+
+<li><p>解凍する</p>
+
+<pre><code>cd （ダウンロード先）
+tar -zxf oci8-2.0.12.tgz
+</code></pre></li>
+
+<li><p>makeする</p>
+
+<pre><code>cd oci8-2.0.12
+phpize
+./configure -with-oci8=shared,instantclient,/Library/Oracle/instantclient_12_1
+make install
+</code></pre>
+
+<p><code>modules</code>の中に<code>oci8.so</code>ができていればOK</p></li>
+
+<li><p>ライブラリを移動</p>
+
+<pre><code>sudo mv modules/oci8.so /Library/Oracle 
+</code></pre>
+
+<p>（とりあえず今回はここで）</p></li>
+
+<li><p>PHPの設定
+<code>php.ini</code>に以下の2つの項目を設定</p>
+
+<pre><code>extension_dir = &quot;/Library/Oracle&quot; # oci8.soを置いた場所
+extension=oci8.so
+</code></pre>
+
+<p>（ファイルの場所が判らない時は<code>php -i | grep php.ini</code>）</p></li>
+
+<li><p>設定の確認</p>
+
+<pre><code>php --ri oci8
+</code></pre>
+
+<p>を実行して、</p>
+
+<pre><code>（略）
+OCI8 Support =&gt; enabled
+（略）
+OCI8 Version =&gt; 2.0.12
+（略）
+Oracle Run-time Client Library Version =&gt; 12.1.0.2.0
+Oracle Compile-time Instant Client Version =&gt; 12.1
+</code></pre>
+
+<p>と出ていればOK</p></li>
+</ol>
+
+<h2 id="phpからの接続">PHPからの接続</h2>
+
+<p>フレームワークなどを使わずにそのまま接続する場合は、</p>
+
+<pre><code>$user = 'test';             // ユーザ名
+$pass = '1234';             // パスワード
+$host = '192.168.0.10';     // ホスト
+$port = '1521';             // ポート番号
+$db = 'sample';             // データベース名（サービス名）
+
+$conn = oci_connect(
+  $user,
+  $pass,
+  '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)'
+  . '(HOST=' . $host . ')(PORT=' . $port . ')))' 
+  . '(CONNECT_DATA=(SERVICE_NAME=' . $db . ')))']
+);
+</code></pre>
+
+<p>といった感じで接続できる</p>
+
+<h2 id="phpstormの設定">PHPStormの設定</h2>
+
+<p><code>PHPStorm</code>から接続したい場合は、<code>Oracle Instant Client</code>はVer.12以上が必要</p>
+
+<p>設定は以下の感じ</p>
+
+<figure>
+	<img src="/media/2016-11-03-oracle-mac/phpstorm.png" />
+</figure>
+
+
+<h1 id="参考リンク">参考リンク</h1>
+
+<ul>
+<li>PHP公式 <a href="http://php.net/manual/ja/book.oci8.php">Oracle OCI8</a></li>
+<li><a href="http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html">Orcale Instant Client</a>
+(下の方にインストール方法)</li>
+</ul>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Mac 10.11</li>
+<li>PHP 5.6.27 + OCI8 2.0.12</li>
+<li>Oracle Instant Client 12.1.0.2.0</li>
+<li>DBサーバ OracleDB(Win)</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

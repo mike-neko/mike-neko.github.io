@@ -137,6 +137,572 @@ vagrant vbguest
     </item>
     
     <item>
+      <title>CentOSからOracleへ接続</title>
+      <link>https://mike-neko.github.io/blog/oracle-cent/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/oracle-cent/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;CentOSのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
+
+&lt;p&gt;Macの場合は&lt;a href=&#34;../oracle-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;oracleのドライバのインストール&#34;&gt;Oracleのドライバのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;サーバのアーキテクチャを確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;uname -a
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index.html&#34;&gt;Oracle Instant Client&lt;/a&gt;から
+1で確認した環境の&lt;code&gt;basic&lt;/code&gt;と&lt;code&gt;SDK&lt;/code&gt;をダウンロードしサーバへ保存&lt;br /&gt;
+(今回は&lt;code&gt;x86_64&lt;/code&gt;だったので&lt;code&gt;Version 12.1.0.2 (x86_64)&lt;/code&gt;の&lt;code&gt;rpm&lt;/code&gt;を選択。以降このバージョンが前提)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd (保存した場所)
+su
+rpm -ivh oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
+rpm -ivh oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;パスを通す&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vi /etc/profile
+# 以下の行を追加
+export LD_LIBRARY_PATH=/usr/lib/oracle/12.1/client64/lib:$LD_LIBRARY_PATH
+export PATH=/usr/lib/oracle/12.1/client64/bin:$PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;追記したら保存して終了し&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;source /etc/profile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で強制反映させる&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;peclのインストール&#34;&gt;peclのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;以下でインストール
+&lt;code&gt;
+yum -y install --enablerepo=remi --enablerepo=remi-php56 php-pear
+&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;oci8のインストール&#34;&gt;oci8のインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;pecl&lt;/code&gt;からインストールするので&lt;code&gt;DTrace&lt;/code&gt;サポートを有効にする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;yum -y install systemtap-sdt-devel
+export PHP_DTRACE=yes
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ちなみにこれをしないと&lt;code&gt;error: oci8_dtrace_gen.h: No such file or director&lt;/code&gt;というエラーになる。
+詳細は&lt;a href=&#34;http://php.net/manual/ja/oci8.dtrace.php&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;oci8&lt;/code&gt;をバージョン（Ver.2.0.12）を指定してインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pecl install oci8-2.0.12
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;oci8の最新版だとPHP7以降の為、2.0系を指定する&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;インストール中にプロンプトが出れば、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;instantclient,/usr/lib/oracle/12.1/client64/lib
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と入力&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;PHPの設定
+&lt;code&gt;php.ini&lt;/code&gt;に以下を設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;extension=oci8.so
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（場所が判らない時は&lt;code&gt;php -i | grep php.ini&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php --ri oci8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;（略）
+OCI8 Support =&amp;gt; enabled
+（略）
+OCI8 Version =&amp;gt; 2.0.12
+（略）
+Oracle Run-time Client Library Version =&amp;gt; 12.1.0.2.0
+Oracle Compile-time Instant Client Version =&amp;gt; 12.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;Macの場合の&lt;a href=&#34;../oracle-mac/&#34;&gt;PHPからの接続&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/book.oci8.php&#34;&gt;Oracle OCI8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Pecl公式 &lt;a href=&#34;https://pecl.php.net/package/oci8&#34;&gt;oci8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html&#34;&gt;Orcale Instant Client&lt;/a&gt;
+(下の方にインストール方法)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CentOS6.8&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + OCI8 2.0.12&lt;/li&gt;
+&lt;li&gt;Oracle Instant Client 12.1.0.2.0&lt;/li&gt;
+&lt;li&gt;DBサーバ OracleDB(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>CentOSからSQLServerへ接続</title>
+      <link>https://mike-neko.github.io/blog/mssql-cent/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/mssql-cent/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;CentOSのPHP5.6から&lt;code&gt;PDO_ODBC&lt;/code&gt;でSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
+
+&lt;p&gt;Macの場合は&lt;a href=&#34;../mssql-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;なおCentOSからであれば&lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;も可能だが、公式ドライバがあるこちらを試してみた&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;sqlserverのドライバのインストール&#34;&gt;SQLServerのドライバのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;su
+yum -y update
+yum -y install yum-utils
+yum-config-manager --add-repo https://apt-mo.trafficmanager.net/yumrepos/mssql-rhel6-release/
+yum-config-manager --enable mssql-rhel6-release
+wget &amp;quot;http://aka.ms/msodbcrhelpublickey/dpgswdist.v1.asc&amp;quot;
+rpm --import dpgswdist.v1.asc
+yum -y remove unixODBC
+yum -y install msodbcsql # 途中にライセンスの承諾確認あり
+yum -y install unixODBC-utf16-devel
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ODBCドライバの確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vi /etc/odbcinst.ini
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として、以下のような文言があればOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[ODBC Driver 13 for SQL Server]
+Description=Microsoft ODBC Driver 13 for SQL Server
+Driver=/opt/microsoft/msodbcsql/lib64/libmsodbcsql-13.0.so.1.0
+UsageCount=1
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;odbcドライバの設定&#34;&gt;ODBCドライバの設定&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo vi /etc/odbcinst.ini
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として、次のような設定を追記する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[(ドライバ名として判り易い名称)]
+Driver = （odbcinst.iniの[]で囲まれたドライバ名）
+Description = (適当な説明)
+Trace = Yes
+Server = (サーバのIP)
+Port = (サーバのポート)
+Database = (データベース名)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上記の例の場合だと、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[SQLServer]
+Driver = ODBC Driver 13 for SQL Server
+Description = For Develop
+Trace = Yes
+Server = 192.168.0.10
+Port = 1433
+Database = sample
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;といった感じになる&lt;/p&gt;
+
+&lt;h3 id=&#34;pdo-odbcのインストール&#34;&gt;PDO_ODBCのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;yum -y install --enablerepo=remi --enablerepo=remi-php56 php-pdo php-odbc
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php -i | grep odbc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;code&gt;PDO drivers&lt;/code&gt;に&lt;code&gt;odbc&lt;/code&gt;が表示されていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;PDOのDSNの指定は以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$driver = &#39;SQLServer&#39;;      // odbc.iniで設定したドライバ名
+$user = &#39;test&#39;;             // ユーザ名
+$pass = &#39;1234&#39;;             // パスワード
+
+$pdo = new PDO(&#39;odbc:&#39; . $driver, $user, $pass); 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/ref.pdo-odbc.php&#34;&gt;PDO_ODBC&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Microsoft公式 &lt;a href=&#34;https://blogs.technet.microsoft.com/dataplatforminsider/2016/10/25/odbc-driver-13-0-for-sql-server-linux-is-now-released/&#34;&gt;ODBC Driver 13.0 for SQL Server&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CentOS6.8&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + PDO_ODBC&lt;/li&gt;
+&lt;li&gt;ODBC Driver 13.0 for SQL Server&lt;/li&gt;
+&lt;li&gt;DBサーバ SQLServer Express 2016(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MacからOracleへ接続</title>
+      <link>https://mike-neko.github.io/blog/oracle-mac/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/oracle-mac/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;MacのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
+
+&lt;p&gt;CentOSの場合は&lt;a href=&#34;../oracle-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;oracleのドライバのインストール&#34;&gt;Oracleのドライバのインストール&lt;/h3&gt;
+
+&lt;p&gt;今回は&lt;code&gt;Version 12.1.0.2 (64-bit)&lt;/code&gt;は選択。手順などはこのバージョンが前提&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index.html&#34;&gt;Oracle Instant Client&lt;/a&gt;から&lt;code&gt;basic&lt;/code&gt;と&lt;code&gt;SDK&lt;/code&gt;をダウンロード&lt;br /&gt;
+&lt;em&gt;公式の&lt;a href=&#34;http://php.net/manual/ja/oci8.requirements.php&#34;&gt;要件&lt;/a&gt;にあるように&lt;code&gt;OracleDB&lt;/code&gt;と&lt;code&gt;PHP&lt;/code&gt;のバージョンに合ったものを選択&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;1を全て同じフォルダへ解凍する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd （ダウンロード先）
+unzip instantclient-basic-macos.x64-12.1.0.2.0.zip
+unzip instantclient-sdk-macos.x64-12.1.0.2.0.zip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;(Ver.12であれば&lt;code&gt;instantclient_12_1&lt;/code&gt;というフォルダ内に全ファイルが解凍された状態になればOK)&lt;br /&gt;
+&lt;strong&gt;フォルダ名がバージョンになっているので解凍したフォルダ名をそのまま使うこと！&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;2をフォルダごと適当な場所に移動&lt;br /&gt;
+（今回は&lt;code&gt;/Library/Oracle/&lt;/code&gt;へ移動）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ライブラリのシンボリックリンクを作成&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /Library/Oracle/instantclient_12_1/
+ln -s libclntsh.dylib.12.1 libclntsh.dylib
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;パスを通す&lt;br /&gt;
+&lt;code&gt;.bash_profile&lt;/code&gt;に以下を追記&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export DYLD_LIBRARY_PATH=/Library/Oracle/instantclient_12_1
+export PATH=$PATH:$DYLD_LIBRARY_PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;追記したら保存し、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;source ~/.bash_profile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で強制反映させる&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;oci8をインストール&#34;&gt;OCI8をインストール&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;以下はすでにPHPをインストール済かつ&lt;code&gt;PECL&lt;/code&gt;が使えない場合なので、
+通常はPHPインストールと同時にしてしまうか&lt;code&gt;PECL&lt;/code&gt;で追加が恐らく楽&lt;/em&gt;&lt;br /&gt;
+（手持ちの環境では&lt;code&gt;PECL&lt;/code&gt;がなぜか使えなかったので以下の手順）&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;OCI8（Ver.2.0.12）を&lt;code&gt;PECL&lt;/code&gt;の&lt;a href=&#34;https://pecl.php.net/package/oci8&#34;&gt;該当ページ&lt;/a&gt;からダウンロード&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;解凍する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd （ダウンロード先）
+tar -zxf oci8-2.0.12.tgz
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;makeする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd oci8-2.0.12
+phpize
+./configure -with-oci8=shared,instantclient,/Library/Oracle/instantclient_12_1
+make install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;modules&lt;/code&gt;の中に&lt;code&gt;oci8.so&lt;/code&gt;ができていればOK&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ライブラリを移動&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo mv modules/oci8.so /Library/Oracle 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（とりあえず今回はここで）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;PHPの設定
+&lt;code&gt;php.ini&lt;/code&gt;に以下の2つの項目を設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;extension_dir = &amp;quot;/Library/Oracle&amp;quot; # oci8.soを置いた場所
+extension=oci8.so
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（ファイルの場所が判らない時は&lt;code&gt;php -i | grep php.ini&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php --ri oci8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;（略）
+OCI8 Support =&amp;gt; enabled
+（略）
+OCI8 Version =&amp;gt; 2.0.12
+（略）
+Oracle Run-time Client Library Version =&amp;gt; 12.1.0.2.0
+Oracle Compile-time Instant Client Version =&amp;gt; 12.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;フレームワークなどを使わずにそのまま接続する場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$user = &#39;test&#39;;             // ユーザ名
+$pass = &#39;1234&#39;;             // パスワード
+$host = &#39;192.168.0.10&#39;;     // ホスト
+$port = &#39;1521&#39;;             // ポート番号
+$db = &#39;sample&#39;;             // データベース名（サービス名）
+
+$conn = oci_connect(
+  $user,
+  $pass,
+  &#39;(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)&#39;
+  . &#39;(HOST=&#39; . $host . &#39;)(PORT=&#39; . $port . &#39;)))&#39; 
+  . &#39;(CONNECT_DATA=(SERVICE_NAME=&#39; . $db . &#39;)))&#39;]
+);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;といった感じで接続できる&lt;/p&gt;
+
+&lt;h2 id=&#34;phpstormの設定&#34;&gt;PHPStormの設定&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;PHPStorm&lt;/code&gt;から接続したい場合は、&lt;code&gt;Oracle Instant Client&lt;/code&gt;はVer.12以上が必要&lt;/p&gt;
+
+&lt;p&gt;設定は以下の感じ&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-11-03-oracle-mac/phpstorm.png&#34; /&gt;
+&lt;/figure&gt;
+
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/book.oci8.php&#34;&gt;Oracle OCI8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html&#34;&gt;Orcale Instant Client&lt;/a&gt;
+(下の方にインストール方法)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mac 10.11&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + OCI8 2.0.12&lt;/li&gt;
+&lt;li&gt;Oracle Instant Client 12.1.0.2.0&lt;/li&gt;
+&lt;li&gt;DBサーバ OracleDB(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MacからSQLServerへ接続</title>
+      <link>https://mike-neko.github.io/blog/mssql-mac/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/mssql-mac/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;MacのPHP5.6からSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
+
+&lt;p&gt;CentOSの場合は&lt;a href=&#34;../mssql-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;子ネタ&#34;&gt;子ネタ&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;SQLServer&lt;/code&gt;へPHPから接続するには以下の方法がある&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-sqlsrv.php&#34;&gt;PDO_SQLSR&lt;/a&gt;&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Windows版のPHPでしか使えない&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-dblib.php&#34;&gt;PDO_DBLIB&lt;/a&gt;&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;FreeTDS&lt;/code&gt;ライブラリを利用する&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Windows版はPHP5.3以降使えない&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-odbc.php&#34;&gt;PDO_ODBC&lt;/a&gt;&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Microsoftのドライバが必要(Win or Linuxのみ) =&amp;gt; &lt;strong&gt;Macは使えない&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という訳で、Macからの場合は&lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;一択、
+Linuxの場合は&lt;code&gt;PDO_ODBC&lt;/code&gt;+公式ドライバ（おすすめ？） or &lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;となる&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;freetdsのインストール&#34;&gt;FreeTDSのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;で&lt;code&gt;FreeTDS&lt;/code&gt;をインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install freetds
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;FreeTDS&lt;/code&gt;の接続確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;tsql -H (SQLServerのアドレス) -p (ポート) -U (ユーザ名) -P (パスワード)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;locale is &amp;quot;ja_JP.UTF-8&amp;quot;
+locale charset is &amp;quot;UTF-8&amp;quot;
+using default charset &amp;quot;UTF-8&amp;quot;
+1&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;のようになれば&lt;code&gt;exit&lt;/code&gt;で終了&lt;br /&gt;
+&lt;code&gt;1&amp;gt;&lt;/code&gt;の部分の数字が変わっていく場合は接続がうまくいっていない&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;em&gt;試した開発環境ではかなりの頻度でタイムアウトのエラーが出ていたので何度か試してみること&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;pdo-dblibのインストール&#34;&gt;PDO_DBLIBのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;で&lt;code&gt;PDO_DBLIB&lt;/code&gt;をインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install homebrew/php/php56-pdo-dblib
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php --ri pdo_dblib
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PDO Driver for FreeTDS/Sybase DB-lib =&amp;gt; enabled
+Flavour =&amp;gt; freetds
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;PDOのDSNの指定は以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$user = &#39;test&#39;;             // ユーザ名
+$pass = &#39;1234&#39;;             // パスワード
+$host = &#39;192.168.0.10&#39;;     // ホスト
+$port = &#39;1433&#39;;             // ポート番号
+$db = &#39;sample&#39;;             // データベース名
+
+$pdo = new PDO(&#39;dblib:host=&#39; . $host . &#39;:&#39; . $port . &#39;;dbname=&#39; $db, 
+               $user, $pass); 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;phpstormの設定&#34;&gt;PHPStormの設定&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;PHPStorm&lt;/code&gt;から接続したい場合の設定は以下の感じ&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-11-03-mssql-mac/phpstorm.png&#34; /&gt;
+&lt;/figure&gt;
+
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/ref.pdo-dblib.php&#34;&gt;PDO_DBLIB&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;FreeTDS &lt;a href=&#34;http://www.freetds.org/&#34;&gt;公式&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mac 10.11&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + PDO_DBLIB&lt;/li&gt;
+&lt;li&gt;FreeTDS 1.00.15 (TDS 7.3)&lt;/li&gt;
+&lt;li&gt;DBサーバ SQLServer Express 2016(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Guzzle(PHP)でAPNsの同時配信を行う</title>
       <link>https://mike-neko.github.io/blog/guzzle-apns/</link>
       <pubDate>Sat, 29 Oct 2016 22:40:57 +0900</pubDate>
@@ -1416,846 +1982,6 @@ brew install nginx-full --with-http2
 &lt;li&gt;iOS 9.3.2&lt;/li&gt;
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Perfect APNs編</title>
-      <link>https://mike-neko.github.io/blog/perfect-push/</link>
-      <pubDate>Mon, 11 Apr 2016 19:45:28 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/perfect-push/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその3&lt;/p&gt;
-
-&lt;p&gt;今回はiOSのプッシュ通知を送信する方法について&lt;/p&gt;
-
-&lt;p&gt;Perfectは最新のAPNsの通信形式に対応していて、細かなエラーレスポンスを取れるのがメリット。
-なので、開発用としては大変使いやすい。&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;p&gt;Push通知はサーバ側で微妙に必要とされる証明書が変わったりするのがややこしいところ。
-PerfectでPush通知を送るのに必要なものは以下の通り。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;サーバ
-
-&lt;ul&gt;
-&lt;li&gt;APNs用証明書と秘密鍵&lt;/li&gt;
-&lt;li&gt;CAルート証明書&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;クライアント
-
-&lt;ul&gt;
-&lt;li&gt;プロビジョニングプロファイル&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;登録-プロビジョニングプロファイルと証明書の作成&#34;&gt;登録〜プロビジョニングプロファイルと証明書の作成&lt;/h3&gt;
-
-&lt;p&gt;証明書の取得には&lt;code&gt;AppID&lt;/code&gt;の登録やら結構手順があって大変だが、まずは以下のリンク先の通りに作業をすればOK。&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Qiita:&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;なお、最後の手順の&lt;code&gt;APNs用証明書(.p12)&lt;/code&gt;を書き出す時のファイル名は&lt;code&gt;apns.p12&lt;/code&gt;とする&lt;/p&gt;
-
-&lt;h3 id=&#34;サーバ用の証明書の準備&#34;&gt;サーバ用の証明書の準備&lt;/h3&gt;
-
-&lt;h4 id=&#34;apns用証明書-pem&#34;&gt;APNs用証明書(.pem)&lt;/h4&gt;
-
-&lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_cert.pem&lt;/code&gt;を作成する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd [apns.p12を書き出した場所]
-openssl pkcs12 -clcerts -nokeys -out apns_dev_cert.pem -in apns.p12
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;秘密鍵-pem&#34;&gt;秘密鍵(.pem)&lt;/h4&gt;
-
-&lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_key.pem&lt;/code&gt;を作成する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd [apns.p12を書き出した場所]
-openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;Enter PEM pass phrase:&lt;/code&gt;と秘密鍵のパスフレーズを聞かれるので、適当なものを入れる。
-後でサーバに設定するので忘れないように・・・&lt;/p&gt;
-
-&lt;h4 id=&#34;caルート証明書&#34;&gt;CAルート証明書&lt;/h4&gt;
-
-&lt;p&gt;APNsとサーバで接続する為に&lt;code&gt;Entrust&lt;/code&gt;の証明書が必要なので、以下からダウンロードする。&lt;/p&gt;
-
-&lt;p&gt;Entrust.net Certificate Authority (2048)：
-&lt;a href=&#34;https://www.entrust.com/root-certificates/entrust_2048_ca.cer&#34;&gt;entrust_2048_ca.cer&lt;/a&gt;&lt;br /&gt;
-（&lt;a href=&#34;https://www.entrust.com/get-support/ssl-certificate-support/root-certificate-downloads/&#34;&gt;Entrustの証明書DLページ&lt;/a&gt; - Entrust.net Certificate Authority (2048) - Download）&lt;/p&gt;
-
-&lt;h3 id=&#34;iosアプリの作成&#34;&gt;iOSアプリの作成&lt;/h3&gt;
-
-&lt;p&gt;とりあえず、必要最低限でPush通知を受信できる状態にする。
-デバイストークンの更新等には未対応なので注意。&lt;/p&gt;
-
-&lt;h4 id=&#34;プロジェクトの設定&#34;&gt;プロジェクトの設定&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;ダウンロードしたプロビジョニングプロファイルをダブルクリックしてインストール&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Bundle Identifier&lt;/code&gt;を&lt;code&gt;AppID&lt;/code&gt;取得時のものと一緒にする&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Provisioning Profile&lt;/code&gt;をインストールしたプロビジョニングプロファイルにする&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;アプリの実装&#34;&gt;アプリの実装&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;AppDelegate&lt;/code&gt;に以下の実装をする&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;didFinishLaunchingWithOptions&lt;/code&gt;でPush通知の登録&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;didRegisterForRemoteNotificationsWithDeviceToken&lt;/code&gt;でデバイストークンを受信&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;コードにすると以下の通り
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/8000f2d8dc5b37773323065e867e2e4d.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
-
-&lt;p&gt;これを実機上で実行すると、端末のデバイストークンがログ出力される。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;デバッグ実行を停止させると、Push通知が届かない場合があるので、デバッグ実行したままにするか
-再度実機上からアクティブにしてバックグラウンドに落としておく。&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;また、マルチタスクから終了させても届かない場合があるので、注意&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;サーバへ証明書の設置&#34;&gt;サーバへ証明書の設置&lt;/h3&gt;
-
-&lt;p&gt;基礎編の&lt;a href=&#34;../perfect-2/&#34;&gt;ビルドでファイルを配置する&lt;/a&gt;の方法で証明書を配置する&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;対象のファイル
-
-&lt;ul&gt;
-&lt;li&gt;apns_dev_cert.pem&lt;/li&gt;
-&lt;li&gt;apns_dev_key.pem&lt;/li&gt;
-&lt;li&gt;entrust_2048_ca.cer&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Copy Files&lt;/code&gt;の設定
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Destination&lt;/code&gt;:Products Directory&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Subpath&lt;/code&gt;:空白&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;（&lt;code&gt;webroot&lt;/code&gt;へのドキュメントの配置とは別に&lt;code&gt;Copy Files&lt;/code&gt;を設定する）&lt;/p&gt;
-
-&lt;h3 id=&#34;サーバの実装&#34;&gt;サーバの実装&lt;/h3&gt;
-
-&lt;p&gt;サーバ側での実装は主に2つ。
-ひとつは証明書を&lt;code&gt;NotificationPusher&lt;/code&gt;に初期設定するのと、
-もう一つは実際にPush通知を送る実装。&lt;/p&gt;
-
-&lt;p&gt;初期設定は一度だけ行えばOKなので、（実環境では送信毎にチェックした方が良いけど）
-今回は&lt;code&gt;PerfectServerModuleInit&lt;/code&gt;で行う。&lt;/p&gt;
-
-&lt;p&gt;Push通知の送信は、&lt;code&gt;IOSNotificationItem&lt;/code&gt;の配列
-（ここのenumの使い方は参考になる）で送信内容を作成し、
-&lt;code&gt;NotificationPusher().pushIOS&lt;/code&gt;で送信を行う。&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/821b3dced86e0eb741563e23c43fed0f.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;この実装でサーバにアクセスする度に、Push通知が端末へ送られる。
-送信時の結果は、ブラウザに表示される（エラーであればエラー内容）。&lt;/p&gt;
-
-&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
-
-&lt;p&gt;今回の一番大変だったのはEntrustの証明書の置き場が変わっていたこと。。。
-逆に言えばそれ以外はとても簡単にPush通知を送れる環境を作れた感じ。&lt;/p&gt;
-
-&lt;p&gt;巷にはたくさんAPNsに対応したフレームワークやサービスがあるけど、
-開発用としては、このPerfectが一番手軽で確実だと思う。
-なにせ環境構築は不要で、Xcodeでプロジェクトを作って
-少し実装すれば良いだけという素晴らしさ！&lt;/p&gt;
-
-&lt;p&gt;もちろん、商用はAWSとかがオススメだけど。。。&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Perfect 導入編&lt;a href=&#34;../perfect-1/&#34;&gt;その1&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Perfect 基礎編&lt;a href=&#34;../perfect-2/&#34;&gt;その2&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.4&lt;/li&gt;
-&lt;li&gt;Xcode 7.3&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Perfect 基礎編</title>
-      <link>https://mike-neko.github.io/blog/perfect-2/</link>
-      <pubDate>Sun, 10 Apr 2016 23:09:11 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/perfect-2/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその2&lt;/p&gt;
-
-&lt;p&gt;基礎編ではルーティングやリクエストの処理方法のあたりまで&lt;/p&gt;
-
-&lt;h2 id=&#34;urlルーティング&#34;&gt;URLルーティング&lt;/h2&gt;
-
-&lt;p&gt;サンプルを見ると、ルーティングは大きくわけて&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;mustache&lt;/code&gt;テンプレートエンジンのページを&lt;code&gt;PageHandler&lt;/code&gt;に登録&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Routing&lt;/code&gt;に&lt;code&gt;RequestHandler&lt;/code&gt;を登録&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;の2種類がある様子。&lt;/p&gt;
-
-&lt;p&gt;設定はいずれも&lt;code&gt;PerfectServerModuleInit()&lt;/code&gt;の中で行う。&lt;/p&gt;
-
-&lt;h3 id=&#34;pagehandlerでのルーティング&#34;&gt;PageHandlerでのルーティング&lt;/h3&gt;
-
-&lt;p&gt;Webアプリなどでの固定ページの表示向け。&lt;br /&gt;
-公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/PerfectExamples/blob/master/Sources/Authenticator/#authenticator&#34;&gt;Authenticator&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;例えば、&lt;code&gt;http://0.0.0.0:8181/admin/&lt;/code&gt;というページを表示させたい時の流れとしては、&lt;/p&gt;
-
-&lt;h4 id=&#34;表示するページを-mustache-のテンプレートで作成&#34;&gt;表示するページを&lt;code&gt;mustache&lt;/code&gt;のテンプレートで作成&lt;/h4&gt;
-
-&lt;p&gt;例だと&lt;code&gt;admin.mustache&lt;/code&gt;というファイル名にし、先頭のところで&lt;code&gt;handler:AdminHandler&lt;/code&gt;と指定する。&lt;br /&gt;
-ポイントは、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;先頭の&lt;code&gt;handler:&lt;/code&gt;の部分で対応する&lt;code&gt;PageHandler&lt;/code&gt;の名前を指定&lt;/li&gt;
-&lt;li&gt;ファイル名がアクセスする際のディレクトリと対応&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;テンプレートをプロジェクトへ追加&#34;&gt;テンプレートをプロジェクトへ追加&lt;/h4&gt;
-
-&lt;p&gt;後述の小ネタにある「ドキュメントの配置」の方法で、&lt;code&gt;admin.mustache&lt;/code&gt;がドキュメントルートへ配置されるように設定する。&lt;/p&gt;
-
-&lt;h4 id=&#34;pagehandler-を作成&#34;&gt;&lt;code&gt;PageHandler&lt;/code&gt;を作成&lt;/h4&gt;
-
-&lt;p&gt;ページにアクセスがあった時の処理を行う為の&lt;code&gt;PageHandler&lt;/code&gt;を継承したクラスを作る。&lt;br /&gt;
-（クラス名は任意だが、わかりやすいように&lt;code&gt;AdminHandler&lt;/code&gt;としておく）&lt;/p&gt;
-
-&lt;p&gt;作ったクラスを&lt;code&gt;PageHandlerRegistry.addPageHandler&lt;/code&gt;で登録する。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;PageHandlerRegistry.addPageHandler(&amp;quot;AdminHandler&amp;quot;) {
-// (r: WebResponse) -&amp;gt; PageHandler in
-  return AdminHandler()
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ポイントは、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;addPageHandler&lt;/code&gt;の一つ目の引数の文字列は、テンプレートの中で指定したhandlerと同じにする&lt;/li&gt;
-&lt;li&gt;リクエストの詳細な情報で分岐させたい時は、コメントアウトを外し&lt;code&gt;WebResponse&lt;/code&gt;の情報を使う&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;code&gt;PageHandler&lt;/code&gt;の中では、テンプレートに流し込む変数のDictionaryを生成する。&lt;/p&gt;
-
-&lt;h3 id=&#34;requesthandlerでのルーティング&#34;&gt;RequestHandlerでのルーティング&lt;/h3&gt;
-
-&lt;p&gt;APIとかブログのような動的なページ向け。&lt;br /&gt;
-公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/PerfectExamples/blob/master/Sources/URL%20Routing/#url-routing&#34;&gt;URL Routing&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;例えば、REST APIで&lt;code&gt;http://0.0.0.0:8181/user/mike&lt;/code&gt;の&lt;code&gt;GET&lt;/code&gt;でmikeというユーザの情報を取得したい時の流れとしては、&lt;/p&gt;
-
-&lt;h4 id=&#34;ルーティングを設定&#34;&gt;ルーティングを設定&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Routing&lt;/code&gt;でルーティングのルール（HTTPのメソッドやURLなど）を&lt;code&gt;RouteMap&lt;/code&gt;を使って設定する。&lt;/p&gt;
-
-&lt;p&gt;例だと、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Routing.Routes[&amp;quot;GET&amp;quot;, &amp;quot;/user/{id}&amp;quot;] = { _ in return UserHandler() }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;となる。ポイントは、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;HTTPのメソッドが指定できる&lt;br /&gt;
-（指定する場合は一つ目にする）&lt;/li&gt;
-&lt;li&gt;URL部分は配列で複数指定できる&lt;/li&gt;
-&lt;li&gt;ルール部分では&lt;code&gt;{}&lt;/code&gt;で囲うと&lt;code&gt;RequestHandler&lt;/code&gt;へ値を渡せる&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;*&lt;/code&gt;が使える&lt;/li&gt;
-&lt;li&gt;クロージャで対応する&lt;code&gt;RequestHandler&lt;/code&gt;を指定する&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;requesthandler-を作成&#34;&gt;&lt;code&gt;RequestHandler&lt;/code&gt;を作成&lt;/h4&gt;
-
-&lt;p&gt;クライアントへ返すレスポンスを生成する為の&lt;code&gt;RequestHandler&lt;/code&gt;を継承したクラスを作る。&lt;br /&gt;
-（クラス名は任意だが、わかりやすいように&lt;code&gt;UserHandler&lt;/code&gt;としておく）&lt;/p&gt;
-
-&lt;p&gt;URLで指定されたユーザ名をそのままJSONで返す場合は以下の感じ。
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/55c5d91b5b1d7a309289f5d0b2a12edd.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
-
-&lt;p&gt;これで、&lt;code&gt;http://0.0.0.0:8181/user/mike&lt;/code&gt;にアクセスすると&lt;code&gt;{ user: &amp;quot;mike&amp;quot; }&lt;/code&gt;と返ってくる。&lt;/p&gt;
-
-&lt;h4 id=&#34;ルーティング設定の確認&#34;&gt;ルーティング設定の確認&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Routing.Routes.description&lt;/code&gt;で設定をダンプできる。これ、かなり便利！&lt;/p&gt;
-
-&lt;h2 id=&#34;リクエストの処理&#34;&gt;リクエストの処理&lt;/h2&gt;
-
-&lt;p&gt;URLパラメータやPOSTのボディの中身は、&lt;code&gt;WebRequest&lt;/code&gt;の中に格納されている。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;http://0.0.0.0:8181/hoge?key1=value1&amp;amp;key2=value2&lt;/code&gt;とした場合、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func handleRequest(request: WebRequest, response: WebResponse) {
-  request.queryString()  // key1=value1&amp;amp;key2=value2
-  request.queryParams    // [(&amp;quot;key1&amp;quot;, &amp;quot;value1&amp;quot;), (&amp;quot;key2&amp;quot;, &amp;quot;value2&amp;quot;)]
-  request.params()       // [(&amp;quot;key1&amp;quot;, &amp;quot;value1&amp;quot;), (&amp;quot;key2&amp;quot;, &amp;quot;value2&amp;quot;)]
-  request.param(&amp;quot;key1&amp;quot;)  // value1
-  request.param(&amp;quot;key3&amp;quot;, defaultValue: &amp;quot;value3&amp;quot;)  // value3
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;POSTで&lt;code&gt;{ &amp;quot;count&amp;quot;=100 }&lt;/code&gt;を送った場合、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func handleRequest(request: WebRequest, response: WebResponse) {
-  let body = request.postBodyString
-  let json = try! JSONDecoder().decode(body) as! JSONDictionaryType
-  json[&amp;quot;count&amp;quot;]  // 100
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;といった感じで取得できる。&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;h3 id=&#34;ドキュメントの配置&#34;&gt;ドキュメントの配置&lt;/h3&gt;
-
-&lt;p&gt;Xcode経由で起動している時に、サーバからドキュメントへアクセスできるようにする方法。なお、ドキュメントルートはデフォルトで&lt;code&gt;./webroot/&lt;/code&gt;が設定されている。&lt;/p&gt;
-
-&lt;h4 id=&#34;documentrootのパスを変更する&#34;&gt;DocumentRootのパスを変更する&lt;/h4&gt;
-
-&lt;p&gt;状況によってはソースから改変するのもアリだが、起動時に立ち上がるGUIから変更するのが手軽。&lt;code&gt;Choose...&lt;/code&gt;でフォルダ位置を選択できる。ただし、注意すべきなのは&lt;code&gt;Document Root&lt;/code&gt;のテキストフィールド内でキー操作(return)しないと変更と認識されずに保存されない点（これにはまってソースまで見てようやく気付いた・・・）。変更後はサーバの再起動が必要（というか勝手にされるはず）。&lt;/p&gt;
-
-&lt;p&gt;この方法だとサーバを起動したままでもドキュメントを変更できるが、一方でパスの設定が必要となる。&lt;/p&gt;
-
-&lt;h4 id=&#34;ビルドでファイルを配置する&#34;&gt;ビルドでファイルを配置する&lt;/h4&gt;
-
-&lt;p&gt;前回の導入編で使った方法で、デフォルトの&lt;code&gt;./webroot/&lt;/code&gt;を使いたい場合用。&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;作成したプロジェクトを選択&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;TARGETS&lt;/code&gt;でプロジェクト名と同じもの、&lt;code&gt;Build Phases&lt;/code&gt;タブを選択&lt;/li&gt;
-&lt;li&gt;左上の&lt;code&gt;＋&lt;/code&gt;をクリックして、&lt;code&gt;New Copy Files Phases&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Destination&lt;/code&gt;で&lt;code&gt;Products Directory&lt;/code&gt;を選択&lt;br /&gt;
-&lt;code&gt;Subpath&lt;/code&gt;に&lt;code&gt;webroot&lt;/code&gt;と入力&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Name&lt;/code&gt;の下の方にある&lt;code&gt;＋&lt;/code&gt;をクリックし、追加ファイルを選択して&lt;code&gt;Add&lt;/code&gt;&lt;br /&gt;
-（プロジェクトに未追加のファイルの場合は&lt;code&gt;Add Other...&lt;/code&gt;からで）&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;同一lan内からのアクセス&#34;&gt;同一LAN内からのアクセス&lt;/h3&gt;
-
-&lt;p&gt;例えば同じルータに繋がっているiPhoneから、Mac上で動いているPerfectのサーバに接続する方法。&lt;/p&gt;
-
-&lt;p&gt;起動時に立ち上がるGUIの&lt;code&gt;Server Address&lt;/code&gt;をMacに割り当てられているIPアドレスに変更すればOK。
-（変更後にreturnで確定を忘れずに・・・）
-ポートも変更できるが、&lt;code&gt;80&lt;/code&gt;とかはroot権限が必要と怒られて変更できないので注意。&lt;/p&gt;
-
-&lt;p&gt;（今回は既に&lt;a href=&#34;../docker/&#34;&gt;Docker+nginxを構築&lt;/a&gt;してあったので、nginxのリバースプロキシの設定でさくっと対応）&lt;/p&gt;
-
-&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
-
-&lt;p&gt;普段、クライアント（iOSアプリ）側で使っている開発環境と全く同じ環境でサーバの開発が出来るというのは、
-想像以上に便利というかストレスフリーな感じ。&lt;/p&gt;
-
-&lt;p&gt;もちろん、PerfectではCocoaが使えないというのはあるし、物足りない感じはしなくも無いが。。。&lt;/p&gt;
-
-&lt;p&gt;ただ、そのあたりのカバーを目指しての&lt;code&gt;Perfect&lt;/code&gt;という命名なんだろうと勝手に想像。&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.chrismanahan.com/creating-a-web-service-swift-perfect&#34;&gt;Creating a Web Service for Your App in Swift with Perfect&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.4&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Xcode 7.3&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Perfect 導入編&lt;a href=&#34;../perfect-1/&#34;&gt;その1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Perfect APNs編&lt;a href=&#34;../perfect-push/&#34;&gt;その3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Perfect 導入編</title>
-      <link>https://mike-neko.github.io/blog/perfect-1/</link>
-      <pubDate>Fri, 08 Apr 2016 22:25:06 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/perfect-1/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその1&lt;/p&gt;
-
-&lt;p&gt;導入編ではベースとなるプロジェクトを一から作るあたりまで&lt;/p&gt;
-
-&lt;h2 id=&#34;きっかけ&#34;&gt;きっかけ&lt;/h2&gt;
-
-&lt;p&gt;Perfectがついに1.0になったというのを聞きつけてGitHubのREADMEを見てると、、、&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;WebSockets &amp;amp; iOS Push Notifications&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Perfect now includes a &lt;strong&gt;WebSockets&lt;/strong&gt; server and support for handling your own server-side &lt;strong&gt;iOS push notifications&lt;/strong&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;ってのを発見！&lt;/p&gt;
-
-&lt;p&gt;ちょうど、Push通知周りの実験をしたかったこともあり、さっそく手を出すことに〜&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;h3 id=&#34;下準備&#34;&gt;下準備&lt;/h3&gt;
-
-&lt;h4 id=&#34;github-https-github-com-perfectlysoft-perfect-からperfectをダウンロードする&#34;&gt;&lt;a href=&#34;https://github.com/PerfectlySoft/Perfect&#34;&gt;GitHub&lt;/a&gt;からPerfectをダウンロードする&lt;/h4&gt;
-
-&lt;p&gt;ダウンロードしたら適当な場所に展開しておく&lt;/p&gt;
-
-&lt;h4 id=&#34;xcodeにテンプレートを追加&#34;&gt;Xcodeにテンプレートを追加&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;~/Library/Developer/Xcode&lt;/code&gt;をFinderで開く&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Xcode&lt;/code&gt;直下に(無ければ)&lt;code&gt;Templates&lt;/code&gt;というフォルダを作成&lt;/li&gt;
-&lt;li&gt;その&lt;code&gt;Templates&lt;/code&gt;直下に(無ければ)&lt;code&gt;Project Template&lt;/code&gt;というフォルダを作成&lt;/li&gt;
-&lt;li&gt;ダウンロードしておいたPerfectのプロジェクトの中（&lt;code&gt;Perfect-master/Extras/Xcode Templates/Perfect/&lt;/code&gt;）にある&lt;code&gt;Perfect Server Framework.xctemplate&lt;/code&gt;のフォルダを丸ごとコピー&lt;/li&gt;
-&lt;li&gt;3で作ったフォルダに4のフォルダを貼り付け&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;プロジェクトの作成&#34;&gt;プロジェクトの作成&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;ワークスペース名：&lt;code&gt;SmapleBasePerfect&lt;/code&gt;&lt;br /&gt;
- プロジェクト名：&lt;code&gt;SampleServer&lt;/code&gt;&lt;/em&gt;&lt;br /&gt;
-で作成する前提での手順&lt;/p&gt;
-
-&lt;h4 id=&#34;ワークスペースの作成&#34;&gt;ワークスペースの作成&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Xcodeのメニューの&lt;code&gt;File&lt;/code&gt;-&lt;code&gt;New&lt;/code&gt;-&lt;code&gt;Workspace...&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;ワークスペース名と保存先のフォルダを選択(作成)して&lt;code&gt;Save&lt;/code&gt;&lt;br /&gt;
-（ワークスペースはプロジェクトと違ってフォルダは自動作成されないので注意）&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;自動で空のワークスペースの画面が開かれるので、そのままの状態で次の手順へ&lt;/p&gt;
-
-&lt;h4 id=&#34;プロジェクトの作成-1&#34;&gt;プロジェクトの作成&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Xcodeのメニューの&lt;code&gt;File&lt;/code&gt;-&lt;code&gt;New&lt;/code&gt;-&lt;code&gt;Project...&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;左側の&lt;code&gt;OS X&lt;/code&gt;-&lt;code&gt;Project Template&lt;/code&gt;の中から&lt;code&gt;Perfect Server Framework&lt;/code&gt;を選択して&lt;code&gt;Next&lt;/code&gt;（下図）
-&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-04-08-perfect-1/template.png&#34; /&gt;
-&lt;/figure&gt;
-&lt;/li&gt;
-&lt;li&gt;プロジェクト名などを適宜入力して&lt;code&gt;Next&lt;/code&gt;&lt;br /&gt;
-（プロジェクト名はワークスペースと同じにできない）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Add to:&lt;/code&gt;でワークスペース名を選択する&lt;br /&gt;&lt;/li&gt;
-&lt;li&gt;保存先を選択して&lt;code&gt;Create&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;デフォルトで下のようなプロジェクトが生成される
-&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-04-08-perfect-1/project.png&#34; /&gt;
-&lt;/figure&gt;
-&lt;/p&gt;
-
-&lt;h4 id=&#34;perfectを追加&#34;&gt;Perfectを追加&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;ダウンロードしておいたPerfectのプロジェクト直下にある&lt;code&gt;PerfectLib&lt;/code&gt;と&lt;code&gt;PerfectServer&lt;/code&gt;のフォルダを丸ごとコピー&lt;/li&gt;
-&lt;li&gt;プロジェクトのフォルダと同じ階層に貼り付け&lt;/li&gt;
-&lt;li&gt;XcodeのProject Navigator(上のイメージの部分)の何もないところで右クリック&lt;/li&gt;
-&lt;li&gt;出てきたメニューから&lt;code&gt;Add files to &amp;quot;ワークスペース名&amp;quot;...&lt;/code&gt;を選択&lt;br /&gt;
-（もしプロジェクト名が出てきたら3からやり直し）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Copy items into ...&lt;/code&gt;はチェック無、&lt;code&gt;Create groups ...&lt;/code&gt;にチェック有にする&lt;br /&gt;
-（無い場合は&lt;code&gt;Option&lt;/code&gt;をクリック）&lt;/li&gt;
-&lt;li&gt;1と2でコピーしたフォルダの中から&lt;code&gt;PerfectLib.xcodeproj&lt;/code&gt;を選択して&lt;code&gt;Add&lt;/code&gt;&lt;br /&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;PerfectServer.xcodeproj&lt;/code&gt;についても3からの同じ手順で追加&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&#34;スキームの設定&#34;&gt;スキームの設定&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Xcodeのメニューの&lt;code&gt;Product&lt;/code&gt;-&lt;code&gt;Scheme&lt;/code&gt;-&lt;code&gt;Manage Schemes...&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;プロジェクト名と同じスキームを選択して&lt;code&gt;Edit...&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;左側で&lt;code&gt;Run&lt;/code&gt;、右側の&lt;code&gt;Info&lt;/code&gt;タグを選択&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Executable&lt;/code&gt;で&lt;code&gt;PerfectServer HTTP.app&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;下の方にある&lt;code&gt;Shared&lt;/code&gt;にチェック&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Close&lt;/code&gt;で閉じる&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&#34;フレームワークの追加&#34;&gt;フレームワークの追加&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;作成したプロジェクトを選択&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;TARGETS&lt;/code&gt;でプロジェクト名と同じもの、&lt;code&gt;General&lt;/code&gt;タブを選択&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Linked Frameworks and Libraries&lt;/code&gt;の&lt;code&gt;＋&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;PerfectLib.framework&lt;/code&gt;で&lt;code&gt;OSX&lt;/code&gt;の方を選択して&lt;code&gt;Add&lt;/code&gt;
-&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-04-08-perfect-1/framework.png&#34; /&gt;
-&lt;/figure&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&#34;ドキュメントを配置&#34;&gt;ドキュメントを配置&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;Build Phases&lt;/code&gt;タブを選択&lt;/li&gt;
-&lt;li&gt;左上の&lt;code&gt;＋&lt;/code&gt;をクリックして、&lt;code&gt;New Copy Files Phases&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Destination&lt;/code&gt;で&lt;code&gt;Products Directory&lt;/code&gt;を選択&lt;br /&gt;
-&lt;code&gt;Subpath&lt;/code&gt;に&lt;code&gt;webroot&lt;/code&gt;と入力&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Name&lt;/code&gt;の下の方にある&lt;code&gt;＋&lt;/code&gt;をクリックし、&lt;code&gt;index.mustache&lt;/code&gt;を選択して&lt;code&gt;Add&lt;/code&gt;&lt;br /&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;動作確認&#34;&gt;動作確認&lt;/h2&gt;
-
-&lt;p&gt;Xcodeで&lt;code&gt;SampleServer&lt;/code&gt;のスキームで&lt;code&gt;Run&lt;/code&gt;して、GUIが立ち上がるとサーバが動作した状態となる。&lt;/p&gt;
-
-&lt;p&gt;その状態で&lt;code&gt;http://0.0.0.0:8181/&lt;/code&gt;にアクセスして、「Hello, world!」と出ればひとまずOK。&lt;/p&gt;
-
-&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
-
-&lt;p&gt;意外に日本語の、特にMac上で動かす場合の資料が少なくて苦労した。&lt;br /&gt;
-それとこういうのを触る度にサーバ周りの知識が足りないのを痛感する・・・&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://code-me-dirty.blogspot.jp/2016/02/creating-perfect-swift-server.html&#34;&gt;Create a Perfect Swift Server Project(from scratch) in Xcode&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.4&lt;/li&gt;
-&lt;li&gt;Xcode 7.3&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/SampleBasePerfect&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Perfect 基礎編&lt;a href=&#34;../perfect-2/&#34;&gt;その2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Perfect APNs編&lt;a href=&#34;../perfect-push/&#34;&gt;その3&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Docker構築メモ</title>
-      <link>https://mike-neko.github.io/blog/docker/</link>
-      <pubDate>Mon, 04 Apr 2016 00:35:57 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/docker/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;なお、ローカルの開発用ということでセキュリティは考慮していないので注意&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;要件&#34;&gt;要件&lt;/h3&gt;
-
-&lt;p&gt;主にAPIでサーバとやりとりするアプリの開発用なので以下の感じ&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;PHPとDBが使えること&lt;/li&gt;
-&lt;li&gt;同一LAN内の別の端末からアクセスできること&lt;/li&gt;
-&lt;li&gt;SSLが使えること（iOS用）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
-
-&lt;h4 id=&#34;構成イメージ&#34;&gt;構成イメージ&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;Mac   (192.168.0.2) == ルータ(192.168.0.1) == iPhone(192.168.0.3)  
-｜  
-VM    (192.168.99.1)  
-｜  
-Docker(192.168.99.100)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;em&gt;()内はIPアドレス&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;ゴールは、iPhone上から&lt;code&gt;https://192.168.0.2&lt;/code&gt;へアクセスするとページが表示(APIの通信)できればOK。&lt;/p&gt;
-
-&lt;h4 id=&#34;mac上-ホストos&#34;&gt;Mac上(ホストOS)&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;MacOS 10.11.3(El Capitan)&lt;/li&gt;
-&lt;li&gt;VirtualBox 5.0.14&lt;/li&gt;
-&lt;li&gt;DockerToolBox 1.10.2&lt;/li&gt;
-&lt;li&gt;nginx 1.8.1&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;docker上-ゲストos&#34;&gt;Docker上(ゲストOS)&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Apache&lt;/li&gt;
-&lt;li&gt;PHP 5系の最新&lt;br /&gt;
-(Xdebug)&lt;/li&gt;
-&lt;li&gt;MariaDB&lt;br /&gt;
-(phpmyadmin)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;手順&#34;&gt;手順&lt;/h1&gt;
-
-&lt;h3 id=&#34;dockerのインストール&#34;&gt;Dockerのインストール&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.docker.com/products/docker-toolbox&#34;&gt;公式&lt;/a&gt;から&lt;code&gt;DockerToolBox&lt;/code&gt;をダウンロードしてインストールを実行&lt;br /&gt;&lt;/li&gt;
-&lt;li&gt;途中で&lt;code&gt;Docker Quickstart Terminal&lt;/code&gt;のアイコンがでてきたら起動させる&lt;br /&gt;
-（忘れたらアプリケーションにもあるのでそちらから）&lt;br /&gt;&lt;/li&gt;
-&lt;li&gt;すると勝手にVM作成やらネットワーク設定をしてくれる親切設計なのでクジラが出てくるまで待つ&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;dockercomposeの設定&#34;&gt;DockerComposeの設定&lt;/h3&gt;
-
-&lt;p&gt;Dockerはコンテナをパーツのように組み合わせて環境を作っていく。&lt;/p&gt;
-
-&lt;p&gt;そのコンテナを作成する際の基本的な流れは&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;使いたいもののイメージを見つける&lt;br /&gt;
-(無ければ&lt;code&gt;Dockerfile&lt;/code&gt;を自力で書く)&lt;/li&gt;
-&lt;li&gt;タグを指定してイメージをダウンロード&lt;/li&gt;
-&lt;li&gt;コンテナの作成&lt;br /&gt;
-(もし足りない設定などあれば&lt;code&gt;Dockerfile&lt;/code&gt;でカスマイズ)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;となる。&lt;/p&gt;
-
-&lt;p&gt;イメージの検索からコンテナの取得は公式GUIの&lt;code&gt;Kitematic (Beta)&lt;/code&gt;を使うと一気にしてくれるので便利。&lt;/p&gt;
-
-&lt;p&gt;ただ、この方法だと引数の指定が多かったり複数のコンテナを利用する場合は大変なので、
-&lt;code&gt;DockerCompose&lt;/code&gt;を用いて管理する。&lt;/p&gt;
-
-&lt;h4 id=&#34;事前準備&#34;&gt;事前準備&lt;/h4&gt;
-
-&lt;p&gt;まずは適当な場所に、コンテナ毎の&lt;code&gt;Dockerfile&lt;/code&gt;や設定ファイルなどを
-まとめておくディレクトリを作ってカレントディレクトリとする。
-今回のディレクトリ構成は、以下のようにする。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;docker
- ├─ docker-compose.yml
- ├─ mariadb              # MariaDB用のフォルダ
- |   └─ my.cnf
- ├─ php                  # PHP用のフォルダ
- |   ├─ Dockerfile
- |   └─ php.ini
- └─ www                  # Apacheのドキュメントルート
-     └─ index.html       # 動作確認用のHTML
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;apache-php&#34;&gt;Apache+PHP&lt;/h4&gt;
-
-&lt;p&gt;ApacheはPHPに同梱されているものを使うのが便利なので、&lt;code&gt;apache&lt;/code&gt;がついているタグのものを使う。
-今回は&lt;a href=&#34;https://hub.docker.com/_/php/&#34;&gt;公式&lt;/a&gt;で5系の一番新しいバージョンの&lt;code&gt;5.6.18-apache&lt;/code&gt;を選択。&lt;/p&gt;
-
-&lt;p&gt;で、&lt;code&gt;php.ini&lt;/code&gt;の設定と追加で入れたい拡張モジュール（特に&lt;code&gt;Xdebug&lt;/code&gt;）を&lt;code&gt;Dockerfile&lt;/code&gt;でカスタムしておく。&lt;/p&gt;
-
-&lt;p&gt;DockerComposeの設定&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;php:
-  build: ./php/　　　　　　　　# php/Dockerfileからビルド
-  ports:
-    - &amp;quot;80:80&amp;quot;　　　　　　　　　# 80ポートを公開
-  volumes:
-    - ./www:/var/www/html   # ドキュメントルートを指定
-  links:
-    - mariadb:mysql         # DBとの接続を指定
-  container_name: php
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これでMac上からは、&lt;code&gt;http://192.168.99.100/index.html&lt;/code&gt;へアクセスすると、
-&lt;code&gt;www/index.html&lt;/code&gt;が表示される。&lt;/p&gt;
-
-&lt;h4 id=&#34;mariadb-phpmyadmin&#34;&gt;MariaDB+phpMyAdmin&lt;/h4&gt;
-
-&lt;p&gt;特に変更点もないのでイメージは公式の最新をそのままを使う。&lt;/p&gt;
-
-&lt;p&gt;DockerComposeの設定&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;mariadb:
-  image: mariadb:latest           # 常に最新版を使う
-  environment:
-    MYSQL_ROOT_PASSWORD: pass     # ルートのパスワード
-    MYSQL_DATABASE: docker        # DB名
-    MYSQL_USER: docker            # ユーザ名
-    MYSQL_PASSWORD: docker        # パスワード
-  volumes:                        # my.cnfの設定
-    - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
-  container_name: mariadb
-
-phpmyadmin:
-  image: phpmyadmin/phpmyadmin:latest
-  container_name: myadmin
-  ports:
-    - &amp;quot;8080:80&amp;quot;                   # 8080ポートを公開して80へフォワード
-  links:
-    - mariadb:db
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これでMac上からは、&lt;code&gt;http://192.168.99.100:8080&lt;/code&gt;へアクセスすると、
-&lt;code&gt;phpMyAdmin&lt;/code&gt;のログイン画面が表示され、&lt;code&gt;docker/docker&lt;/code&gt;でログインが可能。&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;注意点としてこの状態ではDBの永続化はできていないので、コンテナを削除するとDBの内容も消える&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;ios端末からのアクセス&#34;&gt;iOS端末からのアクセス&lt;/h3&gt;
-
-&lt;p&gt;ここまでの状態だとMacからしかアクセスできないので、Mac上で&lt;code&gt;nginx&lt;/code&gt;をリバースプロキシとして動かし、
-他のiOS端末からアクセスできるようにする。&lt;/p&gt;
-
-&lt;p&gt;また、iOS9のATSへ対応する為にSSLでアクセスできるようにする。ただしローカル環境なのでオレオレ証明書を利用する。&lt;/p&gt;
-
-&lt;h4 id=&#34;nginxのインストール&#34;&gt;nginxのインストール&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;でインストールする。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew update
-brew install nginx
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;インストールできたら、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;nginx -t
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;で設定ファイルの場所を確認し、適当なエディタで開いてリバースプロキシの設定をする。
-コメントにしてあるのがデフォルトの設定。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;http {
-  server {
-    #listen       8080;
-    listen       80;
-    location / {
-      # root   html;
-      # index  index.html index.htm;
-      proxy_pass http://127.0.0.1:8080;
-    }
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;sslの証明書について&#34;&gt;SSLの証明書について&lt;/h4&gt;
-
-&lt;p&gt;今回はnginx部分だけSSLに対応させる。（dockerはHTTPのまま）&lt;/p&gt;
-
-&lt;p&gt;オレオレ証明書作成のiOS向けの設定のポイントは、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;SHA256で証明書を作成する&lt;br /&gt;
-(デフォルトだとSHA1になる)&lt;/li&gt;
-&lt;li&gt;Safari以外からアクセスする場合は、証明書作成時のCommonNameをIPアドレスにする&lt;br /&gt;
-(つまりIP固定が必要)&lt;/li&gt;
-&lt;li&gt;端末へ証明書のインストールが必要&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;もし、上の条件が満たせない場合は、ATSの設定を変えるとか個別に認証処理を書くなどして回避する必要がある。
-（回避できないのもあるけど）&lt;/p&gt;
-
-&lt;h4 id=&#34;sslの証明書の作成&#34;&gt;SSLの証明書の作成&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;openssl genrsa -out server.key 2048
-openssl req -new -key server.key &amp;gt; server.csr
-openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &amp;gt; server.crt
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;（オレオレ証明書の各項目は&lt;code&gt;CommonName&lt;/code&gt;以外は空白でも動作する）&lt;/p&gt;
-
-&lt;p&gt;生成された&lt;code&gt;server.key&lt;/code&gt;と&lt;code&gt;server.crt&lt;/code&gt;をnginxの設定ファイルと同じディレクトリに置く。&lt;/p&gt;
-
-&lt;p&gt;iOS端末へは&lt;code&gt;server.crt&lt;/code&gt;をインストールする。
-&lt;del&gt;（メール添付か適当なWEB上に置いてインストール）&lt;/del&gt;&lt;br /&gt;
-※環境によってうまくいかないことがあったので、より確実な構成プロファイル経由にすること
-（手順は&lt;a href=&#34;../ios-cert/&#34;&gt;ATS有効の状態でオレオレ証明書を使って通信する(iOS9)&lt;/a&gt;を参照）&lt;/p&gt;
-
-&lt;p&gt;nginxの設定ファイルに以下を追加する。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;server {
-  listen       443 ssl;
-  server_name  localhost;
-
-  ssl_certificate      server.crt;
-  ssl_certificate_key  server.key;
-
-  location / {
-    proxy_pass http://127.0.0.1:8080;
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;vmの設定&#34;&gt;VMの設定&lt;/h4&gt;
-
-&lt;p&gt;DockerはVirtualBox上で動いているので、VMのポートフォワードを設定が必要となる。
-設定は、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;VBoxManage controlvm &amp;quot;default&amp;quot; natpf1 &amp;quot;nginx,tcp,127.0.0.1,8080,,80&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;とする。VirtualBoxを起動して、&lt;code&gt;default-設定-ネットワーク-アダプター1-ポートフォワーディング&lt;/code&gt;からでもOK。&lt;/p&gt;
-
-&lt;h2 id=&#34;起動&#34;&gt;起動&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Dockerを起動させる&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;docker-compose.yml&lt;/code&gt;を置いた場所をカレントディレクトリにする&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;docker-compose up -d&lt;/code&gt;でコンテナを起動&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;sudo nginx&lt;/code&gt;でnginxを起動&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;これでiPhone上からは、&lt;code&gt;https://192.168.0.2/index.html&lt;/code&gt;へアクセスすると、
-&lt;code&gt;www/index.html&lt;/code&gt;が表示される。
-（ただし、オレオレ証明書なので認証の警告などは出る）&lt;/p&gt;
-
-&lt;h1 id=&#34;追記&#34;&gt;追記&lt;/h1&gt;
-
-&lt;p&gt;Docker起動時に&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ERROR: Couldn&#39;t connect to Docker daemon - you might need to run `docker-machine start default`.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;というエラーが出る場合は、VMの設定の&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;VBoxManage controlvm &amp;quot;default&amp;quot; natpf1 &amp;quot;nginx,tcp,127.0.0.1,8080,,80&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;をしてから起動し直すと大丈夫っぽい。なお、原因は不明・・・&lt;/p&gt;
-
-&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
-
-&lt;p&gt;開発環境をプラグインみたいな感じで構築していけるのと構築内容がテキストで残るのはあとあと楽。&lt;/p&gt;
-
-&lt;p&gt;ただ、サーバ環境とまるまる同じものを構築するならVagrantの方が良いのかも・・・
-でも、Dockerはいろいろな環境を次々に試すのには便利なので、使い分けが大事そう。&lt;/p&gt;
-
-&lt;h1 id=&#34;ファイル一式&#34;&gt;ファイル一式&lt;/h1&gt;
-
-&lt;p&gt;実際の各イメージのDockerfileや設定ファイルをまとめたものは
-&lt;a href=&#34;https://github.com/mike-neko/Docker/tree/master/SSLWebServer&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
