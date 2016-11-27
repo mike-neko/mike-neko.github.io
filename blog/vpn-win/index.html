@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Guzzle(PHP)でAPNsの同時配信を行う &middot; M.Ike</title>
+  <title>VPN上のWindows機へ接続 &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -96,93 +96,95 @@
 
 <div class="content container">
   <div class="post">
-    <h1>Guzzle(PHP)でAPNsの同時配信を行う</h1>
-    <span class="post-date">Oct 29, 2016 
+    <h1>VPN上のWindows機へ接続</h1>
+    <span class="post-date">Nov 27, 2016 
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/memo">memo</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
+    <a class="label" href="https://mike-neko.github.io/categories/memo">memo</a><a class="label" href="https://mike-neko.github.io/categories/server">server</a>
     </span>
     
 
 <h2 id="概要">概要</h2>
 
-<p><code>Guzzle</code>でiOSのAPNs(Push通知)をお手軽に同時配信する方法</p>
+<p><code>SSH</code>が入っていないVPN上のWindowsへアクセスする方法</p>
 
-<p>APNs自体については<a href="../http2apns/">APNs Provider API(http2)を利用する(Node.js)</a>を参照</p>
+<p>この場合、踏み台となる<code>SSH</code>が入った別のマシンが必要となる</p>
 
-<h2 id="事前準備">事前準備</h2>
-
-<p><code>Guzzle</code>自体は<a href="../guzzle/">以前の記事</a>を参照</p>
-
-<h3 id="curlの更新">curlの更新</h3>
-
-<p>APNsを使うには<code>http2</code>が必要かつ非同期で実行したいので、<code>curl</code>をインストールし直す</p>
-
-<p><code>homebrew</code>を使っている場合は以下の感じ</p>
-
-<pre><code>brew install curl --with-nghttp2 --with-openssl
-brew link curl --force
-brew reinstall php56 --with-homebrew-curl
-</code></pre>
-
-<p>なお、自分で試した時は上記だけでは<code>http2</code>が有効にならなかったので、
-アンイストールした方が確実かもしれない</p>
-
-<p>更新後に</p>
-
-<pre><code>curl -V
-</code></pre>
-
-<p>として<code>http2</code>が出ていればOK</p>
-
-<h2 id="guzzleの使い方">Guzzleの使い方</h2>
-
-<h3 id="http2で通信する">http2で通信する</h3>
-
-<p>オプションで指定するだけでOK</p>
-
-<pre><code>$client = new Client(['version' =&gt; 2.0]);
-</code></pre>
-
-<h3 id="post送信">POST送信</h3>
-
-<p><code>body</code>はリクエスト時のオプションとして以下の感じで指定する</p>
-
-<pre><code>$client = new Client();
-$response = $client-&gt;request('POST', $url, ['body' =&gt; $body]);
-</code></pre>
-
-<p><code>body</code>の中身を<code>JSON</code>にしたい時は、</p>
-
-<pre><code>['body' =&gt; json_encode($json])]
-</code></pre>
-
-<p>という形にして渡す</p>
-
-<h3 id="クライアント証明書をつける">クライアント証明書をつける</h3>
-
-<p>これもオプションで指定するだけでOK</p>
-
-<p>例えば同じ階層内に<code>apns_dev.pem</code>という証明書（パスフレーズ<code>0000</code>）に置いた場合は、</p>
-
-<pre><code>$client = new Client(['cert' =&gt; ['apns_dev.pem', '0000']]);
-</code></pre>
-
-<p>あえていうなら、<code>pem</code>形式の証明書を作るのがちょっと面倒</p>
-
-<h2 id="apnsの同時配信">APNsの同時配信</h2>
-
-<p>APNsは通知内容をJSONで指定することと、前回の並列リクエストを併せると、以下のコードで同時配信が実現できる</p>
-
-<script type="text/javascript" src="https://gist.github.com/dcc15bedbc4d42e4e8b1c31119f3c63a.js"></script>
-
-<p>（※配信環境はSandBox向け）</p>
-
-<h1 id="開発環境">開発環境</h1>
+<p>今回の検証環境は以下の通り</p>
 
 <ul>
-<li>PHP 5.6</li>
-<li>Guzzle 6.2.2</li>
+<li>ローカル：Mac OS 10.11(※)</li>
+<li>VPN
+
+<ul>
+<li>CentOS 6.8(踏み台)</li>
+<li>Windows(SQLServer)</li>
+</ul></li>
+</ul>
+
+<p><em>※ macOS 10.12(sierra)は<code>PPTP</code>でのVPN接続がOSではサポートされていないので注意！</em></p>
+
+<p>接続のイメージは以下の通り</p>
+
+<pre><code>    Mac
+     |
+(VPN / SSH)
+     |
+   CentOS(192.168.10.1 / 踏み台) - Windows(192.168.10.2 / SQLServer)
+</code></pre>
+
+<h2 id="remotedesktopでログイン">RemoteDesktopでログイン</h2>
+
+<p>Windowsなので遠隔で操作するには<code>RemoteDesktop</code>を利用</p>
+
+<h3 id="sshの接続方法">SSHの接続方法</h3>
+
+<p>以下の形式でSSH接続する</p>
+
+<pre><code>ssh -C -L 3389:(WindowsのIP):3389 (踏み台のIP)
+</code></pre>
+
+<p>例えば、上述の環境でCentOSの<code>user</code>でログインする場合だと、</p>
+
+<pre><code>ssh -C -L 3389:192.168.10.2:3389 user@192.168.10.1
+</code></pre>
+
+<p>で接続する</p>
+
+<h3 id="remotedesktopの設定">RemoteDesktopの設定</h3>
+
+<ul>
+<li>PC name:<code>localhost</code></li>
+<li>User name: Windowsのユーザ名</li>
+<li>Password: Windowsのパスワード</li>
+</ul>
+
+<p>ポイントはホストが<code>localhost</code>になること</p>
+
+<h2 id="sql-serverへ接続">SQL Serverへ接続</h2>
+
+<h3 id="sshの接続方法-1">SSHの接続方法</h3>
+
+<p>以下の形式でSSH接続する</p>
+
+<pre><code>ssh -C -L (DBのポート):(WindowsのIP):(DBのポート) (踏み台のIP)
+</code></pre>
+
+<p>例えば、上述の環境でCentOSの<code>user</code>、SQLServerのポートが<code>1433</code>でログインする場合だと、</p>
+
+<pre><code>ssh -C -L 1433:192.168.10.2:1433 user@192.168.10.1
+</code></pre>
+
+<p>で接続する</p>
+
+<h3 id="db接続設定">DB接続設定</h3>
+
+<ul>
+<li>ホスト:<code>localhost</code></li>
+<li>ポート:1433</li>
+<li>DB名: そのまま</li>
+<li>DBユーザ: そのまま</li>
+<li>DBパスワード: そのまま</li>
 </ul>
 
   </div>
