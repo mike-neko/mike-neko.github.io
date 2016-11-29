@@ -54,9 +54,9 @@
         
           &nbsp;<a href="/categories/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/categories/ios">ios&nbsp;(23)</a>&nbsp;
+          &nbsp;<a href="/categories/ios">ios&nbsp;(24)</a>&nbsp;
         
-          &nbsp;<a href="/categories/memo">memo&nbsp;(24)</a>&nbsp;
+          &nbsp;<a href="/categories/memo">memo&nbsp;(25)</a>&nbsp;
         
           &nbsp;<a href="/categories/metal">metal&nbsp;(6)</a>&nbsp;
         
@@ -102,6 +102,27 @@
   <h1>Category: " ios "</h1>
   <div class="posts">
     
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/metalshader-scenekit/">SceneKitでMetalのシェーダを利用する(SCNProgram)</a>
+      </h1>
+      <span class="post-date">Jul 10, 2016
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/metal">metal</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a>
+      </span>
+      
+      <h2 id="概要">概要</h2>
+
+<p><code>Metal</code>を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
+なので、その面倒な部分を<code>SceneKit</code>に任せたいという時の話。</p>
+
+<p>今回は描画周りに<code>Metal</code>のシェーダを使うパターン。</p>
+
+      <a href="https://mike-neko.github.io/blog/metalshader-scenekit/">Read On &rarr;</a>
+      
+    </div>
     
     <div class="post">
       <h1 class="post-title">
@@ -279,30 +300,6 @@
 <p><code>NSException</code>は、ObjectiveCの<code>@try ~ @catch ~ @finally</code>でしか例外処理を行えない。例外処理を書いていない時は、実行時エラーとして処理される。つまり、Swiftから<code>NSException</code>を発生させるコードを呼び出して例外が起きると、問答無用でアプリが落ちてしまう・・・</p>
 
       <a href="https://mike-neko.github.io/blog/objc-exception/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/metal-image/">MetalのGPGPUによるパーティクルデモ</a>
-      </h1>
-      <span class="post-date">Feb 11, 2016
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/metal">metal</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a><a class="label" href="https://mike-neko.github.io/categories/gpgpu">gpgpu</a>
-      </span>
-      
-      <h2 id="概要">概要</h2>
-
-<p>読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。</p>
-
-<p>画像サイズが512*512、1ピクセル=1パーティクルに分解するので、約26万個のパーティクルを動かしているが、60FPSを維持している。約100万まで増やすとiPhone6+で30FPSぐらいとなる。</p>
-
-<p>そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。</p>
-
-<h2 id="動作イメージ">動作イメージ</h2>
-
-      <a href="https://mike-neko.github.io/blog/metal-image/">Read On &rarr;</a>
       
     </div>
     
