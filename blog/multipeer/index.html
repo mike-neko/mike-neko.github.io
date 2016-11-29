@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>MultipeerConnectivityでP2P通信 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      <li>
+        
+          &nbsp;<a href="/categories/code">code&nbsp;(22)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/docker">docker&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/github">github&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/ios">ios&nbsp;(23)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/memo">memo&nbsp;(24)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/metal">metal&nbsp;(6)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/perfect">perfect&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/server">server&nbsp;(21)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/swift3">swift3&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/unity">unity&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2016
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>MultipeerConnectivityでP2P通信</h1>
+    <span class="post-date">Nov 29, 2016 
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a>
+    </span>
+    
+
+<h2 id="概要">概要</h2>
+
+<p>iOS同士限定になるが、<code>Multipeer Connectivity Framework</code>でお手軽にP2P通信をさせる方法</p>
+
+<p>今回は特に<code>MCBrowserViewController</code>を使わずに実装してみた</p>
+
+<h2 id="使い方">使い方</h2>
+
+<p>おおまかな流れは</p>
+
+<ol>
+<li><code>MCSession</code>で接続を開く<br />
+同時に<code>MCNearbyServiceAdvertiser</code>で他の端末からの接続を待機</li>
+<li><code>MCNearbyServiceBrowser</code>で待機している端末を探す<br />
+見つかれば、招待して接続を確立する</li>
+<li>招待された側が招待を受け入れれば接続が確立されるので、データをやりとりできる</li>
+</ol>
+
+<p>となる</p>
+
+<p><em>なお、各種デリゲートはメインスレッドで呼び出されるとは限らないので、
+UIを操作する場合は注意すること</em></p>
+
+<h3 id="接続の開始">接続の開始</h3>
+
+<p>各端末は<code>Peer</code>（ピア）と呼ばれ、相手に表示させる表示名を設定できる。
+自端末をあらわす<code>Peer</code>を生成したら、それを使って接続を開始する</p>
+
+<pre><code>let peerID = MCPeerID(displayName: &quot;表示名&quot;)
+session = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .none)
+session.delegate = self
+</code></pre>
+
+<p>さらに他の端末から見える状態にする為に<code>MCNearbyServiceAdvertiser</code>を設定する。
+サービス名は相手を検索するのに使用するIDの様なものなので、かぶらないものを指定する</p>
+
+<pre><code>advertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType: &quot;サービス名&quot;)
+advertiser.delegate = self
+advertiser.startAdvertisingPeer()
+</code></pre>
+
+<p>ここまでの手順でいわば接続の待ち受け状態となる</p>
+
+<h3 id="相手の検索と接続の確立">相手の検索と接続の確立</h3>
+
+<p>相手を検索するには、<code>MCNearbyServiceBrowser</code>を利用する。
+サービス名には<code>Advertiser</code>で設定したのと同じものを指定する</p>
+
+<pre><code>browser = MCNearbyServiceBrowser(peer: peerID, serviceType: &quot;サービス名&quot;)
+browser.delegate = self
+browser.startBrowsingForPeers()
+</code></pre>
+
+<p>指定したサービス名と同じPeerが見つかると<code>MCNearbyServiceBrowserDelegate</code>の<code>foundPeer</code>が呼び出される</p>
+
+<pre><code>func browser(_ browser: MCNearbyServiceBrowser,
+      foundPeer peerID: MCPeerID,
+withDiscoveryInfo info: [String : String]?) {
+    print(&quot;found: \(peerID)&quot;)
+    browser.invitePeer(peerID, to: session, withContext: nil, timeout: 0)
+}
+</code></pre>
+
+<p>見つかった相手に、<code>invitePeer</code>で接続を招待することができる。
+招待された側には、<code>MCNearbyServiceAdvertiserDelegate</code>の<code>didReceiveInvitationFromPeer</code>が呼び出される</p>
+
+<pre><code>func advertiser(_ advertiser: MCNearbyServiceAdvertiser,
+  didReceiveInvitationFromPeer peerID: MCPeerID,
+                  withContext context: Data?,
+                    invitationHandler: @escaping (Bool, MCSession?) -&gt; Void) {
+    print(&quot;InvitationFrom: \(peerID)&quot;)
+    invitationHandler(true, session)
+}
+</code></pre>
+
+<p><code>invitationHandler</code>の第一引数で<code>true</code>を渡すと招待を受け入れたことになり接続が確立される。</p>
+
+<h3 id="データの送受信">データの送受信</h3>
+
+<p>接続が確立されればデータのやりとりが出来る様になる。
+データのやりとりには</p>
+
+<ul>
+<li><code>Data / NSData</code></li>
+<li><code>URL / NSURL</code>でのリソース</li>
+<li><code>Stream / NSStream</code>でのストリーム</li>
+</ul>
+
+<p>のどれかを使う</p>
+
+<p>一番シンプルな<code>Data</code>の場合、</p>
+
+<pre><code>session.send(data, toPeers: session.connectedPeers, with: .reliable)
+</code></pre>
+
+<p>とすると、接続を確立しているPeer全てにデータを送信できる。
+<code>.reliable</code>にするとデータの送信順が保証され、
+<code>.unreliable</code>にすると送信順が保証されない代わりに即時にデータが送られる</p>
+
+<p>送信されたデータは、<code>MCSessionDelegate</code>の各メソッドで受け取ることができる。
+<code>Data</code>の場合だと、</p>
+
+<pre><code>func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+}
+</code></pre>
+
+<p>で受け取れる</p>
+
+<h1 id="ソース">ソース</h1>
+
+<p>上記を元に2台の端末同士でP2Pで単純なテキストを送受信するクラスのソースは以下のとおり</p>
+
+<script type="text/javascript" src="https://gist.github.com/00e0e04fd7bdf4c3e9378fc6d8e0a11a.js"></script>
+
+<p>使い方は、</p>
+
+<h4 id="接続の開始-1">接続の開始</h4>
+
+<pre><code>P2PConnectivity.manager.start(
+    serviceType: &quot;MIKE-SIMPLE-P2P&quot;,
+    displayName: UIDevice.current.name,
+    stateChangeHandler: { state in
+        // 接続状況の変化した時の処理
+    }, recieveHandler: { data in
+        // データを受信した時の処理
+    }
+)
+</code></pre>
+
+<h4 id="データの送信">データの送信</h4>
+
+<pre><code>// 送信
+P2PConnectivity.manager.send(message: &quot;送信するテキスト&quot;)
+</code></pre>
+
+<h4 id="終了">終了</h4>
+
+<pre><code>P2PConnectivity.manager.stop()
+</code></pre>
+
+<p>という感じ</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Xcode 8.1</li>
+<li>iOS 9.3.2 / 10.1.1</li>
+<li>iPhone 6+ / 7+</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

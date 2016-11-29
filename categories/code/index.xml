@@ -6,8 +6,168 @@
     <description>Recent content in Code on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sat, 29 Oct 2016 22:40:57 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 29 Nov 2016 18:40:09 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/code/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>MultipeerConnectivityでP2P通信</title>
+      <link>https://mike-neko.github.io/blog/multipeer/</link>
+      <pubDate>Tue, 29 Nov 2016 18:40:09 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/multipeer/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;iOS同士限定になるが、&lt;code&gt;Multipeer Connectivity Framework&lt;/code&gt;でお手軽にP2P通信をさせる方法&lt;/p&gt;
+
+&lt;p&gt;今回は特に&lt;code&gt;MCBrowserViewController&lt;/code&gt;を使わずに実装してみた&lt;/p&gt;
+
+&lt;h2 id=&#34;使い方&#34;&gt;使い方&lt;/h2&gt;
+
+&lt;p&gt;おおまかな流れは&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;MCSession&lt;/code&gt;で接続を開く&lt;br /&gt;
+同時に&lt;code&gt;MCNearbyServiceAdvertiser&lt;/code&gt;で他の端末からの接続を待機&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;MCNearbyServiceBrowser&lt;/code&gt;で待機している端末を探す&lt;br /&gt;
+見つかれば、招待して接続を確立する&lt;/li&gt;
+&lt;li&gt;招待された側が招待を受け入れれば接続が確立されるので、データをやりとりできる&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;となる&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;なお、各種デリゲートはメインスレッドで呼び出されるとは限らないので、
+UIを操作する場合は注意すること&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;接続の開始&#34;&gt;接続の開始&lt;/h3&gt;
+
+&lt;p&gt;各端末は&lt;code&gt;Peer&lt;/code&gt;（ピア）と呼ばれ、相手に表示させる表示名を設定できる。
+自端末をあらわす&lt;code&gt;Peer&lt;/code&gt;を生成したら、それを使って接続を開始する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let peerID = MCPeerID(displayName: &amp;quot;表示名&amp;quot;)
+session = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .none)
+session.delegate = self
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;さらに他の端末から見える状態にする為に&lt;code&gt;MCNearbyServiceAdvertiser&lt;/code&gt;を設定する。
+サービス名は相手を検索するのに使用するIDの様なものなので、かぶらないものを指定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;advertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType: &amp;quot;サービス名&amp;quot;)
+advertiser.delegate = self
+advertiser.startAdvertisingPeer()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ここまでの手順でいわば接続の待ち受け状態となる&lt;/p&gt;
+
+&lt;h3 id=&#34;相手の検索と接続の確立&#34;&gt;相手の検索と接続の確立&lt;/h3&gt;
+
+&lt;p&gt;相手を検索するには、&lt;code&gt;MCNearbyServiceBrowser&lt;/code&gt;を利用する。
+サービス名には&lt;code&gt;Advertiser&lt;/code&gt;で設定したのと同じものを指定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;browser = MCNearbyServiceBrowser(peer: peerID, serviceType: &amp;quot;サービス名&amp;quot;)
+browser.delegate = self
+browser.startBrowsingForPeers()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;指定したサービス名と同じPeerが見つかると&lt;code&gt;MCNearbyServiceBrowserDelegate&lt;/code&gt;の&lt;code&gt;foundPeer&lt;/code&gt;が呼び出される&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func browser(_ browser: MCNearbyServiceBrowser,
+      foundPeer peerID: MCPeerID,
+withDiscoveryInfo info: [String : String]?) {
+    print(&amp;quot;found: \(peerID)&amp;quot;)
+    browser.invitePeer(peerID, to: session, withContext: nil, timeout: 0)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;見つかった相手に、&lt;code&gt;invitePeer&lt;/code&gt;で接続を招待することができる。
+招待された側には、&lt;code&gt;MCNearbyServiceAdvertiserDelegate&lt;/code&gt;の&lt;code&gt;didReceiveInvitationFromPeer&lt;/code&gt;が呼び出される&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func advertiser(_ advertiser: MCNearbyServiceAdvertiser,
+  didReceiveInvitationFromPeer peerID: MCPeerID,
+                  withContext context: Data?,
+                    invitationHandler: @escaping (Bool, MCSession?) -&amp;gt; Void) {
+    print(&amp;quot;InvitationFrom: \(peerID)&amp;quot;)
+    invitationHandler(true, session)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;invitationHandler&lt;/code&gt;の第一引数で&lt;code&gt;true&lt;/code&gt;を渡すと招待を受け入れたことになり接続が確立される。&lt;/p&gt;
+
+&lt;h3 id=&#34;データの送受信&#34;&gt;データの送受信&lt;/h3&gt;
+
+&lt;p&gt;接続が確立されればデータのやりとりが出来る様になる。
+データのやりとりには&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Data / NSData&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;URL / NSURL&lt;/code&gt;でのリソース&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Stream / NSStream&lt;/code&gt;でのストリーム&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;のどれかを使う&lt;/p&gt;
+
+&lt;p&gt;一番シンプルな&lt;code&gt;Data&lt;/code&gt;の場合、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;session.send(data, toPeers: session.connectedPeers, with: .reliable)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とすると、接続を確立しているPeer全てにデータを送信できる。
+&lt;code&gt;.reliable&lt;/code&gt;にするとデータの送信順が保証され、
+&lt;code&gt;.unreliable&lt;/code&gt;にすると送信順が保証されない代わりに即時にデータが送られる&lt;/p&gt;
+
+&lt;p&gt;送信されたデータは、&lt;code&gt;MCSessionDelegate&lt;/code&gt;の各メソッドで受け取ることができる。
+&lt;code&gt;Data&lt;/code&gt;の場合だと、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で受け取れる&lt;/p&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;上記を元に2台の端末同士でP2Pで単純なテキストを送受信するクラスのソースは以下のとおり&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/00e0e04fd7bdf4c3e9378fc6d8e0a11a.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;使い方は、&lt;/p&gt;
+
+&lt;h4 id=&#34;接続の開始-1&#34;&gt;接続の開始&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;P2PConnectivity.manager.start(
+    serviceType: &amp;quot;MIKE-SIMPLE-P2P&amp;quot;,
+    displayName: UIDevice.current.name,
+    stateChangeHandler: { state in
+        // 接続状況の変化した時の処理
+    }, recieveHandler: { data in
+        // データを受信した時の処理
+    }
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;データの送信&#34;&gt;データの送信&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;// 送信
+P2PConnectivity.manager.send(message: &amp;quot;送信するテキスト&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;終了&#34;&gt;終了&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;P2PConnectivity.manager.stop()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という感じ&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Guzzle(PHP)でAPNsの同時配信を行う</title>
@@ -1863,93 +2023,6 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 &lt;li&gt;&lt;p&gt;Perfect APNs編&lt;a href=&#34;../perfect-push/&#34;&gt;その3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>IPアドレス取得のサンプル(Swift)</title>
-      <link>https://mike-neko.github.io/blog/ipaddress/</link>
-      <pubDate>Mon, 07 Mar 2016 23:59:45 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/ipaddress/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;iOS端末のIPアドレスを取得するサンプル。Cの関数呼び出し周りも含めてSwiftにて実装。&lt;/p&gt;
-
-&lt;p&gt;一応、Apple公式の方法でIPv6only環境でも動作確認済。&lt;/p&gt;
-
-&lt;h3 id=&#34;実装概要&#34;&gt;実装概要&lt;/h3&gt;
-
-&lt;p&gt;アドレス取得の実装は&lt;code&gt;NetworkInfo&lt;/code&gt;にまとまっている。
-実装の中身自体はよくあるIPアドレスの取得のコード。&lt;/p&gt;
-
-&lt;p&gt;サンプルでは、IPアドレスの一覧を取得して&lt;code&gt;TableView&lt;/code&gt;に表示している。&lt;/p&gt;
-
-&lt;p&gt;細かい点は実際のソースを参照のこと。&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;h3 id=&#34;cの関数呼び出し&#34;&gt;Cの関数呼び出し&lt;/h3&gt;
-
-&lt;p&gt;端末内部のネットワーク情報を取得する為に、&lt;code&gt;getifaddrs&lt;/code&gt;や&lt;code&gt;inet_ntop&lt;/code&gt;などの関数を呼び出すが、
-通常のCであればファイルの頭で&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;#include &amp;lt;ifaddrs.h&amp;gt;
-#include &amp;lt;sys/socket.h&amp;gt;
-#include &amp;lt;netinet/in.h&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;とするが、Swiftなので&lt;code&gt;Bridging-Header.h&lt;/code&gt;を用意して、そこに&lt;code&gt;include&lt;/code&gt;を書く。&lt;/p&gt;
-
-&lt;p&gt;あと、ヘッダを追加した後にはビルド設定の&lt;code&gt;Objective-C Bridging Header&lt;/code&gt;も忘れずに変更。&lt;/p&gt;
-
-&lt;h3 id=&#34;デバイス&#34;&gt;デバイス&lt;/h3&gt;
-
-&lt;p&gt;とりあえず今回は、IPアドレスを取りたいだけなので、WiFi(&lt;code&gt;en0&lt;/code&gt;)とCellular(&lt;code&gt;pdp_ip0&lt;/code&gt;)の
-デバイスのみチェックしている。&lt;/p&gt;
-
-&lt;h3 id=&#34;swiftの言語的なこと&#34;&gt;Swiftの言語的なこと&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;defer&lt;/code&gt;がとっても便利。これのおかげでリソースの解放のような後始末が必要なコードが、
-とても簡単にかけるし処理漏れもなくなるので素晴らしい！&lt;br /&gt;
-(これが無いと今回のように処理の中でエラーで返すような場合はコードが面倒になる)&lt;/p&gt;
-
-&lt;p&gt;ポインタが見えなくなったり、型が厳格になってC系のソースの移植が面倒に思えるけど、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;対応する型への変換（特に&lt;code&gt;UnsafePointer&lt;/code&gt;）&lt;/li&gt;
-&lt;li&gt;C++の&lt;code&gt;-&amp;gt;&lt;/code&gt;に相当するのが&lt;code&gt;memory&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;同じく&lt;code&gt;[]&lt;/code&gt;に相当するのが&lt;code&gt;advancedBy&lt;/code&gt;(今回は出てこないけど)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;と言ったあたりを押さえておけばOKな気がする。&lt;/p&gt;
-
-&lt;p&gt;確かに冗長な感じは否めないが、型は書かなくても済むことが多いし、
-逆に一度正しく変換しておけば後はコンパイラで型チェックが行われるのは安心できる。&lt;/p&gt;
-
-&lt;p&gt;この辺りのバランス感覚がSwiftは絶妙だと思う。&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/UnderstandingandPreparingfortheIPv6Transition/UnderstandingandPreparingfortheIPv6Transition.html&#34;&gt;IPv6only環境の確認方法&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html&#34;&gt;CのAPIをSwiftで使う方法&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 7.2&lt;/li&gt;
-&lt;li&gt;iOS 9.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;li&gt;Mac OS 10.11.3(NAT64ネットワーク)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/NetworkInfo&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
