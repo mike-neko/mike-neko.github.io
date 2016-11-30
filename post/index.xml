@@ -10,7 +10,7 @@
     <atom:link href="https://mike-neko.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>WebRTCをiOSのネイティブで使う(準備編)</title>
+      <title>WebRTCをiOSネイティブで使う(準備編)</title>
       <link>https://mike-neko.github.io/blog/webrtc-build/</link>
       <pubDate>Tue, 29 Nov 2016 23:24:55 +0900</pubDate>
       
@@ -27,7 +27,7 @@
 &lt;p&gt;ただ、これが結構面倒で、ソースをダウンロードして一からビルドしないといけないし、
 その方法が公式に明記されていないというおまけ付き&lt;/p&gt;
 
-&lt;p&gt;普段、GitHubやCarthageに頼りきっている身では大変だった・・・&lt;/p&gt;
+&lt;p&gt;普段、GitHubやCarthageに頼りきっている身には大変だった・・・&lt;/p&gt;
 
 &lt;h2 id=&#34;フレームワークの生成&#34;&gt;フレームワークの生成&lt;/h2&gt;
 
