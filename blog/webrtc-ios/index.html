@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>WebRTCをiOSネイティブで使う(実装編) &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      <li>
+        
+          &nbsp;<a href="/categories/code">code&nbsp;(23)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/docker">docker&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/github">github&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/ios">ios&nbsp;(25)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/memo">memo&nbsp;(25)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/metal">metal&nbsp;(6)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/perfect">perfect&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/server">server&nbsp;(21)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/swift3">swift3&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/categories/unity">unity&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2016
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>WebRTCをiOSネイティブで使う(実装編)</h1>
+    <span class="post-date">Nov 30, 2016 
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a>
+    </span>
+    
+
+<h2 id="概要">概要</h2>
+
+<p>iOSで<code>WebRTC</code>を使ったビデオチャットを作る方法</p>
+
+<h2 id="事前準備">事前準備</h2>
+
+<ul>
+<li><a href="../webrtc-build">準備編</a>を参考にフレームワークを組み込む</li>
+<li><code>Info.plist</code>に以下を書き込む（※）
+
+<ul>
+<li><code>Privacy - Camera Usage Description</code>（カメラを使うのに必要）</li>
+<li><code>Privacy - Microphone Usage Description</code>（マイクを使うのに必要）</li>
+</ul></li>
+</ul>
+
+<p><em>※iOS10から必須。ないとアプリが強制終了する。
+それぞれの値は使う理由の説明を入れておく</em></p>
+
+<h2 id="シグナリング">シグナリング</h2>
+
+<p>WebRTCはP2P通信なので何らかの方法で相手と端末(<code>Peer</code>)や
+通信経路(<code>ICE Candidate</code>)の情報をやり取りする必要がある</p>
+
+<p>つまり、何らかのWebRTCとは別の方法で端末間の通信を確立させておくことが必要となる</p>
+
+<p>といってもテキストベースの情報をやり取りできれば良いので、
+特にややこしい訳ではない（もちろん接続管理はそれなりに必要だが）ので、
+node.jsのsocket.ioで自前のサーバを立てるのも良いし、
+サービスとして提供されているサーバを介してやりとりしても良い</p>
+
+<p>今回のサンプルでは完全にローカルなネットワークで、かつ、iOS同士限定なので
+サーバが不要な<code>Multipeer Connectivity Framework</code>を使っている
+（詳細は<a href="../multipeer/">こちら</a>）</p>
+
+<h2 id="実装">実装</h2>
+
+<p>ビデオチャットは1対1で動画と音声をやりとりするタイプとする</p>
+
+<p><em>生成したコネクション(<code>RTCPeerConnection</code>)とローカル / リモートストリーム(<code>RTCMediaStream</code>)はクラスのプロパティにして、
+必ずstrongで保持されるようにしておくこと<br />
+これを忘れると正常に接続ができていても画像が出ない原因となるので注意！</em></p>
+
+<h3 id="接続の準備">接続の準備</h3>
+
+<p>最初に自分が相手に送る動画と音声のストリームを準備する。
+なお、カメラへのアクセスやカメラのライブ映像の表示はほぼフレームワークがカバーしてくれる</p>
+
+<h4 id="ローカルストリームの生成">ローカルストリームの生成</h4>
+
+<p>ビデオ（ライブ映像）ストリームを生成して端末のカメラと紐づける</p>
+
+<pre><code>let factory = RTCPeerConnectionFactory()
+localStream = factory.mediaStream(withStreamId: &quot;MIKE-VIDEOCHAT&quot;)
+let video = factory.avFoundationVideoSource(with: nil)
+let track = factory.videoTrack(with: video, trackId: &quot;MIKE-VIDEOCHAT-V0&quot;)
+localStream.addVideoTrack(track)
+</code></pre>
+
+<p>オーディオ（音声）ストリームを生成する
+（こちらは特に指定しなくても端末のマイクと紐付けされるみたい）</p>
+
+<pre><code>localStream.addAudioTrack(factory.audioTrack(withTrackId: &quot;MIKE-VIDEOCHAT-A0&quot;))
+</code></pre>
+
+<h4 id="表示用のビューの生成">表示用のビューの生成</h4>
+
+<p>相手に送信している映像を確認できるよう、表示用のView
+(<code>RTCEAGLVideoView</code>というOpenGLを利用して動画を表示する専用のView)
+と端末のカメラを紐づける</p>
+
+<pre><code>// localView: ViewController内に置いた表示用ビューのコンテナ
+let local = RTCEAGLVideoView(frame: localView.bounds)
+localView.addSubview(local)
+track.add(local)
+</code></pre>
+
+<p>これで端末のフロントカメラの映像が自動で表示されるようになる</p>
+
+<h4 id="接続の生成">接続の生成</h4>
+
+<p>ビデオチャットなのでVideoとAudioを必須と指定して<code>RTCPeerConnection</code>を生成する。
+またローカルストリームを接続と紐づけて相手に送信できるようにする</p>
+
+<pre><code>// peer: RTCPeerConnection
+let constraints = RTCMediaConstraints(
+  mandatoryConstraints: [&quot;OfferToReceiveVideo&quot;: kRTCMediaConstraintsValueTrue,
+                         &quot;OfferToReceiveAudio&quot;: kRTCMediaConstraintsValueTrue],
+   optionalConstraints: nil)
+peer = factory.peerConnection(with: RTCConfiguration(),
+                       constraints: constraints,
+                          delegate: self)
+peer.add(localStream)
+</code></pre>
+
+<h3 id="接続の開始">接続の開始</h3>
+
+<p>接続の準備ができればシグナリングを行なって相手と接続を確立させる</p>
+
+<p>流れとしては、</p>
+
+<ol>
+<li>端末Aがofferを送信</li>
+<li>端末Bが端末Aのofferを受信</li>
+<li>端末Bが端末Aへanswerを送信</li>
+<li>端末Aが端末Bのanswerを受信</li>
+<li>ICEをやりとりしてP2Pで接続を確立</li>
+</ol>
+
+<p>となる</p>
+
+<h4 id="端末a-offerの送信">[端末A] offerの送信</h4>
+
+<p><code>peer.offer</code>で生成したローカルの情報を<code>peer.setLocalDescription</code>で設定すると、
+offerとなる<code>SDP</code>（Peerの情報）が取得できるので、それを相手へ送信する</p>
+
+<pre><code>peer.offer(for: constraints) { (description, error) in
+  guard let localDescription = description, error == nil else {
+    print(&quot;Error: \(error?.localizedDescription ?? &quot;&quot;)&quot;)
+    return
+  }
+  self.peer.setLocalDescription(localDescription) { error in
+    guard error == nil,
+          let state = self.peer.signalingState,
+          case .haveLocalOffer = state else {
+      print(&quot;Error: \(error?.localizedDescription ?? &quot;&quot;)&quot;)
+      return
+    }
+    // localDescription.sdp(=offer)を相手へ送信する
+  }
+}
+</code></pre>
+
+<h4 id="端末b-offerの受信-answerの送信">[端末B] offerの受信 / answerの送信</h4>
+
+<p>受信した<code>SDP</code>から<code>RTCSessionDescription</code>でリモートの情報を生成し<code>peer.setRemoteDescription</code>で設定する</p>
+
+<p>offerを正常に設定できれば、<code>peer.answer</code>でローカルの情報を生成し<code>peer.setLocalDescription</code>で設定すると、
+answerとなる<code>SDP</code>が取得できるので、それを相手へ返信する</p>
+
+<pre><code>// sdp: 受信した端末Aのoffer
+let remoteDescription = RTCSessionDescription(type: .offer, sdp: sdp)
+peer.setRemoteDescription(remoteDescription) { error in
+  guard error == nil,
+        let state = self.peer.signalingState, 
+        case .haveRemoteOffer = state else {
+    print(&quot;Error: \(error?.localizedDescription ?? &quot;&quot;)&quot;)
+    return
+  }
+  self.peer.answer(for: constraints) { (description, error) in
+    guard let localDescription = description, error == nil else {
+      print(&quot;Error: \(error?.localizedDescription ?? &quot;&quot;)&quot;)
+      return
+    }
+    self.peer.setLocalDescription(localDescription) { error in
+      guard error == nil else {
+        print(&quot;Error: \(error?.localizedDescription ?? &quot;&quot;)&quot;)
+        return
+      }
+      // localDescription.sdp(=answer)を相手へ送信する
+    }
+  }
+}
+</code></pre>
+
+<h4 id="端末a-answerの受信">[端末A] answerの受信</h4>
+
+<p>相手から返信された<code>SDP</code>から<code>RTCSessionDescription</code>でリモートの情報を生成し<code>peer.setRemoteDescription</code>で設定する</p>
+
+<pre><code>// sdp: 受信した端末Bのanswer
+let remoteDescription = RTCSessionDescription(type: .answer, sdp: sdp)
+peer.setRemoteDescription(remoteDescription) { error in
+  guard error == nil else {
+    print(&quot;Error: \(error?.localizedDescription ?? &quot;&quot;)&quot;)
+    return
+  }
+}
+</code></pre>
+
+<h4 id="iceの送受信">ICEの送受信</h4>
+
+<p>SDPのやり取りとは別に通信経路(<code>ICE Candidate</code>)もやり取りする必要がある</p>
+
+<p>こちらは単純に相手に渡すべき<code>ICE Candidate</code>があると、<code>RTCPeerConnectionDelegate</code>の<code>didGenerate</code>が呼ばれるのでそれを相手へ送信する</p>
+
+<pre><code>func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
+  // candidate.sdp(=ICE)を相手へ送信する
+}
+</code></pre>
+
+<p>受信した側は、<code>SDP</code>から<code>RTCIceCandidate</code>を生成して<code>RTCPeerConnection</code>に追加する</p>
+
+<pre><code>let can = RTCIceCandidate(sdp: sdp, sdpMLineIndex: 0, sdpMid: nil)
+peer.add(can)
+</code></pre>
+
+<p>これは何度か行われる</p>
+
+<h3 id="リモートストリームの受信">リモートストリームの受信</h3>
+
+<p><code>ICE</code>のやり取りで接続が確立されると、<code>RTCPeerConnectionDelegate</code>の<code>didAdd</code>が呼び出されて、
+相手側からのリモートストリームが渡される</p>
+
+<p>今回はVideoとAudioの両方のストリームがくるはずなので、それを表示用のViewと紐づける</p>
+
+<pre><code>func peerConnection(_ peerConnection: RTCPeerConnection, 
+                       didAdd stream: RTCMediaStream) {
+  // remoteView: ViewController内に置いた表示用ビューのコンテナ
+  let remote = RTCEAGLVideoView(frame: remoteView.bounds)
+  remoteView.addSubview(remote)
+  stream.videoTracks.last?.add(remote)
+  remoteStream = stream
+}
+</code></pre>
+
+<p>これで相手の映像が表示されてチャットができるようになる</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>macOS 10.12</li>
+<li>Xcode 8.1</li>
+<li>iOS 9.3.2 / 10.1.1</li>
+<li>iPhone 6+ / 7+</li>
+</ul>
+
+<h1 id="ソース">ソース</h1>
+
+<p><a href="https://github.com/mike-neko/WebRTCVideoChat">こちら</a></p>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

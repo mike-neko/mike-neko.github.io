@@ -6,8 +6,248 @@
     <description>Recent content in Code on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Tue, 29 Nov 2016 18:40:09 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 30 Nov 2016 01:38:22 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/code/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>WebRTCをiOSネイティブで使う(実装編)</title>
+      <link>https://mike-neko.github.io/blog/webrtc-ios/</link>
+      <pubDate>Wed, 30 Nov 2016 01:38:22 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/webrtc-ios/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;iOSで&lt;code&gt;WebRTC&lt;/code&gt;を使ったビデオチャットを作る方法&lt;/p&gt;
+
+&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;../webrtc-build&#34;&gt;準備編&lt;/a&gt;を参考にフレームワークを組み込む&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Info.plist&lt;/code&gt;に以下を書き込む（※）
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Privacy - Camera Usage Description&lt;/code&gt;（カメラを使うのに必要）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Privacy - Microphone Usage Description&lt;/code&gt;（マイクを使うのに必要）&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;※iOS10から必須。ないとアプリが強制終了する。
+それぞれの値は使う理由の説明を入れておく&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;シグナリング&#34;&gt;シグナリング&lt;/h2&gt;
+
+&lt;p&gt;WebRTCはP2P通信なので何らかの方法で相手と端末(&lt;code&gt;Peer&lt;/code&gt;)や
+通信経路(&lt;code&gt;ICE Candidate&lt;/code&gt;)の情報をやり取りする必要がある&lt;/p&gt;
+
+&lt;p&gt;つまり、何らかのWebRTCとは別の方法で端末間の通信を確立させておくことが必要となる&lt;/p&gt;
+
+&lt;p&gt;といってもテキストベースの情報をやり取りできれば良いので、
+特にややこしい訳ではない（もちろん接続管理はそれなりに必要だが）ので、
+node.jsのsocket.ioで自前のサーバを立てるのも良いし、
+サービスとして提供されているサーバを介してやりとりしても良い&lt;/p&gt;
+
+&lt;p&gt;今回のサンプルでは完全にローカルなネットワークで、かつ、iOS同士限定なので
+サーバが不要な&lt;code&gt;Multipeer Connectivity Framework&lt;/code&gt;を使っている
+（詳細は&lt;a href=&#34;../multipeer/&#34;&gt;こちら&lt;/a&gt;）&lt;/p&gt;
+
+&lt;h2 id=&#34;実装&#34;&gt;実装&lt;/h2&gt;
+
+&lt;p&gt;ビデオチャットは1対1で動画と音声をやりとりするタイプとする&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;生成したコネクション(&lt;code&gt;RTCPeerConnection&lt;/code&gt;)とローカル / リモートストリーム(&lt;code&gt;RTCMediaStream&lt;/code&gt;)はクラスのプロパティにして、
+必ずstrongで保持されるようにしておくこと&lt;br /&gt;
+これを忘れると正常に接続ができていても画像が出ない原因となるので注意！&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;接続の準備&#34;&gt;接続の準備&lt;/h3&gt;
+
+&lt;p&gt;最初に自分が相手に送る動画と音声のストリームを準備する。
+なお、カメラへのアクセスやカメラのライブ映像の表示はほぼフレームワークがカバーしてくれる&lt;/p&gt;
+
+&lt;h4 id=&#34;ローカルストリームの生成&#34;&gt;ローカルストリームの生成&lt;/h4&gt;
+
+&lt;p&gt;ビデオ（ライブ映像）ストリームを生成して端末のカメラと紐づける&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let factory = RTCPeerConnectionFactory()
+localStream = factory.mediaStream(withStreamId: &amp;quot;MIKE-VIDEOCHAT&amp;quot;)
+let video = factory.avFoundationVideoSource(with: nil)
+let track = factory.videoTrack(with: video, trackId: &amp;quot;MIKE-VIDEOCHAT-V0&amp;quot;)
+localStream.addVideoTrack(track)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;オーディオ（音声）ストリームを生成する
+（こちらは特に指定しなくても端末のマイクと紐付けされるみたい）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;localStream.addAudioTrack(factory.audioTrack(withTrackId: &amp;quot;MIKE-VIDEOCHAT-A0&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;表示用のビューの生成&#34;&gt;表示用のビューの生成&lt;/h4&gt;
+
+&lt;p&gt;相手に送信している映像を確認できるよう、表示用のView
+(&lt;code&gt;RTCEAGLVideoView&lt;/code&gt;というOpenGLを利用して動画を表示する専用のView)
+と端末のカメラを紐づける&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// localView: ViewController内に置いた表示用ビューのコンテナ
+let local = RTCEAGLVideoView(frame: localView.bounds)
+localView.addSubview(local)
+track.add(local)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで端末のフロントカメラの映像が自動で表示されるようになる&lt;/p&gt;
+
+&lt;h4 id=&#34;接続の生成&#34;&gt;接続の生成&lt;/h4&gt;
+
+&lt;p&gt;ビデオチャットなのでVideoとAudioを必須と指定して&lt;code&gt;RTCPeerConnection&lt;/code&gt;を生成する。
+またローカルストリームを接続と紐づけて相手に送信できるようにする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// peer: RTCPeerConnection
+let constraints = RTCMediaConstraints(
+  mandatoryConstraints: [&amp;quot;OfferToReceiveVideo&amp;quot;: kRTCMediaConstraintsValueTrue,
+                         &amp;quot;OfferToReceiveAudio&amp;quot;: kRTCMediaConstraintsValueTrue],
+   optionalConstraints: nil)
+peer = factory.peerConnection(with: RTCConfiguration(),
+                       constraints: constraints,
+                          delegate: self)
+peer.add(localStream)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;接続の開始&#34;&gt;接続の開始&lt;/h3&gt;
+
+&lt;p&gt;接続の準備ができればシグナリングを行なって相手と接続を確立させる&lt;/p&gt;
+
+&lt;p&gt;流れとしては、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;端末Aがofferを送信&lt;/li&gt;
+&lt;li&gt;端末Bが端末Aのofferを受信&lt;/li&gt;
+&lt;li&gt;端末Bが端末Aへanswerを送信&lt;/li&gt;
+&lt;li&gt;端末Aが端末Bのanswerを受信&lt;/li&gt;
+&lt;li&gt;ICEをやりとりしてP2Pで接続を確立&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;となる&lt;/p&gt;
+
+&lt;h4 id=&#34;端末a-offerの送信&#34;&gt;[端末A] offerの送信&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;peer.offer&lt;/code&gt;で生成したローカルの情報を&lt;code&gt;peer.setLocalDescription&lt;/code&gt;で設定すると、
+offerとなる&lt;code&gt;SDP&lt;/code&gt;（Peerの情報）が取得できるので、それを相手へ送信する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;peer.offer(for: constraints) { (description, error) in
+  guard let localDescription = description, error == nil else {
+    print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
+    return
+  }
+  self.peer.setLocalDescription(localDescription) { error in
+    guard error == nil,
+          let state = self.peer.signalingState,
+          case .haveLocalOffer = state else {
+      print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
+      return
+    }
+    // localDescription.sdp(=offer)を相手へ送信する
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;端末b-offerの受信-answerの送信&#34;&gt;[端末B] offerの受信 / answerの送信&lt;/h4&gt;
+
+&lt;p&gt;受信した&lt;code&gt;SDP&lt;/code&gt;から&lt;code&gt;RTCSessionDescription&lt;/code&gt;でリモートの情報を生成し&lt;code&gt;peer.setRemoteDescription&lt;/code&gt;で設定する&lt;/p&gt;
+
+&lt;p&gt;offerを正常に設定できれば、&lt;code&gt;peer.answer&lt;/code&gt;でローカルの情報を生成し&lt;code&gt;peer.setLocalDescription&lt;/code&gt;で設定すると、
+answerとなる&lt;code&gt;SDP&lt;/code&gt;が取得できるので、それを相手へ返信する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// sdp: 受信した端末Aのoffer
+let remoteDescription = RTCSessionDescription(type: .offer, sdp: sdp)
+peer.setRemoteDescription(remoteDescription) { error in
+  guard error == nil,
+        let state = self.peer.signalingState, 
+        case .haveRemoteOffer = state else {
+    print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
+    return
+  }
+  self.peer.answer(for: constraints) { (description, error) in
+    guard let localDescription = description, error == nil else {
+      print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
+      return
+    }
+    self.peer.setLocalDescription(localDescription) { error in
+      guard error == nil else {
+        print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
+        return
+      }
+      // localDescription.sdp(=answer)を相手へ送信する
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;端末a-answerの受信&#34;&gt;[端末A] answerの受信&lt;/h4&gt;
+
+&lt;p&gt;相手から返信された&lt;code&gt;SDP&lt;/code&gt;から&lt;code&gt;RTCSessionDescription&lt;/code&gt;でリモートの情報を生成し&lt;code&gt;peer.setRemoteDescription&lt;/code&gt;で設定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// sdp: 受信した端末Bのanswer
+let remoteDescription = RTCSessionDescription(type: .answer, sdp: sdp)
+peer.setRemoteDescription(remoteDescription) { error in
+  guard error == nil else {
+    print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
+    return
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;iceの送受信&#34;&gt;ICEの送受信&lt;/h4&gt;
+
+&lt;p&gt;SDPのやり取りとは別に通信経路(&lt;code&gt;ICE Candidate&lt;/code&gt;)もやり取りする必要がある&lt;/p&gt;
+
+&lt;p&gt;こちらは単純に相手に渡すべき&lt;code&gt;ICE Candidate&lt;/code&gt;があると、&lt;code&gt;RTCPeerConnectionDelegate&lt;/code&gt;の&lt;code&gt;didGenerate&lt;/code&gt;が呼ばれるのでそれを相手へ送信する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
+  // candidate.sdp(=ICE)を相手へ送信する
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;受信した側は、&lt;code&gt;SDP&lt;/code&gt;から&lt;code&gt;RTCIceCandidate&lt;/code&gt;を生成して&lt;code&gt;RTCPeerConnection&lt;/code&gt;に追加する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let can = RTCIceCandidate(sdp: sdp, sdpMLineIndex: 0, sdpMid: nil)
+peer.add(can)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これは何度か行われる&lt;/p&gt;
+
+&lt;h3 id=&#34;リモートストリームの受信&#34;&gt;リモートストリームの受信&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;ICE&lt;/code&gt;のやり取りで接続が確立されると、&lt;code&gt;RTCPeerConnectionDelegate&lt;/code&gt;の&lt;code&gt;didAdd&lt;/code&gt;が呼び出されて、
+相手側からのリモートストリームが渡される&lt;/p&gt;
+
+&lt;p&gt;今回はVideoとAudioの両方のストリームがくるはずなので、それを表示用のViewと紐づける&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func peerConnection(_ peerConnection: RTCPeerConnection, 
+                       didAdd stream: RTCMediaStream) {
+  // remoteView: ViewController内に置いた表示用ビューのコンテナ
+  let remote = RTCEAGLVideoView(frame: remoteView.bounds)
+  remoteView.addSubview(remote)
+  stream.videoTracks.last?.add(remote)
+  remoteStream = stream
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで相手の映像が表示されてチャットができるようになる&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;macOS 10.12&lt;/li&gt;
+&lt;li&gt;Xcode 8.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/WebRTCVideoChat&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>MultipeerConnectivityでP2P通信</title>
@@ -1822,206 +2062,6 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;li&gt;Xcode 7.3&lt;/li&gt;
 &lt;li&gt;iOS 9.3.2&lt;/li&gt;
 &lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Perfect 基礎編</title>
-      <link>https://mike-neko.github.io/blog/perfect-2/</link>
-      <pubDate>Sun, 10 Apr 2016 23:09:11 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/perfect-2/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその2&lt;/p&gt;
-
-&lt;p&gt;基礎編ではルーティングやリクエストの処理方法のあたりまで&lt;/p&gt;
-
-&lt;h2 id=&#34;urlルーティング&#34;&gt;URLルーティング&lt;/h2&gt;
-
-&lt;p&gt;サンプルを見ると、ルーティングは大きくわけて&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;mustache&lt;/code&gt;テンプレートエンジンのページを&lt;code&gt;PageHandler&lt;/code&gt;に登録&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Routing&lt;/code&gt;に&lt;code&gt;RequestHandler&lt;/code&gt;を登録&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;の2種類がある様子。&lt;/p&gt;
-
-&lt;p&gt;設定はいずれも&lt;code&gt;PerfectServerModuleInit()&lt;/code&gt;の中で行う。&lt;/p&gt;
-
-&lt;h3 id=&#34;pagehandlerでのルーティング&#34;&gt;PageHandlerでのルーティング&lt;/h3&gt;
-
-&lt;p&gt;Webアプリなどでの固定ページの表示向け。&lt;br /&gt;
-公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/PerfectExamples/blob/master/Sources/Authenticator/#authenticator&#34;&gt;Authenticator&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;例えば、&lt;code&gt;http://0.0.0.0:8181/admin/&lt;/code&gt;というページを表示させたい時の流れとしては、&lt;/p&gt;
-
-&lt;h4 id=&#34;表示するページを-mustache-のテンプレートで作成&#34;&gt;表示するページを&lt;code&gt;mustache&lt;/code&gt;のテンプレートで作成&lt;/h4&gt;
-
-&lt;p&gt;例だと&lt;code&gt;admin.mustache&lt;/code&gt;というファイル名にし、先頭のところで&lt;code&gt;handler:AdminHandler&lt;/code&gt;と指定する。&lt;br /&gt;
-ポイントは、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;先頭の&lt;code&gt;handler:&lt;/code&gt;の部分で対応する&lt;code&gt;PageHandler&lt;/code&gt;の名前を指定&lt;/li&gt;
-&lt;li&gt;ファイル名がアクセスする際のディレクトリと対応&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;テンプレートをプロジェクトへ追加&#34;&gt;テンプレートをプロジェクトへ追加&lt;/h4&gt;
-
-&lt;p&gt;後述の小ネタにある「ドキュメントの配置」の方法で、&lt;code&gt;admin.mustache&lt;/code&gt;がドキュメントルートへ配置されるように設定する。&lt;/p&gt;
-
-&lt;h4 id=&#34;pagehandler-を作成&#34;&gt;&lt;code&gt;PageHandler&lt;/code&gt;を作成&lt;/h4&gt;
-
-&lt;p&gt;ページにアクセスがあった時の処理を行う為の&lt;code&gt;PageHandler&lt;/code&gt;を継承したクラスを作る。&lt;br /&gt;
-（クラス名は任意だが、わかりやすいように&lt;code&gt;AdminHandler&lt;/code&gt;としておく）&lt;/p&gt;
-
-&lt;p&gt;作ったクラスを&lt;code&gt;PageHandlerRegistry.addPageHandler&lt;/code&gt;で登録する。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;PageHandlerRegistry.addPageHandler(&amp;quot;AdminHandler&amp;quot;) {
-// (r: WebResponse) -&amp;gt; PageHandler in
-  return AdminHandler()
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ポイントは、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;addPageHandler&lt;/code&gt;の一つ目の引数の文字列は、テンプレートの中で指定したhandlerと同じにする&lt;/li&gt;
-&lt;li&gt;リクエストの詳細な情報で分岐させたい時は、コメントアウトを外し&lt;code&gt;WebResponse&lt;/code&gt;の情報を使う&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;code&gt;PageHandler&lt;/code&gt;の中では、テンプレートに流し込む変数のDictionaryを生成する。&lt;/p&gt;
-
-&lt;h3 id=&#34;requesthandlerでのルーティング&#34;&gt;RequestHandlerでのルーティング&lt;/h3&gt;
-
-&lt;p&gt;APIとかブログのような動的なページ向け。&lt;br /&gt;
-公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/PerfectExamples/blob/master/Sources/URL%20Routing/#url-routing&#34;&gt;URL Routing&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;例えば、REST APIで&lt;code&gt;http://0.0.0.0:8181/user/mike&lt;/code&gt;の&lt;code&gt;GET&lt;/code&gt;でmikeというユーザの情報を取得したい時の流れとしては、&lt;/p&gt;
-
-&lt;h4 id=&#34;ルーティングを設定&#34;&gt;ルーティングを設定&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Routing&lt;/code&gt;でルーティングのルール（HTTPのメソッドやURLなど）を&lt;code&gt;RouteMap&lt;/code&gt;を使って設定する。&lt;/p&gt;
-
-&lt;p&gt;例だと、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Routing.Routes[&amp;quot;GET&amp;quot;, &amp;quot;/user/{id}&amp;quot;] = { _ in return UserHandler() }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;となる。ポイントは、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;HTTPのメソッドが指定できる&lt;br /&gt;
-（指定する場合は一つ目にする）&lt;/li&gt;
-&lt;li&gt;URL部分は配列で複数指定できる&lt;/li&gt;
-&lt;li&gt;ルール部分では&lt;code&gt;{}&lt;/code&gt;で囲うと&lt;code&gt;RequestHandler&lt;/code&gt;へ値を渡せる&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;*&lt;/code&gt;が使える&lt;/li&gt;
-&lt;li&gt;クロージャで対応する&lt;code&gt;RequestHandler&lt;/code&gt;を指定する&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;requesthandler-を作成&#34;&gt;&lt;code&gt;RequestHandler&lt;/code&gt;を作成&lt;/h4&gt;
-
-&lt;p&gt;クライアントへ返すレスポンスを生成する為の&lt;code&gt;RequestHandler&lt;/code&gt;を継承したクラスを作る。&lt;br /&gt;
-（クラス名は任意だが、わかりやすいように&lt;code&gt;UserHandler&lt;/code&gt;としておく）&lt;/p&gt;
-
-&lt;p&gt;URLで指定されたユーザ名をそのままJSONで返す場合は以下の感じ。
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/55c5d91b5b1d7a309289f5d0b2a12edd.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
-
-&lt;p&gt;これで、&lt;code&gt;http://0.0.0.0:8181/user/mike&lt;/code&gt;にアクセスすると&lt;code&gt;{ user: &amp;quot;mike&amp;quot; }&lt;/code&gt;と返ってくる。&lt;/p&gt;
-
-&lt;h4 id=&#34;ルーティング設定の確認&#34;&gt;ルーティング設定の確認&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Routing.Routes.description&lt;/code&gt;で設定をダンプできる。これ、かなり便利！&lt;/p&gt;
-
-&lt;h2 id=&#34;リクエストの処理&#34;&gt;リクエストの処理&lt;/h2&gt;
-
-&lt;p&gt;URLパラメータやPOSTのボディの中身は、&lt;code&gt;WebRequest&lt;/code&gt;の中に格納されている。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;http://0.0.0.0:8181/hoge?key1=value1&amp;amp;key2=value2&lt;/code&gt;とした場合、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func handleRequest(request: WebRequest, response: WebResponse) {
-  request.queryString()  // key1=value1&amp;amp;key2=value2
-  request.queryParams    // [(&amp;quot;key1&amp;quot;, &amp;quot;value1&amp;quot;), (&amp;quot;key2&amp;quot;, &amp;quot;value2&amp;quot;)]
-  request.params()       // [(&amp;quot;key1&amp;quot;, &amp;quot;value1&amp;quot;), (&amp;quot;key2&amp;quot;, &amp;quot;value2&amp;quot;)]
-  request.param(&amp;quot;key1&amp;quot;)  // value1
-  request.param(&amp;quot;key3&amp;quot;, defaultValue: &amp;quot;value3&amp;quot;)  // value3
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;POSTで&lt;code&gt;{ &amp;quot;count&amp;quot;=100 }&lt;/code&gt;を送った場合、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func handleRequest(request: WebRequest, response: WebResponse) {
-  let body = request.postBodyString
-  let json = try! JSONDecoder().decode(body) as! JSONDictionaryType
-  json[&amp;quot;count&amp;quot;]  // 100
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;といった感じで取得できる。&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;h3 id=&#34;ドキュメントの配置&#34;&gt;ドキュメントの配置&lt;/h3&gt;
-
-&lt;p&gt;Xcode経由で起動している時に、サーバからドキュメントへアクセスできるようにする方法。なお、ドキュメントルートはデフォルトで&lt;code&gt;./webroot/&lt;/code&gt;が設定されている。&lt;/p&gt;
-
-&lt;h4 id=&#34;documentrootのパスを変更する&#34;&gt;DocumentRootのパスを変更する&lt;/h4&gt;
-
-&lt;p&gt;状況によってはソースから改変するのもアリだが、起動時に立ち上がるGUIから変更するのが手軽。&lt;code&gt;Choose...&lt;/code&gt;でフォルダ位置を選択できる。ただし、注意すべきなのは&lt;code&gt;Document Root&lt;/code&gt;のテキストフィールド内でキー操作(return)しないと変更と認識されずに保存されない点（これにはまってソースまで見てようやく気付いた・・・）。変更後はサーバの再起動が必要（というか勝手にされるはず）。&lt;/p&gt;
-
-&lt;p&gt;この方法だとサーバを起動したままでもドキュメントを変更できるが、一方でパスの設定が必要となる。&lt;/p&gt;
-
-&lt;h4 id=&#34;ビルドでファイルを配置する&#34;&gt;ビルドでファイルを配置する&lt;/h4&gt;
-
-&lt;p&gt;前回の導入編で使った方法で、デフォルトの&lt;code&gt;./webroot/&lt;/code&gt;を使いたい場合用。&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;作成したプロジェクトを選択&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;TARGETS&lt;/code&gt;でプロジェクト名と同じもの、&lt;code&gt;Build Phases&lt;/code&gt;タブを選択&lt;/li&gt;
-&lt;li&gt;左上の&lt;code&gt;＋&lt;/code&gt;をクリックして、&lt;code&gt;New Copy Files Phases&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Destination&lt;/code&gt;で&lt;code&gt;Products Directory&lt;/code&gt;を選択&lt;br /&gt;
-&lt;code&gt;Subpath&lt;/code&gt;に&lt;code&gt;webroot&lt;/code&gt;と入力&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Name&lt;/code&gt;の下の方にある&lt;code&gt;＋&lt;/code&gt;をクリックし、追加ファイルを選択して&lt;code&gt;Add&lt;/code&gt;&lt;br /&gt;
-（プロジェクトに未追加のファイルの場合は&lt;code&gt;Add Other...&lt;/code&gt;からで）&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;同一lan内からのアクセス&#34;&gt;同一LAN内からのアクセス&lt;/h3&gt;
-
-&lt;p&gt;例えば同じルータに繋がっているiPhoneから、Mac上で動いているPerfectのサーバに接続する方法。&lt;/p&gt;
-
-&lt;p&gt;起動時に立ち上がるGUIの&lt;code&gt;Server Address&lt;/code&gt;をMacに割り当てられているIPアドレスに変更すればOK。
-（変更後にreturnで確定を忘れずに・・・）
-ポートも変更できるが、&lt;code&gt;80&lt;/code&gt;とかはroot権限が必要と怒られて変更できないので注意。&lt;/p&gt;
-
-&lt;p&gt;（今回は既に&lt;a href=&#34;../docker/&#34;&gt;Docker+nginxを構築&lt;/a&gt;してあったので、nginxのリバースプロキシの設定でさくっと対応）&lt;/p&gt;
-
-&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
-
-&lt;p&gt;普段、クライアント（iOSアプリ）側で使っている開発環境と全く同じ環境でサーバの開発が出来るというのは、
-想像以上に便利というかストレスフリーな感じ。&lt;/p&gt;
-
-&lt;p&gt;もちろん、PerfectではCocoaが使えないというのはあるし、物足りない感じはしなくも無いが。。。&lt;/p&gt;
-
-&lt;p&gt;ただ、そのあたりのカバーを目指しての&lt;code&gt;Perfect&lt;/code&gt;という命名なんだろうと勝手に想像。&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.chrismanahan.com/creating-a-web-service-swift-perfect&#34;&gt;Creating a Web Service for Your App in Swift with Perfect&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.4&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Xcode 7.3&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Perfect 導入編&lt;a href=&#34;../perfect-1/&#34;&gt;その1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Perfect APNs編&lt;a href=&#34;../perfect-push/&#34;&gt;その3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
