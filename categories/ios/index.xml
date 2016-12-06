@@ -6,8 +6,150 @@
     <description>Recent content in Ios on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 30 Nov 2016 01:38:22 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 06 Dec 2016 22:04:28 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>multipart/form-dataによるファイルのアップロード</title>
+      <link>https://mike-neko.github.io/blog/multipart/</link>
+      <pubDate>Tue, 06 Dec 2016 22:04:28 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/multipart/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;（&lt;code&gt;Alamofire&lt;/code&gt;とかのライブラリを使った方が幸せになれると思うが）
+HTMLのフォームからの送信と同じ様な&lt;code&gt;multipart&lt;/code&gt;によるアップロードをiOSからする方法&lt;/p&gt;
+
+&lt;h2 id=&#34;要件&#34;&gt;要件&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;タイトル（文字列）とファイルを一緒にサーバへアップロード&lt;/li&gt;
+&lt;li&gt;アップロード先は同じホストの&lt;code&gt;upload.php&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;サーバからはjsonで結果が返ってくる&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;htmlの場合&#34;&gt;HTMLの場合&lt;/h2&gt;
+
+&lt;p&gt;上記要件でかつアップロードと同じ画面内で結果を表示させたい場合、
+&lt;code&gt;jQuery&lt;/code&gt;などを全く使わずに素のHTMLで書くと&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/9c53de2d62a4be94dd26131479b52c6f.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;もし、ajaxではなく送信結果は次の画面で表示させる様な場合だと&lt;code&gt;&amp;lt;form&amp;gt;&lt;/code&gt;タグは
+&lt;code&gt;&amp;lt;form name=&amp;quot;upload&amp;quot; enctype=&amp;quot;multipart/form-data&amp;quot; action=&amp;quot;upload.php&amp;quot; method=&amp;quot;post&amp;quot;&amp;gt;&lt;/code&gt;
+とする必要がある&lt;/p&gt;
+
+&lt;h2 id=&#34;iosの場合&#34;&gt;iOSの場合&lt;/h2&gt;
+
+&lt;p&gt;もし単一のファイルのアップロードだけなら、&lt;code&gt;URLSession&lt;/code&gt;の&lt;code&gt;uploadTask(with:〜&lt;/code&gt;でOKだが、
+他のデータやファイルも付加したい場合は自分で&lt;code&gt;multipart&lt;/code&gt;のリクエストを生成する必要がある&lt;/p&gt;
+
+&lt;p&gt;とりあえずHTMLと同じものをベタ書き(+エラー省略)すると、&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/3825cf1ea22cb4f1a1469a33c44097ff.js&#34;&gt;&lt;/script&gt;
+
+&lt;h3 id=&#34;boundary文字列&#34;&gt;boundary文字列&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;multipart&lt;/code&gt;の場合、データの区切りを表すためにデータ内に含まれない様なバウンダリ文字列が必要となる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let boundary = String(format: &amp;quot;----iOSURLSessionBoundary.%08x%08x&amp;quot;, arc4random(), arc4random())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;今回は&lt;code&gt;Alamofire&lt;/code&gt;を参考に送信元のプログラムとランダムな数字を組合せた文字列を生成している&lt;/p&gt;
+
+&lt;h3 id=&#34;bodyの生成&#34;&gt;bodyの生成&lt;/h3&gt;
+
+&lt;p&gt;フォームのデータの場合の構造は&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)[CRLF]
+Content-Disposition: form-data; name=&amp;quot;フォームの名前&amp;quot;[CRLF]
+[CRLF]
+(フォームのデータ)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;となる&lt;/p&gt;
+
+&lt;p&gt;ファイルの場合の構造は&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)[CRLF]
+Content-Disposition: form-data; name=&amp;quot;フォームの名前&amp;quot;; filename=&amp;quot;ファイル名&amp;quot;[CRLF]
+Content-Type: &amp;quot;ファイルのタイプ&amp;quot;[CRLF]
+[CRLF]
+(ファイルのデータ)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;となる&lt;/p&gt;
+
+&lt;p&gt;各構造をバイナリ(&lt;code&gt;Data&lt;/code&gt;型)にしたものを必要な分だけ組合せて、最後に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)--[CRLF]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;をつけたものがbody部分のデータとなる&lt;/p&gt;
+
+&lt;p&gt;今回の例だとフォームデータが一つとファイルデータが一つなので、
+それぞれ一つずつを追加し最後にフッタを付けたものをbodyに入れている&lt;/p&gt;
+
+&lt;h3 id=&#34;headerの生成&#34;&gt;headerの生成&lt;/h3&gt;
+
+&lt;p&gt;フィールドにセットすべきなのは以下の2つ&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&amp;ldquo;Content-Type&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;Content-Length&amp;rdquo;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;code&gt;Content-Type&lt;/code&gt;にはタイプとバウンダリ文字列を以下のように指定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;multipart/form-data; boundary=（バウンダリ文字列）
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;Content-Length&lt;/code&gt;は普通にbodyのサイズを入れればOK&lt;/p&gt;
+
+&lt;h3 id=&#34;送信&#34;&gt;送信&lt;/h3&gt;
+
+&lt;p&gt;送信は&lt;code&gt;uploadTask&lt;/code&gt;だと&lt;code&gt;multipart&lt;/code&gt;指定ができないので&lt;code&gt;dataTask&lt;/code&gt;で行う。
+それ以外は通常の&lt;code&gt;dataTask&lt;/code&gt;のやり方でOK&lt;/p&gt;
+
+&lt;h2 id=&#34;参考-サーバの処理-php&#34;&gt;参考：サーバの処理(PHP)&lt;/h2&gt;
+
+&lt;p&gt;今回サーバ側で検証用に使ったのは以下のソース&lt;br /&gt;
+（送信されてきたファイルはそのまま専用のディレクトリに格納し結果をJSONで返すだけ）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// &amp;quot;upload&amp;quot;のディレクトリに書き込み権限が必要
+$dir = __DIR__ . &#39;/upload/&#39;;
+$path = $dir . basename($_FILES[&#39;filename&#39;][&#39;name&#39;]);
+
+$data[&#39;result&#39;] = &#39;アップロード失敗&#39;;
+if (move_uploaded_file($_FILES[&#39;filename&#39;][&#39;tmp_name&#39;], $path)) {
+    chmod($path, 0666);
+    $data[&#39;result&#39;] = date(&amp;quot;H:i:s&amp;quot;) . &#39; &#39; . $_POST[&#39;title&#39;] . &#39; アップロード成功&#39;;
+}
+
+header(&#39;Content-Type: application/json&#39;);
+echo json_encode($data);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式：&lt;a href=&#34;http://php.net/manual/ja/features.file-upload.post-method.php&#34;&gt;POST メソッドによるアップロード&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;MDN公式：&lt;a href=&#34;https://developer.mozilla.org/ja/docs/Web/Guide/Using_FormData_Objects&#34;&gt;FormData オブジェクトの利用&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
+&lt;li&gt;PHP 7&lt;/li&gt;
+&lt;li&gt;Chrome&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>WebRTCをiOSネイティブで使う(実装編)</title>
@@ -1815,81 +1957,6 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/QRReader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>QRコードの読み取りサンプル(Swift) その1</title>
-      <link>https://mike-neko.github.io/blog/code-reader/</link>
-      <pubDate>Wed, 15 Jun 2016 22:52:40 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/code-reader/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル。&lt;/p&gt;
-
-&lt;p&gt;なお、QRコードに限らず、他のバーコードや顔認識にも対応。対応形式は&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/AVFoundation/Reference/AVMetadataMachineReadableCodeObject_Class/index.html#//apple_ref/doc/constant_group/Machine_Readable_Object_Types&#34;&gt;公式&lt;/a&gt;を参照。地味にiOS8から対応形式が増えている。&lt;/p&gt;
-
-&lt;p&gt;あと、2次元なら同時認識できたりするが、その辺りの詳細は参考リンクの公式FAQが詳しい。&lt;/p&gt;
-
-&lt;p&gt;コード認識自体はもっと詳しい説明がいろんなとこにあるので、ここは他で説明していなそうなところだけ。&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;h3 id=&#34;シリアルキューの利用&#34;&gt;シリアルキューの利用&lt;/h3&gt;
-
-&lt;p&gt;カメラの起動や画像認識は処理が重いので、それぞれ専用のシリアルキューを作成して利用している。&lt;/p&gt;
-
-&lt;p&gt;カメラの設定周りはフリーズ状態になるのを防ぐためだが、最近の端末は起動が早いらしく、キューを使わなくても特に問題無い感じ。&lt;/p&gt;
-
-&lt;h3 id=&#34;avmetadatamachinereadablecodeobject&#34;&gt;AVMetadataMachineReadableCodeObject&lt;/h3&gt;
-
-&lt;p&gt;認識されたコードは&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;のオブジェクトの配列で渡される。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;type&lt;/code&gt;：認識されたコードのフォーマットが逆DNS形式で返ってくる&lt;br /&gt;
-(QRの場合は&lt;code&gt;org.iso.QRCode&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;stringValue&lt;/code&gt;：コードに含まれるデータ&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;プレビュー画面上に認識したコードの枠を表示する&#34;&gt;プレビュー画面上に認識したコードの枠を表示する&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;の中の&lt;code&gt;corners&lt;/code&gt;にコードの座標位置が含まれているが、これはプレビューのViewの座標系とは異なるので、そのままでは使えない。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;AVCaptureVideoPreviewLayer&lt;/code&gt;の&lt;code&gt;transformedMetadataObjectForMetadataObject&lt;/code&gt;で変換後の座標が入った&lt;code&gt;AVMetadataObject&lt;/code&gt;が取得できるので、その中の&lt;code&gt;bounds&lt;/code&gt;を使って枠線を描画している。&lt;/p&gt;
-
-&lt;p&gt;（以前は手動でちゃんとプレビュー画面上の座標に変換していたが、今回、この簡単に変換できるメソッドを発見！&lt;code&gt;AVCaptureVideoPreviewLayer&lt;/code&gt;の方もちゃんと調べていれば・・・）&lt;/p&gt;
-
-&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
-
-&lt;p&gt;昔iOS7で使えるようになった時に試したものを、Swiftで書き直し＋αしたコード。やはりSwiftはわかりやすく、かつエラー処理もしっかり書いても、Objective-Cよりコードが少ないので良い。&lt;/p&gt;
-
-&lt;p&gt;以前は結構カメラの起動もコードの読み取りも時間がかかっていたのだが、今回はかなりスピードアップした感じがした。iPhoneのカメラの進化もすごいということか。ただ、バッテリーには優しくないので常に使うのは厳しそう・・・&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;あと、カメラをわざわざ起動しなくても画像を直接認識してくれるようになって欲しい。&lt;/del&gt;
-(6/17追記：方法が判ったので&lt;a href=&#34;../qr-reader/&#34;&gt;その2&lt;/a&gt;を作成した)&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/technotes/tn2325/_index.html&#34;&gt;AV Foundation iOS Machine Readable Code Detection FAQ&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 7.3&lt;/li&gt;
-&lt;li&gt;iOS 9.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/CodeReader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;カメラ不要なバージョンは&lt;a href=&#34;../qr-reader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
