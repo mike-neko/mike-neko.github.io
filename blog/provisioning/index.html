@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>WebRTCをiOSネイティブで使う(準備編) &middot; M.Ike</title>
+  <title>Provisioning Profileの有効期限をアプリ内で取得 &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -96,82 +96,59 @@
 
 <div class="content container">
   <div class="post">
-    <h1>WebRTCをiOSネイティブで使う(準備編)</h1>
-    <span class="post-date">Nov 29, 2016 
+    <h1>Provisioning Profileの有効期限をアプリ内で取得</h1>
+    <span class="post-date">Dec 7, 2016 
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/memo">memo</a>
+    <a class="label" href="https://mike-neko.github.io/categories/ios">ios</a><a class="label" href="https://mike-neko.github.io/categories/code">code</a><a class="label" href="https://mike-neko.github.io/categories/memo">memo</a>
     </span>
     
 
 <h2 id="概要">概要</h2>
 
-<p>iOSのブラウザでは<code>WebRTC</code>がサポートされていないので、利用したい場合は
-ネイティブのフレームワークを使う必要がある。</p>
+<p><code>AdHoc</code>で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
+その有効期限をアプリ内から確認する方法</p>
 
-<p>今回の準備編では公式のフレームワークを使うにあたってフレームワークの生成と組み込みまでの手順について</p>
+<p>確認自体はipaを解凍して見れば良いのだけど、エンタープライズの様にアプリ内で出したい場合は、
+この方法であらかじめ設定画面とかに仕込むと良いかもしれない</p>
 
-<p>ただ、これが結構面倒で、ソースをダウンロードして一からビルドしないといけないし、
-その方法が公式に明記されていないというおまけ付き</p>
+<p>もちろん<code>Settings.bundle</code>や直接アプリ内にリテラルとして持たすのも方法の一つだが、
+それだと更新の度に余分な作業が発生したり更新忘れとかのミスも発生したりしがちなので、
+この方法に行き着いた感じ</p>
 
-<p>普段、GitHubやCarthageに頼りきっている身には大変だった・・・</p>
+<p>（プロビジョニングプロファイルはアーカイブ時に確定されるので、
+アプリバージョンのようにビルドスクリプトに仕込んでといった技は使えない。
+Xcode7以前はdryrunでビルド設定を出力させてそこから特定ということもできたが、
+Xcode8からの自動にした場合は使えないっぽい）</p>
 
-<h2 id="フレームワークの生成">フレームワークの生成</h2>
+<h2 id="方法">方法</h2>
 
-<p>まずは、作業用の適当なフォルダを作っておく</p>
-
-<pre><code>mkdir 作業用のフォルダ
-cd 作業用のフォルダ
-</code></pre>
-
-<p>ビルド用のツールをインストールする</p>
-
-<pre><code>brew update
-brew install git
-brew install python
-git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-</code></pre>
-
-<p>ソースをダウンロードする</p>
-
-<p><strong><em>以下、ものすごく時間と容量をくうので注意！</em></strong></p>
-
-<pre><code>export PATH=`pwd`/depot_tools:&quot;$PATH&quot;
-fetch --nohooks webrtc_ios
-gclient sync
-</code></pre>
-
-<p>ビルドする</p>
-
-<pre><code>cd src
-webrtc/build/ios/build_ios_libs.sh
-</code></pre>
-
-<p>成功すれば、<code>src/out_ios_libs/</code>の中に<code>WebRTC.framework</code>ができている</p>
-
-<h2 id="組み込み">組み込み</h2>
-
-<p>組み込み自体は他のサードパーティのフレームワークと一緒だが、ポイントは</p>
+<p>ipa作成時のプロビジョニングプロファイルについてまとめると、</p>
 
 <ul>
-<li><code>Embedded Binaries</code>で追加</li>
-<li><code>Build Settings</code>で<code>Bitcode</code>を無効にする</li>
+<li>プロビジョニングプロファイルの中身はほぼ<code>plist</code>(XML)</li>
+<li>有効期限はプロビジョニングプロファイルの中の<code>ExpirationDate</code>に<code>Date</code>(NSDate)で記載</li>
+<li>プロビジョニングプロファイルはアプリのパッケージの中に
+<code>embedded.mobileprovision</code>という名前で同梱</li>
 </ul>
 
-<p>というあたり</p>
+<p>これを踏まえてコードにすると、以下の感じになる</p>
 
-<p>また、<code>Video</code>を使う場合はシミュレータが使えないので注意</p>
+<script type="text/javascript" src="https://gist.github.com/bdbedbb280883dff96b6a5a7062c67bd.js"></script>
 
-<h1 id="参考リンク">参考リンク</h1>
+<p>まずは1行目にあるように、同梱されているプロビジョニングを取得する<br />
+<strong>デバッグ実行時には正しく取得できないので注意！</strong></p>
 
-<ul>
-<li><a href="https://webrtc.org/native-code/">WebRTC公式</a></li>
-</ul>
+<p>次に5〜14行目にあるように、<code>plist</code>として必要な部分のみに加工。
+（不要部分があると変換に失敗するので）<br />
+抜き出したら<code>PropertyListSerialization</code>で<code>Dictionary</code>に変換して有効期限を抜き出す</p>
+
+<p>あとは、画面に表示させる為に文字列に変換してやって完了
+（例では余裕を持って1日前の日付にしている）</p>
 
 <h1 id="開発環境">開発環境</h1>
 
 <ul>
-<li>macOS 10.12</li>
 <li>Xcode 8.1</li>
 <li>iOS 9.3.2 / 10.1.1</li>
 <li>iPhone 6+ / 7+</li>

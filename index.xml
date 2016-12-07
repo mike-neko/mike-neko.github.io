@@ -6,8 +6,68 @@
     <description>Recent content on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Tue, 06 Dec 2016 22:04:28 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 07 Dec 2016 19:18:57 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Provisioning Profileの有効期限をアプリ内で取得</title>
+      <link>https://mike-neko.github.io/blog/provisioning/</link>
+      <pubDate>Wed, 07 Dec 2016 19:18:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/provisioning/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;AdHoc&lt;/code&gt;で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
+その有効期限をアプリ内から確認する方法&lt;/p&gt;
+
+&lt;p&gt;確認自体はipaを解凍して見れば良いのだけど、エンタープライズの様にアプリ内で出したい場合は、
+この方法であらかじめ設定画面とかに仕込むと良いかもしれない&lt;/p&gt;
+
+&lt;p&gt;もちろん&lt;code&gt;Settings.bundle&lt;/code&gt;や直接アプリ内にリテラルとして持たすのも方法の一つだが、
+それだと更新の度に余分な作業が発生したり更新忘れとかのミスも発生したりしがちなので、
+この方法に行き着いた感じ&lt;/p&gt;
+
+&lt;p&gt;（プロビジョニングプロファイルはアーカイブ時に確定されるので、
+アプリバージョンのようにビルドスクリプトに仕込んでといった技は使えない。
+Xcode7以前はdryrunでビルド設定を出力させてそこから特定ということもできたが、
+Xcode8からの自動にした場合は使えないっぽい）&lt;/p&gt;
+
+&lt;h2 id=&#34;方法&#34;&gt;方法&lt;/h2&gt;
+
+&lt;p&gt;ipa作成時のプロビジョニングプロファイルについてまとめると、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;プロビジョニングプロファイルの中身はほぼ&lt;code&gt;plist&lt;/code&gt;(XML)&lt;/li&gt;
+&lt;li&gt;有効期限はプロビジョニングプロファイルの中の&lt;code&gt;ExpirationDate&lt;/code&gt;に&lt;code&gt;Date&lt;/code&gt;(NSDate)で記載&lt;/li&gt;
+&lt;li&gt;プロビジョニングプロファイルはアプリのパッケージの中に
+&lt;code&gt;embedded.mobileprovision&lt;/code&gt;という名前で同梱&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;これを踏まえてコードにすると、以下の感じになる&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bdbedbb280883dff96b6a5a7062c67bd.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;まずは1行目にあるように、同梱されているプロビジョニングを取得する&lt;br /&gt;
+&lt;strong&gt;デバッグ実行時には正しく取得できないので注意！&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;次に5〜14行目にあるように、&lt;code&gt;plist&lt;/code&gt;として必要な部分のみに加工。
+（不要部分があると変換に失敗するので）&lt;br /&gt;
+抜き出したら&lt;code&gt;PropertyListSerialization&lt;/code&gt;で&lt;code&gt;Dictionary&lt;/code&gt;に変換して有効期限を抜き出す&lt;/p&gt;
+
+&lt;p&gt;あとは、画面に表示させる為に文字列に変換してやって完了
+（例では余裕を持って1日前の日付にしている）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>multipart/form-dataによるファイルのアップロード</title>
@@ -1812,120 +1872,6 @@ NotificationCenter.default.addObserver(self,
 &lt;li&gt;OS X 10.12.0&lt;/li&gt;
 &lt;li&gt;Xcode 8.0 / Swift3&lt;/li&gt;
 &lt;li&gt;iOS 10.0.2&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>さくらのレンタルサーバでredisを使う</title>
-      <link>https://mike-neko.github.io/blog/redis-sakura/</link>
-      <pubDate>Sat, 15 Oct 2016 21:53:49 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/redis-sakura/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;さくらのレンタルサーバ（スタンダード）に&lt;a href=&#34;http://redis.io/&#34;&gt;redis&lt;/a&gt;をインストールする方法のメモ&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Laravel&lt;/code&gt;のキューを使うついでに、せっかくなので&lt;code&gt;redis&lt;/code&gt;を使えるようにしてみる。
-&lt;code&gt;Laravel&lt;/code&gt;をさくらで使うあたりは&lt;a href=&#34;../laravel-sakura/&#34;&gt;以前の記事&lt;/a&gt;を参照&lt;/p&gt;
-
-&lt;h2 id=&#34;インストール&#34;&gt;インストール&lt;/h2&gt;
-
-&lt;h3 id=&#34;ソースを展開&#34;&gt;ソースを展開&lt;/h3&gt;
-
-&lt;p&gt;SSHでログインして公式の手順通り以下の様にする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% wget http://download.redis.io/releases/redis-3.2.0.tar.gz
-% tar xzf redis-3.2.0.tar.gz
-% cd redis-3.2.0
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;最新版(Ver.3.2.4)では、権限絡みで&lt;code&gt;make&lt;/code&gt;に失敗する為、少し古いバージョンを使っているのがポイント&lt;/p&gt;
-
-&lt;h3 id=&#34;インストール先の変更&#34;&gt;インストール先の変更&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;src/Makefile&lt;/code&gt;を開く
-（&lt;code&gt;redis-3.2.0&lt;/code&gt;直下にも&lt;code&gt;Makefile&lt;/code&gt;があるので間違わないこと）&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;PREFIX?=&lt;/code&gt;という行を以下の様に書き換えて保存する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;PREFIX?=/home/アカウント名
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;make&#34;&gt;make&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;% gmake
-% gmake install
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;さくらのサーバはBSD系なので&lt;code&gt;gmake&lt;/code&gt;を使ってインストールを実行。
-これで、&lt;code&gt;~/bin&lt;/code&gt;に&lt;code&gt;redis&lt;/code&gt;関連がインストールされる&lt;/p&gt;
-
-&lt;p&gt;もし、&lt;code&gt;~/bin&lt;/code&gt;にパスが通っていなければ通しておくと便利&lt;/p&gt;
-
-&lt;h3 id=&#34;実行&#34;&gt;実行&lt;/h3&gt;
-
-&lt;p&gt;一旦、SSHをログアウトしてログインしなおしてから&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% nohup redis-server &amp;lt; /dev/null &amp;gt;&amp;amp; /dev/null &amp;amp;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;として、&lt;code&gt;redis&lt;/code&gt;サーバをバックグラウンド起動する&lt;/p&gt;
-
-&lt;p&gt;確認のため、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% redis-cli
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;として、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;127.0.0.1:6379&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;というようになればOK。失敗している時は&lt;code&gt;not connected&amp;gt;&lt;/code&gt;となる&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;この時に表示されているサーバのIPとポート番号を覚えておくこと&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;確認が終了すれば、&lt;code&gt;exit&lt;/code&gt;で抜ける（&lt;code&gt;shatdown&lt;/code&gt;にするとサーバまで止まるのでNG）&lt;/p&gt;
-
-&lt;h2 id=&#34;laravelで使う&#34;&gt;Laravelで使う&lt;/h2&gt;
-
-&lt;h3 id=&#34;パッケージの準備&#34;&gt;パッケージの準備&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;Laravel&lt;/code&gt;で&lt;code&gt;redis&lt;/code&gt;を使うには&lt;code&gt;predis/predis&lt;/code&gt;が必要なので、&lt;code&gt;Composer&lt;/code&gt;でインストールしておく&lt;/p&gt;
-
-&lt;h3 id=&#34;設定&#34;&gt;設定&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;config/database.php&lt;/code&gt;の中の&lt;code&gt;redis&lt;/code&gt;を設定する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&#39;redis&#39; =&amp;gt; [
-
-  &#39;cluster&#39; =&amp;gt; false,
-
-  &#39;default&#39; =&amp;gt; [
-    &#39;host&#39;     =&amp;gt; &#39;127.0.0.1&#39;,      // redis-cliで確認したIP
-    &#39;port&#39;     =&amp;gt; 6379,             // redis-cliで確認したポート
-    &#39;database&#39; =&amp;gt; 0,
-  ],
-],
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;なお&lt;code&gt;.env&lt;/code&gt;を使う場合、&lt;code&gt;database&lt;/code&gt;の部分は&lt;code&gt;intval(env(&#39;REDIS_DATABASE&#39;, 0))&lt;/code&gt;というように明示的にintにしないとエラーになるので注意&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;以上で、&lt;code&gt;Laravel&lt;/code&gt;からも&lt;code&gt;redis&lt;/code&gt;が使える様になる&lt;/p&gt;
-
-&lt;h2 id=&#34;環境&#34;&gt;環境&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Laravel 5.1&lt;/li&gt;
-&lt;li&gt;さくらのレンタルサーバ（スタンダード）
-
-&lt;ul&gt;
-&lt;li&gt;PHP 5.6&lt;/li&gt;
-&lt;li&gt;redis 3.2.0&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
