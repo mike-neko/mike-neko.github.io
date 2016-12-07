@@ -6,8 +6,68 @@
     <description>Recent content in Memo on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Tue, 29 Nov 2016 23:24:55 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 07 Dec 2016 19:18:57 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/memo/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Provisioning Profileの有効期限をアプリ内で取得</title>
+      <link>https://mike-neko.github.io/blog/provisioning/</link>
+      <pubDate>Wed, 07 Dec 2016 19:18:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/provisioning/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;AdHoc&lt;/code&gt;で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
+その有効期限をアプリ内から確認する方法&lt;/p&gt;
+
+&lt;p&gt;確認自体はipaを解凍して見れば良いのだけど、エンタープライズの様にアプリ内で出したい場合は、
+この方法であらかじめ設定画面とかに仕込むと良いかもしれない&lt;/p&gt;
+
+&lt;p&gt;もちろん&lt;code&gt;Settings.bundle&lt;/code&gt;や直接アプリ内にリテラルとして持たすのも方法の一つだが、
+それだと更新の度に余分な作業が発生したり更新忘れとかのミスも発生したりしがちなので、
+この方法に行き着いた感じ&lt;/p&gt;
+
+&lt;p&gt;（プロビジョニングプロファイルはアーカイブ時に確定されるので、
+アプリバージョンのようにビルドスクリプトに仕込んでといった技は使えない。
+Xcode7以前はdryrunでビルド設定を出力させてそこから特定ということもできたが、
+Xcode8からの自動にした場合は使えないっぽい）&lt;/p&gt;
+
+&lt;h2 id=&#34;方法&#34;&gt;方法&lt;/h2&gt;
+
+&lt;p&gt;ipa作成時のプロビジョニングプロファイルについてまとめると、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;プロビジョニングプロファイルの中身はほぼ&lt;code&gt;plist&lt;/code&gt;(XML)&lt;/li&gt;
+&lt;li&gt;有効期限はプロビジョニングプロファイルの中の&lt;code&gt;ExpirationDate&lt;/code&gt;に&lt;code&gt;Date&lt;/code&gt;(NSDate)で記載&lt;/li&gt;
+&lt;li&gt;プロビジョニングプロファイルはアプリのパッケージの中に
+&lt;code&gt;embedded.mobileprovision&lt;/code&gt;という名前で同梱&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;これを踏まえてコードにすると、以下の感じになる&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bdbedbb280883dff96b6a5a7062c67bd.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;まずは1行目にあるように、同梱されているプロビジョニングを取得する&lt;br /&gt;
+&lt;strong&gt;デバッグ実行時には正しく取得できないので注意！&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;次に5〜14行目にあるように、&lt;code&gt;plist&lt;/code&gt;として必要な部分のみに加工。
+（不要部分があると変換に失敗するので）&lt;br /&gt;
+抜き出したら&lt;code&gt;PropertyListSerialization&lt;/code&gt;で&lt;code&gt;Dictionary&lt;/code&gt;に変換して有効期限を抜き出す&lt;/p&gt;
+
+&lt;p&gt;あとは、画面に表示させる為に文字列に変換してやって完了
+（例では余裕を持って1日前の日付にしている）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>WebRTCをiOSネイティブで使う(準備編)</title>
@@ -1801,110 +1861,6 @@ CREATEボタンの左にある&lt;code&gt;・・・&lt;/code&gt; - &lt;code&gt;S
 &lt;ul&gt;
 &lt;li&gt;macOS 10.12.0&lt;/li&gt;
 &lt;li&gt;PhpStorm 2016.2&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>ATS有効の状態でオレオレ証明書を使って通信する(iOS9)</title>
-      <link>https://mike-neko.github.io/blog/ios-cert/</link>
-      <pubDate>Tue, 06 Sep 2016 00:35:57 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/ios-cert/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;ATS&lt;/code&gt;が有効の場合、SSL/TLS通信でないと通信自体ができない。&lt;/p&gt;
-
-&lt;p&gt;が、開発時はローカル環境だったりドメイン自体がなかったりで正式なSSL証明書を使えないことが多い・・・
-かといって、ATSをOFFにして開発するのも・・・&lt;/p&gt;
-
-&lt;p&gt;って時に自己署名証明書（オレオレ証明書）を使ってしのぐ方法。&lt;/p&gt;
-
-&lt;p&gt;流れとしては、&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;オレオレ証明書を作ってサーバへ設定&lt;/li&gt;
-&lt;li&gt;iOS端末へオレオレ証明書をインストール&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;となる。&lt;br /&gt;
-ポイントはオレオレ証明書のインストール部分で、その手順をメモしておく。&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;証明書の作成のあたりは&lt;a href=&#34;../docker/&#34;&gt;Docker構築メモ&lt;/a&gt;を参照&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&#34;注意&#34;&gt;！注意！&lt;/h2&gt;
-
-&lt;p&gt;検証はiOS9でのみ。iOS10は未検証。
-（ローカル環境でのATSの挙動が変わりそう！？）&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;は&lt;code&gt;2.2&lt;/code&gt;の操作方法。&lt;/p&gt;
-
-&lt;p&gt;また、&lt;strong&gt;セキュリティ面で危険&lt;/strong&gt;なのでくれぐれもオレオレ証明書の容量・用法には気をつけること&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;p&gt;前提：サーバへのオレオレ証明書は設定済みの状態&lt;/p&gt;
-
-&lt;h3 id=&#34;準備&#34;&gt;準備&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;オレオレ証明書&lt;code&gt;server.crt&lt;/code&gt;を作成しておく&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator2&lt;/code&gt;をインストールしておく&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;構成プロファイルの作成&#34;&gt;構成プロファイルの作成&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;のメニューの&lt;code&gt;ファイル&lt;/code&gt;から&lt;code&gt;新規プロファイル&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;左側の&lt;code&gt;証明書&lt;/code&gt;の項目を選択し&lt;code&gt;構成&lt;/code&gt;ボタンを押下&lt;/li&gt;
-&lt;li&gt;ファイル選択画面でオレオレ証明書(&lt;code&gt;server.crt&lt;/code&gt;)を選択して開く&lt;/li&gt;
-&lt;li&gt;メニューの&lt;code&gt;ファイル&lt;/code&gt;から&lt;code&gt;保存&lt;/code&gt;を選択し、適当な名前をつけて保存&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;端末へインストール&#34;&gt;端末へインストール&lt;/h3&gt;
-
-&lt;p&gt;以下のどちらかの方法でインストールする&lt;/p&gt;
-
-&lt;h4 id=&#34;apple-configurator経由&#34;&gt;Apple Configurator経由&lt;/h4&gt;
-
-&lt;p&gt;Macと端末の有線接続が必要&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;に接続中の端末が表示されるので選択&lt;/li&gt;
-&lt;li&gt;ツールバーの&lt;code&gt;追加&lt;/code&gt;ボタンから&lt;code&gt;プロファイル&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;作成した構成プロファイルを選択&lt;/li&gt;
-&lt;li&gt;iOS端末の画面がインストール画面に変わるので、&lt;code&gt;インストール&lt;/code&gt;x3&lt;br /&gt;
-（プロファイルのインストールはConfiguratorから操作不可）&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&#34;ネットワーク経由&#34;&gt;ネットワーク経由&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;適当なサーバに構成プロファイルを置いてダウンロードできるようにする&lt;/li&gt;
-&lt;li&gt;iOS端末のSafariから該当のURLへアクセス&lt;/li&gt;
-&lt;li&gt;インストール画面になるので&lt;code&gt;インストール&lt;/code&gt;x3&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;なお、証明書だけをインストールしてもアプリからは接続できないので、
-&lt;code&gt;構成プロファイル&lt;/code&gt;を作ってからインストールするのが大事！&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Appleのテクニカルノート：&lt;a href=&#34;https://developer.apple.com/library/ios/technotes/tn2326/_index.html&#34;&gt;TLSのテスト用証明書の作成&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.5&lt;/li&gt;
-&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.4&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>

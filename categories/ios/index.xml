@@ -6,8 +6,68 @@
     <description>Recent content in Ios on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Tue, 06 Dec 2016 22:04:28 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 07 Dec 2016 19:18:57 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Provisioning Profileの有効期限をアプリ内で取得</title>
+      <link>https://mike-neko.github.io/blog/provisioning/</link>
+      <pubDate>Wed, 07 Dec 2016 19:18:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/provisioning/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;AdHoc&lt;/code&gt;で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
+その有効期限をアプリ内から確認する方法&lt;/p&gt;
+
+&lt;p&gt;確認自体はipaを解凍して見れば良いのだけど、エンタープライズの様にアプリ内で出したい場合は、
+この方法であらかじめ設定画面とかに仕込むと良いかもしれない&lt;/p&gt;
+
+&lt;p&gt;もちろん&lt;code&gt;Settings.bundle&lt;/code&gt;や直接アプリ内にリテラルとして持たすのも方法の一つだが、
+それだと更新の度に余分な作業が発生したり更新忘れとかのミスも発生したりしがちなので、
+この方法に行き着いた感じ&lt;/p&gt;
+
+&lt;p&gt;（プロビジョニングプロファイルはアーカイブ時に確定されるので、
+アプリバージョンのようにビルドスクリプトに仕込んでといった技は使えない。
+Xcode7以前はdryrunでビルド設定を出力させてそこから特定ということもできたが、
+Xcode8からの自動にした場合は使えないっぽい）&lt;/p&gt;
+
+&lt;h2 id=&#34;方法&#34;&gt;方法&lt;/h2&gt;
+
+&lt;p&gt;ipa作成時のプロビジョニングプロファイルについてまとめると、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;プロビジョニングプロファイルの中身はほぼ&lt;code&gt;plist&lt;/code&gt;(XML)&lt;/li&gt;
+&lt;li&gt;有効期限はプロビジョニングプロファイルの中の&lt;code&gt;ExpirationDate&lt;/code&gt;に&lt;code&gt;Date&lt;/code&gt;(NSDate)で記載&lt;/li&gt;
+&lt;li&gt;プロビジョニングプロファイルはアプリのパッケージの中に
+&lt;code&gt;embedded.mobileprovision&lt;/code&gt;という名前で同梱&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;これを踏まえてコードにすると、以下の感じになる&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bdbedbb280883dff96b6a5a7062c67bd.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;まずは1行目にあるように、同梱されているプロビジョニングを取得する&lt;br /&gt;
+&lt;strong&gt;デバッグ実行時には正しく取得できないので注意！&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;次に5〜14行目にあるように、&lt;code&gt;plist&lt;/code&gt;として必要な部分のみに加工。
+（不要部分があると変換に失敗するので）&lt;br /&gt;
+抜き出したら&lt;code&gt;PropertyListSerialization&lt;/code&gt;で&lt;code&gt;Dictionary&lt;/code&gt;に変換して有効期限を抜き出す&lt;/p&gt;
+
+&lt;p&gt;あとは、画面に表示させる為に文字列に変換してやって完了
+（例では余裕を持って1日前の日付にしている）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>multipart/form-dataによるファイルのアップロード</title>
@@ -1857,106 +1917,6 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/WebView2PDF&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>QRコードの読み取りサンプル(Swift) その2</title>
-      <link>https://mike-neko.github.io/blog/qr-reader/</link>
-      <pubDate>Thu, 16 Jun 2016 21:17:36 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/qr-reader/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;以前に書いたQRコードの読み取りサンプルの別バージョン。
-今回はカメラ不要で画像データから直接QRコードを読み取りが可能。&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;過去の記事（&lt;a href=&#34;../code-reader/&#34;&gt;QRコードの読み取りサンプル&lt;/a&gt;）&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;サンプルでは、カメラロールから画像を取得し、認識できたQRコードを切り出して表示している。&lt;/p&gt;
-
-&lt;p&gt;今回の認識部分は、&lt;code&gt;CoreImage&lt;/code&gt;の&lt;code&gt;CIDetector&lt;/code&gt;を利用している。
-&lt;code&gt;CIDetector&lt;/code&gt;は顔認識や文字認識もできる優れもの。&lt;/p&gt;
-
-&lt;h3 id=&#34;相違点&#34;&gt;相違点&lt;/h3&gt;
-
-&lt;p&gt;前回の&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;を利用した方法との違いは、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;画像データから読み取り可能&lt;/li&gt;
-&lt;li&gt;読み取り可能なコードはQRコードのみ&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;といった辺り。複数認識可能なのは変わらない。&lt;/p&gt;
-
-&lt;p&gt;画像データは&lt;code&gt;UIImage&lt;/code&gt;が生成できるデータを用意すれば良いので、
-元データはローカルファイルでもネット上でも、当然カメラからでもOK。&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;h3 id=&#34;qr検出&#34;&gt;QR検出&lt;/h3&gt;
-
-&lt;p&gt;検出のコードはとてもシンプル。&lt;/p&gt;
-
-&lt;p&gt;画像データを&lt;code&gt;CoreImage&lt;/code&gt;の形式へ変換し、検出器にかけるだけ。&lt;/p&gt;
-
-&lt;p&gt;エラー処理を省略して抜粋すると以下の感じ&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let ciimg = CIImage(image: image)!
-let detector = CIDetector(ofType: CIDetectorTypeQRCode,
-                         context: nil, options: nil)
-let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これで、検出されたコードの配列が取得される。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;CIQRCodeFeature&lt;/code&gt;には&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;bounds&lt;/code&gt;：コードを検出した領域&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;bottomLeft bottomRight topLeft topRight&lt;/code&gt;：コードを検出した位置&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;messageString&lt;/code&gt;：コードに含まれるデータ&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;が入っている。&lt;/p&gt;
-
-&lt;h3 id=&#34;検出位置&#34;&gt;検出位置&lt;/h3&gt;
-
-&lt;p&gt;位置の座標は、画面ではなく画像の座標を基準とした座標で取得される。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;bounds&lt;/code&gt;とそれ以外の&lt;code&gt;bottom〜&lt;/code&gt;や&lt;code&gt;top〜&lt;/code&gt;で取れる座標は、
-検出したQRコードが回転していた場合に異なってくる。&lt;/p&gt;
-
-&lt;p&gt;例えば、斜めの状態のQRコードが検出された場合、
-&lt;code&gt;bounds&lt;/code&gt;は周りの余白部分を含めた正方形の領域が入る。
-それ以外のものにはQRコードの各頂点の座標がそれぞれ入る。&lt;br /&gt;
-（この辺りは実際に斜めの画像を読み込んで見ればよくわかる）&lt;/p&gt;
-
-&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
-
-&lt;p&gt;このQRコードの検出は&lt;code&gt;iOS8&lt;/code&gt;から可能になっているが、全然把握できていなかったので反省。&lt;/p&gt;
-
-&lt;p&gt;この&lt;code&gt;CIDetector&lt;/code&gt;は他にもいろいろ検出できるので楽しみ。
-他にもまだこういう知らないものがいっぱいあるんだろうな・・・&lt;/p&gt;
-
-&lt;p&gt;なお、&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;との性能などの差は未調査。。。&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.5&lt;/li&gt;
-&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/QRReader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
