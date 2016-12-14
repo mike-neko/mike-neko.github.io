@@ -6,8 +6,119 @@
     <description>Recent content in Code on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 07 Dec 2016 19:18:57 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 13 Dec 2016 19:33:53 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/code/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>UIPageViewControllerのエンドレス化などなど</title>
+      <link>https://mike-neko.github.io/blog/pageview/</link>
+      <pubDate>Tue, 13 Dec 2016 19:33:53 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/pageview/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;UIPageViewController&lt;/code&gt;をエンドレスでページ切り替えする方法とかその他小ネタ&lt;/p&gt;
+
+&lt;p&gt;エンドレスの挙動は、最後のページから次へ進むと最初のページへ、最初のページからさらに戻ると最後のページへ移動する感じ。
+詳細はサンプルを参照のこと&lt;/p&gt;
+
+&lt;h2 id=&#34;作成の流れ&#34;&gt;作成の流れ&lt;/h2&gt;
+
+&lt;p&gt;まず、画面の構造は以下の通り。ページ部分は&lt;code&gt;ChildViewController&lt;/code&gt;にしているが、
+&lt;code&gt;UIPageViewController&lt;/code&gt;を全画面にしている場合も同じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ViewController
+ └─ Container View
+     └─ UIPageViewController
+         └─ (各ページ)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;ページの生成&#34;&gt;ページの生成&lt;/h3&gt;
+
+&lt;p&gt;今回はページ数が固定（5ページ）を想定しているので、&lt;code&gt;viewDidLoad&lt;/code&gt;でページのリストをあらかじめ生成しておく&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// var pages = [PageViewController]()
+pages = Array(1...5).flatMap {
+    guard let vc = storyboard?.instantiateViewController(withIdentifier: &amp;quot;Page&amp;quot;) as? PageViewController else {
+        return nil
+    }
+    // 各ページの設定
+    return vc
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;リストを生成したら、初期表示するページを設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;setViewControllers([pages[0]], direction: .forward, animated: false)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;ページングの処理&#34;&gt;ページングの処理&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;UIPageViewControllerDataSource&lt;/code&gt;の
+&lt;code&gt;viewControllerBefore&lt;/code&gt;と&lt;code&gt;viewControllerAfter&lt;/code&gt;を実装する&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;viewControllerBefore&lt;/code&gt;だとこんな感じで前のページを返す&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;guard let vc = viewController as? PageViewController,
+    var index = pages.index(of: vc)  else { return nil }
+
+index -= 1
+index = (index &amp;lt; pages.startIndex) ? pages.endIndex - 1 : index
+return pages[index]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ポイントは基準となるページ(引数で渡される&lt;code&gt;viewController&lt;/code&gt;)のインデックスをページのリストから検索して見つけること
+(コードでは&lt;code&gt;index = pages.index(of: vc)&lt;/code&gt;)&lt;/p&gt;
+
+&lt;p&gt;例えば、現在表示中のページのインデックスをプロパティに持っておく方法ではうまくいかない。
+なぜならこのデリゲートは現在表示中のページ以外からも呼び出されるので&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;uipageviewcontrollerのstoryboardへの追加&#34;&gt;UIPageViewControllerのStoryboardへの追加&lt;/h3&gt;
+
+&lt;p&gt;追加する時は、右下のUIパーツが並んでいるところから&lt;code&gt;PageViewController&lt;/code&gt;を選んで追加すること&lt;br /&gt;
+通常の&lt;code&gt;ViewController&lt;/code&gt;で追加してしまうと後から変更しても、&lt;code&gt;UIPageViewController&lt;/code&gt;の設定項目が出てこない。。。&lt;/p&gt;
+
+&lt;h3 id=&#34;ページを表示した時に各uiの位置が一瞬ずれて表示されてしまう場合&#34;&gt;ページを表示した時に各UIの位置が一瞬ずれて表示されてしまう場合&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;AutoLayout&lt;/code&gt;の基準が&lt;code&gt;LayoutGuide&lt;/code&gt;になっているとダメな場合があるので&lt;code&gt;View&lt;/code&gt;を基準に変えてみる&lt;br /&gt;
+（例えば上部は&lt;code&gt;TopLayoutGuide&lt;/code&gt;ではなく、&lt;code&gt;View&lt;/code&gt;からにする。&lt;code&gt;Constrain to margins&lt;/code&gt;はチェックを外す）&lt;/p&gt;
+
+&lt;h3 id=&#34;container-viewの中のviewcontrollerを取得する&#34;&gt;Container Viewの中のViewControllerを取得する&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;Container View&lt;/code&gt;と&lt;code&gt;ChildViewController&lt;/code&gt;を繋ぐ&lt;code&gt;segue&lt;/code&gt;の&lt;code&gt;destination&lt;/code&gt;から取得できる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;private weak var pager: PagerViewController!
+
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    switch segue.destination {
+    case let vc as PagerViewController:
+        pager = vc
+    default: break
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、今回は&lt;code&gt;Container View&lt;/code&gt;の&lt;code&gt;PagerViewController&lt;/code&gt;は1つなので上記の判定だが、
+同じクラスのものが複数ある場合は、&lt;code&gt;segue&lt;/code&gt;の&lt;code&gt;identifier&lt;/code&gt;で判定すれば良い
+（もちろん、&lt;code&gt;Storyboard&lt;/code&gt;上で別々のIDを設定しておく）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.1&lt;/li&gt;
+&lt;li&gt;iOS 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 7+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/EndlessPage&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Provisioning Profileの有効期限をアプリ内で取得</title>
@@ -1833,81 +1944,6 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/QRReader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>QRコードの読み取りサンプル(Swift) その1</title>
-      <link>https://mike-neko.github.io/blog/code-reader/</link>
-      <pubDate>Wed, 15 Jun 2016 22:52:40 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/code-reader/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル。&lt;/p&gt;
-
-&lt;p&gt;なお、QRコードに限らず、他のバーコードや顔認識にも対応。対応形式は&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/AVFoundation/Reference/AVMetadataMachineReadableCodeObject_Class/index.html#//apple_ref/doc/constant_group/Machine_Readable_Object_Types&#34;&gt;公式&lt;/a&gt;を参照。地味にiOS8から対応形式が増えている。&lt;/p&gt;
-
-&lt;p&gt;あと、2次元なら同時認識できたりするが、その辺りの詳細は参考リンクの公式FAQが詳しい。&lt;/p&gt;
-
-&lt;p&gt;コード認識自体はもっと詳しい説明がいろんなとこにあるので、ここは他で説明していなそうなところだけ。&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;h3 id=&#34;シリアルキューの利用&#34;&gt;シリアルキューの利用&lt;/h3&gt;
-
-&lt;p&gt;カメラの起動や画像認識は処理が重いので、それぞれ専用のシリアルキューを作成して利用している。&lt;/p&gt;
-
-&lt;p&gt;カメラの設定周りはフリーズ状態になるのを防ぐためだが、最近の端末は起動が早いらしく、キューを使わなくても特に問題無い感じ。&lt;/p&gt;
-
-&lt;h3 id=&#34;avmetadatamachinereadablecodeobject&#34;&gt;AVMetadataMachineReadableCodeObject&lt;/h3&gt;
-
-&lt;p&gt;認識されたコードは&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;のオブジェクトの配列で渡される。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;type&lt;/code&gt;：認識されたコードのフォーマットが逆DNS形式で返ってくる&lt;br /&gt;
-(QRの場合は&lt;code&gt;org.iso.QRCode&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;stringValue&lt;/code&gt;：コードに含まれるデータ&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;プレビュー画面上に認識したコードの枠を表示する&#34;&gt;プレビュー画面上に認識したコードの枠を表示する&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;の中の&lt;code&gt;corners&lt;/code&gt;にコードの座標位置が含まれているが、これはプレビューのViewの座標系とは異なるので、そのままでは使えない。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;AVCaptureVideoPreviewLayer&lt;/code&gt;の&lt;code&gt;transformedMetadataObjectForMetadataObject&lt;/code&gt;で変換後の座標が入った&lt;code&gt;AVMetadataObject&lt;/code&gt;が取得できるので、その中の&lt;code&gt;bounds&lt;/code&gt;を使って枠線を描画している。&lt;/p&gt;
-
-&lt;p&gt;（以前は手動でちゃんとプレビュー画面上の座標に変換していたが、今回、この簡単に変換できるメソッドを発見！&lt;code&gt;AVCaptureVideoPreviewLayer&lt;/code&gt;の方もちゃんと調べていれば・・・）&lt;/p&gt;
-
-&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
-
-&lt;p&gt;昔iOS7で使えるようになった時に試したものを、Swiftで書き直し＋αしたコード。やはりSwiftはわかりやすく、かつエラー処理もしっかり書いても、Objective-Cよりコードが少ないので良い。&lt;/p&gt;
-
-&lt;p&gt;以前は結構カメラの起動もコードの読み取りも時間がかかっていたのだが、今回はかなりスピードアップした感じがした。iPhoneのカメラの進化もすごいということか。ただ、バッテリーには優しくないので常に使うのは厳しそう・・・&lt;/p&gt;
-
-&lt;p&gt;&lt;del&gt;あと、カメラをわざわざ起動しなくても画像を直接認識してくれるようになって欲しい。&lt;/del&gt;
-(6/17追記：方法が判ったので&lt;a href=&#34;../qr-reader/&#34;&gt;その2&lt;/a&gt;を作成した)&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/technotes/tn2325/_index.html&#34;&gt;AV Foundation iOS Machine Readable Code Detection FAQ&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 7.3&lt;/li&gt;
-&lt;li&gt;iOS 9.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/CodeReader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;カメラ不要なバージョンは&lt;a href=&#34;../qr-reader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

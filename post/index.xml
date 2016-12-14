@@ -6,8 +6,119 @@
     <description>Recent content in Posts on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 07 Dec 2016 19:18:57 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 13 Dec 2016 19:33:53 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>UIPageViewControllerのエンドレス化などなど</title>
+      <link>https://mike-neko.github.io/blog/pageview/</link>
+      <pubDate>Tue, 13 Dec 2016 19:33:53 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/pageview/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;UIPageViewController&lt;/code&gt;をエンドレスでページ切り替えする方法とかその他小ネタ&lt;/p&gt;
+
+&lt;p&gt;エンドレスの挙動は、最後のページから次へ進むと最初のページへ、最初のページからさらに戻ると最後のページへ移動する感じ。
+詳細はサンプルを参照のこと&lt;/p&gt;
+
+&lt;h2 id=&#34;作成の流れ&#34;&gt;作成の流れ&lt;/h2&gt;
+
+&lt;p&gt;まず、画面の構造は以下の通り。ページ部分は&lt;code&gt;ChildViewController&lt;/code&gt;にしているが、
+&lt;code&gt;UIPageViewController&lt;/code&gt;を全画面にしている場合も同じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ViewController
+ └─ Container View
+     └─ UIPageViewController
+         └─ (各ページ)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;ページの生成&#34;&gt;ページの生成&lt;/h3&gt;
+
+&lt;p&gt;今回はページ数が固定（5ページ）を想定しているので、&lt;code&gt;viewDidLoad&lt;/code&gt;でページのリストをあらかじめ生成しておく&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// var pages = [PageViewController]()
+pages = Array(1...5).flatMap {
+    guard let vc = storyboard?.instantiateViewController(withIdentifier: &amp;quot;Page&amp;quot;) as? PageViewController else {
+        return nil
+    }
+    // 各ページの設定
+    return vc
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;リストを生成したら、初期表示するページを設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;setViewControllers([pages[0]], direction: .forward, animated: false)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;ページングの処理&#34;&gt;ページングの処理&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;UIPageViewControllerDataSource&lt;/code&gt;の
+&lt;code&gt;viewControllerBefore&lt;/code&gt;と&lt;code&gt;viewControllerAfter&lt;/code&gt;を実装する&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;viewControllerBefore&lt;/code&gt;だとこんな感じで前のページを返す&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;guard let vc = viewController as? PageViewController,
+    var index = pages.index(of: vc)  else { return nil }
+
+index -= 1
+index = (index &amp;lt; pages.startIndex) ? pages.endIndex - 1 : index
+return pages[index]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ポイントは基準となるページ(引数で渡される&lt;code&gt;viewController&lt;/code&gt;)のインデックスをページのリストから検索して見つけること
+(コードでは&lt;code&gt;index = pages.index(of: vc)&lt;/code&gt;)&lt;/p&gt;
+
+&lt;p&gt;例えば、現在表示中のページのインデックスをプロパティに持っておく方法ではうまくいかない。
+なぜならこのデリゲートは現在表示中のページ以外からも呼び出されるので&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;uipageviewcontrollerのstoryboardへの追加&#34;&gt;UIPageViewControllerのStoryboardへの追加&lt;/h3&gt;
+
+&lt;p&gt;追加する時は、右下のUIパーツが並んでいるところから&lt;code&gt;PageViewController&lt;/code&gt;を選んで追加すること&lt;br /&gt;
+通常の&lt;code&gt;ViewController&lt;/code&gt;で追加してしまうと後から変更しても、&lt;code&gt;UIPageViewController&lt;/code&gt;の設定項目が出てこない。。。&lt;/p&gt;
+
+&lt;h3 id=&#34;ページを表示した時に各uiの位置が一瞬ずれて表示されてしまう場合&#34;&gt;ページを表示した時に各UIの位置が一瞬ずれて表示されてしまう場合&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;AutoLayout&lt;/code&gt;の基準が&lt;code&gt;LayoutGuide&lt;/code&gt;になっているとダメな場合があるので&lt;code&gt;View&lt;/code&gt;を基準に変えてみる&lt;br /&gt;
+（例えば上部は&lt;code&gt;TopLayoutGuide&lt;/code&gt;ではなく、&lt;code&gt;View&lt;/code&gt;からにする。&lt;code&gt;Constrain to margins&lt;/code&gt;はチェックを外す）&lt;/p&gt;
+
+&lt;h3 id=&#34;container-viewの中のviewcontrollerを取得する&#34;&gt;Container Viewの中のViewControllerを取得する&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;Container View&lt;/code&gt;と&lt;code&gt;ChildViewController&lt;/code&gt;を繋ぐ&lt;code&gt;segue&lt;/code&gt;の&lt;code&gt;destination&lt;/code&gt;から取得できる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;private weak var pager: PagerViewController!
+
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    switch segue.destination {
+    case let vc as PagerViewController:
+        pager = vc
+    default: break
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、今回は&lt;code&gt;Container View&lt;/code&gt;の&lt;code&gt;PagerViewController&lt;/code&gt;は1つなので上記の判定だが、
+同じクラスのものが複数ある場合は、&lt;code&gt;segue&lt;/code&gt;の&lt;code&gt;identifier&lt;/code&gt;で判定すれば良い
+（もちろん、&lt;code&gt;Storyboard&lt;/code&gt;上で別々のIDを設定しておく）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.1&lt;/li&gt;
+&lt;li&gt;iOS 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 7+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/EndlessPage&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Provisioning Profileの有効期限をアプリ内で取得</title>
@@ -1747,124 +1858,6 @@ ScrollViewの&lt;code&gt;ContentSize&lt;/code&gt;の高さがあらかじめ決�
 &lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;AutoLayout&lt;/code&gt;って使い方のコツを見つけるまでが大変だけど、このサンプルみたいにやり方を見つけてしまうと楽すぎ〜〜&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.12.0&lt;/li&gt;
-&lt;li&gt;Xcode 8.0 / Swift3&lt;/li&gt;
-&lt;li&gt;iOS 10.0.2&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>NotificationCenter(Swift3)の使い方</title>
-      <link>https://mike-neko.github.io/blog/notification/</link>
-      <pubDate>Sun, 23 Oct 2016 18:30:34 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/notification/</guid>
-      <description>
-
-&lt;p&gt;旧&lt;code&gt;NSNotification&lt;/code&gt;がSwift3でちょっと変更が入ったので使い方と＋αのエクステンションのまとめ&lt;/p&gt;
-
-&lt;h2 id=&#34;使い方&#34;&gt;使い方&lt;/h2&gt;
-
-&lt;h3 id=&#34;通知の送信&#34;&gt;通知の送信&lt;/h3&gt;
-
-&lt;p&gt;&amp;ldquo;Change&amp;rdquo;という名前の通知を送信するときは以下の2パターン&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;NotificationCenter.default.post(
-    Notification(name: Notification.Name(&amp;quot;Change&amp;quot;)))
-
-NotificationCenter.default.post(name: Notification.Name(&amp;quot;Change&amp;quot;),
-                                object: nil)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;通知の受信&#34;&gt;通知の受信&lt;/h3&gt;
-
-&lt;p&gt;上述の通知を受信したい場合は、&lt;/p&gt;
-
-&lt;h4 id=&#34;受信先の登録&#34;&gt;受信先の登録&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;NotificationCenter.default.addObserver(self,
-    selector: #selector(recieveHoge),
-    name: Notification.Name(&amp;quot;Change&amp;quot;),
-    object: nil)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;なお、登録した場合は解除も忘れずにすること！&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;参考: UIKeyboardWillShowNotificationとかは&lt;/em&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;NotificationCenter.default.addObserver(self,
-    selector: #selector(keyboardWillShow),
-    name: .UIKeyboardWillShow,
-    object: nil)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;という感じに名前が定義されているので省略形で良い&lt;/p&gt;
-
-&lt;h4 id=&#34;受信するメソッド&#34;&gt;受信するメソッド&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;func recieveHoge(notification: NSNotification) {
-    // ここで処理
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;アクセス制限は&lt;code&gt;internal&lt;/code&gt;以上が必要（&lt;code&gt;private&lt;/code&gt;/&lt;code&gt;fileprivate&lt;/code&gt;は不可）&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;post&lt;/code&gt;時に送った&lt;code&gt;object&lt;/code&gt;を利用したい場合は、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;guard let hoge = notification.object as? Hoge else { return }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;というように変換して使う&lt;/p&gt;
-
-&lt;p&gt;また、特に指定をしないとメイン以外のスレッドで呼び出されることがあるので、
-UI絡みの部分は&lt;code&gt;DispatchQueue.main.async&lt;/code&gt;を使った方が良い&lt;/p&gt;
-
-&lt;h4 id=&#34;受信の解除&#34;&gt;受信の解除&lt;/h4&gt;
-
-&lt;p&gt;特定の通知のみ解除する場合は、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;NotificationCenter.default.removeObserver(self,
-                                          name: Notification.Name(&amp;quot;Change&amp;quot;),
-                                          object: nil)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;自身が登録している受信を全て解除する場合は、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;NotificationCenter.default.removeObserver(self)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;エクステンション&#34;&gt;エクステンション&lt;/h2&gt;
-
-&lt;p&gt;今回のSwift3から&lt;code&gt;Notification.Name&lt;/code&gt;の部分で、以前と比べて手間がかかるようになってしまった
-（元からOSで用意されているものは逆に楽）&lt;/p&gt;
-
-&lt;p&gt;それとは別に、名前がアプリの他とかぶらないようになるべく一元管理をしたいので、以下のようなエクステンションと&lt;code&gt;enum&lt;/code&gt;を利用する&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5c92a36705ebcc3c49022a534d4df157.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;&lt;em&gt;※&lt;code&gt;enum&lt;/code&gt;はガイドライン的には小文字が良いが文字定数を強調したいので大文字になっている&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;特にエクステンションといっても特別なことはしていなくて単に専用の&lt;code&gt;enum&lt;/code&gt;を使えるようにしただけ。&lt;br /&gt;
-でも、これを実際に使うと、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// 通知の送信
-NotificationCenter.default.post(key: .ChangeStatus)
-
-// 通知の受信先の登録
-NotificationCenter.default.addObserver(self,
-    selector: #selector(recieveHoge),
-    key: .ChangeStatus)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;って感じですっきりする&lt;/p&gt;
-
-&lt;p&gt;本来は、&lt;code&gt;Notification.Name&lt;/code&gt;をエクステンションして使うのが想定されているようだが、
-&lt;code&gt;enum&lt;/code&gt;により一意になることが保証されるのと、リテラルが出てこないので、個人的にはこっちがお気に入り&lt;/p&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 

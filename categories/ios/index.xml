@@ -6,8 +6,119 @@
     <description>Recent content in Ios on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 07 Dec 2016 19:18:57 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 13 Dec 2016 19:33:53 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>UIPageViewControllerのエンドレス化などなど</title>
+      <link>https://mike-neko.github.io/blog/pageview/</link>
+      <pubDate>Tue, 13 Dec 2016 19:33:53 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/pageview/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;UIPageViewController&lt;/code&gt;をエンドレスでページ切り替えする方法とかその他小ネタ&lt;/p&gt;
+
+&lt;p&gt;エンドレスの挙動は、最後のページから次へ進むと最初のページへ、最初のページからさらに戻ると最後のページへ移動する感じ。
+詳細はサンプルを参照のこと&lt;/p&gt;
+
+&lt;h2 id=&#34;作成の流れ&#34;&gt;作成の流れ&lt;/h2&gt;
+
+&lt;p&gt;まず、画面の構造は以下の通り。ページ部分は&lt;code&gt;ChildViewController&lt;/code&gt;にしているが、
+&lt;code&gt;UIPageViewController&lt;/code&gt;を全画面にしている場合も同じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ViewController
+ └─ Container View
+     └─ UIPageViewController
+         └─ (各ページ)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;ページの生成&#34;&gt;ページの生成&lt;/h3&gt;
+
+&lt;p&gt;今回はページ数が固定（5ページ）を想定しているので、&lt;code&gt;viewDidLoad&lt;/code&gt;でページのリストをあらかじめ生成しておく&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// var pages = [PageViewController]()
+pages = Array(1...5).flatMap {
+    guard let vc = storyboard?.instantiateViewController(withIdentifier: &amp;quot;Page&amp;quot;) as? PageViewController else {
+        return nil
+    }
+    // 各ページの設定
+    return vc
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;リストを生成したら、初期表示するページを設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;setViewControllers([pages[0]], direction: .forward, animated: false)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;ページングの処理&#34;&gt;ページングの処理&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;UIPageViewControllerDataSource&lt;/code&gt;の
+&lt;code&gt;viewControllerBefore&lt;/code&gt;と&lt;code&gt;viewControllerAfter&lt;/code&gt;を実装する&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;viewControllerBefore&lt;/code&gt;だとこんな感じで前のページを返す&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;guard let vc = viewController as? PageViewController,
+    var index = pages.index(of: vc)  else { return nil }
+
+index -= 1
+index = (index &amp;lt; pages.startIndex) ? pages.endIndex - 1 : index
+return pages[index]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ポイントは基準となるページ(引数で渡される&lt;code&gt;viewController&lt;/code&gt;)のインデックスをページのリストから検索して見つけること
+(コードでは&lt;code&gt;index = pages.index(of: vc)&lt;/code&gt;)&lt;/p&gt;
+
+&lt;p&gt;例えば、現在表示中のページのインデックスをプロパティに持っておく方法ではうまくいかない。
+なぜならこのデリゲートは現在表示中のページ以外からも呼び出されるので&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;uipageviewcontrollerのstoryboardへの追加&#34;&gt;UIPageViewControllerのStoryboardへの追加&lt;/h3&gt;
+
+&lt;p&gt;追加する時は、右下のUIパーツが並んでいるところから&lt;code&gt;PageViewController&lt;/code&gt;を選んで追加すること&lt;br /&gt;
+通常の&lt;code&gt;ViewController&lt;/code&gt;で追加してしまうと後から変更しても、&lt;code&gt;UIPageViewController&lt;/code&gt;の設定項目が出てこない。。。&lt;/p&gt;
+
+&lt;h3 id=&#34;ページを表示した時に各uiの位置が一瞬ずれて表示されてしまう場合&#34;&gt;ページを表示した時に各UIの位置が一瞬ずれて表示されてしまう場合&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;AutoLayout&lt;/code&gt;の基準が&lt;code&gt;LayoutGuide&lt;/code&gt;になっているとダメな場合があるので&lt;code&gt;View&lt;/code&gt;を基準に変えてみる&lt;br /&gt;
+（例えば上部は&lt;code&gt;TopLayoutGuide&lt;/code&gt;ではなく、&lt;code&gt;View&lt;/code&gt;からにする。&lt;code&gt;Constrain to margins&lt;/code&gt;はチェックを外す）&lt;/p&gt;
+
+&lt;h3 id=&#34;container-viewの中のviewcontrollerを取得する&#34;&gt;Container Viewの中のViewControllerを取得する&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;Container View&lt;/code&gt;と&lt;code&gt;ChildViewController&lt;/code&gt;を繋ぐ&lt;code&gt;segue&lt;/code&gt;の&lt;code&gt;destination&lt;/code&gt;から取得できる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;private weak var pager: PagerViewController!
+
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    switch segue.destination {
+    case let vc as PagerViewController:
+        pager = vc
+    default: break
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、今回は&lt;code&gt;Container View&lt;/code&gt;の&lt;code&gt;PagerViewController&lt;/code&gt;は1つなので上記の判定だが、
+同じクラスのものが複数ある場合は、&lt;code&gt;segue&lt;/code&gt;の&lt;code&gt;identifier&lt;/code&gt;で判定すれば良い
+（もちろん、&lt;code&gt;Storyboard&lt;/code&gt;上で別々のIDを設定しておく）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.1&lt;/li&gt;
+&lt;li&gt;iOS 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 7+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/EndlessPage&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Provisioning Profileの有効期限をアプリ内で取得</title>
@@ -1836,87 +1947,6 @@ material.setValue(SCNMaterialProperty(contents: contents),
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalShaderSceneKit&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>WKWebViewの内容をPDFで保存する(Swift)</title>
-      <link>https://mike-neko.github.io/blog/webview-pdf/</link>
-      <pubDate>Thu, 23 Jun 2016 00:13:25 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/webview-pdf/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;昔に&lt;code&gt;UIWebView&lt;/code&gt;でやっていたものを最新の&lt;code&gt;WKWebView&lt;/code&gt;+&lt;code&gt;Swift&lt;/code&gt;で書き換えた時のメモ。&lt;/p&gt;
-
-&lt;p&gt;内容は大したことないのだけれど、検索で引っかかるWebの資料がiOS9の実機で動かなかったので残しておく。&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;h3 id=&#34;内容全体の取得&#34;&gt;内容全体の取得&lt;/h3&gt;
-
-&lt;p&gt;今回は&lt;code&gt;WebView&lt;/code&gt;の中身全体をPDF化したいので、PDF化する時に表示中のコンテンツがビュー内に収まるように、
-コンテンツの表示位置（&lt;code&gt;scrollView.contentOffset&lt;/code&gt;）を初期位置に戻し、
-ビュー自体のサイズも表示ページのサイズ（&lt;code&gt;scrollView.contentSize&lt;/code&gt;）に拡大している。&lt;/p&gt;
-
-&lt;p&gt;また、以下のようにPDFのページのサイズもコンテンツと同じサイズに設定している。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// frameの中身はコンテンツのサイズ
-UIGraphicsBeginPDFPageWithInfo(frame, nil)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;（つまり、書き出し時には一瞬画面がちらついてしまうので、気になる場合は
-&lt;code&gt;ViewController&lt;/code&gt;の&lt;code&gt;view&lt;/code&gt;にマスクとなるビューを&lt;code&gt;addSubView&lt;/code&gt;して隠すこと）&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;ただし、あまりにコンテンツが長い場合は、うまく描画されないので注意！&lt;/strong&gt;&lt;br /&gt;
-（例えば、Google検索結果とかだと半分ぐらいから下は空白状態になったり、全く空白になったりする）&lt;/p&gt;
-
-&lt;p&gt;なお、端末によっても状況が異なるようで、対処方法は未調査。。。&lt;/p&gt;
-
-&lt;h3 id=&#34;pdfへの書き出し&#34;&gt;PDFへの書き出し&lt;/h3&gt;
-
-&lt;p&gt;今回は、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;webView.scrollView.drawViewHierarchyInRect(frame, afterScreenUpdates: true)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;としてWebView内のコンテンツをPDFに書き出ししている。&lt;/p&gt;
-
-&lt;p&gt;ちまたにある資料では、この部分が、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;webView.scrollView.layer.renderInContext(context)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;のようになっているのが多いが、iOS9の実機では、
-&lt;code&gt;CGImageCreateWithImageProvider: invalid image provider: NULL&lt;/code&gt;
-のエラーが出て書き出しが出来なくなっている。（他のOSは未検証）&lt;/p&gt;
-
-&lt;p&gt;なお、&lt;code&gt;drawViewHierarchyInRect&lt;/code&gt;の方が速いらしいが、個人的には、
-わざわざコンテキストの取得がいらなくなったのがありがたい。
-（よく書く場所を間違えて取得に失敗する凡ミスをしていたので）&lt;/p&gt;
-
-&lt;h3 id=&#34;pdfのファイル保存&#34;&gt;PDFのファイル保存&lt;/h3&gt;
-
-&lt;p&gt;PDFをファイルとして保存したい場合は、&lt;code&gt;UIGraphicsBeginPDFContextToFile&lt;/code&gt;を利用するが、
-このメソッドは既存のファイルを問答無用で上書きするので注意すること。&lt;/p&gt;
-
-&lt;p&gt;もし、サーバへ送信などでデータが欲しい場合は、&lt;code&gt;UIGraphicsBeginPDFContextToData&lt;/code&gt;を利用すれば、
-&lt;code&gt;NSData&lt;/code&gt;で取得できる。&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.5&lt;/li&gt;
-&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/WebView2PDF&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
