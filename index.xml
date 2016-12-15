@@ -6,8 +6,258 @@
     <description>Recent content on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Tue, 13 Dec 2016 19:33:53 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 14 Dec 2016 19:51:59 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>GitHubの自作ライブラリを公開する（CI導入編）</title>
+      <link>https://mike-neko.github.io/blog/library1/</link>
+      <pubDate>Wed, 14 Dec 2016 19:51:59 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/library1/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
+その1ではCIの導入周りについての内容&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;なお、作成するフレームワーク名、プロジェクト名は&lt;code&gt;Kanagata&lt;/code&gt;とした場合の手順なので、
+他の作業時は適宜読み替えること&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;その2は&lt;a href=&#34;../library2&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;構成&#34;&gt;構成&lt;/h2&gt;
+
+&lt;p&gt;せっかくなので単なるライブラリの公開だけでなく、以下の感じでそれっぽく公開&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CIの導入(&lt;code&gt;TravisCI&lt;/code&gt;)
+
+&lt;ul&gt;
+&lt;li&gt;ユニットテスト(&lt;code&gt;XCTest&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;カバレッジ表示(&lt;code&gt;Codecov&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;静的コード解析(&lt;code&gt;SwiftLint&lt;/code&gt;)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;del&gt;ドキュメント生成(&lt;code&gt;juzzy&lt;/code&gt;)&lt;/del&gt;&lt;/li&gt;
+&lt;li&gt;マルチプラットフォーム対応(iOS以外も)&lt;/li&gt;
+&lt;li&gt;ライブラリ管理ツール
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Carthage&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;CocoaPods&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;ciの導入&#34;&gt;CIの導入&lt;/h2&gt;
+
+&lt;h3 id=&#34;プロジェクトの作成&#34;&gt;プロジェクトの作成&lt;/h3&gt;
+
+&lt;p&gt;今回は既存のプロジェクトの中で使っていたものをフレームワークとして切り出す為、まずは新規プロジェクトを作成&lt;/p&gt;
+
+&lt;p&gt;作成時には、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Cocoa Touch Framework&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Include Unit Tests&lt;/code&gt;にチェック&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;をつけて作成する。
+既存のソースとテストの各ファイルを移植したら、&lt;code&gt;.h&lt;/code&gt;のファイルを削除
+（Swiftのみなのでヘッダは不要）&lt;/p&gt;
+
+&lt;p&gt;ちなみに、ここで一旦ビルドとテストを実行すると&lt;code&gt;module file&#39;s minimum deployment target is ios10.1&lt;/code&gt;のエラー。。。
+その時の&lt;code&gt;Deployment Target&lt;/code&gt;はiOS9で問題ないはず。が、iOS10へ変更したりクリーンをしたりしても変わらず。
+最後にダメ元でiOS9のシミュレータをDLしてみると、無事完了。
+他の環境で試すと再現しなかったりで、結局原因はよく判らなかった・・・・&lt;/p&gt;
+
+&lt;p&gt;さて、無事？テストも通ったのでGitHubへpushしておく&lt;/p&gt;
+
+&lt;h3 id=&#34;travisci&#34;&gt;TravisCI&lt;/h3&gt;
+
+&lt;p&gt;CIツールに&lt;a href=&#34;https://travis-ci.org&#34;&gt;TravisCI&lt;/a&gt;を選択したのは、GitHubと連携できてiOSのビルドができて*タダ*なので&lt;/p&gt;
+
+&lt;h4 id=&#34;登録&#34;&gt;登録&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;トップページから&lt;code&gt;Sign in with GitHub&lt;/code&gt;のボタンを押して、GitHubとの連携を許可&lt;/li&gt;
+&lt;li&gt;しばらくすると、GitHubのリポジトリの一覧が表示される&lt;br /&gt;
+(表示されない時は再ログインしてみればOK)&lt;/li&gt;
+&lt;li&gt;今回のプロジェクトを選んで有効化&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;プロジェクトの修正&#34;&gt;プロジェクトの修正&lt;/h4&gt;
+
+&lt;p&gt;登録が終わればXcodeの&lt;code&gt;Scheme&lt;/code&gt;の設定を変更する&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Shared&lt;/code&gt;にチェック&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Test&lt;/code&gt;の中の&lt;code&gt;Gather coverage data&lt;/code&gt;にチェック&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;この時のスキーム名はCIの設定で使うので覚えておくこと！&lt;/p&gt;
+
+&lt;h4 id=&#34;設定&#34;&gt;設定&lt;/h4&gt;
+
+&lt;p&gt;リポジトリの直下に&lt;code&gt;.travis.yml&lt;/code&gt;を追加し、CIで行う作業を設定する&lt;/p&gt;
+
+&lt;p&gt;この書き方がよく判らなかったので、いろいろなライブラリのリポジトリを見て
+試した結果たどり着いた書き方（テストを実行するだけの最低限）がこちら&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;language: objective-c  # Swiftだけどobjective-cを指定
+osx_image: xcode8.1    # 使っているXcodeのバージョン
+script:
+  # テストを実行(schemeにスキーム名を指定する)
+  - xcodebuild test -scheme Kanagata -sdk iphonesimulator -destination &#39;platform=iOS Simulator,name=iPhone 5&#39;
+notifications:
+  email: false         # メール通知はOFF
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;変更が終わればスキームと&lt;code&gt;.travis.yml&lt;/code&gt;の変更分をpushする。&lt;br /&gt;
+その後はpushする毎に自動でCIが走るようになる
+（だいたい、pushしてから15分程度で開始されることが多い感じ）&lt;/p&gt;
+
+&lt;h3 id=&#34;カバレッジ表示&#34;&gt;カバレッジ表示&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;TravisCI&lt;/code&gt;と&lt;code&gt;Swift&lt;/code&gt;に対応していてバッジが表示できて*タダ*のものということで、
+&lt;a href=&#34;https://codecov.io/&#34;&gt;Codecov&lt;/a&gt;を選択&lt;br /&gt;
+開発時はXcode内でカバレッジを見るのでどういう詳細表示がされるのかは重視していない&lt;/p&gt;
+
+&lt;h4 id=&#34;登録と設定&#34;&gt;登録と設定&lt;/h4&gt;
+
+&lt;p&gt;こちらも&lt;code&gt;TravisCI&lt;/code&gt;と同じくGitHubとの連携だけで登録完了&lt;/p&gt;
+
+&lt;p&gt;便利なのが、リポジトリを選択すると&lt;code&gt;TravisCI&lt;/code&gt;に設定するコードを表示してくれること。&lt;br /&gt;
+表示されたコードを&lt;code&gt;.travis.yml&lt;/code&gt;に追加すればOK&lt;/p&gt;
+
+&lt;h4 id=&#34;ignoreの設定&#34;&gt;ignoreの設定&lt;/h4&gt;
+
+&lt;p&gt;デフォルトの状態ではリポジトリ内全部が対象となるので、テスト用のコードもカウントされてしまい、
+正しくないカバレッジが表示されてしまう。それを防ぐため、テスト用のコードは対象外とする様に設定する&lt;/p&gt;
+
+&lt;p&gt;リポジトリ直下に&lt;code&gt;codecov.yml&lt;/code&gt;を追加し、以下を追記する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ignore:
+  - &amp;quot;KanagataTests&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで&lt;code&gt;KanagataTests&lt;/code&gt;以下のフォルダは対象外となる&lt;/p&gt;
+
+&lt;h3 id=&#34;swiftlint&#34;&gt;SwiftLint&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/realm/SwiftLint&#34;&gt;SwiftLint&lt;/a&gt;には&lt;code&gt;Auto-correct&lt;/code&gt;というコードフォーマッタの機能があり、
+これを使いたいので導入した&lt;/p&gt;
+
+&lt;h4 id=&#34;インストール&#34;&gt;インストール&lt;/h4&gt;
+
+&lt;p&gt;なぜか&lt;code&gt;Sierra&lt;/code&gt;では&lt;code&gt;Homebrew&lt;/code&gt;でインストールできなかったので、パッケージからインストール&lt;/p&gt;
+
+&lt;h4 id=&#34;xcodeに設定&#34;&gt;Xcodeに設定&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Auto-correct&lt;/code&gt;はビルド時に毎回走らせたいので、Xcode上でのビルド設定に追加する&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;フレームワーク用のターゲットの&lt;code&gt;Bulid Phases&lt;/code&gt;を開く&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;New Run Script Phase&lt;/code&gt;で以下のスクリプトを追加&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if which swiftlint &amp;gt;/dev/null; then
+swiftlint autocorrect
+swiftlint
+else
+echo &amp;quot;warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint&amp;quot;
+fi
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;追加した&lt;code&gt;Run Script&lt;/code&gt;を&lt;code&gt;Compile Sources&lt;/code&gt;より上に移動&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;これでビルドを試してみて、たくさんエラーとワーニングが出ればOK&lt;/p&gt;
+
+&lt;h4 id=&#34;ルールのカスタマイズ&#34;&gt;ルールのカスタマイズ&lt;/h4&gt;
+
+&lt;p&gt;デフォルトの状態ではかなり厳しい設定で、エラーやワーニングが出まくるので調整する&lt;/p&gt;
+
+&lt;p&gt;リポジトリ直下に&lt;code&gt;.swiftlint.yml&lt;/code&gt;を追加し、無視するルールや変更する基準値を書いていく&lt;/p&gt;
+
+&lt;p&gt;調整内容は各プロジェクトにもよるが、今回は以下の感じに調整した&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;included:
+  - Kanagata
+variable_name:
+  min_length: 0
+line_length:
+  - 120
+  - 150
+type_body_length:
+  - 350
+  - 400
+function_body_length:
+  - 50
+  - 100
+cyclomatic_complexity: 25
+disabled_rules:
+  - nesting
+  - file_length
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;具体的には1ファイルに詰め込んだ都合上、行数制限をゆるめに設定。
+また、JSONの構造上、再起処理や型ごとの処理で複雑性が増しているのでそこもゆるめにした&lt;/p&gt;
+
+&lt;h4 id=&#34;ciに設定&#34;&gt;CIに設定&lt;/h4&gt;
+
+&lt;p&gt;CIの時にはチェックだけされる様に設定を&lt;code&gt;.travis.yml&lt;/code&gt;に追加&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;before_install:
+  - brew update
+  - brew install swiftlint
+script:
+  - swiftlint   # xcodebuild testより前にしておく
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（今回追加した分のみ記載）&lt;/p&gt;
+
+&lt;p&gt;CI環境には&lt;code&gt;SwiftLint&lt;/code&gt;が入っていないので実行前にインストールが必要。
+なお、&lt;code&gt;Homebrew&lt;/code&gt;ではなく、パッケージからインストールさせるとCIにかかる時間が減るらしい&lt;/p&gt;
+
+&lt;h3 id=&#34;バッジを貼る&#34;&gt;バッジを貼る&lt;/h3&gt;
+
+&lt;h4 id=&#34;travisci-1&#34;&gt;TravisCI&lt;/h4&gt;
+
+&lt;p&gt;リポジトリのビルド結果の画面の中に表示されているバッジをクリックすると、
+貼り付ける用のURLが出てくるので、*マークダウン*形式をコピーして&lt;code&gt;README&lt;/code&gt;に貼り付け&lt;/p&gt;
+
+&lt;h4 id=&#34;codecov&#34;&gt;Codecov&lt;/h4&gt;
+
+&lt;p&gt;リポジトリの画面の中の&lt;code&gt;Settings&lt;/code&gt; - &lt;code&gt;Badge&lt;/code&gt;で貼り付ける用のURLが出てくるので、
+こちらも*マークダウン*形式をコピーして&lt;code&gt;README&lt;/code&gt;に貼り付け&lt;/p&gt;
+
+&lt;h2 id=&#34;ドキュメント生成&#34;&gt;ドキュメント生成&lt;/h2&gt;
+
+&lt;p&gt;基本&lt;code&gt;public&lt;/code&gt;になるものにはドキュメントコメントをつけていて、&lt;code&gt;juzzy&lt;/code&gt;でドキュメント生成をしていたが、
+&lt;code&gt;CocoaPods&lt;/code&gt;に公開すれば&lt;code&gt;CocoaDocs&lt;/code&gt;が出来上がるので不要に。。。&lt;/p&gt;
+
+&lt;h2 id=&#34;一旦-まとめ&#34;&gt;一旦、まとめ&lt;/h2&gt;
+
+&lt;p&gt;ここまでの手順で、pushすると&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;SwiftLint&lt;/code&gt;で静的解析&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;XCTest&lt;/code&gt;でユニットテスト&lt;/li&gt;
+&lt;li&gt;ユニットテストのカバレッジを送信&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;といったところまで自動で実行される状態となる&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://travis-ci.org&#34;&gt;TravisCI&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://codecov.io/&#34;&gt;Codecov&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/realm/SwiftLint&#34;&gt;SwiftLint&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>UIPageViewControllerのエンドレス化などなど</title>
@@ -1771,100 +2021,6 @@ $response = $client-&amp;gt;request(&#39;POST&#39;, $url, [&#39;body&#39; =&amp;
 &lt;ul&gt;
 &lt;li&gt;PHP 5.6&lt;/li&gt;
 &lt;li&gt;Guzzle 6.2.2&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>UIScrollViewのAutoLayoutをStoryboardのみで設定</title>
-      <link>https://mike-neko.github.io/blog/scrollview/</link>
-      <pubDate>Sun, 23 Oct 2016 22:28:33 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/scrollview/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;Storyboard上だけでUIScrollViewのAutoLayoutを完結させる方法。
-中のUIを動的に追加や削除しないのであればコードを書く必要もないし、
-&lt;code&gt;UILabel&lt;/code&gt;のようにコンテンツに応じて動的に高さが変わるようなものにも対応可能&lt;/p&gt;
-
-&lt;p&gt;ポイントは&lt;code&gt;ContainerView&lt;/code&gt;を利用してScrollViewを別のViewControllerに持っていくこと&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;p&gt;サンプルとしてViewControllerの全画面に縦スクロールするScrollViewを配置する例を考える&lt;/p&gt;
-
-&lt;h4 id=&#34;1-viewcontrollerのscrollviewを置きたい場所に-containerview-を置き制約を設定する&#34;&gt;1. ViewControllerのScrollViewを置きたい場所に&lt;code&gt;ContainerView&lt;/code&gt;を置き制約を設定する&lt;/h4&gt;
-
-&lt;p&gt;（サンプル）全画面にしたいのでViewに対して&lt;code&gt;0&lt;/code&gt;で設定
-&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-10-23-scrollview/step1.png&#34; /&gt;
-&lt;/figure&gt;
-
-&lt;em&gt;&lt;code&gt;Layout Guide&lt;/code&gt;に対して制約を設定するとステータスバーなどに合わせて位置が変わる&lt;/em&gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;2-1で追加した子viewcontrollerをアウトライン上で選択し-viewcontrollerのサイズを-freeform-へ変更する&#34;&gt;2. 1で追加した子ViewControllerをアウトライン上で選択し、ViewControllerのサイズを&lt;code&gt;Freeform&lt;/code&gt;へ変更する&lt;/h4&gt;
-
-&lt;p&gt;変更すると&lt;code&gt;Height&lt;/code&gt;の部分が変更できるようになるので、
-&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-10-23-scrollview/step2.png&#34; /&gt;
-&lt;/figure&gt;
-
-ScrollViewの&lt;code&gt;ContentSize&lt;/code&gt;の高さがあらかじめ決まっているのであれば同じに、
-そうでないなら余裕を持った数字に変えておく&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;サイズを変更しなくても組めるが変更した方がスクロールせずに作業が行えるので楽&lt;/em&gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;3-1で追加した子viewcontrollerのviewにscrollviewを追加し任意の制約を設定する&#34;&gt;3. 1で追加した子ViewControllerのViewにScrollViewを追加し任意の制約を設定する&lt;/h4&gt;
-
-&lt;p&gt;（サンプル）全画面にしたいのでViewに対して今回も&lt;code&gt;0&lt;/code&gt;で設定
-&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-10-23-scrollview/step1.png&#34; /&gt;
-&lt;/figure&gt;
-
-&lt;em&gt;もしスクロールしないヘッダとつけたりしたいなら、この子ViewControllerのViewに対して追加しておくと便利&lt;/em&gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;4-3で追加したscrollviewにviewを追加し制約を設定する&#34;&gt;4. 3で追加したScrollViewにViewを追加し制約を設定する&lt;/h4&gt;
-
-&lt;p&gt;（サンプル）縦スクロールにしたいので制約は以下の通り
-&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-10-23-scrollview/step4.png&#34; /&gt;
-&lt;/figure&gt;
-&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;縦と横はそれぞれ親(Scrollview)に対して&lt;code&gt;0&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;横幅は親(Scrollview)と同じ&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;ここで追加したViewがいわば&lt;code&gt;ContentView&lt;/code&gt;となる&lt;/em&gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;5-4のviewに各パーツを配置していく&#34;&gt;5. 4のviewに各パーツを配置していく&lt;/h4&gt;
-
-&lt;p&gt;この工程は普段通りのAutoLayoutの設定でOK。
-&lt;code&gt;UILabel&lt;/code&gt;の高さをコンテンツに応じて変えたいなら高さを設定せずにマージンだけを設定する&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Scrollviewの中身の高さが固定でないなら&lt;code&gt;height&lt;/code&gt;は設定しないこと&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;参考-viewの階層&#34;&gt;参考：Viewの階層&lt;/h3&gt;
-
-&lt;p&gt;子ViewControllerのアウトライン
-&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-10-23-scrollview/view.png&#34; /&gt;
-&lt;/figure&gt;
-&lt;/p&gt;
-
-&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;AutoLayout&lt;/code&gt;って使い方のコツを見つけるまでが大変だけど、このサンプルみたいにやり方を見つけてしまうと楽すぎ〜〜&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.12.0&lt;/li&gt;
-&lt;li&gt;Xcode 8.0 / Swift3&lt;/li&gt;
-&lt;li&gt;iOS 10.0.2&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
