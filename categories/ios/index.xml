@@ -6,8 +6,218 @@
     <description>Recent content in Ios on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 14 Dec 2016 19:51:59 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 14 Dec 2016 19:52:13 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>GitHubの自作ライブラリを公開する（ライブラリ編）</title>
+      <link>https://mike-neko.github.io/blog/library2/</link>
+      <pubDate>Wed, 14 Dec 2016 19:52:13 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/library2/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
+その2ではマルチプラットフォーム対応とライブラリ管理ツールの導入についての内容&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;なお、作成するフレームワーク名、プロジェクト名は&lt;code&gt;Kanagata&lt;/code&gt;とした場合の手順なので、
+他の作業時は適宜読み替えること&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;その1は&lt;a href=&#34;../library1&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;マルチプラットフォーム対応&#34;&gt;マルチプラットフォーム対応&lt;/h2&gt;
+
+&lt;p&gt;元々は&lt;code&gt;iOS&lt;/code&gt;で作成していたが、特にOS依存するコードもないので、&lt;code&gt;macOS&lt;/code&gt;と&lt;code&gt;watchOS&lt;/code&gt;と&lt;code&gt;tvOS&lt;/code&gt;にも対応させる。
+また、ソースとテストは全て共通のものを用いることとする&lt;/p&gt;
+
+&lt;h3 id=&#34;既存ターゲット名変更&#34;&gt;既存ターゲット名変更&lt;/h3&gt;
+
+&lt;p&gt;まず&lt;code&gt;iOS&lt;/code&gt;用のターゲットと判る様にターゲット名を&lt;code&gt;Kanagata&lt;/code&gt;から&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更する&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;プロジェクト設定から&lt;code&gt;TARGETS&lt;/code&gt;の中の&lt;code&gt;Kanagata&lt;/code&gt;をクリックして名前を&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;の&lt;code&gt;Product Name&lt;/code&gt;を&lt;code&gt;$(TARGET_NAME)&lt;/code&gt;から&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;li&gt;スキーム名も&lt;code&gt;Manage Schemes...&lt;/code&gt;から&lt;code&gt;Kanagata&lt;/code&gt;をクリックして名前を&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;テスト用のターゲット&lt;code&gt;KanagataTests&lt;/code&gt;も同じ様にターゲット名を&lt;code&gt;KanagataTests-iOS&lt;/code&gt;へ、
+&lt;code&gt;Product Name&lt;/code&gt;を`&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ変更する&lt;/p&gt;
+
+&lt;h3 id=&#34;他os用のターゲットを追加&#34;&gt;他OS用のターゲットを追加&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;プロジェクト設定の&lt;code&gt;TARGETS&lt;/code&gt;の下部にある＋からターゲットを追加
+
+&lt;ul&gt;
+&lt;li&gt;追加画面の上部でOSを選択してから&lt;code&gt;Framework&lt;/code&gt;を選択&lt;br /&gt;
+（各OSで微妙に名前が違うので道具箱とココアのアイコンで見分けること）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Product Name&lt;/code&gt;は&lt;code&gt;Kanagata-(OS名)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Include Unit Tests&lt;/code&gt;にチェック(&lt;code&gt;watchOS&lt;/code&gt;以外)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;プロジェクトに&lt;code&gt;Kanagata-(OS名)&lt;/code&gt;と&lt;code&gt;KanagataTests-(OS名)&lt;/code&gt;が追加されるのでフォルダごと削除&lt;/li&gt;
+&lt;li&gt;追加したターゲットのバンドルIDから&lt;code&gt;-(OS名)&lt;/code&gt;を削除&lt;br /&gt;
+（必要に応じて&lt;code&gt;Signing&lt;/code&gt;と&lt;code&gt;Deployment Target&lt;/code&gt;も修正）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;を変更
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Info.plist File&lt;/code&gt;のパスから&lt;code&gt;-(OS名)&lt;/code&gt;を削除（共通のplistを指す様に）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Product Name&lt;/code&gt;を&lt;code&gt;$(TARGET_NAME)&lt;/code&gt;から&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;テスト用のターゲットも同じ様にバンドルID、&lt;code&gt;Signing&lt;/code&gt;、&lt;code&gt;Build Settings&lt;/code&gt;の各項目を修正する&lt;/p&gt;
+
+&lt;p&gt;ここで一旦ビルドとテストを実行して問題なければ次へ&lt;/p&gt;
+
+&lt;h3 id=&#34;travisciへの追加&#34;&gt;travisCIへの追加&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;追加されたOSの各スキームの&lt;code&gt;Shared&lt;/code&gt;をチェック&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;.travis.yml&lt;/code&gt;を修正&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;iOS&lt;/code&gt;用のスキーム名を&lt;code&gt;Kanagata&lt;/code&gt;から&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;li&gt;追加された&lt;code&gt;macOS&lt;/code&gt;と&lt;code&gt;tvOS&lt;/code&gt;の分のテストを追加（以下の設定）
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;- xcodebuild test -scheme Kanagata-macOS -destination &#39;platform=OS X&#39;
+- xcodebuild test -scheme Kanagata-tvOS -destination &#39;platform=tvOS Simulator,name=Apple TV 1080p&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;pushしてエラーがなければ次へ&lt;/p&gt;
+
+&lt;h2 id=&#34;ライブラリ管理ツールへの対応&#34;&gt;ライブラリ管理ツールへの対応&lt;/h2&gt;
+
+&lt;p&gt;個人的にはシンプルな&lt;code&gt;Carthage&lt;/code&gt;がお気に入り。
+&lt;code&gt;CocoaPods&lt;/code&gt;はプロジェクトの設定がいじられてしまうのが気になるのであまり使っていないが、
+周りでは使っている人も多いので対応する&lt;/p&gt;
+
+&lt;p&gt;なお、あらかじめ&lt;code&gt;Carthage&lt;/code&gt;も&lt;code&gt;CocoaPods&lt;/code&gt;もインストール済とする&lt;/p&gt;
+
+&lt;h3 id=&#34;carthage&#34;&gt;Carthage&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;Carthage&lt;/code&gt;は&lt;code&gt;CocoaPods&lt;/code&gt;と違って登録などの作業は不要で、
+GitHubにリリースすれば良い&lt;/p&gt;
+
+&lt;p&gt;まずは、プロジェクトのカレントディレクトリで以下を実行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;carthage build --no-skip-current
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;エラーなく完了し、&lt;code&gt;Carthage/Build&lt;/code&gt;内に各フレームワークが生成されていればOK&lt;/p&gt;
+
+&lt;p&gt;ビルドに問題なければ&lt;code&gt;GitHub&lt;/code&gt;上のリリースタブからタグをつける&lt;br /&gt;
+(この時はバージョンとして&lt;code&gt;0.1.0&lt;/code&gt;の様に数字のみをつけるのが良い。
+vを入れたりすると&lt;code&gt;CocoaPods&lt;/code&gt;でうまくいかないことがあるので)&lt;/p&gt;
+
+&lt;h4 id=&#34;参考-インストール&#34;&gt;（参考）インストール&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Cartfile&lt;/code&gt;に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;github &amp;quot;mike-neko/Kanagata&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という感じ（&lt;code&gt;アカウント名/リポジトリ名&lt;/code&gt;）で追記するだけで利用できる&lt;/p&gt;
+
+&lt;h3 id=&#34;cocoapods&#34;&gt;CocoaPods&lt;/h3&gt;
+
+&lt;p&gt;今回はデモプロジェクトは同梱しないので直接&lt;code&gt;podspec&lt;/code&gt;を作って対応させる&lt;/p&gt;
+
+&lt;h4 id=&#34;podspecの作成&#34;&gt;podspecの作成&lt;/h4&gt;
+
+&lt;p&gt;プロジェクトのカレントディレクトリで以下を実行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod spec create Kanagata
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ひな形の&lt;code&gt;Kanagata.podspec&lt;/code&gt;ができるので内容をプロジェクトに合わせて修正していく。
+今回は以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Pod::Spec.new do |s|
+  s.name         = &amp;quot;Kanagata&amp;quot;   // ライブラリ名
+  s.version      = &amp;quot;0.1.0&amp;quot;      // バージョン
+  s.summary      = &amp;quot;短い説明&amp;quot;
+  s.homepage     = &amp;quot;https://github.com/mike-neko/Kanagata&amp;quot;  // GitHub上にしておいた
+  s.license      = &amp;quot;MIT&amp;quot;        // ライセンス
+  s.author       = { &amp;quot;mike-neko&amp;quot; =&amp;gt; &amp;quot;mike.app.info@gmail.com&amp;quot; } // GitHub上の名前とメール
+  s.social_media_url   = &amp;quot;https://twitter.com/m__ike_&amp;quot;          // ツイッターのアドレス
+  s.ios.deployment_target = &amp;quot;8.0&amp;quot;           // OS毎のDeployment Targetと合わせる
+  s.osx.deployment_target = &amp;quot;10.10&amp;quot;
+  s.watchos.deployment_target = &amp;quot;2.0&amp;quot;
+  s.tvos.deployment_target = &amp;quot;9.0&amp;quot;
+  // GitHubのアドレスとタグの紐付けの設定。tagの方はデフォルトのままが良い
+  s.source       = { :git =&amp;gt; &amp;quot;https://github.com/mike-neko/Kanagata.git&amp;quot;, :tag =&amp;gt; &amp;quot;#{s.version}&amp;quot; }
+  s.source_files  = &amp;quot;Kanagata/*.swift&amp;quot;      // プロジェクト内でのソースの位置
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;基本はそのまま埋めていけば良い。ポイントがあるとすると&lt;code&gt;version&lt;/code&gt;の部分は、
+数字のみのバージョン(&lt;code&gt;v1.0.0&lt;/code&gt;とかはNG)にして、GitHub上のタグと一致させておくこと。
+あとは、忘れずに&lt;code&gt;source_files&lt;/code&gt;を自分のプロジェクトでのソースの位置に合わせること&lt;/p&gt;
+
+&lt;p&gt;一通り作成ができたら、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod spec lint Kanagata.podspec
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;としてみてエラーにならなければOK。pushしておく&lt;/p&gt;
+
+&lt;h4 id=&#34;cocoapodsへ登録&#34;&gt;CocoaPodsへ登録&lt;/h4&gt;
+
+&lt;p&gt;（初回のみ）ユーザを登録する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod trunk register (メールアドレス) &#39;(ユーザ名)&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行後に入力したメールアドレスへメールが来るので確認をする。&lt;br /&gt;
+確認後は&lt;code&gt;pod trunk me&lt;/code&gt;で登録内容が確認出来る&lt;/p&gt;
+
+&lt;p&gt;ユーザ登録ができれば、&lt;code&gt;podspec&lt;/code&gt;を&lt;code&gt;CocoaPods&lt;/code&gt;へ登録&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod trunk push
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、&lt;code&gt;podspec&lt;/code&gt;にTwitterを登録していると、無事完了した時にツイートが飛んでくる&lt;/p&gt;
+
+&lt;h4 id=&#34;ciに設定&#34;&gt;CIに設定&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;.travis.yml&lt;/code&gt;に&lt;code&gt;podspec&lt;/code&gt;の検証を追加&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;script:
+  - pod lib lint --allow-warnings
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（今回追加した分のみ記載）&lt;/p&gt;
+
+&lt;h4 id=&#34;参考-インストール-1&#34;&gt;（参考）インストール&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Podfile&lt;/code&gt;に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod &#39;Kanagata&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を追加すれば利用可能&lt;/p&gt;
+
+&lt;p&gt;また、生成されたドキュメントは、&lt;code&gt;http://cocoadocs.org/docsets/Kanagata/&lt;/code&gt;で見ることが出来る&lt;/p&gt;
+
+&lt;h2 id=&#34;その他&#34;&gt;その他&lt;/h2&gt;
+
+&lt;p&gt;後はバッジを貼ったり、ライセンスを貼ったりすれば、かなりそれっぽい感じになる。
+ライブラリとして公開するとなると敷居が高い気がするが、GitHubを使っていればあまり手間をかけることなく公開できる&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/Carthage/Carthage&#34;&gt;Carthage&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cocoapods.org/&#34;&gt;CocoaPods&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>GitHubの自作ライブラリを公開する（CI導入編）</title>
@@ -1812,157 +2022,6 @@ session.dataTaskWithRequest(request).resume()
 &lt;li&gt;OS X 10.12 Beta&lt;/li&gt;
 &lt;li&gt;Node.js 6.3.1&lt;/li&gt;
 &lt;li&gt;OpenSSL 1.0.2&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>KVOを利用する(Swift)</title>
-      <link>https://mike-neko.github.io/blog/swift-kvo/</link>
-      <pubDate>Mon, 25 Jul 2016 22:55:03 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/swift-kvo/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;で&lt;code&gt;KVO&lt;/code&gt;を利用する方法について。特に&lt;code&gt;context&lt;/code&gt;を一意の識別子として使いたい場合の方法。&lt;/p&gt;
-
-&lt;h2 id=&#34;サンプルコード&#34;&gt;サンプルコード&lt;/h2&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5f00c1927b3cede0376c575147956112.js&#34;&gt;&lt;/script&gt;
-
-&lt;h2 id=&#34;ポイント&#34;&gt;ポイント&lt;/h2&gt;
-
-&lt;h3 id=&#34;nsobject-を継承する&#34;&gt;&lt;code&gt;NSObject&lt;/code&gt;を継承する&lt;/h3&gt;
-
-&lt;p&gt;監視対象も監視するクラスも両方とも&lt;code&gt;NSObject&lt;/code&gt;のサブクラスであることが必要。&lt;/p&gt;
-
-&lt;p&gt;監視対象（サンプルでは&lt;code&gt;Target&lt;/code&gt;）で継承しなかった場合、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&#39;NSUnknownKeyException&#39;, reason: &#39;[&amp;lt;〜.ViewController 0x〜&amp;gt; addObserver:&amp;lt;〜.ViewController 0x〜&amp;gt; forKeyPath:@&amp;quot;target.valueA&amp;quot; options:3 context:0x〜] was sent to an object that is not KVC-compliant for the &amp;quot;target&amp;quot; property.&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;といった実行時エラーが発生する。&lt;/p&gt;
-
-&lt;p&gt;監視する側だとそもそも&lt;code&gt;addObserver&lt;/code&gt;などが利用できない。&lt;/p&gt;
-
-&lt;h3 id=&#34;プロパティには-dynamic-をつける&#34;&gt;プロパティには&lt;code&gt;dynamic&lt;/code&gt;をつける&lt;/h3&gt;
-
-&lt;p&gt;監視対象のプロパティ（&lt;code&gt;addObserver&lt;/code&gt;で追加するプロパティ）は必ず&lt;code&gt;dynamic&lt;/code&gt;をつけること。&lt;/p&gt;
-
-&lt;p&gt;もし、これをつけ忘れると、エラーにはならないが、通知も来ない状態
-（＝変更されても&lt;code&gt;observeValueForKeyPath&lt;/code&gt;が呼ばれない）
-という判りにくいバグになってしまう。&lt;/p&gt;
-
-&lt;h3 id=&#34;アクセスコントロールに注意&#34;&gt;アクセスコントロールに注意&lt;/h3&gt;
-
-&lt;p&gt;プロパティが別クラスのオブジェクト?の場合、&lt;code&gt;private&lt;/code&gt;にすると&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&#39;NSUnknownKeyException&#39;, reason: &#39;[&amp;lt;〜.ViewController 0x〜&amp;gt; addObserver:&amp;lt;〜.ViewController 0x〜&amp;gt; forKeyPath:@&amp;quot;target.valueA&amp;quot; options:3 context:0x〜] was sent to an object that is not KVC-compliant for the &amp;quot;target&amp;quot; property.&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;といった実行時エラーが発生する。&lt;/p&gt;
-
-&lt;p&gt;サンプルだと、&lt;code&gt;value1&lt;/code&gt;と&lt;code&gt;value2&lt;/code&gt;は&lt;code&gt;private&lt;/code&gt;でも問題無いが、&lt;code&gt;target&lt;/code&gt;は&lt;code&gt;private&lt;/code&gt;ではエラーになる。&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&lt;code&gt;String&lt;/code&gt;や&lt;code&gt;Int&lt;/code&gt;ではエラーにならないのは確認したが、具体的な条件は未調査・・・&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&#34;識別子としての-context-の指定&#34;&gt;識別子としての&lt;code&gt;context&lt;/code&gt;の指定&lt;/h3&gt;
-
-&lt;p&gt;通常の指定方法は参考リンクの通り（&lt;code&gt;private var myContext = 0&lt;/code&gt;）。
-ただ、今回のサンプルでは、キー値の指定とまとめて以下のようにしている。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;private struct KeyContext {
-    static var value1 = &amp;quot;value1&amp;quot;
-    ...
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;というのも、&lt;code&gt;context&lt;/code&gt;には一意なアドレスを渡すべきなので、&lt;code&gt;static&lt;/code&gt;によりアドレスを確保している。
-（通常の指定方法ではグローバル変数にして一意なアドレスを確保）&lt;/p&gt;
-
-&lt;p&gt;なお、&lt;code&gt;private&lt;/code&gt;なのは単に他からアクセスさせないようにしたい（する必要がない）からで、
-&lt;code&gt;struct&lt;/code&gt;の中で宣言しているのは、名前空間のようにしたかったからである。
-よって、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;private var value1 = &amp;quot;value1&amp;quot;
-...
-
-class ViewController: UIViewController {
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;と言った書き方でも同じ。&lt;/p&gt;
-
-&lt;h3 id=&#34;通知の登録-解除&#34;&gt;通知の登録 / 解除&lt;/h3&gt;
-
-&lt;h4 id=&#34;呼び出しタイミング&#34;&gt;呼び出しタイミング&lt;/h4&gt;
-
-&lt;h5 id=&#34;登録時&#34;&gt;登録時&lt;/h5&gt;
-
-&lt;p&gt;サンプルでは&lt;code&gt;UIViewController&lt;/code&gt;なので、&lt;code&gt;viewWillAppear&lt;/code&gt;で登録しているが、
-通常は&lt;code&gt;init&lt;/code&gt;での登録が良さげ。&lt;/p&gt;
-
-&lt;h5 id=&#34;解除時&#34;&gt;解除時&lt;/h5&gt;
-
-&lt;p&gt;サンプルでは登録が&lt;code&gt;viewWillAppear&lt;/code&gt;なので、対となる&lt;code&gt;viewWillDisappear&lt;/code&gt;で解除しているが、
-通常は&lt;code&gt;deinit&lt;/code&gt;での登録が良い。&lt;/p&gt;
-
-&lt;h4 id=&#34;登録方法&#34;&gt;登録方法&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;addObserver(self, forKeyPath: KeyContext.value1, options: .New, context: &amp;amp;KeyContext.value1)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;Objective-C&lt;/code&gt;との相違点は、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;KeyPath&lt;/code&gt;に&lt;code&gt;self&lt;/code&gt;がいらない&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;options&lt;/code&gt;を複数指定する時は、&lt;code&gt;|&lt;/code&gt;ではなく配列（例：&lt;code&gt;[.New, .Old]&lt;/code&gt;）で渡す&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;context&lt;/code&gt;へのポインタは&lt;code&gt;&amp;amp;&lt;/code&gt;だけで良い&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;といったあたり。&lt;/p&gt;
-
-&lt;h3 id=&#34;通知の受信&#34;&gt;通知の受信&lt;/h3&gt;
-
-&lt;p&gt;今回は、&lt;code&gt;context&lt;/code&gt;を識別子として利用しているので、&lt;code&gt;switch&lt;/code&gt;でまとめて比較しているが、&lt;code&gt;defalut&lt;/code&gt;の時にちゃんと&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;を呼ぶこと。これがないと、もし親クラスで何か監視をしていた場合に処理が正しく行われないので。
-（当然、自身の監視対象だった場合は呼ばない）&lt;/p&gt;
-
-&lt;p&gt;なお、&lt;code&gt;case&lt;/code&gt;に監視対象のプロパティを書き忘れると、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;An -observeValueForKeyPath:ofObject:change:context: message was received but not handled.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;の実行時エラーとなる。&lt;/p&gt;
-
-&lt;h4 id=&#34;値の取得&#34;&gt;値の取得&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;// Change Dictionary Keys: 
-// NSKeyValueChangeNewKeyとかNSKeyValueChangeOldKeyとか
-let value = change?[&amp;quot;Change Dictionary Keys&amp;quot;] as? &amp;quot;データ型&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;と書けば希望のデータ型へ変換して取得できる。
-&lt;code&gt;NSNull&lt;/code&gt;や型が違う場合などは、最終的に&lt;code&gt;nil&lt;/code&gt;が入るのでサンプルのように
-&lt;code&gt;guard&lt;/code&gt;ではじくのがスマート。&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/AdoptingCocoaDesignPatterns.html#//apple_ref/doc/uid/TP40014216-CH7-ID12&#34;&gt;Using Swift with Cocoa and Objective-C (Swift 2.2)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
