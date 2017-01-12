@@ -1,0 +1,1949 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Memo on M.Ikeの小ネタ集</title>
+    <link>https://mike-neko.github.io/tags/memo/</link>
+    <description>Recent content in Memo on M.Ikeの小ネタ集</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>jp</language>
+    <lastBuildDate>Wed, 14 Dec 2016 19:52:13 +0900</lastBuildDate>
+    <atom:link href="https://mike-neko.github.io/tags/memo/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>GitHubの自作ライブラリを公開する（ライブラリ編）</title>
+      <link>https://mike-neko.github.io/blog/library2/</link>
+      <pubDate>Wed, 14 Dec 2016 19:52:13 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/library2/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
+その2ではマルチプラットフォーム対応とライブラリ管理ツールの導入についての内容&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;なお、作成するフレームワーク名、プロジェクト名は&lt;code&gt;Kanagata&lt;/code&gt;とした場合の手順なので、
+他の作業時は適宜読み替えること&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;その1は&lt;a href=&#34;../library1&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;マルチプラットフォーム対応&#34;&gt;マルチプラットフォーム対応&lt;/h2&gt;
+
+&lt;p&gt;元々は&lt;code&gt;iOS&lt;/code&gt;で作成していたが、特にOS依存するコードもないので、&lt;code&gt;macOS&lt;/code&gt;と&lt;code&gt;watchOS&lt;/code&gt;と&lt;code&gt;tvOS&lt;/code&gt;にも対応させる。
+また、ソースとテストは全て共通のものを用いることとする&lt;/p&gt;
+
+&lt;h3 id=&#34;既存ターゲット名変更&#34;&gt;既存ターゲット名変更&lt;/h3&gt;
+
+&lt;p&gt;まず&lt;code&gt;iOS&lt;/code&gt;用のターゲットと判る様にターゲット名を&lt;code&gt;Kanagata&lt;/code&gt;から&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更する&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;プロジェクト設定から&lt;code&gt;TARGETS&lt;/code&gt;の中の&lt;code&gt;Kanagata&lt;/code&gt;をクリックして名前を&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;の&lt;code&gt;Product Name&lt;/code&gt;を&lt;code&gt;$(TARGET_NAME)&lt;/code&gt;から&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;li&gt;スキーム名も&lt;code&gt;Manage Schemes...&lt;/code&gt;から&lt;code&gt;Kanagata&lt;/code&gt;をクリックして名前を&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;テスト用のターゲット&lt;code&gt;KanagataTests&lt;/code&gt;も同じ様にターゲット名を&lt;code&gt;KanagataTests-iOS&lt;/code&gt;へ、
+&lt;code&gt;Product Name&lt;/code&gt;を`&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ変更する&lt;/p&gt;
+
+&lt;h3 id=&#34;他os用のターゲットを追加&#34;&gt;他OS用のターゲットを追加&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;プロジェクト設定の&lt;code&gt;TARGETS&lt;/code&gt;の下部にある＋からターゲットを追加
+
+&lt;ul&gt;
+&lt;li&gt;追加画面の上部でOSを選択してから&lt;code&gt;Framework&lt;/code&gt;を選択&lt;br /&gt;
+（各OSで微妙に名前が違うので道具箱とココアのアイコンで見分けること）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Product Name&lt;/code&gt;は&lt;code&gt;Kanagata-(OS名)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Include Unit Tests&lt;/code&gt;にチェック(&lt;code&gt;watchOS&lt;/code&gt;以外)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;プロジェクトに&lt;code&gt;Kanagata-(OS名)&lt;/code&gt;と&lt;code&gt;KanagataTests-(OS名)&lt;/code&gt;が追加されるのでフォルダごと削除&lt;/li&gt;
+&lt;li&gt;追加したターゲットのバンドルIDから&lt;code&gt;-(OS名)&lt;/code&gt;を削除&lt;br /&gt;
+（必要に応じて&lt;code&gt;Signing&lt;/code&gt;と&lt;code&gt;Deployment Target&lt;/code&gt;も修正）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;を変更
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Info.plist File&lt;/code&gt;のパスから&lt;code&gt;-(OS名)&lt;/code&gt;を削除（共通のplistを指す様に）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Product Name&lt;/code&gt;を&lt;code&gt;$(TARGET_NAME)&lt;/code&gt;から&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;テスト用のターゲットも同じ様にバンドルID、&lt;code&gt;Signing&lt;/code&gt;、&lt;code&gt;Build Settings&lt;/code&gt;の各項目を修正する&lt;/p&gt;
+
+&lt;p&gt;ここで一旦ビルドとテストを実行して問題なければ次へ&lt;/p&gt;
+
+&lt;h3 id=&#34;travisciへの追加&#34;&gt;travisCIへの追加&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;追加されたOSの各スキームの&lt;code&gt;Shared&lt;/code&gt;をチェック&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;.travis.yml&lt;/code&gt;を修正&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;iOS&lt;/code&gt;用のスキーム名を&lt;code&gt;Kanagata&lt;/code&gt;から&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;li&gt;追加された&lt;code&gt;macOS&lt;/code&gt;と&lt;code&gt;tvOS&lt;/code&gt;の分のテストを追加（以下の設定）
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;- xcodebuild test -scheme Kanagata-macOS -destination &#39;platform=OS X&#39;
+- xcodebuild test -scheme Kanagata-tvOS -destination &#39;platform=tvOS Simulator,name=Apple TV 1080p&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;pushしてエラーがなければ次へ&lt;/p&gt;
+
+&lt;h2 id=&#34;ライブラリ管理ツールへの対応&#34;&gt;ライブラリ管理ツールへの対応&lt;/h2&gt;
+
+&lt;p&gt;個人的にはシンプルな&lt;code&gt;Carthage&lt;/code&gt;がお気に入り。
+&lt;code&gt;CocoaPods&lt;/code&gt;はプロジェクトの設定がいじられてしまうのが気になるのであまり使っていないが、
+周りでは使っている人も多いので対応する&lt;/p&gt;
+
+&lt;p&gt;なお、あらかじめ&lt;code&gt;Carthage&lt;/code&gt;も&lt;code&gt;CocoaPods&lt;/code&gt;もインストール済とする&lt;/p&gt;
+
+&lt;h3 id=&#34;carthage&#34;&gt;Carthage&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;Carthage&lt;/code&gt;は&lt;code&gt;CocoaPods&lt;/code&gt;と違って登録などの作業は不要で、
+GitHubにリリースすれば良い&lt;/p&gt;
+
+&lt;p&gt;まずは、プロジェクトのカレントディレクトリで以下を実行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;carthage build --no-skip-current
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;エラーなく完了し、&lt;code&gt;Carthage/Build&lt;/code&gt;内に各フレームワークが生成されていればOK&lt;/p&gt;
+
+&lt;p&gt;ビルドに問題なければ&lt;code&gt;GitHub&lt;/code&gt;上のリリースタブからタグをつける&lt;br /&gt;
+(この時はバージョンとして&lt;code&gt;0.1.0&lt;/code&gt;の様に数字のみをつけるのが良い。
+vを入れたりすると&lt;code&gt;CocoaPods&lt;/code&gt;でうまくいかないことがあるので)&lt;/p&gt;
+
+&lt;h4 id=&#34;参考-インストール&#34;&gt;（参考）インストール&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Cartfile&lt;/code&gt;に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;github &amp;quot;mike-neko/Kanagata&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という感じ（&lt;code&gt;アカウント名/リポジトリ名&lt;/code&gt;）で追記するだけで利用できる&lt;/p&gt;
+
+&lt;h3 id=&#34;cocoapods&#34;&gt;CocoaPods&lt;/h3&gt;
+
+&lt;p&gt;今回はデモプロジェクトは同梱しないので直接&lt;code&gt;podspec&lt;/code&gt;を作って対応させる&lt;/p&gt;
+
+&lt;h4 id=&#34;podspecの作成&#34;&gt;podspecの作成&lt;/h4&gt;
+
+&lt;p&gt;プロジェクトのカレントディレクトリで以下を実行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod spec create Kanagata
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ひな形の&lt;code&gt;Kanagata.podspec&lt;/code&gt;ができるので内容をプロジェクトに合わせて修正していく。
+今回は以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Pod::Spec.new do |s|
+  s.name         = &amp;quot;Kanagata&amp;quot;   // ライブラリ名
+  s.version      = &amp;quot;0.1.0&amp;quot;      // バージョン
+  s.summary      = &amp;quot;短い説明&amp;quot;
+  s.homepage     = &amp;quot;https://github.com/mike-neko/Kanagata&amp;quot;  // GitHub上にしておいた
+  s.license      = &amp;quot;MIT&amp;quot;        // ライセンス
+  s.author       = { &amp;quot;mike-neko&amp;quot; =&amp;gt; &amp;quot;mike.app.info@gmail.com&amp;quot; } // GitHub上の名前とメール
+  s.social_media_url   = &amp;quot;https://twitter.com/m__ike_&amp;quot;          // ツイッターのアドレス
+  s.ios.deployment_target = &amp;quot;8.0&amp;quot;           // OS毎のDeployment Targetと合わせる
+  s.osx.deployment_target = &amp;quot;10.10&amp;quot;
+  s.watchos.deployment_target = &amp;quot;2.0&amp;quot;
+  s.tvos.deployment_target = &amp;quot;9.0&amp;quot;
+  // GitHubのアドレスとタグの紐付けの設定。tagの方はデフォルトのままが良い
+  s.source       = { :git =&amp;gt; &amp;quot;https://github.com/mike-neko/Kanagata.git&amp;quot;, :tag =&amp;gt; &amp;quot;#{s.version}&amp;quot; }
+  s.source_files  = &amp;quot;Kanagata/*.swift&amp;quot;      // プロジェクト内でのソースの位置
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;基本はそのまま埋めていけば良い。ポイントがあるとすると&lt;code&gt;version&lt;/code&gt;の部分は、
+数字のみのバージョン(&lt;code&gt;v1.0.0&lt;/code&gt;とかはNG)にして、GitHub上のタグと一致させておくこと。
+あとは、忘れずに&lt;code&gt;source_files&lt;/code&gt;を自分のプロジェクトでのソースの位置に合わせること&lt;/p&gt;
+
+&lt;p&gt;一通り作成ができたら、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod spec lint Kanagata.podspec
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;としてみてエラーにならなければOK。pushしておく&lt;/p&gt;
+
+&lt;h4 id=&#34;cocoapodsへ登録&#34;&gt;CocoaPodsへ登録&lt;/h4&gt;
+
+&lt;p&gt;（初回のみ）ユーザを登録する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod trunk register (メールアドレス) &#39;(ユーザ名)&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行後に入力したメールアドレスへメールが来るので確認をする。&lt;br /&gt;
+確認後は&lt;code&gt;pod trunk me&lt;/code&gt;で登録内容が確認出来る&lt;/p&gt;
+
+&lt;p&gt;ユーザ登録ができれば、&lt;code&gt;podspec&lt;/code&gt;を&lt;code&gt;CocoaPods&lt;/code&gt;へ登録&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod trunk push
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、&lt;code&gt;podspec&lt;/code&gt;にTwitterを登録していると、無事完了した時にツイートが飛んでくる&lt;/p&gt;
+
+&lt;h4 id=&#34;ciに設定&#34;&gt;CIに設定&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;.travis.yml&lt;/code&gt;に&lt;code&gt;podspec&lt;/code&gt;の検証を追加&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;script:
+  - pod lib lint --allow-warnings
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（今回追加した分のみ記載）&lt;/p&gt;
+
+&lt;h4 id=&#34;参考-インストール-1&#34;&gt;（参考）インストール&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Podfile&lt;/code&gt;に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod &#39;Kanagata&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を追加すれば利用可能&lt;/p&gt;
+
+&lt;p&gt;また、生成されたドキュメントは、&lt;code&gt;http://cocoadocs.org/docsets/Kanagata/&lt;/code&gt;で見ることが出来る&lt;/p&gt;
+
+&lt;h2 id=&#34;その他&#34;&gt;その他&lt;/h2&gt;
+
+&lt;p&gt;後はバッジを貼ったり、ライセンスを貼ったりすれば、かなりそれっぽい感じになる。
+ライブラリとして公開するとなると敷居が高い気がするが、GitHubを使っていればあまり手間をかけることなく公開できる&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/Carthage/Carthage&#34;&gt;Carthage&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cocoapods.org/&#34;&gt;CocoaPods&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GitHubの自作ライブラリを公開する（CI導入編）</title>
+      <link>https://mike-neko.github.io/blog/library1/</link>
+      <pubDate>Wed, 14 Dec 2016 19:51:59 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/library1/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
+その1ではCIの導入周りについての内容&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;なお、作成するフレームワーク名、プロジェクト名は&lt;code&gt;Kanagata&lt;/code&gt;とした場合の手順なので、
+他の作業時は適宜読み替えること&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;その2は&lt;a href=&#34;../library2&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;構成&#34;&gt;構成&lt;/h2&gt;
+
+&lt;p&gt;せっかくなので単なるライブラリの公開だけでなく、以下の感じでそれっぽく公開&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CIの導入(&lt;code&gt;TravisCI&lt;/code&gt;)
+
+&lt;ul&gt;
+&lt;li&gt;ユニットテスト(&lt;code&gt;XCTest&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;カバレッジ表示(&lt;code&gt;Codecov&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;静的コード解析(&lt;code&gt;SwiftLint&lt;/code&gt;)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;del&gt;ドキュメント生成(&lt;code&gt;juzzy&lt;/code&gt;)&lt;/del&gt;&lt;/li&gt;
+&lt;li&gt;マルチプラットフォーム対応(iOS以外も)&lt;/li&gt;
+&lt;li&gt;ライブラリ管理ツール
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Carthage&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;CocoaPods&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;ciの導入&#34;&gt;CIの導入&lt;/h2&gt;
+
+&lt;h3 id=&#34;プロジェクトの作成&#34;&gt;プロジェクトの作成&lt;/h3&gt;
+
+&lt;p&gt;今回は既存のプロジェクトの中で使っていたものをフレームワークとして切り出す為、まずは新規プロジェクトを作成&lt;/p&gt;
+
+&lt;p&gt;作成時には、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Cocoa Touch Framework&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Include Unit Tests&lt;/code&gt;にチェック&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;をつけて作成する。
+既存のソースとテストの各ファイルを移植したら、&lt;code&gt;.h&lt;/code&gt;のファイルを削除
+（Swiftのみなのでヘッダは不要）&lt;/p&gt;
+
+&lt;p&gt;ちなみに、ここで一旦ビルドとテストを実行すると&lt;code&gt;module file&#39;s minimum deployment target is ios10.1&lt;/code&gt;のエラー。。。
+その時の&lt;code&gt;Deployment Target&lt;/code&gt;はiOS9で問題ないはず。が、iOS10へ変更したりクリーンをしたりしても変わらず。
+最後にダメ元でiOS9のシミュレータをDLしてみると、無事完了。
+他の環境で試すと再現しなかったりで、結局原因はよく判らなかった・・・・&lt;/p&gt;
+
+&lt;p&gt;さて、無事？テストも通ったのでGitHubへpushしておく&lt;/p&gt;
+
+&lt;h3 id=&#34;travisci&#34;&gt;TravisCI&lt;/h3&gt;
+
+&lt;p&gt;CIツールに&lt;a href=&#34;https://travis-ci.org&#34;&gt;TravisCI&lt;/a&gt;を選択したのは、GitHubと連携できてiOSのビルドができて*タダ*なので&lt;/p&gt;
+
+&lt;h4 id=&#34;登録&#34;&gt;登録&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;トップページから&lt;code&gt;Sign in with GitHub&lt;/code&gt;のボタンを押して、GitHubとの連携を許可&lt;/li&gt;
+&lt;li&gt;しばらくすると、GitHubのリポジトリの一覧が表示される&lt;br /&gt;
+(表示されない時は再ログインしてみればOK)&lt;/li&gt;
+&lt;li&gt;今回のプロジェクトを選んで有効化&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;プロジェクトの修正&#34;&gt;プロジェクトの修正&lt;/h4&gt;
+
+&lt;p&gt;登録が終わればXcodeの&lt;code&gt;Scheme&lt;/code&gt;の設定を変更する&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Shared&lt;/code&gt;にチェック&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Test&lt;/code&gt;の中の&lt;code&gt;Gather coverage data&lt;/code&gt;にチェック&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;この時のスキーム名はCIの設定で使うので覚えておくこと！&lt;/p&gt;
+
+&lt;h4 id=&#34;設定&#34;&gt;設定&lt;/h4&gt;
+
+&lt;p&gt;リポジトリの直下に&lt;code&gt;.travis.yml&lt;/code&gt;を追加し、CIで行う作業を設定する&lt;/p&gt;
+
+&lt;p&gt;この書き方がよく判らなかったので、いろいろなライブラリのリポジトリを見て
+試した結果たどり着いた書き方（テストを実行するだけの最低限）がこちら&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;language: objective-c  # Swiftだけどobjective-cを指定
+osx_image: xcode8.1    # 使っているXcodeのバージョン
+script:
+  # テストを実行(schemeにスキーム名を指定する)
+  - xcodebuild test -scheme Kanagata -sdk iphonesimulator -destination &#39;platform=iOS Simulator,name=iPhone 5&#39;
+notifications:
+  email: false         # メール通知はOFF
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;変更が終わればスキームと&lt;code&gt;.travis.yml&lt;/code&gt;の変更分をpushする。&lt;br /&gt;
+その後はpushする毎に自動でCIが走るようになる
+（だいたい、pushしてから15分程度で開始されることが多い感じ）&lt;/p&gt;
+
+&lt;h3 id=&#34;カバレッジ表示&#34;&gt;カバレッジ表示&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;TravisCI&lt;/code&gt;と&lt;code&gt;Swift&lt;/code&gt;に対応していてバッジが表示できて*タダ*のものということで、
+&lt;a href=&#34;https://codecov.io/&#34;&gt;Codecov&lt;/a&gt;を選択&lt;br /&gt;
+開発時はXcode内でカバレッジを見るのでどういう詳細表示がされるのかは重視していない&lt;/p&gt;
+
+&lt;h4 id=&#34;登録と設定&#34;&gt;登録と設定&lt;/h4&gt;
+
+&lt;p&gt;こちらも&lt;code&gt;TravisCI&lt;/code&gt;と同じくGitHubとの連携だけで登録完了&lt;/p&gt;
+
+&lt;p&gt;便利なのが、リポジトリを選択すると&lt;code&gt;TravisCI&lt;/code&gt;に設定するコードを表示してくれること。&lt;br /&gt;
+表示されたコードを&lt;code&gt;.travis.yml&lt;/code&gt;に追加すればOK&lt;/p&gt;
+
+&lt;h4 id=&#34;ignoreの設定&#34;&gt;ignoreの設定&lt;/h4&gt;
+
+&lt;p&gt;デフォルトの状態ではリポジトリ内全部が対象となるので、テスト用のコードもカウントされてしまい、
+正しくないカバレッジが表示されてしまう。それを防ぐため、テスト用のコードは対象外とする様に設定する&lt;/p&gt;
+
+&lt;p&gt;リポジトリ直下に&lt;code&gt;codecov.yml&lt;/code&gt;を追加し、以下を追記する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ignore:
+  - &amp;quot;KanagataTests&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで&lt;code&gt;KanagataTests&lt;/code&gt;以下のフォルダは対象外となる&lt;/p&gt;
+
+&lt;h3 id=&#34;swiftlint&#34;&gt;SwiftLint&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/realm/SwiftLint&#34;&gt;SwiftLint&lt;/a&gt;には&lt;code&gt;Auto-correct&lt;/code&gt;というコードフォーマッタの機能があり、
+これを使いたいので導入した&lt;/p&gt;
+
+&lt;h4 id=&#34;インストール&#34;&gt;インストール&lt;/h4&gt;
+
+&lt;p&gt;なぜか&lt;code&gt;Sierra&lt;/code&gt;では&lt;code&gt;Homebrew&lt;/code&gt;でインストールできなかったので、パッケージからインストール&lt;/p&gt;
+
+&lt;h4 id=&#34;xcodeに設定&#34;&gt;Xcodeに設定&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Auto-correct&lt;/code&gt;はビルド時に毎回走らせたいので、Xcode上でのビルド設定に追加する&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;フレームワーク用のターゲットの&lt;code&gt;Bulid Phases&lt;/code&gt;を開く&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;New Run Script Phase&lt;/code&gt;で以下のスクリプトを追加&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if which swiftlint &amp;gt;/dev/null; then
+swiftlint autocorrect
+swiftlint
+else
+echo &amp;quot;warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint&amp;quot;
+fi
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;追加した&lt;code&gt;Run Script&lt;/code&gt;を&lt;code&gt;Compile Sources&lt;/code&gt;より上に移動&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;これでビルドを試してみて、たくさんエラーとワーニングが出ればOK&lt;/p&gt;
+
+&lt;h4 id=&#34;ルールのカスタマイズ&#34;&gt;ルールのカスタマイズ&lt;/h4&gt;
+
+&lt;p&gt;デフォルトの状態ではかなり厳しい設定で、エラーやワーニングが出まくるので調整する&lt;/p&gt;
+
+&lt;p&gt;リポジトリ直下に&lt;code&gt;.swiftlint.yml&lt;/code&gt;を追加し、無視するルールや変更する基準値を書いていく&lt;/p&gt;
+
+&lt;p&gt;調整内容は各プロジェクトにもよるが、今回は以下の感じに調整した&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;included:
+  - Kanagata
+variable_name:
+  min_length: 0
+line_length:
+  - 120
+  - 150
+type_body_length:
+  - 350
+  - 400
+function_body_length:
+  - 50
+  - 100
+cyclomatic_complexity: 25
+disabled_rules:
+  - nesting
+  - file_length
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;具体的には1ファイルに詰め込んだ都合上、行数制限をゆるめに設定。
+また、JSONの構造上、再起処理や型ごとの処理で複雑性が増しているのでそこもゆるめにした&lt;/p&gt;
+
+&lt;h4 id=&#34;ciに設定&#34;&gt;CIに設定&lt;/h4&gt;
+
+&lt;p&gt;CIの時にはチェックだけされる様に設定を&lt;code&gt;.travis.yml&lt;/code&gt;に追加&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;before_install:
+  - brew update
+  - brew install swiftlint
+script:
+  - swiftlint   # xcodebuild testより前にしておく
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（今回追加した分のみ記載）&lt;/p&gt;
+
+&lt;p&gt;CI環境には&lt;code&gt;SwiftLint&lt;/code&gt;が入っていないので実行前にインストールが必要。
+なお、&lt;code&gt;Homebrew&lt;/code&gt;ではなく、パッケージからインストールさせるとCIにかかる時間が減るらしい&lt;/p&gt;
+
+&lt;h3 id=&#34;バッジを貼る&#34;&gt;バッジを貼る&lt;/h3&gt;
+
+&lt;h4 id=&#34;travisci-1&#34;&gt;TravisCI&lt;/h4&gt;
+
+&lt;p&gt;リポジトリのビルド結果の画面の中に表示されているバッジをクリックすると、
+貼り付ける用のURLが出てくるので、*マークダウン*形式をコピーして&lt;code&gt;README&lt;/code&gt;に貼り付け&lt;/p&gt;
+
+&lt;h4 id=&#34;codecov&#34;&gt;Codecov&lt;/h4&gt;
+
+&lt;p&gt;リポジトリの画面の中の&lt;code&gt;Settings&lt;/code&gt; - &lt;code&gt;Badge&lt;/code&gt;で貼り付ける用のURLが出てくるので、
+こちらも*マークダウン*形式をコピーして&lt;code&gt;README&lt;/code&gt;に貼り付け&lt;/p&gt;
+
+&lt;h2 id=&#34;ドキュメント生成&#34;&gt;ドキュメント生成&lt;/h2&gt;
+
+&lt;p&gt;基本&lt;code&gt;public&lt;/code&gt;になるものにはドキュメントコメントをつけていて、&lt;code&gt;juzzy&lt;/code&gt;でドキュメント生成をしていたが、
+&lt;code&gt;CocoaPods&lt;/code&gt;に公開すれば&lt;code&gt;CocoaDocs&lt;/code&gt;が出来上がるので不要に。。。&lt;/p&gt;
+
+&lt;h2 id=&#34;一旦-まとめ&#34;&gt;一旦、まとめ&lt;/h2&gt;
+
+&lt;p&gt;ここまでの手順で、pushすると&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;SwiftLint&lt;/code&gt;で静的解析&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;XCTest&lt;/code&gt;でユニットテスト&lt;/li&gt;
+&lt;li&gt;ユニットテストのカバレッジを送信&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;といったところまで自動で実行される状態となる&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://travis-ci.org&#34;&gt;TravisCI&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://codecov.io/&#34;&gt;Codecov&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/realm/SwiftLint&#34;&gt;SwiftLint&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Provisioning Profileの有効期限をアプリ内で取得</title>
+      <link>https://mike-neko.github.io/blog/provisioning/</link>
+      <pubDate>Wed, 07 Dec 2016 19:18:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/provisioning/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;AdHoc&lt;/code&gt;で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
+その有効期限をアプリ内から確認する方法&lt;/p&gt;
+
+&lt;p&gt;確認自体はipaを解凍して見れば良いのだけど、エンタープライズの様にアプリ内で出したい場合は、
+この方法であらかじめ設定画面とかに仕込むと良いかもしれない&lt;/p&gt;
+
+&lt;p&gt;もちろん&lt;code&gt;Settings.bundle&lt;/code&gt;や直接アプリ内にリテラルとして持たすのも方法の一つだが、
+それだと更新の度に余分な作業が発生したり更新忘れとかのミスも発生したりしがちなので、
+この方法に行き着いた感じ&lt;/p&gt;
+
+&lt;p&gt;（プロビジョニングプロファイルはアーカイブ時に確定されるので、
+アプリバージョンのようにビルドスクリプトに仕込んでといった技は使えない。
+Xcode7以前はdryrunでビルド設定を出力させてそこから特定ということもできたが、
+Xcode8からの自動にした場合は使えないっぽい）&lt;/p&gt;
+
+&lt;h2 id=&#34;方法&#34;&gt;方法&lt;/h2&gt;
+
+&lt;p&gt;ipa作成時のプロビジョニングプロファイルについてまとめると、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;プロビジョニングプロファイルの中身はほぼ&lt;code&gt;plist&lt;/code&gt;(XML)&lt;/li&gt;
+&lt;li&gt;有効期限はプロビジョニングプロファイルの中の&lt;code&gt;ExpirationDate&lt;/code&gt;に&lt;code&gt;Date&lt;/code&gt;(NSDate)で記載&lt;/li&gt;
+&lt;li&gt;プロビジョニングプロファイルはアプリのパッケージの中に
+&lt;code&gt;embedded.mobileprovision&lt;/code&gt;という名前で同梱&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;これを踏まえてコードにすると、以下の感じになる&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bdbedbb280883dff96b6a5a7062c67bd.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;まずは1行目にあるように、同梱されているプロビジョニングを取得する&lt;br /&gt;
+&lt;strong&gt;デバッグ実行時には正しく取得できないので注意！&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;次に5〜14行目にあるように、&lt;code&gt;plist&lt;/code&gt;として必要な部分のみに加工。
+（不要部分があると変換に失敗するので）&lt;br /&gt;
+抜き出したら&lt;code&gt;PropertyListSerialization&lt;/code&gt;で&lt;code&gt;Dictionary&lt;/code&gt;に変換して有効期限を抜き出す&lt;/p&gt;
+
+&lt;p&gt;あとは、画面に表示させる為に文字列に変換してやって完了
+（例では余裕を持って1日前の日付にしている）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>WebRTCをiOSネイティブで使う(準備編)</title>
+      <link>https://mike-neko.github.io/blog/webrtc-build/</link>
+      <pubDate>Tue, 29 Nov 2016 23:24:55 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/webrtc-build/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;iOSのブラウザでは&lt;code&gt;WebRTC&lt;/code&gt;がサポートされていないので、利用したい場合は
+ネイティブのフレームワークを使う必要がある。&lt;/p&gt;
+
+&lt;p&gt;今回の準備編では公式のフレームワークを使うにあたってフレームワークの生成と組み込みまでの手順について&lt;/p&gt;
+
+&lt;p&gt;ただ、これが結構面倒で、ソースをダウンロードして一からビルドしないといけないし、
+その方法が公式に明記されていないというおまけ付き&lt;/p&gt;
+
+&lt;p&gt;普段、GitHubやCarthageに頼りきっている身には大変だった・・・&lt;/p&gt;
+
+&lt;h2 id=&#34;フレームワークの生成&#34;&gt;フレームワークの生成&lt;/h2&gt;
+
+&lt;p&gt;まずは、作業用の適当なフォルダを作っておく&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir 作業用のフォルダ
+cd 作業用のフォルダ
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ビルド用のツールをインストールする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew update
+brew install git
+brew install python
+git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ソースをダウンロードする&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;以下、ものすごく時間と容量をくうので注意！&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export PATH=`pwd`/depot_tools:&amp;quot;$PATH&amp;quot;
+fetch --nohooks webrtc_ios
+gclient sync
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ビルドする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd src
+webrtc/build/ios/build_ios_libs.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;成功すれば、&lt;code&gt;src/out_ios_libs/&lt;/code&gt;の中に&lt;code&gt;WebRTC.framework&lt;/code&gt;ができている&lt;/p&gt;
+
+&lt;h2 id=&#34;組み込み&#34;&gt;組み込み&lt;/h2&gt;
+
+&lt;p&gt;組み込み自体は他のサードパーティのフレームワークと一緒だが、ポイントは&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Embedded Binaries&lt;/code&gt;で追加&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;で&lt;code&gt;Bitcode&lt;/code&gt;を無効にする&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;というあたり&lt;/p&gt;
+
+&lt;p&gt;また、&lt;code&gt;Video&lt;/code&gt;を使う場合はシミュレータが使えないので注意&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://webrtc.org/native-code/&#34;&gt;WebRTC公式&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;macOS 10.12&lt;/li&gt;
+&lt;li&gt;Xcode 8.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>VPN上のWindows機へ接続</title>
+      <link>https://mike-neko.github.io/blog/vpn-win/</link>
+      <pubDate>Sun, 27 Nov 2016 22:50:47 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/vpn-win/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;SSH&lt;/code&gt;が入っていないVPN上のWindowsへアクセスする方法&lt;/p&gt;
+
+&lt;p&gt;この場合、踏み台となる&lt;code&gt;SSH&lt;/code&gt;が入った別のマシンが必要となる&lt;/p&gt;
+
+&lt;p&gt;今回の検証環境は以下の通り&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ローカル：Mac OS 10.11(※)&lt;/li&gt;
+&lt;li&gt;VPN
+
+&lt;ul&gt;
+&lt;li&gt;CentOS 6.8(踏み台)&lt;/li&gt;
+&lt;li&gt;Windows(SQLServer)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;※ macOS 10.12(sierra)は&lt;code&gt;PPTP&lt;/code&gt;でのVPN接続がOSではサポートされていないので注意！&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;接続のイメージは以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    Mac
+     |
+(VPN / SSH)
+     |
+   CentOS(192.168.10.1 / 踏み台) - Windows(192.168.10.2 / SQLServer)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;remotedesktopでログイン&#34;&gt;RemoteDesktopでログイン&lt;/h2&gt;
+
+&lt;p&gt;Windowsなので遠隔で操作するには&lt;code&gt;RemoteDesktop&lt;/code&gt;を利用&lt;/p&gt;
+
+&lt;h3 id=&#34;sshの接続方法&#34;&gt;SSHの接続方法&lt;/h3&gt;
+
+&lt;p&gt;以下の形式でSSH接続する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh -C -L 3389:(WindowsのIP):3389 (踏み台のIP)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例えば、上述の環境でCentOSの&lt;code&gt;user&lt;/code&gt;でログインする場合だと、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh -C -L 3389:192.168.10.2:3389 user@192.168.10.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で接続する&lt;/p&gt;
+
+&lt;h3 id=&#34;remotedesktopの設定&#34;&gt;RemoteDesktopの設定&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PC name:&lt;code&gt;localhost&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;User name: Windowsのユーザ名&lt;/li&gt;
+&lt;li&gt;Password: Windowsのパスワード&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ポイントはホストが&lt;code&gt;localhost&lt;/code&gt;になること&lt;/p&gt;
+
+&lt;h2 id=&#34;sql-serverへ接続&#34;&gt;SQL Serverへ接続&lt;/h2&gt;
+
+&lt;h3 id=&#34;sshの接続方法-1&#34;&gt;SSHの接続方法&lt;/h3&gt;
+
+&lt;p&gt;以下の形式でSSH接続する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh -C -L (DBのポート):(WindowsのIP):(DBのポート) (踏み台のIP)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例えば、上述の環境でCentOSの&lt;code&gt;user&lt;/code&gt;、SQLServerのポートが&lt;code&gt;1433&lt;/code&gt;でログインする場合だと、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh -C -L 1433:192.168.10.2:1433 user@192.168.10.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で接続する&lt;/p&gt;
+
+&lt;h3 id=&#34;db接続設定&#34;&gt;DB接続設定&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ホスト:&lt;code&gt;localhost&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;ポート:1433&lt;/li&gt;
+&lt;li&gt;DB名: そのまま&lt;/li&gt;
+&lt;li&gt;DBユーザ: そのまま&lt;/li&gt;
+&lt;li&gt;DBパスワード: そのまま&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>VagrantでCentOS6.8を使う </title>
+      <link>https://mike-neko.github.io/blog/vagrant-cent/</link>
+      <pubDate>Tue, 08 Nov 2016 21:32:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/vagrant-cent/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;野良BOXは自力で問題ないか検証するほどの腕がないので、公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Vagrantfile&lt;/code&gt;を作成&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir -p （適当なフォルダ）
+cd （上で作ったフォルダ）
+vagrant init bento/centos-6.8
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Vagrantfile&lt;/code&gt;を編集(サーバとして使いたいので以下のように編集)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# config.vm.network &amp;quot;forwarded_port&amp;quot;, guest: 80, host: 8080
+# ↓コメントを外す＋ポートは空いているものを指定
+config.vm.network &amp;quot;forwarded_port&amp;quot;, guest: 8010, host: 8010
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;# config.vm.network &amp;quot;private_network&amp;quot;, ip: &amp;quot;192.168.33.10&amp;quot;
+# ↓コメントを外す＋IPは空いているものを指定
+config.vm.network &amp;quot;private_network&amp;quot;, ip: &amp;quot;192.168.33.10&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;# Centos6.8限定で以下も追記(※1 詳細は後述)
+config.vm.provider &amp;quot;virtualbox&amp;quot; do |vb|
+vb.customize [&amp;quot;modifyvm&amp;quot;, :id, &amp;quot;--cableconnected1&amp;quot;, &amp;quot;on&amp;quot;]
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;起動する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant up
+vagrant ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;トラブルシューティング&#34;&gt;トラブルシューティング&lt;/h2&gt;
+
+&lt;h3 id=&#34;vagrant-up-で-private-key-で先に進まずエラーになる&#34;&gt;vagrant up で private key で先に進まずエラーになる&lt;/h3&gt;
+
+&lt;p&gt;エラーは以下の感じでCentOS6.8で発生(6.7は問題無し)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Timed out while waiting for the machine to boot. This means that
+Vagrant was unable to communicate with the guest machine within
+the configured (&amp;quot;config.vm.boot_timeout&amp;quot; value) time period.
+
+If you look above, you should be able to see the error(s) that
+Vagrant had when attempting to connect to the machine. These errors
+are usually good hints as to what may be wrong.
+
+If you&#39;re using a custom box, make sure that networking is properly
+working and you&#39;re able to connect to the machine. It is a common
+problem that networking isn&#39;t setup properly in these boxes.
+Verify that authentication configurations are also setup properly,
+as well.
+
+If the box appears to be booting properly, you may want to increase
+the timeout (&amp;quot;config.vm.boot_timeout&amp;quot;) value.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;対応策&#34;&gt;対応策&lt;/h4&gt;
+
+&lt;p&gt;ググると色々出てくるが、CentOS6.8で発生する場合は、前述の※1を&lt;code&gt;Vagrantfile&lt;/code&gt;に追記しておけば大丈夫。&lt;br /&gt;
+（というか他の方法は効果なしだった・・・）&lt;/p&gt;
+
+&lt;h3 id=&#34;ファイルの共有ができない&#34;&gt;ファイルの共有ができない&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;vagrant up&lt;/code&gt;で以下のエラーが出ている&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Vagrant was unable to mount VirtualBox shared folders. This is usually
+because the filesystem &amp;quot;vboxsf&amp;quot; is not available. This filesystem is
+made available via the VirtualBox Guest Additions and kernel module.
+Please verify that these guest additions are properly installed in the
+guest. This is not a bug in Vagrant and is usually caused by a faulty
+Vagrant box. For context, the command attempted was:
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;対応策-1&#34;&gt;対応策&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;まずはエラーを一旦無視してログインし、カーネルをアップデート&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant ssh
+su                     # pass:&amp;quot;vagrant&amp;quot;
+yum -y update kernel
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;アップデートが完了すれば&lt;code&gt;exit&lt;/code&gt;を2回でログアウトする&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Guest Additions&lt;/code&gt;をインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant plugin install vagrant-vbguest
+vagrant vbguest
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;リロードをかけてエラーが出なければOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant reload
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;環境&#34;&gt;環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mac 10.11&lt;/li&gt;
+&lt;li&gt;VirtualBox 5.0.28&lt;/li&gt;
+&lt;li&gt;Vagrant 1.8.6
+
+&lt;ul&gt;
+&lt;li&gt;CentOS6.7&lt;/li&gt;
+&lt;li&gt;CentOS6.8&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>CentOSからOracleへ接続</title>
+      <link>https://mike-neko.github.io/blog/oracle-cent/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/oracle-cent/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;CentOSのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
+
+&lt;p&gt;Macの場合は&lt;a href=&#34;../oracle-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;oracleのドライバのインストール&#34;&gt;Oracleのドライバのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;サーバのアーキテクチャを確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;uname -a
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index.html&#34;&gt;Oracle Instant Client&lt;/a&gt;から
+1で確認した環境の&lt;code&gt;basic&lt;/code&gt;と&lt;code&gt;SDK&lt;/code&gt;をダウンロードしサーバへ保存&lt;br /&gt;
+(今回は&lt;code&gt;x86_64&lt;/code&gt;だったので&lt;code&gt;Version 12.1.0.2 (x86_64)&lt;/code&gt;の&lt;code&gt;rpm&lt;/code&gt;を選択。以降このバージョンが前提)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd (保存した場所)
+su
+rpm -ivh oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
+rpm -ivh oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;パスを通す&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vi /etc/profile
+# 以下の行を追加
+export LD_LIBRARY_PATH=/usr/lib/oracle/12.1/client64/lib:$LD_LIBRARY_PATH
+export PATH=/usr/lib/oracle/12.1/client64/bin:$PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;追記したら保存して終了し&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;source /etc/profile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で強制反映させる&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;peclのインストール&#34;&gt;peclのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;以下でインストール
+&lt;code&gt;
+yum -y install --enablerepo=remi --enablerepo=remi-php56 php-pear
+&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;oci8のインストール&#34;&gt;oci8のインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;pecl&lt;/code&gt;からインストールするので&lt;code&gt;DTrace&lt;/code&gt;サポートを有効にする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;yum -y install systemtap-sdt-devel
+export PHP_DTRACE=yes
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ちなみにこれをしないと&lt;code&gt;error: oci8_dtrace_gen.h: No such file or director&lt;/code&gt;というエラーになる。
+詳細は&lt;a href=&#34;http://php.net/manual/ja/oci8.dtrace.php&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;oci8&lt;/code&gt;をバージョン（Ver.2.0.12）を指定してインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pecl install oci8-2.0.12
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;oci8の最新版だとPHP7以降の為、2.0系を指定する&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;インストール中にプロンプトが出れば、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;instantclient,/usr/lib/oracle/12.1/client64/lib
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と入力&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;PHPの設定
+&lt;code&gt;php.ini&lt;/code&gt;に以下を設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;extension=oci8.so
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（場所が判らない時は&lt;code&gt;php -i | grep php.ini&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php --ri oci8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;（略）
+OCI8 Support =&amp;gt; enabled
+（略）
+OCI8 Version =&amp;gt; 2.0.12
+（略）
+Oracle Run-time Client Library Version =&amp;gt; 12.1.0.2.0
+Oracle Compile-time Instant Client Version =&amp;gt; 12.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;Macの場合の&lt;a href=&#34;../oracle-mac/&#34;&gt;PHPからの接続&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/book.oci8.php&#34;&gt;Oracle OCI8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Pecl公式 &lt;a href=&#34;https://pecl.php.net/package/oci8&#34;&gt;oci8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html&#34;&gt;Orcale Instant Client&lt;/a&gt;
+(下の方にインストール方法)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CentOS6.8&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + OCI8 2.0.12&lt;/li&gt;
+&lt;li&gt;Oracle Instant Client 12.1.0.2.0&lt;/li&gt;
+&lt;li&gt;DBサーバ OracleDB(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>CentOSからSQLServerへ接続</title>
+      <link>https://mike-neko.github.io/blog/mssql-cent/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/mssql-cent/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;CentOSのPHP5.6から&lt;code&gt;PDO_ODBC&lt;/code&gt;でSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
+
+&lt;p&gt;Macの場合は&lt;a href=&#34;../mssql-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;なおCentOSからであれば&lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;も可能だが、公式ドライバがあるこちらを試してみた&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;sqlserverのドライバのインストール&#34;&gt;SQLServerのドライバのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;su
+yum -y update
+yum -y install yum-utils
+yum-config-manager --add-repo https://apt-mo.trafficmanager.net/yumrepos/mssql-rhel6-release/
+yum-config-manager --enable mssql-rhel6-release
+wget &amp;quot;http://aka.ms/msodbcrhelpublickey/dpgswdist.v1.asc&amp;quot;
+rpm --import dpgswdist.v1.asc
+yum -y remove unixODBC
+yum -y install msodbcsql # 途中にライセンスの承諾確認あり
+yum -y install unixODBC-utf16-devel
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ODBCドライバの確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vi /etc/odbcinst.ini
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として、以下のような文言があればOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[ODBC Driver 13 for SQL Server]
+Description=Microsoft ODBC Driver 13 for SQL Server
+Driver=/opt/microsoft/msodbcsql/lib64/libmsodbcsql-13.0.so.1.0
+UsageCount=1
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;odbcドライバの設定&#34;&gt;ODBCドライバの設定&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo vi /etc/odbcinst.ini
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として、次のような設定を追記する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[(ドライバ名として判り易い名称)]
+Driver = （odbcinst.iniの[]で囲まれたドライバ名）
+Description = (適当な説明)
+Trace = Yes
+Server = (サーバのIP)
+Port = (サーバのポート)
+Database = (データベース名)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上記の例の場合だと、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[SQLServer]
+Driver = ODBC Driver 13 for SQL Server
+Description = For Develop
+Trace = Yes
+Server = 192.168.0.10
+Port = 1433
+Database = sample
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;といった感じになる&lt;/p&gt;
+
+&lt;h3 id=&#34;pdo-odbcのインストール&#34;&gt;PDO_ODBCのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;yum -y install --enablerepo=remi --enablerepo=remi-php56 php-pdo php-odbc
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php -i | grep odbc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;code&gt;PDO drivers&lt;/code&gt;に&lt;code&gt;odbc&lt;/code&gt;が表示されていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;PDOのDSNの指定は以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$driver = &#39;SQLServer&#39;;      // odbc.iniで設定したドライバ名
+$user = &#39;test&#39;;             // ユーザ名
+$pass = &#39;1234&#39;;             // パスワード
+
+$pdo = new PDO(&#39;odbc:&#39; . $driver, $user, $pass); 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/ref.pdo-odbc.php&#34;&gt;PDO_ODBC&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Microsoft公式 &lt;a href=&#34;https://blogs.technet.microsoft.com/dataplatforminsider/2016/10/25/odbc-driver-13-0-for-sql-server-linux-is-now-released/&#34;&gt;ODBC Driver 13.0 for SQL Server&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CentOS6.8&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + PDO_ODBC&lt;/li&gt;
+&lt;li&gt;ODBC Driver 13.0 for SQL Server&lt;/li&gt;
+&lt;li&gt;DBサーバ SQLServer Express 2016(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MacからOracleへ接続</title>
+      <link>https://mike-neko.github.io/blog/oracle-mac/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/oracle-mac/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;MacのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
+
+&lt;p&gt;CentOSの場合は&lt;a href=&#34;../oracle-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;oracleのドライバのインストール&#34;&gt;Oracleのドライバのインストール&lt;/h3&gt;
+
+&lt;p&gt;今回は&lt;code&gt;Version 12.1.0.2 (64-bit)&lt;/code&gt;は選択。手順などはこのバージョンが前提&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index.html&#34;&gt;Oracle Instant Client&lt;/a&gt;から&lt;code&gt;basic&lt;/code&gt;と&lt;code&gt;SDK&lt;/code&gt;をダウンロード&lt;br /&gt;
+&lt;em&gt;公式の&lt;a href=&#34;http://php.net/manual/ja/oci8.requirements.php&#34;&gt;要件&lt;/a&gt;にあるように&lt;code&gt;OracleDB&lt;/code&gt;と&lt;code&gt;PHP&lt;/code&gt;のバージョンに合ったものを選択&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;1を全て同じフォルダへ解凍する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd （ダウンロード先）
+unzip instantclient-basic-macos.x64-12.1.0.2.0.zip
+unzip instantclient-sdk-macos.x64-12.1.0.2.0.zip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;(Ver.12であれば&lt;code&gt;instantclient_12_1&lt;/code&gt;というフォルダ内に全ファイルが解凍された状態になればOK)&lt;br /&gt;
+&lt;strong&gt;フォルダ名がバージョンになっているので解凍したフォルダ名をそのまま使うこと！&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;2をフォルダごと適当な場所に移動&lt;br /&gt;
+（今回は&lt;code&gt;/Library/Oracle/&lt;/code&gt;へ移動）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ライブラリのシンボリックリンクを作成&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /Library/Oracle/instantclient_12_1/
+ln -s libclntsh.dylib.12.1 libclntsh.dylib
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;パスを通す&lt;br /&gt;
+&lt;code&gt;.bash_profile&lt;/code&gt;に以下を追記&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export DYLD_LIBRARY_PATH=/Library/Oracle/instantclient_12_1
+export PATH=$PATH:$DYLD_LIBRARY_PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;追記したら保存し、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;source ~/.bash_profile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で強制反映させる&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;oci8をインストール&#34;&gt;OCI8をインストール&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;以下はすでにPHPをインストール済かつ&lt;code&gt;PECL&lt;/code&gt;が使えない場合なので、
+通常はPHPインストールと同時にしてしまうか&lt;code&gt;PECL&lt;/code&gt;で追加が恐らく楽&lt;/em&gt;&lt;br /&gt;
+（手持ちの環境では&lt;code&gt;PECL&lt;/code&gt;がなぜか使えなかったので以下の手順）&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;OCI8（Ver.2.0.12）を&lt;code&gt;PECL&lt;/code&gt;の&lt;a href=&#34;https://pecl.php.net/package/oci8&#34;&gt;該当ページ&lt;/a&gt;からダウンロード&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;解凍する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd （ダウンロード先）
+tar -zxf oci8-2.0.12.tgz
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;makeする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd oci8-2.0.12
+phpize
+./configure -with-oci8=shared,instantclient,/Library/Oracle/instantclient_12_1
+make install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;modules&lt;/code&gt;の中に&lt;code&gt;oci8.so&lt;/code&gt;ができていればOK&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ライブラリを移動&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo mv modules/oci8.so /Library/Oracle 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（とりあえず今回はここで）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;PHPの設定
+&lt;code&gt;php.ini&lt;/code&gt;に以下の2つの項目を設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;extension_dir = &amp;quot;/Library/Oracle&amp;quot; # oci8.soを置いた場所
+extension=oci8.so
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（ファイルの場所が判らない時は&lt;code&gt;php -i | grep php.ini&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php --ri oci8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;（略）
+OCI8 Support =&amp;gt; enabled
+（略）
+OCI8 Version =&amp;gt; 2.0.12
+（略）
+Oracle Run-time Client Library Version =&amp;gt; 12.1.0.2.0
+Oracle Compile-time Instant Client Version =&amp;gt; 12.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;フレームワークなどを使わずにそのまま接続する場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$user = &#39;test&#39;;             // ユーザ名
+$pass = &#39;1234&#39;;             // パスワード
+$host = &#39;192.168.0.10&#39;;     // ホスト
+$port = &#39;1521&#39;;             // ポート番号
+$db = &#39;sample&#39;;             // データベース名（サービス名）
+
+$conn = oci_connect(
+  $user,
+  $pass,
+  &#39;(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)&#39;
+  . &#39;(HOST=&#39; . $host . &#39;)(PORT=&#39; . $port . &#39;)))&#39; 
+  . &#39;(CONNECT_DATA=(SERVICE_NAME=&#39; . $db . &#39;)))&#39;]
+);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;といった感じで接続できる&lt;/p&gt;
+
+&lt;h2 id=&#34;phpstormの設定&#34;&gt;PHPStormの設定&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;PHPStorm&lt;/code&gt;から接続したい場合は、&lt;code&gt;Oracle Instant Client&lt;/code&gt;はVer.12以上が必要&lt;/p&gt;
+
+&lt;p&gt;設定は以下の感じ&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-11-03-oracle-mac/phpstorm.png&#34; /&gt;
+&lt;/figure&gt;
+
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/book.oci8.php&#34;&gt;Oracle OCI8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html&#34;&gt;Orcale Instant Client&lt;/a&gt;
+(下の方にインストール方法)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mac 10.11&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + OCI8 2.0.12&lt;/li&gt;
+&lt;li&gt;Oracle Instant Client 12.1.0.2.0&lt;/li&gt;
+&lt;li&gt;DBサーバ OracleDB(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MacからSQLServerへ接続</title>
+      <link>https://mike-neko.github.io/blog/mssql-mac/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/mssql-mac/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;MacのPHP5.6からSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
+
+&lt;p&gt;CentOSの場合は&lt;a href=&#34;../mssql-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;子ネタ&#34;&gt;子ネタ&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;SQLServer&lt;/code&gt;へPHPから接続するには以下の方法がある&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-sqlsrv.php&#34;&gt;PDO_SQLSR&lt;/a&gt;&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Windows版のPHPでしか使えない&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-dblib.php&#34;&gt;PDO_DBLIB&lt;/a&gt;&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;FreeTDS&lt;/code&gt;ライブラリを利用する&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Windows版はPHP5.3以降使えない&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-odbc.php&#34;&gt;PDO_ODBC&lt;/a&gt;&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Microsoftのドライバが必要(Win or Linuxのみ) =&amp;gt; &lt;strong&gt;Macは使えない&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という訳で、Macからの場合は&lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;一択、
+Linuxの場合は&lt;code&gt;PDO_ODBC&lt;/code&gt;+公式ドライバ（おすすめ？） or &lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;となる&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;freetdsのインストール&#34;&gt;FreeTDSのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;で&lt;code&gt;FreeTDS&lt;/code&gt;をインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install freetds
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;FreeTDS&lt;/code&gt;の接続確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;tsql -H (SQLServerのアドレス) -p (ポート) -U (ユーザ名) -P (パスワード)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;locale is &amp;quot;ja_JP.UTF-8&amp;quot;
+locale charset is &amp;quot;UTF-8&amp;quot;
+using default charset &amp;quot;UTF-8&amp;quot;
+1&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;のようになれば&lt;code&gt;exit&lt;/code&gt;で終了&lt;br /&gt;
+&lt;code&gt;1&amp;gt;&lt;/code&gt;の部分の数字が変わっていく場合は接続がうまくいっていない&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;em&gt;試した開発環境ではかなりの頻度でタイムアウトのエラーが出ていたので何度か試してみること&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;pdo-dblibのインストール&#34;&gt;PDO_DBLIBのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;で&lt;code&gt;PDO_DBLIB&lt;/code&gt;をインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install homebrew/php/php56-pdo-dblib
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php --ri pdo_dblib
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PDO Driver for FreeTDS/Sybase DB-lib =&amp;gt; enabled
+Flavour =&amp;gt; freetds
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;PDOのDSNの指定は以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$user = &#39;test&#39;;             // ユーザ名
+$pass = &#39;1234&#39;;             // パスワード
+$host = &#39;192.168.0.10&#39;;     // ホスト
+$port = &#39;1433&#39;;             // ポート番号
+$db = &#39;sample&#39;;             // データベース名
+
+$pdo = new PDO(&#39;dblib:host=&#39; . $host . &#39;:&#39; . $port . &#39;;dbname=&#39; $db, 
+               $user, $pass); 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;phpstormの設定&#34;&gt;PHPStormの設定&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;PHPStorm&lt;/code&gt;から接続したい場合の設定は以下の感じ&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-11-03-mssql-mac/phpstorm.png&#34; /&gt;
+&lt;/figure&gt;
+
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/ref.pdo-dblib.php&#34;&gt;PDO_DBLIB&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;FreeTDS &lt;a href=&#34;http://www.freetds.org/&#34;&gt;公式&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mac 10.11&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + PDO_DBLIB&lt;/li&gt;
+&lt;li&gt;FreeTDS 1.00.15 (TDS 7.3)&lt;/li&gt;
+&lt;li&gt;DBサーバ SQLServer Express 2016(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Guzzle(PHP)でAPNsの同時配信を行う</title>
+      <link>https://mike-neko.github.io/blog/guzzle-apns/</link>
+      <pubDate>Sat, 29 Oct 2016 22:40:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/guzzle-apns/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;でiOSのAPNs(Push通知)をお手軽に同時配信する方法&lt;/p&gt;
+
+&lt;p&gt;APNs自体については&lt;a href=&#34;../http2apns/&#34;&gt;APNs Provider API(http2)を利用する(Node.js)&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;自体は&lt;a href=&#34;../guzzle/&#34;&gt;以前の記事&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h3 id=&#34;curlの更新&#34;&gt;curlの更新&lt;/h3&gt;
+
+&lt;p&gt;APNsを使うには&lt;code&gt;http2&lt;/code&gt;が必要かつ非同期で実行したいので、&lt;code&gt;curl&lt;/code&gt;をインストールし直す&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;homebrew&lt;/code&gt;を使っている場合は以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install curl --with-nghttp2 --with-openssl
+brew link curl --force
+brew reinstall php56 --with-homebrew-curl
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なお、自分で試した時は上記だけでは&lt;code&gt;http2&lt;/code&gt;が有効にならなかったので、
+アンイストールした方が確実かもしれない&lt;/p&gt;
+
+&lt;p&gt;更新後に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -V
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として&lt;code&gt;http2&lt;/code&gt;が出ていればOK&lt;/p&gt;
+
+&lt;h2 id=&#34;guzzleの使い方&#34;&gt;Guzzleの使い方&lt;/h2&gt;
+
+&lt;h3 id=&#34;http2で通信する&#34;&gt;http2で通信する&lt;/h3&gt;
+
+&lt;p&gt;オプションで指定するだけでOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;version&#39; =&amp;gt; 2.0]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;post送信&#34;&gt;POST送信&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;body&lt;/code&gt;はリクエスト時のオプションとして以下の感じで指定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client();
+$response = $client-&amp;gt;request(&#39;POST&#39;, $url, [&#39;body&#39; =&amp;gt; $body]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;body&lt;/code&gt;の中身を&lt;code&gt;JSON&lt;/code&gt;にしたい時は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[&#39;body&#39; =&amp;gt; json_encode($json])]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という形にして渡す&lt;/p&gt;
+
+&lt;h3 id=&#34;クライアント証明書をつける&#34;&gt;クライアント証明書をつける&lt;/h3&gt;
+
+&lt;p&gt;これもオプションで指定するだけでOK&lt;/p&gt;
+
+&lt;p&gt;例えば同じ階層内に&lt;code&gt;apns_dev.pem&lt;/code&gt;という証明書（パスフレーズ&lt;code&gt;0000&lt;/code&gt;）に置いた場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;cert&#39; =&amp;gt; [&#39;apns_dev.pem&#39;, &#39;0000&#39;]]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あえていうなら、&lt;code&gt;pem&lt;/code&gt;形式の証明書を作るのがちょっと面倒&lt;/p&gt;
+
+&lt;h2 id=&#34;apnsの同時配信&#34;&gt;APNsの同時配信&lt;/h2&gt;
+
+&lt;p&gt;APNsは通知内容をJSONで指定することと、前回の並列リクエストを併せると、以下のコードで同時配信が実現できる&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/dcc15bedbc4d42e4e8b1c31119f3c63a.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;（※配信環境はSandBox向け）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP 5.6&lt;/li&gt;
+&lt;li&gt;Guzzle 6.2.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Guzzleで非同期の並列リクエストを行う</title>
+      <link>https://mike-neko.github.io/blog/guzzle/</link>
+      <pubDate>Sat, 29 Oct 2016 16:50:33 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/guzzle/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;PHP&lt;/code&gt;のHTTPクライアント(&lt;a href=&#34;http://docs.guzzlephp.org/en/latest/&#34;&gt;Guzzle&lt;/a&gt;)で非同期の並列リクエストを行う方法&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;は内部では&lt;code&gt;curl&lt;/code&gt;を使っており、便利な&lt;code&gt;curl&lt;/code&gt;を面倒な設定をせずに使えるというありがたいもの
+（なお&lt;code&gt;curl&lt;/code&gt;がなくても動くがその場合は非同期が使えないなど機能が制限されるらしい）&lt;/p&gt;
+
+&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
+
+&lt;p&gt;動作環境は以下のとおり&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP 5.5.0以上&lt;/li&gt;
+&lt;li&gt;curl 7.19.4以上
+(要openSSL/zlib)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;インストール&#34;&gt;インストール&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;composer&lt;/code&gt;で&lt;code&gt;guzzlehttp/guzzle&lt;/code&gt;を入れる&lt;br /&gt;
+(&lt;code&gt;guzzle/guzzle&lt;/code&gt;は古いバージョンなので注意)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;composer&lt;/code&gt;を使っているので、使う時は&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;require &#39;vendor/autoload.php&#39;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を忘れないこと&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;php-iniの設定&#34;&gt;php.iniの設定&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;allow_url_fopen = ON
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を設定しておく&lt;/p&gt;
+
+&lt;h2 id=&#34;使い方&#34;&gt;使い方&lt;/h2&gt;
+
+&lt;p&gt;複数のURLに並列に非同期にリクエストをかける方法は以下のとおり&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/07e16ffece9ecfbffa4959f875897418.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;まずは、&lt;code&gt;$requests&lt;/code&gt;に実際のリクエストを生成する処理をクロージャとして登録する。&lt;br /&gt;
+今回であれば、URLのリストから単純にURLを取り出し、&lt;code&gt;$client-&amp;gt;getAsync($url)&lt;/code&gt;としてリクエストを生成している&lt;br /&gt;
+（URLのエンドポイントだけが違うような場合は&lt;code&gt;base_uri&lt;/code&gt;を指定した方がスマート）&lt;/p&gt;
+
+&lt;p&gt;ポイントは&lt;code&gt;yield&lt;/code&gt;でジェネレータを使っていること。&lt;br /&gt;
+通常は&lt;code&gt;foreach&lt;/code&gt;をした時点でそのループの回数分中の処理が実行されてメモリなどのリソースを消費するが、
+ジェネレータを使うと実際に必要になる（今回であれば&lt;code&gt;Pool&lt;/code&gt;で順次実行される時）まで実行されずリソースを消費しないメリットがある&lt;/p&gt;
+
+&lt;p&gt;リクエストの生成処理ができれば、&lt;code&gt;Pool&lt;/code&gt;オブジェクトに渡して&lt;code&gt;Promise&lt;/code&gt;を生成する。
+その際、&lt;code&gt;concurrency&lt;/code&gt;で同時リクエスト数を、&lt;code&gt;fulfilled&lt;/code&gt;で成功時の処理、&lt;code&gt;rejected&lt;/code&gt;で失敗時の処理が行われる。
+非同期の場合、リクエストは生成順に実行されるが、当然、処理結果は順不同で返ってくる。&lt;/p&gt;
+
+&lt;p&gt;ちなみに&lt;code&gt;Promise&lt;/code&gt;の&lt;code&gt;wait()&lt;/code&gt;の部分で全ての並列処理が終わるまで待機される。
+これを忘れると完了しないまま処理が終わってしまう&lt;/p&gt;
+
+&lt;p&gt;つまり、例えばあるページにアクセスした時にバックグラウンドの非同期でダウンロードを行うといったことはできない。
+そういったことをしたい場合は、&lt;code&gt;Laravel&lt;/code&gt;の&lt;a href=&#34;https://readouble.com/laravel/5.1/ja/queues.html&#34;&gt;キュー&lt;/a&gt;なんかがおすすめ&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;debug&#39; =&amp;gt; true]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;としておくと細かな通信状況が出力されるので便利&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;公式：&lt;a href=&#34;http://docs.guzzlephp.org/en/latest/&#34;&gt;Guzzle&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;ジェネレータ:&lt;a href=&#34;http://php.net/manual/ja/language.generators.overview.php&#34;&gt;PHP公式&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP 5.6&lt;/li&gt;
+&lt;li&gt;Guzzle 6.2.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>さくらのレンタルサーバでredisを使う</title>
+      <link>https://mike-neko.github.io/blog/redis-sakura/</link>
+      <pubDate>Sat, 15 Oct 2016 21:53:49 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/redis-sakura/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;さくらのレンタルサーバ（スタンダード）に&lt;a href=&#34;http://redis.io/&#34;&gt;redis&lt;/a&gt;をインストールする方法のメモ&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Laravel&lt;/code&gt;のキューを使うついでに、せっかくなので&lt;code&gt;redis&lt;/code&gt;を使えるようにしてみる。
+&lt;code&gt;Laravel&lt;/code&gt;をさくらで使うあたりは&lt;a href=&#34;../laravel-sakura/&#34;&gt;以前の記事&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h2 id=&#34;インストール&#34;&gt;インストール&lt;/h2&gt;
+
+&lt;h3 id=&#34;ソースを展開&#34;&gt;ソースを展開&lt;/h3&gt;
+
+&lt;p&gt;SSHでログインして公式の手順通り以下の様にする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% wget http://download.redis.io/releases/redis-3.2.0.tar.gz
+% tar xzf redis-3.2.0.tar.gz
+% cd redis-3.2.0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最新版(Ver.3.2.4)では、権限絡みで&lt;code&gt;make&lt;/code&gt;に失敗する為、少し古いバージョンを使っているのがポイント&lt;/p&gt;
+
+&lt;h3 id=&#34;インストール先の変更&#34;&gt;インストール先の変更&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;src/Makefile&lt;/code&gt;を開く
+（&lt;code&gt;redis-3.2.0&lt;/code&gt;直下にも&lt;code&gt;Makefile&lt;/code&gt;があるので間違わないこと）&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;PREFIX?=&lt;/code&gt;という行を以下の様に書き換えて保存する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PREFIX?=/home/アカウント名
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;make&#34;&gt;make&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;% gmake
+% gmake install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;さくらのサーバはBSD系なので&lt;code&gt;gmake&lt;/code&gt;を使ってインストールを実行。
+これで、&lt;code&gt;~/bin&lt;/code&gt;に&lt;code&gt;redis&lt;/code&gt;関連がインストールされる&lt;/p&gt;
+
+&lt;p&gt;もし、&lt;code&gt;~/bin&lt;/code&gt;にパスが通っていなければ通しておくと便利&lt;/p&gt;
+
+&lt;h3 id=&#34;実行&#34;&gt;実行&lt;/h3&gt;
+
+&lt;p&gt;一旦、SSHをログアウトしてログインしなおしてから&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% nohup redis-server &amp;lt; /dev/null &amp;gt;&amp;amp; /dev/null &amp;amp;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として、&lt;code&gt;redis&lt;/code&gt;サーバをバックグラウンド起動する&lt;/p&gt;
+
+&lt;p&gt;確認のため、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% redis-cli
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;127.0.0.1:6379&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というようになればOK。失敗している時は&lt;code&gt;not connected&amp;gt;&lt;/code&gt;となる&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;この時に表示されているサーバのIPとポート番号を覚えておくこと&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;確認が終了すれば、&lt;code&gt;exit&lt;/code&gt;で抜ける（&lt;code&gt;shatdown&lt;/code&gt;にするとサーバまで止まるのでNG）&lt;/p&gt;
+
+&lt;h2 id=&#34;laravelで使う&#34;&gt;Laravelで使う&lt;/h2&gt;
+
+&lt;h3 id=&#34;パッケージの準備&#34;&gt;パッケージの準備&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;Laravel&lt;/code&gt;で&lt;code&gt;redis&lt;/code&gt;を使うには&lt;code&gt;predis/predis&lt;/code&gt;が必要なので、&lt;code&gt;Composer&lt;/code&gt;でインストールしておく&lt;/p&gt;
+
+&lt;h3 id=&#34;設定&#34;&gt;設定&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;config/database.php&lt;/code&gt;の中の&lt;code&gt;redis&lt;/code&gt;を設定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&#39;redis&#39; =&amp;gt; [
+
+  &#39;cluster&#39; =&amp;gt; false,
+
+  &#39;default&#39; =&amp;gt; [
+    &#39;host&#39;     =&amp;gt; &#39;127.0.0.1&#39;,      // redis-cliで確認したIP
+    &#39;port&#39;     =&amp;gt; 6379,             // redis-cliで確認したポート
+    &#39;database&#39; =&amp;gt; 0,
+  ],
+],
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;なお&lt;code&gt;.env&lt;/code&gt;を使う場合、&lt;code&gt;database&lt;/code&gt;の部分は&lt;code&gt;intval(env(&#39;REDIS_DATABASE&#39;, 0))&lt;/code&gt;というように明示的にintにしないとエラーになるので注意&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;以上で、&lt;code&gt;Laravel&lt;/code&gt;からも&lt;code&gt;redis&lt;/code&gt;が使える様になる&lt;/p&gt;
+
+&lt;h2 id=&#34;環境&#34;&gt;環境&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Laravel 5.1&lt;/li&gt;
+&lt;li&gt;さくらのレンタルサーバ（スタンダード）
+
+&lt;ul&gt;
+&lt;li&gt;PHP 5.6&lt;/li&gt;
+&lt;li&gt;redis 3.2.0&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>さくらのレンタルサーバでeasy_installを使う</title>
+      <link>https://mike-neko.github.io/blog/easyinstall-sakura/</link>
+      <pubDate>Sat, 15 Oct 2016 02:03:14 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/easyinstall-sakura/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;さくらのレンタルサーバ（スタンダード）でいつのまにか
+&lt;a href=&#34;http://setuptools.readthedocs.io/en/latest/easy_install.html&#34;&gt;easy_install&lt;/a&gt;
+が使えるようになっていたので使い方のメモ&lt;/p&gt;
+
+&lt;p&gt;レンタルサーバなので、当然そのまま実行すると&lt;code&gt;[Errno 13] Permission denied&lt;/code&gt;で怒られるのでその対策&lt;/p&gt;
+
+&lt;h2 id=&#34;準備&#34;&gt;準備&lt;/h2&gt;
+
+&lt;h3 id=&#34;インストール先の変更&#34;&gt;インストール先の変更&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;(無ければ)&lt;code&gt;~/.pydistutils.cfg&lt;/code&gt;を作成&lt;/li&gt;
+&lt;li&gt;ファイルの中に以下を追記&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code&gt;[install]
+user=1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;パスの追加&#34;&gt;パスの追加&lt;/h3&gt;
+
+&lt;p&gt;ついでにパスを通しておく。
+&lt;code&gt;csh&lt;/code&gt;の場合は、&lt;code&gt;~/.cshrc&lt;/code&gt;の中の&lt;code&gt;set path&lt;/code&gt;の行に&lt;code&gt;$HOME/.local/bin&lt;/code&gt;を追加する&lt;/p&gt;
+
+&lt;h2 id=&#34;使い方&#34;&gt;使い方&lt;/h2&gt;
+
+&lt;p&gt;インストール時はそのまま実行すればOK。&lt;/p&gt;
+
+&lt;p&gt;例えば、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% easy_install pip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とすれば、&lt;code&gt;~/.local/bin&lt;/code&gt;に&lt;code&gt;pip&lt;/code&gt;がインストールされる。&lt;/p&gt;
+
+&lt;p&gt;実行したい時は、パスが通っているので&lt;code&gt;pip&lt;/code&gt;とだけで実行できる。&lt;/p&gt;
+
+&lt;p&gt;なお、インストールしたのに、&lt;code&gt;Command not found.&lt;/code&gt;と出る場合は、
+SSHにログインしなおすと良い&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>PhpStormからさくらのレンタルサーバを使う</title>
+      <link>https://mike-neko.github.io/blog/phpstorm-sakura/</link>
+      <pubDate>Mon, 10 Oct 2016 02:03:14 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/phpstorm-sakura/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;さくらのレンタルサーバ（スタンダード）をPhpStormから使うにあたっての便利な小ネタ&lt;/p&gt;
+
+&lt;h2 id=&#34;さくらのdbに接続する&#34;&gt;さくらのDBに接続する&lt;/h2&gt;
+
+&lt;h3 id=&#34;設定情報&#34;&gt;設定情報&lt;/h3&gt;
+
+&lt;p&gt;接続したいさくらのDBは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;DBサーバ:mysql***.db.sakura.ne.jp&lt;/li&gt;
+&lt;li&gt;データベース名:アカウント名_testdb&lt;/li&gt;
+&lt;li&gt;ユーザ名:アカウント名&lt;/li&gt;
+&lt;li&gt;パスワード:pass&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;とし、事前に作成済みとする。&lt;/p&gt;
+
+&lt;h3 id=&#34;phpstormでの設定&#34;&gt;PhpStormでの設定&lt;/h3&gt;
+
+&lt;p&gt;1. &lt;code&gt;PhpStorm&lt;/code&gt;で適当なプロジェクトを作って起動&lt;br /&gt;
+2. メニューの&lt;code&gt;View&lt;/code&gt; - &lt;code&gt;Tool Windows&lt;/code&gt; - &lt;code&gt;Database&lt;/code&gt;を選択&lt;br /&gt;
+3. ツールウィンドウの左上の&lt;code&gt;+&lt;/code&gt; - &lt;code&gt;Data Source&lt;/code&gt; - &lt;code&gt;MySQL&lt;/code&gt;を選択&lt;br /&gt;
+4. &lt;code&gt;SSH/SSL&lt;/code&gt;のタブを選択&lt;br /&gt;
+5. &lt;code&gt;Use SSH tunnel&lt;/code&gt;にチェック&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;項目&lt;/th&gt;
+&lt;th&gt;設定値&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Proxy host&lt;/td&gt;
+&lt;td&gt;アカウント名.sakura.ne.jp&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Port&lt;/td&gt;
+&lt;td&gt;22&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Proxy user&lt;/td&gt;
+&lt;td&gt;アカウント名&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Auth type&lt;/td&gt;
+&lt;td&gt;Password&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Proxy password&lt;/td&gt;
+&lt;td&gt;サーバのパスワード&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;6. &lt;code&gt;Test Connection&lt;/code&gt;を押して&lt;code&gt;Error&lt;/code&gt;と出なければ接続OK&lt;br /&gt;
+7. &lt;code&gt;General&lt;/code&gt;のタブを選択&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;項目&lt;/th&gt;
+&lt;th&gt;設定値&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Host&lt;/td&gt;
+&lt;td&gt;mysql***.db.sakura.ne.jp&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Port&lt;/td&gt;
+&lt;td&gt;3306&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Database&lt;/td&gt;
+&lt;td&gt;アカウント名_testdb&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;User&lt;/td&gt;
+&lt;td&gt;アカウント名&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Password&lt;/td&gt;
+&lt;td&gt;pass&lt;/td&gt;
+&lt;td&gt;DBのパスワード&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;8. &lt;code&gt;Test Connection&lt;/code&gt;を押して&lt;code&gt;Successful&lt;/code&gt;と出れば接続OK&lt;br /&gt;
+9. &lt;code&gt;Options&lt;/code&gt;タブを選択&lt;br /&gt;
+10. &lt;code&gt;Resolve ...&lt;/code&gt;の欄でDB名にチェックを入れる&lt;br /&gt;
+11. &lt;code&gt;OK&lt;/code&gt;で閉じるとツールウィンドウ内にDBが表示される&lt;/p&gt;
+
+&lt;h2 id=&#34;サーバの中を見る-ftp&#34;&gt;サーバの中を見る（FTP）&lt;/h2&gt;
+
+&lt;p&gt;PhpStorm内蔵のFTPの設定方法。
+ファイルのアップロードには制約があるが、代わりにローカルファイルとの差分を表示や同期ができるなど結構便利。&lt;/p&gt;
+
+&lt;p&gt;1. &lt;code&gt;PhpStorm&lt;/code&gt;で適当なプロジェクトを作って起動&lt;br /&gt;
+2. メニューの&lt;code&gt;View&lt;/code&gt; - &lt;code&gt;Tool Windows&lt;/code&gt; - &lt;code&gt;Remote Host&lt;/code&gt;を選択&lt;br /&gt;
+3. ツールウィンドウの&lt;code&gt;...&lt;/code&gt;を選択&lt;br /&gt;
+4. &lt;code&gt;Name&lt;/code&gt;に適当な名前をつける&lt;br /&gt;
+5. &lt;code&gt;Type&lt;/code&gt;で&lt;code&gt;SFTP&lt;/code&gt;を選択&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;項目&lt;/th&gt;
+&lt;th&gt;設定値&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;SFTP host&lt;/td&gt;
+&lt;td&gt;アカウント名.sakura.ne.jp&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Port&lt;/td&gt;
+&lt;td&gt;22&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Root path&lt;/td&gt;
+&lt;td&gt;/home/アカウント名/&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;User name&lt;/td&gt;
+&lt;td&gt;アカウント名&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Auth type&lt;/td&gt;
+&lt;td&gt;Password&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Password&lt;/td&gt;
+&lt;td&gt;サーバのパスワード&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;6. &lt;code&gt;Test SFTP connection&lt;/code&gt;を押して&lt;code&gt;Successful&lt;/code&gt;と出れば接続OK&lt;/p&gt;
+
+&lt;p&gt;ここまで設定すればサーバ内のファイルの閲覧や削除などが行える。
+さらに、アップロードやローカルファイルとの比較などがしたい場合は、ローカルとの紐付けが必要。&lt;/p&gt;
+
+&lt;p&gt;7. &lt;code&gt;Mappings&lt;/code&gt;のタブを選択&lt;br /&gt;
+8. &lt;code&gt;Loacal path&lt;/code&gt;に既存プロジェクトのパスが入っていることを確認&lt;br /&gt;
+9. &lt;code&gt;Deployment path on server 〜&lt;/code&gt;に対応するサーバのパスを選択&lt;/p&gt;
+
+&lt;p&gt;これでツールウィンドウの中にサーバ上のファイルが表示され、右クリックでいろいろできるようになる。&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PhpStorm 2016.2&lt;/li&gt;
+&lt;li&gt;さくらのレンタルサーバ（スタンダード）
+
+&lt;ul&gt;
+&lt;li&gt;MySQL 5.5&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

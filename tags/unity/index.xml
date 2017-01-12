@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Unity on M.Ikeの小ネタ集</title>
+    <link>https://mike-neko.github.io/tags/unity/</link>
+    <description>Recent content in Unity on M.Ikeの小ネタ集</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>jp</language>
+    <lastBuildDate>Tue, 07 Jun 2016 00:56:50 +0900</lastBuildDate>
+    <atom:link href="https://mike-neko.github.io/tags/unity/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>UnityからOpenCVを利用する(iOS)</title>
+      <link>https://mike-neko.github.io/blog/unity-opencv/</link>
+      <pubDate>Tue, 07 Jun 2016 00:56:50 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/unity-opencv/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;UnityからiOSのネイティブプラグイン経由で&lt;code&gt;OpenCV&lt;/code&gt;でカメラを利用するサンプル。&lt;/p&gt;
+
+&lt;p&gt;内容としては、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;OpenCV経由で端末のカメラ画像を取得&lt;/li&gt;
+&lt;li&gt;取得した画像をOpenCVで処理（シンプルにグレースケールへ変換）&lt;/li&gt;
+&lt;li&gt;ネイティブプラグイン経由でUnity側(C#)へ渡す&lt;/li&gt;
+&lt;li&gt;Unity側でテクスチャを生成して表示する&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;といった流れになる。&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;opencvのフレームワークの準備&#34;&gt;OpenCVのフレームワークの準備&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://opencv.org/downloads.html&#34;&gt;公式のダウンロードページ&lt;/a&gt;から&lt;code&gt;for iOS&lt;/code&gt;の&lt;strong&gt;Ver.2系&lt;/strong&gt;をダウンロードする&lt;br /&gt;
+（サンプルでは&lt;a href=&#34;https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/opencv2.framework.zip/download&#34;&gt;Ver.2.4.13&lt;/a&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ダウンロードしたファイルを解凍して&lt;code&gt;opencv2.framework&lt;/code&gt;を取り出しておく&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;なお、Ver.2を利用したのは、作成時点ではVer.3だとエラーが出てしまったので。
+多分ソースからビルドするかバージョン上がれば、Ver.3系でも問題ないかと。&lt;/p&gt;
+
+&lt;h3 id=&#34;iosネイティブ部分のソースを作成&#34;&gt;iOSネイティブ部分のソースを作成&lt;/h3&gt;
+
+&lt;p&gt;OpenCVがC++なので、言語は&lt;code&gt;Objective-C++&lt;/code&gt;を利用する。&lt;br /&gt;
+(残念ながらSwiftはC++を扱うことができないのでObjC一択)&lt;/p&gt;
+
+&lt;p&gt;それに伴い、忘れずにファイルの拡張子を&lt;code&gt;.mm&lt;/code&gt;にしておくこと。&lt;br /&gt;
+ただその場合、ヘッダファイル（&lt;code&gt;.hpp&lt;/code&gt;）はUnityがプラグインのファイルとして認識してくれないので、
+今回は一つのファイルに収まるように書いている。&lt;br /&gt;
+（通常の&lt;code&gt;.h&lt;/code&gt;はちゃんと認識してくれるのに・・・）&lt;/p&gt;
+
+&lt;p&gt;プラグインの呼び出しは以下の感じ。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[iOS]
+OpenCV(C++)での処理
+ |
+ObjC++のクラスでラップ
+ |
+Cの関数でラッパークラスをエクスポート
+ |
+[Unity]
+C#でDLLimportして呼び出し
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ObjC++で一旦ラップしているのは、OpenCV部分の開発は別にXCode上で行う為。
+ただ、場合によってはメソッド呼び出しが遅いのでそこは注意。&lt;/p&gt;
+
+&lt;p&gt;ネイティブ側のソースの全文は以下の通り。
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bf258536e5414e25b1e147c8b5e7834d.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;通常のopencv周りの処理-4-51行目あたり&#34;&gt;通常のOpenCV周りの処理（4〜51行目あたり）&lt;/h4&gt;
+
+&lt;p&gt;ややこしいのが、C++はARC管理外の為、手動でメモリ管理が必要。
+今回はメモリの確保/破棄をラッパークラスの初期化/破棄と合わせて、
+ラッパークラスの生存期間とOpenCVのオブジェクトの生存期間が一致するようにしてある。&lt;/p&gt;
+
+&lt;p&gt;カメラの画像の取得は、初期化と同時に&lt;code&gt;cv::VideoCapture&lt;/code&gt;を生成し、
+その後は毎フレーム&lt;code&gt;*camera &amp;gt;&amp;gt; img&lt;/code&gt;で画像を読み込んでいる。&lt;/p&gt;
+
+&lt;p&gt;この時、取得された画像のフォーマットは&lt;code&gt;BGR&lt;/code&gt;なのがポイント。
+最終的にUnityのテクスチャのサイズとフォーマット&lt;code&gt;RGBA&lt;/code&gt;に変換してUnity側へ渡す。&lt;br /&gt;
+（Unity側では&lt;code&gt;ARGB&lt;/code&gt;の表記なので、最初それで変換してハマってた・・・）&lt;/p&gt;
+
+&lt;h4 id=&#34;プラグインのエントリポイントを用意-54-77行目あたり&#34;&gt;プラグインのエントリポイントを用意（54〜77行目あたり）&lt;/h4&gt;
+
+&lt;p&gt;用意するのはラッパークラス&lt;code&gt;VideoCapture&lt;/code&gt;の生成、毎フレーム呼び出す用、破棄の3つのCの関数。&lt;/p&gt;
+
+&lt;p&gt;これを55〜59行目のように宣言してC#へエクスポートする。
+このファイルはC++の扱いになっているので&lt;code&gt;extern &amp;quot;C&amp;quot;&lt;/code&gt;が必要。&lt;br /&gt;
+（逆に言うと、C#からはこれ以外が見えない状態となっている）&lt;/p&gt;
+
+&lt;p&gt;関数の本体は61行目以降にあるように、単純にブリッジしているだけ。&lt;/p&gt;
+
+&lt;h3 id=&#34;unityでネイティブプラグイン作成&#34;&gt;Unityでネイティブプラグイン作成&lt;/h3&gt;
+
+&lt;h4 id=&#34;unityにネイティブのソース類を組み込む&#34;&gt;Unityにネイティブのソース類を組み込む&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Assets&lt;/code&gt;直下に&lt;code&gt;Plugins&lt;/code&gt;フォルダを作る&lt;/li&gt;
+&lt;li&gt;作成した&lt;code&gt;Plugins&lt;/code&gt;フォルダにiOSネイティブ用のソースファイルを入れる&lt;br /&gt;
+Unityのエディタ上のインスペクタの設定を念のため確認
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Select platforms for plugin&lt;/code&gt;：iOS&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Platform settings&lt;/code&gt;：チェック不要&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;同じく&lt;code&gt;Plugins&lt;/code&gt;フォルダにダウンロードしておいた&lt;code&gt;opencv2.framework&lt;/code&gt;を丸ごと入れる&lt;br /&gt;
+Unity上ではフォルダとして認識されて、中にいろいろあればOK&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;コンポーネントの作成&#34;&gt;コンポーネントの作成&lt;/h4&gt;
+
+&lt;p&gt;ネイティブの画像データからテクスチャを生成し、
+そのテクスチャを指定した&lt;code&gt;Renderer&lt;/code&gt;のマテリアルにセットするコンポーネントを作成。&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5ea8d851f18b163ae6a70f6a05ccd4d1.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;当然、ネイティブプラグイン部分は、iOS上での実行時しか動かないので、
+該当部分は&lt;code&gt;#if UNITY_IOS&lt;/code&gt;〜&lt;code&gt;#endif&lt;/code&gt;でエディタ実行時にエラーにならないようにしておく。&lt;/p&gt;
+
+&lt;p&gt;ネイティブ側で準備したエントリポイントを利用する為にインポートの宣言（16〜26行目あたり）が必要。&lt;/p&gt;
+
+&lt;p&gt;Cの関数宣言をそのままC#での宣言にするが、同じデータ型がC#にない場合は対応するデータ型を代わりに指定する。
+（今回だと&lt;code&gt;void*&lt;/code&gt;が&lt;code&gt;IntPtr&lt;/code&gt;）&lt;/p&gt;
+
+&lt;p&gt;なお、構造体をやりとりするような場合は&lt;code&gt;マーシャリング&lt;/code&gt;が必要となるので結構面倒。&lt;/p&gt;
+
+&lt;p&gt;宣言すれば後は通常のメソッドと同じ様に利用できる。ただし、C側と引数などが異なっていた場合は、
+実行時にエラーとなるので注意。&lt;/p&gt;
+
+&lt;p&gt;後は、コンポーネントのライフサイクルと、キャプチャ用とテクスチャのオブジェクトのライフサイクルを一致させればOK。&lt;/p&gt;
+
+&lt;h4 id=&#34;シーン作成&#34;&gt;シーン作成&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;キャプチャしたテクスチャ用の&lt;code&gt;Material&lt;/code&gt;を作成
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Shader&lt;/code&gt;で&lt;code&gt;Unlit/Texture&lt;/code&gt;を選択&lt;br /&gt;
+（キャプチャ画像にライトが反映して光らないように）&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Quad&lt;/code&gt;でテクスチャを貼るオブジェクトを作成
+
+&lt;ul&gt;
+&lt;li&gt;Scaleを&lt;code&gt;X:3, Y:4, Z:1&lt;/code&gt;にする&lt;br /&gt;
+（数値はキャプチャ画像のアスペクト比と合わせる）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Material&lt;/code&gt;に1で作成したマテリアルをセット&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;プラグインのコンポーネントを追加
+
+&lt;ul&gt;
+&lt;li&gt;プラグインの&lt;code&gt;renderTarget&lt;/code&gt;に自身をセット&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
+
+&lt;p&gt;サンプルでは出てこないけど、C#のアンマネージドの辺りが、ObjCやSwiftに比べると結構大変な気がした。
+慣れてないからかも知れないけど、特にメモリ周りやマーシャリングはいずれちゃんと勉強しないと。&lt;/p&gt;
+
+&lt;p&gt;あと、OpenCV周りの細かい挙動もまだ把握しきれていないので調べたい。&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.5&lt;/li&gt;
+&lt;li&gt;Unity 5.3.4f1&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/UnityOpenCV&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;ただし、上記ソースには&lt;code&gt;opencv2.framework&lt;/code&gt;が含まれていない。&lt;br /&gt;
+（Githubの100MB制限にかかってしまったので）&lt;br /&gt;
+動かすには、&lt;code&gt;OpenCVのフレームワークの準備&lt;/code&gt;の項目で準備した
+&lt;code&gt;opencv2.framework&lt;/code&gt;を手動で&lt;code&gt;UnityOpenCV/Assets/Plugins/&lt;/code&gt;直下に追加する必要がある。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>UnityのSprite用シェーダ(2本)</title>
+      <link>https://mike-neko.github.io/blog/sprite-shader/</link>
+      <pubDate>Tue, 16 Feb 2016 04:13:47 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/sprite-shader/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;Unity公式のスプライトシェーダをベースにした、スプライトにエフェクトをつけるシェーダ2本。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;指定色でベタ塗りにするシェーダ：&lt;code&gt;SpriteBetaMask&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;指定色でアウトラインと影をつけるシェーダ：&lt;code&gt;SpriteOutline&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;ベタ塗りシェーダ&#34;&gt;ベタ塗りシェーダ&lt;/h3&gt;
+
+&lt;p&gt;未取得のアイテムをシルエット表示にしておきたいといった場合に、
+わざわざ画像を別に用意しなくても良いように作ったシェーダ&lt;/p&gt;
+
+&lt;h4 id=&#34;プロパティ&#34;&gt;プロパティ&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Mask Color&lt;/code&gt;：ベタ塗りにする時の色&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Mask On&lt;/code&gt;：&lt;code&gt;true&lt;/code&gt;でベタ塗り状態にする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Tint&lt;/code&gt;：乗算する頂点色（SpriteRendererのColorと同じ）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-16-sprite-shader/beta.gif&#34; /&gt;
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;アウトラインシェーダ&#34;&gt;アウトラインシェーダ&lt;/h3&gt;
+
+&lt;p&gt;枠をつけてちょっと目立たせたいとか簡単な影を落としたいといった場合に、
+画像を別に用意しなくても良い＆ある程度動的に変化できるように作ったシェーダ&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-16-sprite-shader/outline.gif&#34; /&gt;
+&lt;/figure&gt;
+
+
+&lt;h4 id=&#34;プロパティ-1&#34;&gt;プロパティ&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;OutLine Spread&lt;/code&gt;：アウトラインの幅&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Outline Color&lt;/code&gt;：アウトラインの色&lt;br /&gt;
+&lt;em&gt;α値は無視される&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Shadow Offset X&lt;/code&gt;/&lt;code&gt;Shadow Offset Y&lt;/code&gt;：影の位置&lt;br /&gt;
+&lt;em&gt;アウトラインの幅がある場合は、&lt;code&gt;アウトラインの幅 + 影の位置&lt;/code&gt;を設定&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Shadow Color&lt;/code&gt;：影の色&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Alpha&lt;/code&gt;：全体のα値&lt;br /&gt;
+&lt;em&gt;スプライト全体のαを変化させたい時は、SpriteRendererではなくこの値を使って変化させる&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;制約事項&#34;&gt;制約事項&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;本来のスプライトのサイズより小さくなるので注意&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;Multiple Spriteでの使用は非推奨&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;キャラのように複雑な形状とかの場合は途切れる可能性あり&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;※手抜きしたい時用なので、特に3つ目などの場合は画像自体を作るか2パスとかの正攻法での対応を。。。&lt;/p&gt;
+
+&lt;h4 id=&#34;説明&#34;&gt;説明&lt;/h4&gt;
+
+&lt;p&gt;スプライトにアウトラインや影を簡単につけるには、参考リンクにあるような方法があるが、uGUIでしか使えないのと、太めの線をつけることができなかったので、自作した。&lt;/p&gt;
+
+&lt;p&gt;アウトラインや影も特別なことをしている訳ではなく、フラグメントシェーダで指定された分の幅をずらしてテクスチャを見に行き、画像がある（＝αがしきい値以上）ならアウトラインないし影の色を出力しているだけ。&lt;/p&gt;
+
+&lt;p&gt;0ではなくしきい値（コード内では&lt;code&gt;THRESHOLD&lt;/code&gt;の&lt;code&gt;0.1&lt;/code&gt;）にしたのは、縁取りをキレイにみせる為。固定値にしているが、使う画像によっては値を変えたりプロパティ化しても良いかも。それと、&lt;code&gt;lerp&lt;/code&gt;とか&lt;code&gt;sign&lt;/code&gt;を使っているのは&lt;code&gt;if&lt;/code&gt;などの分岐命令を使いたくなかったからだけど、これぐらいなら素直に分岐を使った方が楽だったかも・・・&lt;/p&gt;
+
+&lt;p&gt;さて、アウトラインシェーダの重要なポイントは、バーテックスシェーダのテクスチャのUV座標を縮小させている（下の13-14行目あたりの）ところ。
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/f85e50d1f52d136b8e5f.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;これが無いと太めのアウトラインや影をつけた時に途中で切れてしまう。初めはこの理由が判らなくてかなりハマってしまったのだけど、シーンの描画をワイヤフレームにして一目瞭然！Unityの
+スプライトは賢いことに、単に板ポリに画像を貼り付けるのではなく、ちゃんと形状に合わせてポリゴン分割をしてくれている。多分、四角形より描画範囲が狭くなるのでパフォーマンスがあがるからだろうけど、逆に余白がほぼ0に近い状態になるので太めの線だと切れてしまっていた。&lt;/p&gt;
+
+&lt;p&gt;なので、ポリゴンはそのままで中に表示する画像を縮小することで、無理やり余白を作っている。（モデルを法線方向へ膨らます通常のアウトラインシェーダとは逆にしてみた）
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-16-sprite-shader/comp.png&#34; /&gt;
+&lt;/figure&gt;
+
+（左側が余白を作った状態なので、多少太めの線を引いても途切れない。逆に右側の通常のスプライトだと余白がほぼないのですぐに途切れてしまう。縮小する割合&lt;code&gt;1.2&lt;/code&gt;は実際に試して自分の環境でバランスのとれた値なので、必要に応じて調整を）&lt;/p&gt;
+
+&lt;p&gt;ただ、それが逆に制約事項につながってしまっている。Multiple Spriteについては、隣のスプライトとの距離が近すぎるとそれが表示されてしまう場合があるし、ポリゴンがトゲトゲの様な感じの形状だとその部分が途切れてしまう。（が、自分の環境では特に問題にならないので&lt;del&gt;放置&lt;/del&gt;今後の課題に）&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;今回のサンプルに使わせてもらったこのキャラってなんて言うんだろう？？&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;公式：&lt;a href=&#34;http://unity3d.com/jp/get-unity/download/archive&#34;&gt;シェーダ置き場&lt;/a&gt;&lt;br /&gt;
+（バージョン毎のダウンロードから「ビルトインシェーダ」を選択）&lt;/li&gt;
+&lt;li&gt;お手軽なuGUIでの方法：&lt;a href=&#34;http://tsubakit1.hateblo.jp/entry/2014/09/10/224446&#34;&gt;テラシュールブログ&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Unity 5.3&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/mike-neko/SpriteShaderSample&#34;&gt;プロジェクト一式&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;ベタ塗りシェーダ(&lt;a href=&#34;https://github.com/mike-neko/SpriteShaderSample/blob/master/Assets/Shaders/SpriteBetaMask.shader&#34;&gt;ソースのみ&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;アウトラインシェーダ(&lt;a href=&#34;https://github.com/mike-neko/SpriteShaderSample/blob/master/Assets/Shaders/SpriteOutline.shader&#34;&gt;ソースのみ&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div&gt;
+	&lt;img src=&#34;http://unity-chan.com/images/imageLicenseLogo.png&#34; alt=&#34;ユニティちゃんライセンス&#34;&gt;
+	&lt;p&gt;この作品は&lt;a href=&#34;http://unity-chan.com/contents/license_jp/&#34; target=&#34;_blank&#34;&gt;ユニティちゃんライセンス条項&lt;/a&gt;の元に提供されています&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
