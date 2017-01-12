@@ -46,7 +46,11 @@
 
       
         <li class="sidebar-nav-item">
-            <a href="/categories/old">old&nbsp;(50)</a>
+            <a href="/categories/old">old&nbsp;(49)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(1)</a>
         </li>
       
 
@@ -62,9 +66,11 @@
         
           &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
         
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(1)</a>&nbsp;
+        
           &nbsp;<a href="/tags/ios">ios&nbsp;(30)</a>&nbsp;
         
-          &nbsp;<a href="/tags/memo">memo&nbsp;(28)</a>&nbsp;
+          &nbsp;<a href="/tags/memo">memo&nbsp;(27)</a>&nbsp;
         
           &nbsp;<a href="/tags/metal">metal&nbsp;(6)</a>&nbsp;
         
@@ -107,16 +113,20 @@
     <h1>Hugo利用方法メモ</h1>
     <span class="post-date">Jan 20, 2016 
     
-    &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/web">web</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/github">github</a><a class="label" href="https://mike-neko.github.io/tags/memo">memo</a>
+    <a class="label" href="https://mike-neko.github.io/tags/hugo">hugo</a><a class="label" href="https://mike-neko.github.io/tags/github">github</a>
     </span>
     
 
-<p>初めはOctopressを使ってたものの、シンタックスハイライトがどうもうまく好みにならなかったので、結局、１週間ほどでHugoに乗り換え。Octopressに比べると構成もわかりやすいし、最新の資料が多くてよかった。<br />
-テーマはなるべくシンプル、かつ、スマホでも見やすい<a href="http://themes.gohugo.io/hyde-x/">Hyde-X</a>を選定。以下はHyde-Xの場合の設定なので、他のテーマでは変わることがあるので注意。</p>
+<p>このブログは<a href="https://gohugo.io/">Hugo</a>+<code>GitHub Pages</code>で公開しているがそれにあたってのメモ</p>
+
+<p>初めはOctopressを使ってたものの、シンタックスハイライトがどうもうまく好みにならなかったので、結局、１週間ほどでHugoに乗り換え。
+Octopressに比べると構成もわかりやすいし、最新の資料が多くてよかった。<br />
+テーマはなるべくシンプル、かつ、スマホでも見やすい<a href="http://themes.gohugo.io/hyde-x/">Hyde-X</a>を選定。
+以下はHyde-Xの場合の設定なので、他のテーマでは変わることがあるので注意</p>
 
 <h2 id="初期設定">初期設定</h2>
 
@@ -124,19 +134,20 @@
 
 <ol>
 <li><code>hugo new site &lt;site-name&gt;</code>で作業用のローカルディレクトリを作成</li>
-<li>公開用ディレクトリを作成してGitを設定
-<code>
-cd &lt;site-name&gt;
+
+<li><p>公開用ディレクトリを作成してGitを設定</p>
+
+<pre><code>cd &lt;site-name&gt;
 mkdir public
 git remote add origin https://github.com/&lt;github name&gt;/&lt;github name&gt;.github.io.git
-</code></li>
-<li><code>.gitignore</code>を<a href="https://github.com/github/gitignore">https://github.com/github/gitignore</a> から落としてきて、2の<code>public</code>の中に置く。</li>
+</code></pre></li>
+
+<li><p><code>.gitignore</code>を<a href="https://github.com/github/gitignore">https://github.com/github/gitignore</a> から落としてきて、2の<code>public</code>の中に置く</p></li>
 </ol>
 
 <h3 id="記事のテンプレを作成">記事のテンプレを作成</h3>
 
-<p><code>&lt;site-name&gt;/archetypes</code>に<code>default.md</code>を作成する。<br />
-内容は以下の感じ。</p>
+<p><code>&lt;site-name&gt;/archetypes</code>に<code>default.md</code>を作成する</p>
 
 <pre><code>date = &quot;now()&quot;
 draft = true
@@ -147,12 +158,12 @@ categories = []
 
 <h3 id="configを編集">configを編集</h3>
 
-<p><code>&lt;site-name&gt;/config.toml</code>を環境に合わせて編集する。<br />
+<p><code>&lt;site-name&gt;/config.toml</code>を環境に合わせて編集する<br />
 （設定方法はテーマのREADME.mdを参照）</p>
 
 <h3 id="highlight-jsをカスタマイズ">highlight.jsをカスタマイズ</h3>
 
-<p>デフォルトで入っていた分ではSwiftが未対応。。。まぁ基本的にはGistを使う予定だけど、一応使えるように。</p>
+<p>デフォルトで入っていた分ではSwiftが未対応。。。まぁ基本的にはGistを使う予定だけど、一応使えるように</p>
 
 <ol>
 <li><a href="https://highlightjs.org/">highlightjs公式</a>で使いそうなものだけを選択してカスタムパッケージをDL</li>
@@ -165,7 +176,8 @@ categories = []
 
 <h3 id="gist埋め込みコードを設定">Gist埋め込みコードを設定</h3>
 
-<p>普通にリンクをコピペしても良いのだけれども（<del>GistBoxを使い出したら逆にハッシュだけコピペするのが面倒だったり</del>）、せっかくMarkdownで書いているのだから、あまりタグを入れて表記が揺らぐのも微妙なので。</p>
+<p>普通にリンクをコピペしても良いのだけれども（<del>GistBoxを使い出したら逆にハッシュだけコピペするのが面倒だったり</del>）、
+せっかくMarkdownで書いているのだから、あまりタグを入れて表記が揺らぐのも微妙なので</p>
 
 <ol>
 <li><code>&lt;site-name&gt;/layouts/shortcodes/gist.html</code>を作成</li>
@@ -185,9 +197,9 @@ categories = []
 
 <h2 id="記事の作成">記事の作成</h2>
 
-<p><code>&lt;site-name&gt;</code>直下で<code>hugo new post/&lt;file-name&gt;.md</code>を実行する。</p>
+<p><code>&lt;site-name&gt;</code>直下で<code>hugo new post/&lt;file-name&gt;.md</code>を実行する</p>
 
-<p>プレビューは<code>hugo server -t Hyde-X -D -w</code>を実行した後に、<a href="http://localhost:1313/">http://localhost:1313/</a> へアクセス。</p>
+<p>プレビューは<code>hugo server -t Hyde-X -D -w</code>を実行した後に、<a href="http://localhost:1313/">http://localhost:1313/</a> へアクセス</p>
 
 <h2 id="公開手順">公開手順</h2>
 
@@ -199,7 +211,7 @@ categories = []
 <li>1のデータをGitで<code>commit</code>して<code>push</code></li>
 </ol>
 
-<p>ただ、毎回これをやるのは面倒なので、シェルスクリプトにしておく。</p>
+<p>ただ、毎回これをやるのは面倒なので、シェルスクリプトにしておく</p>
 
 <h3 id="デプロイ用スクリプト">デプロイ用スクリプト</h3>
 
