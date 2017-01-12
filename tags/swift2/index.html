@@ -46,11 +46,15 @@
 
       
         <li class="sidebar-nav-item">
-            <a href="/categories/old">old&nbsp;(49)</a>
+            <a href="/categories/old">old&nbsp;(47)</a>
         </li>
       
         <li class="sidebar-nav-item">
-            <a href="/categories/web">web&nbsp;(1)</a>
+            <a href="/categories/others">others&nbsp;(1)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(2)</a>
         </li>
       
 
@@ -58,7 +62,7 @@
 
       <li>
         
-          &nbsp;<a href="/tags/code">code&nbsp;(25)</a>&nbsp;
+          &nbsp;<a href="/tags/code">code&nbsp;(20)</a>&nbsp;
         
           &nbsp;<a href="/tags/docker">docker&nbsp;(3)</a>&nbsp;
         
@@ -66,19 +70,21 @@
         
           &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/hugo">hugo&nbsp;(1)</a>&nbsp;
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/ios">ios&nbsp;(29)</a>&nbsp;
+          &nbsp;<a href="/tags/ios">ios&nbsp;(24)</a>&nbsp;
         
-          &nbsp;<a href="/tags/memo">memo&nbsp;(27)</a>&nbsp;
+          &nbsp;<a href="/tags/memo">memo&nbsp;(25)</a>&nbsp;
         
           &nbsp;<a href="/tags/metal">metal&nbsp;(6)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(1)</a>&nbsp;
         
           &nbsp;<a href="/tags/perfect">perfect&nbsp;(3)</a>&nbsp;
         
           &nbsp;<a href="/tags/server">server&nbsp;(22)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift2">swift2&nbsp;(1)</a>&nbsp;
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(5)</a>&nbsp;
         
           &nbsp;<a href="/tags/swift3">swift3&nbsp;(2)</a>&nbsp;
         
@@ -121,6 +127,103 @@
   <h1>tag: " swift2 "</h1>
   <div class="posts">
     
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/code-reader/">QRコードの読み取りサンプル(Swift) その1</a>
+      </h1>
+      <span class="post-date">Jun 15, 2016
+      
+      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+      
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
+      </span>
+      
+      <h2 id="概要">概要</h2>
+
+<p>iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル。</p>
+
+      <a href="https://mike-neko.github.io/blog/code-reader/">Read On &rarr;</a>
+      
+    </div>
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/objc-exception/">SwiftでNSExceptionを処理する</a>
+      </h1>
+      <span class="post-date">Feb 20, 2016
+      
+      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+      
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a><a class="label" href="https://mike-neko.github.io/tags/objc">objC</a>
+      </span>
+      
+      <h2 id="概要">概要</h2>
+
+<p>ObjectiveCで書かれた<code>NSException</code>を発生させるソースをSwiftから利用したい時の処理方法。</p>
+
+<p><code>NSException</code>は、ObjectiveCの<code>@try ~ @catch ~ @finally</code>でしか例外処理を行えない。例外処理を書いていない時は、実行時エラーとして処理される。つまり、Swiftから<code>NSException</code>を発生させるコードを呼び出して例外が起きると、問答無用でアプリが落ちてしまう・・・</p>
+
+      <a href="https://mike-neko.github.io/blog/objc-exception/">Read On &rarr;</a>
+      
+    </div>
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/metal-image/">MetalのGPGPUによるパーティクルデモ</a>
+      </h1>
+      <span class="post-date">Feb 11, 2016
+      
+      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+      
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
+      </span>
+      
+      <h2 id="概要">概要</h2>
+
+<p>読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。</p>
+
+<p>画像サイズが512*512、1ピクセル=1パーティクルに分解するので、約26万個のパーティクルを動かしているが、60FPSを維持している。約100万まで増やすとiPhone6+で30FPSぐらいとなる。</p>
+
+<p>そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。</p>
+
+<h2 id="動作イメージ">動作イメージ</h2>
+
+      <a href="https://mike-neko.github.io/blog/metal-image/">Read On &rarr;</a>
+      
+    </div>
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/metal-noise/">MetalのGPGPUによるPerlinノイズ</a>
+      </h1>
+      <span class="post-date">Jan 25, 2016
+      
+      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+      
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
+      </span>
+      
+      <h2 id="概要">概要</h2>
+
+<p>GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。</p>
+
+<p>パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
+デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。</p>
+
+<h2 id="動作イメージ">動作イメージ</h2>
+
+      <a href="https://mike-neko.github.io/blog/metal-noise/">Read On &rarr;</a>
+      
+    </div>
     
     <div class="post">
       <h1 class="post-title">
