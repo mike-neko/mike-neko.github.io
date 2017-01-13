@@ -46,11 +46,23 @@
 
       
         <li class="sidebar-nav-item">
-            <a href="/categories/old">old&nbsp;(47)</a>
+            <a href="/categories/ios">ios&nbsp;(13)</a>
         </li>
       
         <li class="sidebar-nav-item">
-            <a href="/categories/others">others&nbsp;(1)</a>
+            <a href="/categories/mac">mac&nbsp;(6)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(20)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(16)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
         </li>
       
         <li class="sidebar-nav-item">
@@ -62,33 +74,39 @@
 
       <li>
         
-          &nbsp;<a href="/tags/code">code&nbsp;(19)</a>&nbsp;
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/docker">docker&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
         
           &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
         
           &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
         
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
           &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
-        
-          &nbsp;<a href="/tags/ios">ios&nbsp;(23)</a>&nbsp;
-        
-          &nbsp;<a href="/tags/memo">memo&nbsp;(25)</a>&nbsp;
         
           &nbsp;<a href="/tags/metal">metal&nbsp;(6)</a>&nbsp;
         
-          &nbsp;<a href="/tags/objc">objc&nbsp;(1)</a>&nbsp;
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/perfect">perfect&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/server">server&nbsp;(22)</a>&nbsp;
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift2">swift2&nbsp;(6)</a>&nbsp;
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift3">swift3&nbsp;(2)</a>&nbsp;
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
         
-          &nbsp;<a href="/tags/unity">unity&nbsp;(2)</a>&nbsp;
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
         
       </li>
     </ul>
@@ -125,7 +143,7 @@
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/perfect">perfect</a><a class="label" href="https://mike-neko.github.io/tags/code">code</a><a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+    <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a><a class="label" href="https://mike-neko.github.io/tags/apns">apns</a>
     </span>
     
 
@@ -136,12 +154,12 @@
 <p>今回はiOSのプッシュ通知を送信する方法について</p>
 
 <p>Perfectは最新のAPNsの通信形式に対応していて、細かなエラーレスポンスを取れるのがメリット。
-なので、開発用としては大変使いやすい。</p>
+なので、開発用としては大変使いやすい</p>
 
 <h2 id="手順">手順</h2>
 
 <p>Push通知はサーバ側で微妙に必要とされる証明書が変わったりするのがややこしいところ。
-PerfectでPush通知を送るのに必要なものは以下の通り。</p>
+PerfectでPush通知を送るのに必要なものは以下の通り</p>
 
 <ul>
 <li>サーバ
@@ -159,7 +177,7 @@ PerfectでPush通知を送るのに必要なものは以下の通り。</p>
 
 <h3 id="登録-プロビジョニングプロファイルと証明書の作成">登録〜プロビジョニングプロファイルと証明書の作成</h3>
 
-<p>証明書の取得には<code>AppID</code>の登録やら結構手順があって大変だが、まずは以下のリンク先の通りに作業をすればOK。</p>
+<p>証明書の取得には<code>AppID</code>の登録やら結構手順があって大変だが、まずは以下のリンク先の通りに作業をすればOK</p>
 
 <blockquote>
 <p>Qiita:<a href="http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb">プッシュ通知に必要な証明書の作り方2016</a></p>
@@ -190,7 +208,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 <h4 id="caルート証明書">CAルート証明書</h4>
 
-<p>APNsとサーバで接続する為に<code>Entrust</code>の証明書が必要なので、以下からダウンロードする。</p>
+<p>APNsとサーバで接続する為に<code>Entrust</code>の証明書が必要なので、以下からダウンロードする</p>
 
 <p>Entrust.net Certificate Authority (2048)：
 <a href="https://www.entrust.com/root-certificates/entrust_2048_ca.cer">entrust_2048_ca.cer</a><br />
@@ -199,7 +217,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 <h3 id="iosアプリの作成">iOSアプリの作成</h3>
 
 <p>とりあえず、必要最低限でPush通知を受信できる状態にする。
-デバイストークンの更新等には未対応なので注意。</p>
+デバイストークンの更新等には未対応なので注意</p>
 
 <h4 id="プロジェクトの設定">プロジェクトの設定</h4>
 
@@ -221,7 +239,7 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 <p>コードにすると以下の通り
 <script type="text/javascript" src="https://gist.github.com/8000f2d8dc5b37773323065e867e2e4d.js"></script></p>
 
-<p>これを実機上で実行すると、端末のデバイストークンがログ出力される。</p>
+<p>これを実機上で実行すると、端末のデバイストークンがログ出力される</p>
 
 <p><strong><em>デバッグ実行を停止させると、Push通知が届かない場合があるので、デバッグ実行したままにするか
 再度実機上からアクティブにしてバックグラウンドに落としておく。</em></strong></p>
@@ -254,24 +272,24 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 
 <p>サーバ側での実装は主に2つ。
 ひとつは証明書を<code>NotificationPusher</code>に初期設定するのと、
-もう一つは実際にPush通知を送る実装。</p>
+もう一つは実際にPush通知を送る実装</p>
 
 <p>初期設定は一度だけ行えばOKなので、（実環境では送信毎にチェックした方が良いけど）
-今回は<code>PerfectServerModuleInit</code>で行う。</p>
+今回は<code>PerfectServerModuleInit</code>で行う</p>
 
 <p>Push通知の送信は、<code>IOSNotificationItem</code>の配列
 （ここのenumの使い方は参考になる）で送信内容を作成し、
-<code>NotificationPusher().pushIOS</code>で送信を行う。</p>
+<code>NotificationPusher().pushIOS</code>で送信を行う</p>
 
 <script type="text/javascript" src="https://gist.github.com/821b3dced86e0eb741563e23c43fed0f.js"></script>
 
 <p>この実装でサーバにアクセスする度に、Push通知が端末へ送られる。
-送信時の結果は、ブラウザに表示される（エラーであればエラー内容）。</p>
+送信時の結果は、ブラウザに表示される（エラーであればエラー内容）</p>
 
 <h2 id="感想">感想</h2>
 
 <p>今回の一番大変だったのはEntrustの証明書の置き場が変わっていたこと。。。
-逆に言えばそれ以外はとても簡単にPush通知を送れる環境を作れた感じ。</p>
+逆に言えばそれ以外はとても簡単にPush通知を送れる環境を作れた感じ</p>
 
 <p>巷にはたくさんAPNsに対応したフレームワークやサービスがあるけど、
 開発用としては、このPerfectが一番手軽で確実だと思う。

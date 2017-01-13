@@ -46,11 +46,23 @@
 
       
         <li class="sidebar-nav-item">
-            <a href="/categories/old">old&nbsp;(47)</a>
+            <a href="/categories/ios">ios&nbsp;(13)</a>
         </li>
       
         <li class="sidebar-nav-item">
-            <a href="/categories/others">others&nbsp;(1)</a>
+            <a href="/categories/mac">mac&nbsp;(6)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(20)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(16)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
         </li>
       
         <li class="sidebar-nav-item">
@@ -62,33 +74,39 @@
 
       <li>
         
-          &nbsp;<a href="/tags/code">code&nbsp;(19)</a>&nbsp;
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/docker">docker&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
         
           &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
         
           &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
         
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
           &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
-        
-          &nbsp;<a href="/tags/ios">ios&nbsp;(23)</a>&nbsp;
-        
-          &nbsp;<a href="/tags/memo">memo&nbsp;(25)</a>&nbsp;
         
           &nbsp;<a href="/tags/metal">metal&nbsp;(6)</a>&nbsp;
         
-          &nbsp;<a href="/tags/objc">objc&nbsp;(1)</a>&nbsp;
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/perfect">perfect&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/server">server&nbsp;(22)</a>&nbsp;
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift2">swift2&nbsp;(6)</a>&nbsp;
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift3">swift3&nbsp;(2)</a>&nbsp;
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
         
-          &nbsp;<a href="/tags/unity">unity&nbsp;(2)</a>&nbsp;
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
         
       </li>
     </ul>
@@ -121,11 +139,11 @@
     <h1>PhpStormからさくらのレンタルサーバを使う</h1>
     <span class="post-date">Oct 10, 2016 
     
-    &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/memo">memo</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+    <a class="label" href="https://mike-neko.github.io/tags/php">php</a><a class="label" href="https://mike-neko.github.io/tags/db">db</a>
     </span>
     
 
@@ -146,7 +164,7 @@
 <li>パスワード:pass</li>
 </ul>
 
-<p>とし、事前に作成済みとする。</p>
+<p>とし、事前に作成済みとする</p>
 
 <h3 id="phpstormでの設定">PhpStormでの設定</h3>
 
@@ -245,7 +263,7 @@
 <h2 id="サーバの中を見る-ftp">サーバの中を見る（FTP）</h2>
 
 <p>PhpStorm内蔵のFTPの設定方法。
-ファイルのアップロードには制約があるが、代わりにローカルファイルとの差分を表示や同期ができるなど結構便利。</p>
+ファイルのアップロードには制約があるが、代わりにローカルファイルとの差分を表示や同期ができるなど結構便利</p>
 
 <p>1. <code>PhpStorm</code>で適当なプロジェクトを作って起動<br />
 2. メニューの<code>View</code> - <code>Tool Windows</code> - <code>Remote Host</code>を選択<br />
@@ -297,13 +315,13 @@
 <p>6. <code>Test SFTP connection</code>を押して<code>Successful</code>と出れば接続OK</p>
 
 <p>ここまで設定すればサーバ内のファイルの閲覧や削除などが行える。
-さらに、アップロードやローカルファイルとの比較などがしたい場合は、ローカルとの紐付けが必要。</p>
+さらに、アップロードやローカルファイルとの比較などがしたい場合は、ローカルとの紐付けが必要</p>
 
 <p>7. <code>Mappings</code>のタブを選択<br />
 8. <code>Loacal path</code>に既存プロジェクトのパスが入っていることを確認<br />
 9. <code>Deployment path on server 〜</code>に対応するサーバのパスを選択</p>
 
-<p>これでツールウィンドウの中にサーバ上のファイルが表示され、右クリックでいろいろできるようになる。</p>
+<p>これでツールウィンドウの中にサーバ上のファイルが表示され、右クリックでいろいろできるようになる</p>
 
 <h1 id="開発環境">開発環境</h1>
 

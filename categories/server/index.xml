@@ -6,150 +6,8 @@
     <description>Recent content in Server on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Tue, 06 Dec 2016 22:04:28 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 27 Nov 2016 22:50:47 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/server/index.xml" rel="self" type="application/rss+xml" />
-    
-    <item>
-      <title>multipart/form-dataによるファイルのアップロード</title>
-      <link>https://mike-neko.github.io/blog/multipart/</link>
-      <pubDate>Tue, 06 Dec 2016 22:04:28 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/multipart/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;（&lt;code&gt;Alamofire&lt;/code&gt;とかのライブラリを使った方が幸せになれると思うが）
-HTMLのフォームからの送信と同じ様な&lt;code&gt;multipart&lt;/code&gt;によるアップロードをiOSからする方法&lt;/p&gt;
-
-&lt;h2 id=&#34;要件&#34;&gt;要件&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;タイトル（文字列）とファイルを一緒にサーバへアップロード&lt;/li&gt;
-&lt;li&gt;アップロード先は同じホストの&lt;code&gt;upload.php&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;サーバからはjsonで結果が返ってくる&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;htmlの場合&#34;&gt;HTMLの場合&lt;/h2&gt;
-
-&lt;p&gt;上記要件でかつアップロードと同じ画面内で結果を表示させたい場合、
-&lt;code&gt;jQuery&lt;/code&gt;などを全く使わずに素のHTMLで書くと&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/9c53de2d62a4be94dd26131479b52c6f.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;もし、ajaxではなく送信結果は次の画面で表示させる様な場合だと&lt;code&gt;&amp;lt;form&amp;gt;&lt;/code&gt;タグは
-&lt;code&gt;&amp;lt;form name=&amp;quot;upload&amp;quot; enctype=&amp;quot;multipart/form-data&amp;quot; action=&amp;quot;upload.php&amp;quot; method=&amp;quot;post&amp;quot;&amp;gt;&lt;/code&gt;
-とする必要がある&lt;/p&gt;
-
-&lt;h2 id=&#34;iosの場合&#34;&gt;iOSの場合&lt;/h2&gt;
-
-&lt;p&gt;もし単一のファイルのアップロードだけなら、&lt;code&gt;URLSession&lt;/code&gt;の&lt;code&gt;uploadTask(with:〜&lt;/code&gt;でOKだが、
-他のデータやファイルも付加したい場合は自分で&lt;code&gt;multipart&lt;/code&gt;のリクエストを生成する必要がある&lt;/p&gt;
-
-&lt;p&gt;とりあえずHTMLと同じものをベタ書き(+エラー省略)すると、&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/3825cf1ea22cb4f1a1469a33c44097ff.js&#34;&gt;&lt;/script&gt;
-
-&lt;h3 id=&#34;boundary文字列&#34;&gt;boundary文字列&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;multipart&lt;/code&gt;の場合、データの区切りを表すためにデータ内に含まれない様なバウンダリ文字列が必要となる&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let boundary = String(format: &amp;quot;----iOSURLSessionBoundary.%08x%08x&amp;quot;, arc4random(), arc4random())
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;今回は&lt;code&gt;Alamofire&lt;/code&gt;を参考に送信元のプログラムとランダムな数字を組合せた文字列を生成している&lt;/p&gt;
-
-&lt;h3 id=&#34;bodyの生成&#34;&gt;bodyの生成&lt;/h3&gt;
-
-&lt;p&gt;フォームのデータの場合の構造は&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)[CRLF]
-Content-Disposition: form-data; name=&amp;quot;フォームの名前&amp;quot;[CRLF]
-[CRLF]
-(フォームのデータ)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;となる&lt;/p&gt;
-
-&lt;p&gt;ファイルの場合の構造は&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)[CRLF]
-Content-Disposition: form-data; name=&amp;quot;フォームの名前&amp;quot;; filename=&amp;quot;ファイル名&amp;quot;[CRLF]
-Content-Type: &amp;quot;ファイルのタイプ&amp;quot;[CRLF]
-[CRLF]
-(ファイルのデータ)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;となる&lt;/p&gt;
-
-&lt;p&gt;各構造をバイナリ(&lt;code&gt;Data&lt;/code&gt;型)にしたものを必要な分だけ組合せて、最後に&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)--[CRLF]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;をつけたものがbody部分のデータとなる&lt;/p&gt;
-
-&lt;p&gt;今回の例だとフォームデータが一つとファイルデータが一つなので、
-それぞれ一つずつを追加し最後にフッタを付けたものをbodyに入れている&lt;/p&gt;
-
-&lt;h3 id=&#34;headerの生成&#34;&gt;headerの生成&lt;/h3&gt;
-
-&lt;p&gt;フィールドにセットすべきなのは以下の2つ&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&amp;ldquo;Content-Type&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;Content-Length&amp;rdquo;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;code&gt;Content-Type&lt;/code&gt;にはタイプとバウンダリ文字列を以下のように指定する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;multipart/form-data; boundary=（バウンダリ文字列）
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;Content-Length&lt;/code&gt;は普通にbodyのサイズを入れればOK&lt;/p&gt;
-
-&lt;h3 id=&#34;送信&#34;&gt;送信&lt;/h3&gt;
-
-&lt;p&gt;送信は&lt;code&gt;uploadTask&lt;/code&gt;だと&lt;code&gt;multipart&lt;/code&gt;指定ができないので&lt;code&gt;dataTask&lt;/code&gt;で行う。
-それ以外は通常の&lt;code&gt;dataTask&lt;/code&gt;のやり方でOK&lt;/p&gt;
-
-&lt;h2 id=&#34;参考-サーバの処理-php&#34;&gt;参考：サーバの処理(PHP)&lt;/h2&gt;
-
-&lt;p&gt;今回サーバ側で検証用に使ったのは以下のソース&lt;br /&gt;
-（送信されてきたファイルはそのまま専用のディレクトリに格納し結果をJSONで返すだけ）&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// &amp;quot;upload&amp;quot;のディレクトリに書き込み権限が必要
-$dir = __DIR__ . &#39;/upload/&#39;;
-$path = $dir . basename($_FILES[&#39;filename&#39;][&#39;name&#39;]);
-
-$data[&#39;result&#39;] = &#39;アップロード失敗&#39;;
-if (move_uploaded_file($_FILES[&#39;filename&#39;][&#39;tmp_name&#39;], $path)) {
-    chmod($path, 0666);
-    $data[&#39;result&#39;] = date(&amp;quot;H:i:s&amp;quot;) . &#39; &#39; . $_POST[&#39;title&#39;] . &#39; アップロード成功&#39;;
-}
-
-header(&#39;Content-Type: application/json&#39;);
-echo json_encode($data);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;PHP公式：&lt;a href=&#34;http://php.net/manual/ja/features.file-upload.post-method.php&#34;&gt;POST メソッドによるアップロード&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;MDN公式：&lt;a href=&#34;https://developer.mozilla.org/ja/docs/Web/Guide/Using_FormData_Objects&#34;&gt;FormData オブジェクトの利用&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
-&lt;li&gt;PHP 7&lt;/li&gt;
-&lt;li&gt;Chrome&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
     
     <item>
       <title>VPN上のWindows機へ接続</title>
@@ -245,7 +103,7 @@ echo json_encode($data);
     </item>
     
     <item>
-      <title>VagrantでCentOS6.8を使う </title>
+      <title>VagrantでCentOS6.8を使う</title>
       <link>https://mike-neko.github.io/blog/vagrant-cent/</link>
       <pubDate>Tue, 08 Nov 2016 21:32:51 +0900</pubDate>
       
@@ -254,7 +112,7 @@ echo json_encode($data);
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;野良BOXは自力で問題ないか検証するほどの腕がないので、公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
+&lt;p&gt;野良BOXはちょっと怖いので公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
 
 &lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
@@ -1271,16 +1129,16 @@ user=1
 
 &lt;h2 id=&#34;使い方&#34;&gt;使い方&lt;/h2&gt;
 
-&lt;p&gt;インストール時はそのまま実行すればOK。&lt;/p&gt;
+&lt;p&gt;インストール時はそのまま実行すればOK&lt;/p&gt;
 
 &lt;p&gt;例えば、&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;% easy_install pip
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;とすれば、&lt;code&gt;~/.local/bin&lt;/code&gt;に&lt;code&gt;pip&lt;/code&gt;がインストールされる。&lt;/p&gt;
+&lt;p&gt;とすれば、&lt;code&gt;~/.local/bin&lt;/code&gt;に&lt;code&gt;pip&lt;/code&gt;がインストールされる&lt;/p&gt;
 
-&lt;p&gt;実行したい時は、パスが通っているので&lt;code&gt;pip&lt;/code&gt;とだけで実行できる。&lt;/p&gt;
+&lt;p&gt;実行したい時は、パスが通っているので&lt;code&gt;pip&lt;/code&gt;とだけで実行できる&lt;/p&gt;
 
 &lt;p&gt;なお、インストールしたのに、&lt;code&gt;Command not found.&lt;/code&gt;と出る場合は、
 SSHにログインしなおすと良い&lt;/p&gt;
@@ -1312,7 +1170,7 @@ SSHにログインしなおすと良い&lt;/p&gt;
 &lt;li&gt;パスワード:pass&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;とし、事前に作成済みとする。&lt;/p&gt;
+&lt;p&gt;とし、事前に作成済みとする&lt;/p&gt;
 
 &lt;h3 id=&#34;phpstormでの設定&#34;&gt;PhpStormでの設定&lt;/h3&gt;
 
@@ -1411,7 +1269,7 @@ SSHにログインしなおすと良い&lt;/p&gt;
 &lt;h2 id=&#34;サーバの中を見る-ftp&#34;&gt;サーバの中を見る（FTP）&lt;/h2&gt;
 
 &lt;p&gt;PhpStorm内蔵のFTPの設定方法。
-ファイルのアップロードには制約があるが、代わりにローカルファイルとの差分を表示や同期ができるなど結構便利。&lt;/p&gt;
+ファイルのアップロードには制約があるが、代わりにローカルファイルとの差分を表示や同期ができるなど結構便利&lt;/p&gt;
 
 &lt;p&gt;1. &lt;code&gt;PhpStorm&lt;/code&gt;で適当なプロジェクトを作って起動&lt;br /&gt;
 2. メニューの&lt;code&gt;View&lt;/code&gt; - &lt;code&gt;Tool Windows&lt;/code&gt; - &lt;code&gt;Remote Host&lt;/code&gt;を選択&lt;br /&gt;
@@ -1463,13 +1321,13 @@ SSHにログインしなおすと良い&lt;/p&gt;
 &lt;p&gt;6. &lt;code&gt;Test SFTP connection&lt;/code&gt;を押して&lt;code&gt;Successful&lt;/code&gt;と出れば接続OK&lt;/p&gt;
 
 &lt;p&gt;ここまで設定すればサーバ内のファイルの閲覧や削除などが行える。
-さらに、アップロードやローカルファイルとの比較などがしたい場合は、ローカルとの紐付けが必要。&lt;/p&gt;
+さらに、アップロードやローカルファイルとの比較などがしたい場合は、ローカルとの紐付けが必要&lt;/p&gt;
 
 &lt;p&gt;7. &lt;code&gt;Mappings&lt;/code&gt;のタブを選択&lt;br /&gt;
 8. &lt;code&gt;Loacal path&lt;/code&gt;に既存プロジェクトのパスが入っていることを確認&lt;br /&gt;
 9. &lt;code&gt;Deployment path on server 〜&lt;/code&gt;に対応するサーバのパスを選択&lt;/p&gt;
 
-&lt;p&gt;これでツールウィンドウの中にサーバ上のファイルが表示され、右クリックでいろいろできるようになる。&lt;/p&gt;
+&lt;p&gt;これでツールウィンドウの中にサーバ上のファイルが表示され、右クリックでいろいろできるようになる&lt;/p&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
@@ -1637,7 +1495,7 @@ ssh アカウント名@アカウント名.sakura.ne.jp
 &lt;p&gt;として&lt;code&gt;Laravel&lt;/code&gt;の&lt;code&gt;public&lt;/code&gt;へのシンボリックリンクを&lt;code&gt;www&lt;/code&gt;の中へ置く&lt;/p&gt;
 
 &lt;p&gt;これで&lt;code&gt;www.アカウント名.sakura.ne.jp/hoge&lt;/code&gt;へのアクセスで、
-プロジェクトの公開用フォルダ&lt;code&gt;public&lt;/code&gt;へアクセスできるようになる。&lt;br /&gt;
+プロジェクトの公開用フォルダ&lt;code&gt;public&lt;/code&gt;へアクセスできるようになる&lt;br /&gt;
 （ただしまだこの段階ではエラー）&lt;/p&gt;
 
 &lt;h4 id=&#34;htaccessの編集&#34;&gt;.htaccessの編集&lt;/h4&gt;
@@ -1650,8 +1508,9 @@ ssh アカウント名@アカウント名.sakura.ne.jp
 &amp;lt;/IfModule&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;の部分を削除する。&lt;br /&gt;
-これで無事公開が完了！&lt;/p&gt;
+&lt;p&gt;の部分を削除する&lt;/p&gt;
+
+&lt;p&gt;これで無事公開が完了！&lt;/p&gt;
 
 &lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;
 
@@ -1692,9 +1551,9 @@ ssh アカウント名@アカウント名.sakura.ne.jp
 まだまだ&lt;code&gt;MySQL&lt;/code&gt;の環境が必要なこともしばしば。。。&lt;/p&gt;
 
 &lt;p&gt;かといって、そんなに使わない環境をわざわざローカルに構築するのも面倒なので、
-さっくりとお手軽に速攻で構築してしまおうという時のメモ。&lt;/p&gt;
+さっくりとお手軽に速攻で構築してしまおうという時のメモ&lt;/p&gt;
 
-&lt;p&gt;ちなみに、お手軽なのでターミナルでコマンドを叩くことすらしない。&lt;/p&gt;
+&lt;p&gt;ちなみに、お手軽なのでターミナルでコマンドを叩くことすらしない&lt;/p&gt;
 
 &lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
@@ -1865,96 +1724,120 @@ CREATEボタンの左にある&lt;code&gt;・・・&lt;/code&gt; - &lt;code&gt;S
     </item>
     
     <item>
-      <title>ATS有効の状態でオレオレ証明書を使って通信する(iOS9)</title>
-      <link>https://mike-neko.github.io/blog/ios-cert/</link>
-      <pubDate>Tue, 06 Sep 2016 00:35:57 +0900</pubDate>
+      <title>nginxをhttp2に対応させる</title>
+      <link>https://mike-neko.github.io/blog/nginx-http2/</link>
+      <pubDate>Fri, 03 Jun 2016 21:29:36 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/ios-cert/</guid>
+      <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
       <description>
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;&lt;code&gt;ATS&lt;/code&gt;が有効の場合、SSL/TLS通信でないと通信自体ができない。&lt;/p&gt;
-
-&lt;p&gt;が、開発時はローカル環境だったりドメイン自体がなかったりで正式なSSL証明書を使えないことが多い・・・
-かといって、ATSをOFFにして開発するのも・・・&lt;/p&gt;
-
-&lt;p&gt;って時に自己署名証明書（オレオレ証明書）を使ってしのぐ方法。&lt;/p&gt;
-
-&lt;p&gt;流れとしては、&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;オレオレ証明書を作ってサーバへ設定&lt;/li&gt;
-&lt;li&gt;iOS端末へオレオレ証明書をインストール&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;となる。&lt;br /&gt;
-ポイントはオレオレ証明書のインストール部分で、その手順をメモしておく。&lt;/p&gt;
+&lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;証明書の作成のあたりは&lt;a href=&#34;../docker/&#34;&gt;Docker構築メモ&lt;/a&gt;を参照&lt;/p&gt;
+&lt;p&gt;過去の記事（&lt;a href=&#34;../docker/&#34;&gt;Dockerでの開発環境&lt;/a&gt;）&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h2 id=&#34;注意&#34;&gt;！注意！&lt;/h2&gt;
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
 
-&lt;p&gt;検証はiOS9でのみ。iOS10は未検証。
-（ローカル環境でのATSの挙動が変わりそう！？）&lt;/p&gt;
+&lt;p&gt;ベースは前回構築したnginx+Dockerで通信はオレオレ証明書によるSSLを前提。&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;は&lt;code&gt;2.2&lt;/code&gt;の操作方法。&lt;/p&gt;
+&lt;p&gt;主な変更点は以下の通り&lt;/p&gt;
 
-&lt;p&gt;また、&lt;strong&gt;セキュリティ面で危険&lt;/strong&gt;なのでくれぐれもオレオレ証明書の容量・用法には気をつけること&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OpenSSL 1.0.2&lt;/li&gt;
+&lt;li&gt;nginx 1.10.0&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;いずれもhttp2対応させる為にバージョンアップが必要。&lt;/p&gt;
+
+&lt;p&gt;なお、iOSは&lt;strong&gt;iOS9&lt;/strong&gt;からhttp2へ対応している。&lt;/p&gt;
 
 &lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
-&lt;p&gt;前提：サーバへのオレオレ証明書は設定済みの状態&lt;/p&gt;
+&lt;h3 id=&#34;事前準備&#34;&gt;事前準備&lt;/h3&gt;
 
-&lt;h3 id=&#34;準備&#34;&gt;準備&lt;/h3&gt;
+&lt;p&gt;http2での通信かどうかの確認用に以下のChromeのプラグインを入れておく。&lt;/p&gt;
 
-&lt;ul&gt;
-&lt;li&gt;オレオレ証明書&lt;code&gt;server.crt&lt;/code&gt;を作成しておく&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator2&lt;/code&gt;をインストールしておく&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;&lt;a href=&#34;https://chrome.google.com/webstore/detail/http2-and-spdy-indicator/mpbpobfflnpcgagjijhmgnchggcjblin/related?hl=ja&#34;&gt;HTTP/2 and SPDY indicator&lt;/a&gt;&lt;br /&gt;
+（Firefox用もあるみたいなのでお好きな方で）&lt;/p&gt;
 
-&lt;h3 id=&#34;構成プロファイルの作成&#34;&gt;構成プロファイルの作成&lt;/h3&gt;
+&lt;p&gt;http2での通信だと稲妻が青色になるので確認が楽。&lt;/p&gt;
 
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;のメニューの&lt;code&gt;ファイル&lt;/code&gt;から&lt;code&gt;新規プロファイル&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;左側の&lt;code&gt;証明書&lt;/code&gt;の項目を選択し&lt;code&gt;構成&lt;/code&gt;ボタンを押下&lt;/li&gt;
-&lt;li&gt;ファイル選択画面でオレオレ証明書(&lt;code&gt;server.crt&lt;/code&gt;)を選択して開く&lt;/li&gt;
-&lt;li&gt;メニューの&lt;code&gt;ファイル&lt;/code&gt;から&lt;code&gt;保存&lt;/code&gt;を選択し、適当な名前をつけて保存&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;端末へインストール&#34;&gt;端末へインストール&lt;/h3&gt;
-
-&lt;p&gt;以下のどちらかの方法でインストールする&lt;/p&gt;
-
-&lt;h4 id=&#34;apple-configurator経由&#34;&gt;Apple Configurator経由&lt;/h4&gt;
-
-&lt;p&gt;Macと端末の有線接続が必要&lt;/p&gt;
+&lt;h3 id=&#34;macでの作業&#34;&gt;Macでの作業&lt;/h3&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;に接続中の端末が表示されるので選択&lt;/li&gt;
-&lt;li&gt;ツールバーの&lt;code&gt;追加&lt;/code&gt;ボタンから&lt;code&gt;プロファイル&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;作成した構成プロファイルを選択&lt;/li&gt;
-&lt;li&gt;iOS端末の画面がインストール画面に変わるので、&lt;code&gt;インストール&lt;/code&gt;x3&lt;br /&gt;
-（プロファイルのインストールはConfiguratorから操作不可）&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;OpenSSLを最新にあげる&lt;br /&gt;
+OpenSSLの更新方法：&lt;a href=&#34;http://qiita.com/Chrowa3/items/b04e772be959cdda9ac3&#34;&gt;Mac OS X の openssl を最新の状態にする&lt;/a&gt;&lt;br /&gt;
+ポイントは&lt;code&gt;upgrade&lt;/code&gt;にすること（普段使う&lt;code&gt;update&lt;/code&gt;ではない）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;nginxをアンイストールする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew uninstall nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;nginxをhttp2モジュール付きでインストールする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install nginx --with-http2
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;nginxのconfを編集&lt;br /&gt;
+&lt;code&gt;HTTPS server&lt;/code&gt;の設定が&lt;code&gt;listen  443 ssl;&lt;/code&gt;となっているはずなので、&lt;code&gt;http2&lt;/code&gt;を追加する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;server {
+listen  443 ssl http2;
+...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;追加したらnginxを再起動する&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ChromeからMacへアクセスしてみて青い稲妻になっていれば&lt;code&gt;nginx&lt;/code&gt;の設定は成功&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h4 id=&#34;ネットワーク経由&#34;&gt;ネットワーク経由&lt;/h4&gt;
+&lt;h3 id=&#34;ios端末での通信&#34;&gt;iOS端末での通信&lt;/h3&gt;
 
-&lt;ol&gt;
-&lt;li&gt;適当なサーバに構成プロファイルを置いてダウンロードできるようにする&lt;/li&gt;
-&lt;li&gt;iOS端末のSafariから該当のURLへアクセス&lt;/li&gt;
-&lt;li&gt;インストール画面になるので&lt;code&gt;インストール&lt;/code&gt;x3&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;iOS9以降の&lt;code&gt;NSURLSession&lt;/code&gt;での通信であれば、特に設定など不要で自動で&lt;code&gt;http2&lt;/code&gt;になる。&lt;/p&gt;
 
-&lt;p&gt;なお、証明書だけをインストールしてもアプリからは接続できないので、
-&lt;code&gt;構成プロファイル&lt;/code&gt;を作ってからインストールするのが大事！&lt;/p&gt;
+&lt;p&gt;なお、規格上は&lt;code&gt;http&lt;/code&gt;のみでも対応しているがiOSでどうかは未検証。&lt;/p&gt;
+
+&lt;h3 id=&#34;ログ設定&#34;&gt;ログ設定&lt;/h3&gt;
+
+&lt;p&gt;iOS端末からの通信も&lt;code&gt;http2&lt;/code&gt;になっているかの確認は、&lt;code&gt;nginx&lt;/code&gt;のログで判別する。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;http2&lt;/code&gt;の場合は、&lt;code&gt;log_format&lt;/code&gt;の&lt;code&gt;$http2&lt;/code&gt;に&lt;code&gt;h2&lt;/code&gt;と入ってくる。&lt;br /&gt;
+詳細は以下のページを参考に&lt;br /&gt;
+&lt;a href=&#34;http://d.hatena.ne.jp/ASnoKaze/20150818/1439896998&#34;&gt;nginxでアクセスログにhttp2の通信か出力する&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;過去情報&#34;&gt;過去情報&lt;/h2&gt;
+
+&lt;p&gt;標準の&lt;code&gt;nginx&lt;/code&gt;に&lt;code&gt;http2&lt;/code&gt;モジュールがないと思っていたら、
+実はちゃんとあったので訂正。&lt;/p&gt;
+
+&lt;p&gt;もったいないので、&lt;code&gt;nginx-full&lt;/code&gt;の情報を残しておく。&lt;/p&gt;
+
+&lt;h3 id=&#34;nginx-full&#34;&gt;nginx-full&lt;/h3&gt;
+
+&lt;p&gt;通常の&lt;code&gt;Homebrew&lt;/code&gt;の&lt;code&gt;nginx&lt;/code&gt;ではオプションのモジュールが少ないので、
+標準では足りないモジュールをインストールしたい時は&lt;code&gt;nginx-full&lt;/code&gt;をインストールする。&lt;/p&gt;
+
+&lt;p&gt;例） nginxをhttp2モジュール付きでインストールする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew tap homebrew/nginx
+brew install nginx-full --with-http2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;モジュールの一覧は以下で確認すること。
+（&lt;a href=&#34;https://nginx.org/en/docs/http/ngx_http_v2_module.html&#34;&gt;公式&lt;/a&gt;のモジュールの情報?とは違うようなのでこれで確認）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew info nginx-full
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Appleのテクニカルノート：&lt;a href=&#34;https://developer.apple.com/library/ios/technotes/tn2326/_index.html&#34;&gt;TLSのテスト用証明書の作成&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kannokanno.hatenablog.com/entry/2014/02/10/134920&#34;&gt;Mac - homebrewでnginxを入れるときはnginx-fullを入れよう&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
@@ -1962,9 +1845,305 @@ CREATEボタンの左にある&lt;code&gt;・・・&lt;/code&gt; - &lt;code&gt;S
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.5&lt;/li&gt;
 &lt;li&gt;Xcode 7.3.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.4&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
 &lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Docker構築メモ</title>
+      <link>https://mike-neko.github.io/blog/docker/</link>
+      <pubDate>Mon, 04 Apr 2016 00:35:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/docker/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;なお、ローカルの開発用ということでセキュリティは考慮していないので注意&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;要件&#34;&gt;要件&lt;/h3&gt;
+
+&lt;p&gt;主にAPIでサーバとやりとりするアプリの開発用なので以下の感じ&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHPとDBが使えること&lt;/li&gt;
+&lt;li&gt;同一LAN内の別の端末からアクセスできること&lt;/li&gt;
+&lt;li&gt;SSLが使えること（iOS用）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
+
+&lt;h4 id=&#34;構成イメージ&#34;&gt;構成イメージ&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;Mac   (192.168.0.2) == ルータ(192.168.0.1) == iPhone(192.168.0.3)  
+｜  
+VM    (192.168.99.1)  
+｜  
+Docker(192.168.99.100)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;()内はIPアドレス&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;ゴールは、iPhone上から&lt;code&gt;https://192.168.0.2&lt;/code&gt;へアクセスするとページが表示(APIの通信)できればOK。&lt;/p&gt;
+
+&lt;h4 id=&#34;mac上-ホストos&#34;&gt;Mac上(ホストOS)&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;MacOS 10.11.3(El Capitan)&lt;/li&gt;
+&lt;li&gt;VirtualBox 5.0.14&lt;/li&gt;
+&lt;li&gt;DockerToolBox 1.10.2&lt;/li&gt;
+&lt;li&gt;nginx 1.8.1&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;docker上-ゲストos&#34;&gt;Docker上(ゲストOS)&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Apache&lt;/li&gt;
+&lt;li&gt;PHP 5系の最新&lt;br /&gt;
+(Xdebug)&lt;/li&gt;
+&lt;li&gt;MariaDB&lt;br /&gt;
+(phpmyadmin)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;手順&#34;&gt;手順&lt;/h1&gt;
+
+&lt;h3 id=&#34;dockerのインストール&#34;&gt;Dockerのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.docker.com/products/docker-toolbox&#34;&gt;公式&lt;/a&gt;から&lt;code&gt;DockerToolBox&lt;/code&gt;をダウンロードしてインストールを実行&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;途中で&lt;code&gt;Docker Quickstart Terminal&lt;/code&gt;のアイコンがでてきたら起動させる&lt;br /&gt;
+（忘れたらアプリケーションにもあるのでそちらから）&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;すると勝手にVM作成やらネットワーク設定をしてくれる親切設計なのでクジラが出てくるまで待つ&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;dockercomposeの設定&#34;&gt;DockerComposeの設定&lt;/h3&gt;
+
+&lt;p&gt;Dockerはコンテナをパーツのように組み合わせて環境を作っていく。&lt;/p&gt;
+
+&lt;p&gt;そのコンテナを作成する際の基本的な流れは&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;使いたいもののイメージを見つける&lt;br /&gt;
+(無ければ&lt;code&gt;Dockerfile&lt;/code&gt;を自力で書く)&lt;/li&gt;
+&lt;li&gt;タグを指定してイメージをダウンロード&lt;/li&gt;
+&lt;li&gt;コンテナの作成&lt;br /&gt;
+(もし足りない設定などあれば&lt;code&gt;Dockerfile&lt;/code&gt;でカスマイズ)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;となる。&lt;/p&gt;
+
+&lt;p&gt;イメージの検索からコンテナの取得は公式GUIの&lt;code&gt;Kitematic (Beta)&lt;/code&gt;を使うと一気にしてくれるので便利。&lt;/p&gt;
+
+&lt;p&gt;ただ、この方法だと引数の指定が多かったり複数のコンテナを利用する場合は大変なので、
+&lt;code&gt;DockerCompose&lt;/code&gt;を用いて管理する。&lt;/p&gt;
+
+&lt;h4 id=&#34;事前準備&#34;&gt;事前準備&lt;/h4&gt;
+
+&lt;p&gt;まずは適当な場所に、コンテナ毎の&lt;code&gt;Dockerfile&lt;/code&gt;や設定ファイルなどを
+まとめておくディレクトリを作ってカレントディレクトリとする。
+今回のディレクトリ構成は、以下のようにする。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;docker
+ ├─ docker-compose.yml
+ ├─ mariadb              # MariaDB用のフォルダ
+ |   └─ my.cnf
+ ├─ php                  # PHP用のフォルダ
+ |   ├─ Dockerfile
+ |   └─ php.ini
+ └─ www                  # Apacheのドキュメントルート
+     └─ index.html       # 動作確認用のHTML
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;apache-php&#34;&gt;Apache+PHP&lt;/h4&gt;
+
+&lt;p&gt;ApacheはPHPに同梱されているものを使うのが便利なので、&lt;code&gt;apache&lt;/code&gt;がついているタグのものを使う。
+今回は&lt;a href=&#34;https://hub.docker.com/_/php/&#34;&gt;公式&lt;/a&gt;で5系の一番新しいバージョンの&lt;code&gt;5.6.18-apache&lt;/code&gt;を選択。&lt;/p&gt;
+
+&lt;p&gt;で、&lt;code&gt;php.ini&lt;/code&gt;の設定と追加で入れたい拡張モジュール（特に&lt;code&gt;Xdebug&lt;/code&gt;）を&lt;code&gt;Dockerfile&lt;/code&gt;でカスタムしておく。&lt;/p&gt;
+
+&lt;p&gt;DockerComposeの設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php:
+  build: ./php/　　　　　　　　# php/Dockerfileからビルド
+  ports:
+    - &amp;quot;80:80&amp;quot;　　　　　　　　　# 80ポートを公開
+  volumes:
+    - ./www:/var/www/html   # ドキュメントルートを指定
+  links:
+    - mariadb:mysql         # DBとの接続を指定
+  container_name: php
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これでMac上からは、&lt;code&gt;http://192.168.99.100/index.html&lt;/code&gt;へアクセスすると、
+&lt;code&gt;www/index.html&lt;/code&gt;が表示される。&lt;/p&gt;
+
+&lt;h4 id=&#34;mariadb-phpmyadmin&#34;&gt;MariaDB+phpMyAdmin&lt;/h4&gt;
+
+&lt;p&gt;特に変更点もないのでイメージは公式の最新をそのままを使う。&lt;/p&gt;
+
+&lt;p&gt;DockerComposeの設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mariadb:
+  image: mariadb:latest           # 常に最新版を使う
+  environment:
+    MYSQL_ROOT_PASSWORD: pass     # ルートのパスワード
+    MYSQL_DATABASE: docker        # DB名
+    MYSQL_USER: docker            # ユーザ名
+    MYSQL_PASSWORD: docker        # パスワード
+  volumes:                        # my.cnfの設定
+    - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
+  container_name: mariadb
+
+phpmyadmin:
+  image: phpmyadmin/phpmyadmin:latest
+  container_name: myadmin
+  ports:
+    - &amp;quot;8080:80&amp;quot;                   # 8080ポートを公開して80へフォワード
+  links:
+    - mariadb:db
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これでMac上からは、&lt;code&gt;http://192.168.99.100:8080&lt;/code&gt;へアクセスすると、
+&lt;code&gt;phpMyAdmin&lt;/code&gt;のログイン画面が表示され、&lt;code&gt;docker/docker&lt;/code&gt;でログインが可能。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;注意点としてこの状態ではDBの永続化はできていないので、コンテナを削除するとDBの内容も消える&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;ios端末からのアクセス&#34;&gt;iOS端末からのアクセス&lt;/h3&gt;
+
+&lt;p&gt;ここまでの状態だとMacからしかアクセスできないので、Mac上で&lt;code&gt;nginx&lt;/code&gt;をリバースプロキシとして動かし、
+他のiOS端末からアクセスできるようにする。&lt;/p&gt;
+
+&lt;p&gt;また、iOS9のATSへ対応する為にSSLでアクセスできるようにする。ただしローカル環境なのでオレオレ証明書を利用する。&lt;/p&gt;
+
+&lt;h4 id=&#34;nginxのインストール&#34;&gt;nginxのインストール&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;でインストールする。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew update
+brew install nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;インストールできたら、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;nginx -t
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で設定ファイルの場所を確認し、適当なエディタで開いてリバースプロキシの設定をする。
+コメントにしてあるのがデフォルトの設定。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http {
+  server {
+    #listen       8080;
+    listen       80;
+    location / {
+      # root   html;
+      # index  index.html index.htm;
+      proxy_pass http://127.0.0.1:8080;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;sslの証明書について&#34;&gt;SSLの証明書について&lt;/h4&gt;
+
+&lt;p&gt;今回はnginx部分だけSSLに対応させる。（dockerはHTTPのまま）&lt;/p&gt;
+
+&lt;p&gt;オレオレ証明書作成のiOS向けの設定のポイントは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;SHA256で証明書を作成する&lt;br /&gt;
+(デフォルトだとSHA1になる)&lt;/li&gt;
+&lt;li&gt;Safari以外からアクセスする場合は、証明書作成時のCommonNameをIPアドレスにする&lt;br /&gt;
+(つまりIP固定が必要)&lt;/li&gt;
+&lt;li&gt;端末へ証明書のインストールが必要&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;もし、上の条件が満たせない場合は、ATSの設定を変えるとか個別に認証処理を書くなどして回避する必要がある。
+（回避できないのもあるけど）&lt;/p&gt;
+
+&lt;h4 id=&#34;sslの証明書の作成&#34;&gt;SSLの証明書の作成&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;openssl genrsa -out server.key 2048
+openssl req -new -key server.key &amp;gt; server.csr
+openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &amp;gt; server.crt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（オレオレ証明書の各項目は&lt;code&gt;CommonName&lt;/code&gt;以外は空白でも動作する）&lt;/p&gt;
+
+&lt;p&gt;生成された&lt;code&gt;server.key&lt;/code&gt;と&lt;code&gt;server.crt&lt;/code&gt;をnginxの設定ファイルと同じディレクトリに置く。&lt;/p&gt;
+
+&lt;p&gt;iOS端末へは&lt;code&gt;server.crt&lt;/code&gt;をインストールする。
+&lt;del&gt;（メール添付か適当なWEB上に置いてインストール）&lt;/del&gt;&lt;br /&gt;
+※環境によってうまくいかないことがあったので、より確実な構成プロファイル経由にすること
+（手順は&lt;a href=&#34;../ios-cert/&#34;&gt;ATS有効の状態でオレオレ証明書を使って通信する(iOS9)&lt;/a&gt;を参照）&lt;/p&gt;
+
+&lt;p&gt;nginxの設定ファイルに以下を追加する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;server {
+  listen       443 ssl;
+  server_name  localhost;
+
+  ssl_certificate      server.crt;
+  ssl_certificate_key  server.key;
+
+  location / {
+    proxy_pass http://127.0.0.1:8080;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;vmの設定&#34;&gt;VMの設定&lt;/h4&gt;
+
+&lt;p&gt;DockerはVirtualBox上で動いているので、VMのポートフォワードを設定が必要となる。
+設定は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;VBoxManage controlvm &amp;quot;default&amp;quot; natpf1 &amp;quot;nginx,tcp,127.0.0.1,8080,,80&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とする。VirtualBoxを起動して、&lt;code&gt;default-設定-ネットワーク-アダプター1-ポートフォワーディング&lt;/code&gt;からでもOK。&lt;/p&gt;
+
+&lt;h2 id=&#34;起動&#34;&gt;起動&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Dockerを起動させる&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;docker-compose.yml&lt;/code&gt;を置いた場所をカレントディレクトリにする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;docker-compose up -d&lt;/code&gt;でコンテナを起動&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sudo nginx&lt;/code&gt;でnginxを起動&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;これでiPhone上からは、&lt;code&gt;https://192.168.0.2/index.html&lt;/code&gt;へアクセスすると、
+&lt;code&gt;www/index.html&lt;/code&gt;が表示される。
+（ただし、オレオレ証明書なので認証の警告などは出る）&lt;/p&gt;
+
+&lt;h1 id=&#34;追記&#34;&gt;追記&lt;/h1&gt;
+
+&lt;p&gt;Docker起動時に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ERROR: Couldn&#39;t connect to Docker daemon - you might need to run `docker-machine start default`.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というエラーが出る場合は、VMの設定の&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;VBoxManage controlvm &amp;quot;default&amp;quot; natpf1 &amp;quot;nginx,tcp,127.0.0.1,8080,,80&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;をしてから起動し直すと大丈夫っぽい。なお、原因は不明・・・&lt;/p&gt;
+
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
+
+&lt;p&gt;開発環境をプラグインみたいな感じで構築していけるのと構築内容がテキストで残るのはあとあと楽。&lt;/p&gt;
+
+&lt;p&gt;ただ、サーバ環境とまるまる同じものを構築するならVagrantの方が良いのかも・・・
+でも、Dockerはいろいろな環境を次々に試すのには便利なので、使い分けが大事そう。&lt;/p&gt;
+
+&lt;h1 id=&#34;ファイル一式&#34;&gt;ファイル一式&lt;/h1&gt;
+
+&lt;p&gt;実際の各イメージのDockerfileや設定ファイルをまとめたものは
+&lt;a href=&#34;https://github.com/mike-neko/Docker/tree/master/SSLWebServer&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

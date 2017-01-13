@@ -6,2139 +6,1919 @@
     <description>Recent content in Old on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 14 Dec 2016 19:52:13 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 06 Sep 2016 00:35:57 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/old/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>GitHubの自作ライブラリを公開する（ライブラリ編）</title>
-      <link>https://mike-neko.github.io/blog/library2/</link>
-      <pubDate>Wed, 14 Dec 2016 19:52:13 +0900</pubDate>
+      <title>ATS有効の状態でオレオレ証明書を使って通信する(iOS9)</title>
+      <link>https://mike-neko.github.io/blog/ios-cert/</link>
+      <pubDate>Tue, 06 Sep 2016 00:35:57 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/library2/</guid>
+      <guid>https://mike-neko.github.io/blog/ios-cert/</guid>
       <description>
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
-その2ではマルチプラットフォーム対応とライブラリ管理ツールの導入についての内容&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ATS&lt;/code&gt;が有効の場合、SSL/TLS通信でないと通信自体ができない。&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;なお、作成するフレームワーク名、プロジェクト名は&lt;code&gt;Kanagata&lt;/code&gt;とした場合の手順なので、
-他の作業時は適宜読み替えること&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;が、開発時はローカル環境だったりドメイン自体がなかったりで正式なSSL証明書を使えないことが多い・・・
+かといって、ATSをOFFにして開発するのも・・・&lt;/p&gt;
 
-&lt;p&gt;その1は&lt;a href=&#34;../library1&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;マルチプラットフォーム対応&#34;&gt;マルチプラットフォーム対応&lt;/h2&gt;
-
-&lt;p&gt;元々は&lt;code&gt;iOS&lt;/code&gt;で作成していたが、特にOS依存するコードもないので、&lt;code&gt;macOS&lt;/code&gt;と&lt;code&gt;watchOS&lt;/code&gt;と&lt;code&gt;tvOS&lt;/code&gt;にも対応させる。
-また、ソースとテストは全て共通のものを用いることとする&lt;/p&gt;
-
-&lt;h3 id=&#34;既存ターゲット名変更&#34;&gt;既存ターゲット名変更&lt;/h3&gt;
-
-&lt;p&gt;まず&lt;code&gt;iOS&lt;/code&gt;用のターゲットと判る様にターゲット名を&lt;code&gt;Kanagata&lt;/code&gt;から&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更する&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;プロジェクト設定から&lt;code&gt;TARGETS&lt;/code&gt;の中の&lt;code&gt;Kanagata&lt;/code&gt;をクリックして名前を&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;の&lt;code&gt;Product Name&lt;/code&gt;を&lt;code&gt;$(TARGET_NAME)&lt;/code&gt;から&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ変更&lt;/li&gt;
-&lt;li&gt;スキーム名も&lt;code&gt;Manage Schemes...&lt;/code&gt;から&lt;code&gt;Kanagata&lt;/code&gt;をクリックして名前を&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;テスト用のターゲット&lt;code&gt;KanagataTests&lt;/code&gt;も同じ様にターゲット名を&lt;code&gt;KanagataTests-iOS&lt;/code&gt;へ、
-&lt;code&gt;Product Name&lt;/code&gt;を`&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ変更する&lt;/p&gt;
-
-&lt;h3 id=&#34;他os用のターゲットを追加&#34;&gt;他OS用のターゲットを追加&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;プロジェクト設定の&lt;code&gt;TARGETS&lt;/code&gt;の下部にある＋からターゲットを追加
-
-&lt;ul&gt;
-&lt;li&gt;追加画面の上部でOSを選択してから&lt;code&gt;Framework&lt;/code&gt;を選択&lt;br /&gt;
-（各OSで微妙に名前が違うので道具箱とココアのアイコンで見分けること）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Product Name&lt;/code&gt;は&lt;code&gt;Kanagata-(OS名)&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Include Unit Tests&lt;/code&gt;にチェック(&lt;code&gt;watchOS&lt;/code&gt;以外)&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;プロジェクトに&lt;code&gt;Kanagata-(OS名)&lt;/code&gt;と&lt;code&gt;KanagataTests-(OS名)&lt;/code&gt;が追加されるのでフォルダごと削除&lt;/li&gt;
-&lt;li&gt;追加したターゲットのバンドルIDから&lt;code&gt;-(OS名)&lt;/code&gt;を削除&lt;br /&gt;
-（必要に応じて&lt;code&gt;Signing&lt;/code&gt;と&lt;code&gt;Deployment Target&lt;/code&gt;も修正）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;を変更
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Info.plist File&lt;/code&gt;のパスから&lt;code&gt;-(OS名)&lt;/code&gt;を削除（共通のplistを指す様に）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Product Name&lt;/code&gt;を&lt;code&gt;$(TARGET_NAME)&lt;/code&gt;から&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;テスト用のターゲットも同じ様にバンドルID、&lt;code&gt;Signing&lt;/code&gt;、&lt;code&gt;Build Settings&lt;/code&gt;の各項目を修正する&lt;/p&gt;
-
-&lt;p&gt;ここで一旦ビルドとテストを実行して問題なければ次へ&lt;/p&gt;
-
-&lt;h3 id=&#34;travisciへの追加&#34;&gt;travisCIへの追加&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;追加されたOSの各スキームの&lt;code&gt;Shared&lt;/code&gt;をチェック&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;code&gt;.travis.yml&lt;/code&gt;を修正&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;iOS&lt;/code&gt;用のスキーム名を&lt;code&gt;Kanagata&lt;/code&gt;から&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
-&lt;li&gt;追加された&lt;code&gt;macOS&lt;/code&gt;と&lt;code&gt;tvOS&lt;/code&gt;の分のテストを追加（以下の設定）
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;pre&gt;&lt;code&gt;- xcodebuild test -scheme Kanagata-macOS -destination &#39;platform=OS X&#39;
-- xcodebuild test -scheme Kanagata-tvOS -destination &#39;platform=tvOS Simulator,name=Apple TV 1080p&#39;
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;pushしてエラーがなければ次へ&lt;/p&gt;
-
-&lt;h2 id=&#34;ライブラリ管理ツールへの対応&#34;&gt;ライブラリ管理ツールへの対応&lt;/h2&gt;
-
-&lt;p&gt;個人的にはシンプルな&lt;code&gt;Carthage&lt;/code&gt;がお気に入り。
-&lt;code&gt;CocoaPods&lt;/code&gt;はプロジェクトの設定がいじられてしまうのが気になるのであまり使っていないが、
-周りでは使っている人も多いので対応する&lt;/p&gt;
-
-&lt;p&gt;なお、あらかじめ&lt;code&gt;Carthage&lt;/code&gt;も&lt;code&gt;CocoaPods&lt;/code&gt;もインストール済とする&lt;/p&gt;
-
-&lt;h3 id=&#34;carthage&#34;&gt;Carthage&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;Carthage&lt;/code&gt;は&lt;code&gt;CocoaPods&lt;/code&gt;と違って登録などの作業は不要で、
-GitHubにリリースすれば良い&lt;/p&gt;
-
-&lt;p&gt;まずは、プロジェクトのカレントディレクトリで以下を実行&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;carthage build --no-skip-current
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;エラーなく完了し、&lt;code&gt;Carthage/Build&lt;/code&gt;内に各フレームワークが生成されていればOK&lt;/p&gt;
-
-&lt;p&gt;ビルドに問題なければ&lt;code&gt;GitHub&lt;/code&gt;上のリリースタブからタグをつける&lt;br /&gt;
-(この時はバージョンとして&lt;code&gt;0.1.0&lt;/code&gt;の様に数字のみをつけるのが良い。
-vを入れたりすると&lt;code&gt;CocoaPods&lt;/code&gt;でうまくいかないことがあるので)&lt;/p&gt;
-
-&lt;h4 id=&#34;参考-インストール&#34;&gt;（参考）インストール&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Cartfile&lt;/code&gt;に&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;github &amp;quot;mike-neko/Kanagata&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;という感じ（&lt;code&gt;アカウント名/リポジトリ名&lt;/code&gt;）で追記するだけで利用できる&lt;/p&gt;
-
-&lt;h3 id=&#34;cocoapods&#34;&gt;CocoaPods&lt;/h3&gt;
-
-&lt;p&gt;今回はデモプロジェクトは同梱しないので直接&lt;code&gt;podspec&lt;/code&gt;を作って対応させる&lt;/p&gt;
-
-&lt;h4 id=&#34;podspecの作成&#34;&gt;podspecの作成&lt;/h4&gt;
-
-&lt;p&gt;プロジェクトのカレントディレクトリで以下を実行&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pod spec create Kanagata
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ひな形の&lt;code&gt;Kanagata.podspec&lt;/code&gt;ができるので内容をプロジェクトに合わせて修正していく。
-今回は以下の感じ&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Pod::Spec.new do |s|
-  s.name         = &amp;quot;Kanagata&amp;quot;   // ライブラリ名
-  s.version      = &amp;quot;0.1.0&amp;quot;      // バージョン
-  s.summary      = &amp;quot;短い説明&amp;quot;
-  s.homepage     = &amp;quot;https://github.com/mike-neko/Kanagata&amp;quot;  // GitHub上にしておいた
-  s.license      = &amp;quot;MIT&amp;quot;        // ライセンス
-  s.author       = { &amp;quot;mike-neko&amp;quot; =&amp;gt; &amp;quot;mike.app.info@gmail.com&amp;quot; } // GitHub上の名前とメール
-  s.social_media_url   = &amp;quot;https://twitter.com/m__ike_&amp;quot;          // ツイッターのアドレス
-  s.ios.deployment_target = &amp;quot;8.0&amp;quot;           // OS毎のDeployment Targetと合わせる
-  s.osx.deployment_target = &amp;quot;10.10&amp;quot;
-  s.watchos.deployment_target = &amp;quot;2.0&amp;quot;
-  s.tvos.deployment_target = &amp;quot;9.0&amp;quot;
-  // GitHubのアドレスとタグの紐付けの設定。tagの方はデフォルトのままが良い
-  s.source       = { :git =&amp;gt; &amp;quot;https://github.com/mike-neko/Kanagata.git&amp;quot;, :tag =&amp;gt; &amp;quot;#{s.version}&amp;quot; }
-  s.source_files  = &amp;quot;Kanagata/*.swift&amp;quot;      // プロジェクト内でのソースの位置
-end
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;基本はそのまま埋めていけば良い。ポイントがあるとすると&lt;code&gt;version&lt;/code&gt;の部分は、
-数字のみのバージョン(&lt;code&gt;v1.0.0&lt;/code&gt;とかはNG)にして、GitHub上のタグと一致させておくこと。
-あとは、忘れずに&lt;code&gt;source_files&lt;/code&gt;を自分のプロジェクトでのソースの位置に合わせること&lt;/p&gt;
-
-&lt;p&gt;一通り作成ができたら、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pod spec lint Kanagata.podspec
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;としてみてエラーにならなければOK。pushしておく&lt;/p&gt;
-
-&lt;h4 id=&#34;cocoapodsへ登録&#34;&gt;CocoaPodsへ登録&lt;/h4&gt;
-
-&lt;p&gt;（初回のみ）ユーザを登録する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pod trunk register (メールアドレス) &#39;(ユーザ名)&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;実行後に入力したメールアドレスへメールが来るので確認をする。&lt;br /&gt;
-確認後は&lt;code&gt;pod trunk me&lt;/code&gt;で登録内容が確認出来る&lt;/p&gt;
-
-&lt;p&gt;ユーザ登録ができれば、&lt;code&gt;podspec&lt;/code&gt;を&lt;code&gt;CocoaPods&lt;/code&gt;へ登録&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pod trunk push
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ちなみに、&lt;code&gt;podspec&lt;/code&gt;にTwitterを登録していると、無事完了した時にツイートが飛んでくる&lt;/p&gt;
-
-&lt;h4 id=&#34;ciに設定&#34;&gt;CIに設定&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;.travis.yml&lt;/code&gt;に&lt;code&gt;podspec&lt;/code&gt;の検証を追加&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;script:
-  - pod lib lint --allow-warnings
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;（今回追加した分のみ記載）&lt;/p&gt;
-
-&lt;h4 id=&#34;参考-インストール-1&#34;&gt;（参考）インストール&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Podfile&lt;/code&gt;に&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pod &#39;Kanagata&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;を追加すれば利用可能&lt;/p&gt;
-
-&lt;p&gt;また、生成されたドキュメントは、&lt;code&gt;http://cocoadocs.org/docsets/Kanagata/&lt;/code&gt;で見ることが出来る&lt;/p&gt;
-
-&lt;h2 id=&#34;その他&#34;&gt;その他&lt;/h2&gt;
-
-&lt;p&gt;後はバッジを貼ったり、ライセンスを貼ったりすれば、かなりそれっぽい感じになる。
-ライブラリとして公開するとなると敷居が高い気がするが、GitHubを使っていればあまり手間をかけることなく公開できる&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/Carthage/Carthage&#34;&gt;Carthage&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://cocoapods.org/&#34;&gt;CocoaPods&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>GitHubの自作ライブラリを公開する（CI導入編）</title>
-      <link>https://mike-neko.github.io/blog/library1/</link>
-      <pubDate>Wed, 14 Dec 2016 19:51:59 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/library1/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
-その1ではCIの導入周りについての内容&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;なお、作成するフレームワーク名、プロジェクト名は&lt;code&gt;Kanagata&lt;/code&gt;とした場合の手順なので、
-他の作業時は適宜読み替えること&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;その2は&lt;a href=&#34;../library2&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;構成&#34;&gt;構成&lt;/h2&gt;
-
-&lt;p&gt;せっかくなので単なるライブラリの公開だけでなく、以下の感じでそれっぽく公開&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;CIの導入(&lt;code&gt;TravisCI&lt;/code&gt;)
-
-&lt;ul&gt;
-&lt;li&gt;ユニットテスト(&lt;code&gt;XCTest&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;カバレッジ表示(&lt;code&gt;Codecov&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;静的コード解析(&lt;code&gt;SwiftLint&lt;/code&gt;)&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;del&gt;ドキュメント生成(&lt;code&gt;juzzy&lt;/code&gt;)&lt;/del&gt;&lt;/li&gt;
-&lt;li&gt;マルチプラットフォーム対応(iOS以外も)&lt;/li&gt;
-&lt;li&gt;ライブラリ管理ツール
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Carthage&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;CocoaPods&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;ciの導入&#34;&gt;CIの導入&lt;/h2&gt;
-
-&lt;h3 id=&#34;プロジェクトの作成&#34;&gt;プロジェクトの作成&lt;/h3&gt;
-
-&lt;p&gt;今回は既存のプロジェクトの中で使っていたものをフレームワークとして切り出す為、まずは新規プロジェクトを作成&lt;/p&gt;
-
-&lt;p&gt;作成時には、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Cocoa Touch Framework&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Include Unit Tests&lt;/code&gt;にチェック&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;をつけて作成する。
-既存のソースとテストの各ファイルを移植したら、&lt;code&gt;.h&lt;/code&gt;のファイルを削除
-（Swiftのみなのでヘッダは不要）&lt;/p&gt;
-
-&lt;p&gt;ちなみに、ここで一旦ビルドとテストを実行すると&lt;code&gt;module file&#39;s minimum deployment target is ios10.1&lt;/code&gt;のエラー。。。
-その時の&lt;code&gt;Deployment Target&lt;/code&gt;はiOS9で問題ないはず。が、iOS10へ変更したりクリーンをしたりしても変わらず。
-最後にダメ元でiOS9のシミュレータをDLしてみると、無事完了。
-他の環境で試すと再現しなかったりで、結局原因はよく判らなかった・・・・&lt;/p&gt;
-
-&lt;p&gt;さて、無事？テストも通ったのでGitHubへpushしておく&lt;/p&gt;
-
-&lt;h3 id=&#34;travisci&#34;&gt;TravisCI&lt;/h3&gt;
-
-&lt;p&gt;CIツールに&lt;a href=&#34;https://travis-ci.org&#34;&gt;TravisCI&lt;/a&gt;を選択したのは、GitHubと連携できてiOSのビルドができて*タダ*なので&lt;/p&gt;
-
-&lt;h4 id=&#34;登録&#34;&gt;登録&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;トップページから&lt;code&gt;Sign in with GitHub&lt;/code&gt;のボタンを押して、GitHubとの連携を許可&lt;/li&gt;
-&lt;li&gt;しばらくすると、GitHubのリポジトリの一覧が表示される&lt;br /&gt;
-(表示されない時は再ログインしてみればOK)&lt;/li&gt;
-&lt;li&gt;今回のプロジェクトを選んで有効化&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&#34;プロジェクトの修正&#34;&gt;プロジェクトの修正&lt;/h4&gt;
-
-&lt;p&gt;登録が終わればXcodeの&lt;code&gt;Scheme&lt;/code&gt;の設定を変更する&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Shared&lt;/code&gt;にチェック&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Test&lt;/code&gt;の中の&lt;code&gt;Gather coverage data&lt;/code&gt;にチェック&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;この時のスキーム名はCIの設定で使うので覚えておくこと！&lt;/p&gt;
-
-&lt;h4 id=&#34;設定&#34;&gt;設定&lt;/h4&gt;
-
-&lt;p&gt;リポジトリの直下に&lt;code&gt;.travis.yml&lt;/code&gt;を追加し、CIで行う作業を設定する&lt;/p&gt;
-
-&lt;p&gt;この書き方がよく判らなかったので、いろいろなライブラリのリポジトリを見て
-試した結果たどり着いた書き方（テストを実行するだけの最低限）がこちら&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;language: objective-c  # Swiftだけどobjective-cを指定
-osx_image: xcode8.1    # 使っているXcodeのバージョン
-script:
-  # テストを実行(schemeにスキーム名を指定する)
-  - xcodebuild test -scheme Kanagata -sdk iphonesimulator -destination &#39;platform=iOS Simulator,name=iPhone 5&#39;
-notifications:
-  email: false         # メール通知はOFF
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;変更が終わればスキームと&lt;code&gt;.travis.yml&lt;/code&gt;の変更分をpushする。&lt;br /&gt;
-その後はpushする毎に自動でCIが走るようになる
-（だいたい、pushしてから15分程度で開始されることが多い感じ）&lt;/p&gt;
-
-&lt;h3 id=&#34;カバレッジ表示&#34;&gt;カバレッジ表示&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;TravisCI&lt;/code&gt;と&lt;code&gt;Swift&lt;/code&gt;に対応していてバッジが表示できて*タダ*のものということで、
-&lt;a href=&#34;https://codecov.io/&#34;&gt;Codecov&lt;/a&gt;を選択&lt;br /&gt;
-開発時はXcode内でカバレッジを見るのでどういう詳細表示がされるのかは重視していない&lt;/p&gt;
-
-&lt;h4 id=&#34;登録と設定&#34;&gt;登録と設定&lt;/h4&gt;
-
-&lt;p&gt;こちらも&lt;code&gt;TravisCI&lt;/code&gt;と同じくGitHubとの連携だけで登録完了&lt;/p&gt;
-
-&lt;p&gt;便利なのが、リポジトリを選択すると&lt;code&gt;TravisCI&lt;/code&gt;に設定するコードを表示してくれること。&lt;br /&gt;
-表示されたコードを&lt;code&gt;.travis.yml&lt;/code&gt;に追加すればOK&lt;/p&gt;
-
-&lt;h4 id=&#34;ignoreの設定&#34;&gt;ignoreの設定&lt;/h4&gt;
-
-&lt;p&gt;デフォルトの状態ではリポジトリ内全部が対象となるので、テスト用のコードもカウントされてしまい、
-正しくないカバレッジが表示されてしまう。それを防ぐため、テスト用のコードは対象外とする様に設定する&lt;/p&gt;
-
-&lt;p&gt;リポジトリ直下に&lt;code&gt;codecov.yml&lt;/code&gt;を追加し、以下を追記する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ignore:
-  - &amp;quot;KanagataTests&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これで&lt;code&gt;KanagataTests&lt;/code&gt;以下のフォルダは対象外となる&lt;/p&gt;
-
-&lt;h3 id=&#34;swiftlint&#34;&gt;SwiftLint&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/realm/SwiftLint&#34;&gt;SwiftLint&lt;/a&gt;には&lt;code&gt;Auto-correct&lt;/code&gt;というコードフォーマッタの機能があり、
-これを使いたいので導入した&lt;/p&gt;
-
-&lt;h4 id=&#34;インストール&#34;&gt;インストール&lt;/h4&gt;
-
-&lt;p&gt;なぜか&lt;code&gt;Sierra&lt;/code&gt;では&lt;code&gt;Homebrew&lt;/code&gt;でインストールできなかったので、パッケージからインストール&lt;/p&gt;
-
-&lt;h4 id=&#34;xcodeに設定&#34;&gt;Xcodeに設定&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Auto-correct&lt;/code&gt;はビルド時に毎回走らせたいので、Xcode上でのビルド設定に追加する&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;フレームワーク用のターゲットの&lt;code&gt;Bulid Phases&lt;/code&gt;を開く&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;code&gt;New Run Script Phase&lt;/code&gt;で以下のスクリプトを追加&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;if which swiftlint &amp;gt;/dev/null; then
-swiftlint autocorrect
-swiftlint
-else
-echo &amp;quot;warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint&amp;quot;
-fi
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;追加した&lt;code&gt;Run Script&lt;/code&gt;を&lt;code&gt;Compile Sources&lt;/code&gt;より上に移動&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;これでビルドを試してみて、たくさんエラーとワーニングが出ればOK&lt;/p&gt;
-
-&lt;h4 id=&#34;ルールのカスタマイズ&#34;&gt;ルールのカスタマイズ&lt;/h4&gt;
-
-&lt;p&gt;デフォルトの状態ではかなり厳しい設定で、エラーやワーニングが出まくるので調整する&lt;/p&gt;
-
-&lt;p&gt;リポジトリ直下に&lt;code&gt;.swiftlint.yml&lt;/code&gt;を追加し、無視するルールや変更する基準値を書いていく&lt;/p&gt;
-
-&lt;p&gt;調整内容は各プロジェクトにもよるが、今回は以下の感じに調整した&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;included:
-  - Kanagata
-variable_name:
-  min_length: 0
-line_length:
-  - 120
-  - 150
-type_body_length:
-  - 350
-  - 400
-function_body_length:
-  - 50
-  - 100
-cyclomatic_complexity: 25
-disabled_rules:
-  - nesting
-  - file_length
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;具体的には1ファイルに詰め込んだ都合上、行数制限をゆるめに設定。
-また、JSONの構造上、再起処理や型ごとの処理で複雑性が増しているのでそこもゆるめにした&lt;/p&gt;
-
-&lt;h4 id=&#34;ciに設定&#34;&gt;CIに設定&lt;/h4&gt;
-
-&lt;p&gt;CIの時にはチェックだけされる様に設定を&lt;code&gt;.travis.yml&lt;/code&gt;に追加&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;before_install:
-  - brew update
-  - brew install swiftlint
-script:
-  - swiftlint   # xcodebuild testより前にしておく
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;（今回追加した分のみ記載）&lt;/p&gt;
-
-&lt;p&gt;CI環境には&lt;code&gt;SwiftLint&lt;/code&gt;が入っていないので実行前にインストールが必要。
-なお、&lt;code&gt;Homebrew&lt;/code&gt;ではなく、パッケージからインストールさせるとCIにかかる時間が減るらしい&lt;/p&gt;
-
-&lt;h3 id=&#34;バッジを貼る&#34;&gt;バッジを貼る&lt;/h3&gt;
-
-&lt;h4 id=&#34;travisci-1&#34;&gt;TravisCI&lt;/h4&gt;
-
-&lt;p&gt;リポジトリのビルド結果の画面の中に表示されているバッジをクリックすると、
-貼り付ける用のURLが出てくるので、*マークダウン*形式をコピーして&lt;code&gt;README&lt;/code&gt;に貼り付け&lt;/p&gt;
-
-&lt;h4 id=&#34;codecov&#34;&gt;Codecov&lt;/h4&gt;
-
-&lt;p&gt;リポジトリの画面の中の&lt;code&gt;Settings&lt;/code&gt; - &lt;code&gt;Badge&lt;/code&gt;で貼り付ける用のURLが出てくるので、
-こちらも*マークダウン*形式をコピーして&lt;code&gt;README&lt;/code&gt;に貼り付け&lt;/p&gt;
-
-&lt;h2 id=&#34;ドキュメント生成&#34;&gt;ドキュメント生成&lt;/h2&gt;
-
-&lt;p&gt;基本&lt;code&gt;public&lt;/code&gt;になるものにはドキュメントコメントをつけていて、&lt;code&gt;juzzy&lt;/code&gt;でドキュメント生成をしていたが、
-&lt;code&gt;CocoaPods&lt;/code&gt;に公開すれば&lt;code&gt;CocoaDocs&lt;/code&gt;が出来上がるので不要に。。。&lt;/p&gt;
-
-&lt;h2 id=&#34;一旦-まとめ&#34;&gt;一旦、まとめ&lt;/h2&gt;
-
-&lt;p&gt;ここまでの手順で、pushすると&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;SwiftLint&lt;/code&gt;で静的解析&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;XCTest&lt;/code&gt;でユニットテスト&lt;/li&gt;
-&lt;li&gt;ユニットテストのカバレッジを送信&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;といったところまで自動で実行される状態となる&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://travis-ci.org&#34;&gt;TravisCI&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://codecov.io/&#34;&gt;Codecov&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/realm/SwiftLint&#34;&gt;SwiftLint&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>UIPageViewControllerのエンドレス化などなど</title>
-      <link>https://mike-neko.github.io/blog/pageview/</link>
-      <pubDate>Tue, 13 Dec 2016 19:33:53 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/pageview/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;UIPageViewController&lt;/code&gt;をエンドレスでページ切り替えする方法とかその他小ネタ&lt;/p&gt;
-
-&lt;p&gt;エンドレスの挙動は、最後のページから次へ進むと最初のページへ、最初のページからさらに戻ると最後のページへ移動する感じ。
-詳細はサンプルを参照のこと&lt;/p&gt;
-
-&lt;h2 id=&#34;作成の流れ&#34;&gt;作成の流れ&lt;/h2&gt;
-
-&lt;p&gt;まず、画面の構造は以下の通り。ページ部分は&lt;code&gt;ChildViewController&lt;/code&gt;にしているが、
-&lt;code&gt;UIPageViewController&lt;/code&gt;を全画面にしている場合も同じ&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ViewController
- └─ Container View
-     └─ UIPageViewController
-         └─ (各ページ)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;ページの生成&#34;&gt;ページの生成&lt;/h3&gt;
-
-&lt;p&gt;今回はページ数が固定（5ページ）を想定しているので、&lt;code&gt;viewDidLoad&lt;/code&gt;でページのリストをあらかじめ生成しておく&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// var pages = [PageViewController]()
-pages = Array(1...5).flatMap {
-    guard let vc = storyboard?.instantiateViewController(withIdentifier: &amp;quot;Page&amp;quot;) as? PageViewController else {
-        return nil
-    }
-    // 各ページの設定
-    return vc
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;リストを生成したら、初期表示するページを設定&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;setViewControllers([pages[0]], direction: .forward, animated: false)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;ページングの処理&#34;&gt;ページングの処理&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;UIPageViewControllerDataSource&lt;/code&gt;の
-&lt;code&gt;viewControllerBefore&lt;/code&gt;と&lt;code&gt;viewControllerAfter&lt;/code&gt;を実装する&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;viewControllerBefore&lt;/code&gt;だとこんな感じで前のページを返す&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;guard let vc = viewController as? PageViewController,
-    var index = pages.index(of: vc)  else { return nil }
-
-index -= 1
-index = (index &amp;lt; pages.startIndex) ? pages.endIndex - 1 : index
-return pages[index]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ポイントは基準となるページ(引数で渡される&lt;code&gt;viewController&lt;/code&gt;)のインデックスをページのリストから検索して見つけること
-(コードでは&lt;code&gt;index = pages.index(of: vc)&lt;/code&gt;)&lt;/p&gt;
-
-&lt;p&gt;例えば、現在表示中のページのインデックスをプロパティに持っておく方法ではうまくいかない。
-なぜならこのデリゲートは現在表示中のページ以外からも呼び出されるので&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;h3 id=&#34;uipageviewcontrollerのstoryboardへの追加&#34;&gt;UIPageViewControllerのStoryboardへの追加&lt;/h3&gt;
-
-&lt;p&gt;追加する時は、右下のUIパーツが並んでいるところから&lt;code&gt;PageViewController&lt;/code&gt;を選んで追加すること&lt;br /&gt;
-通常の&lt;code&gt;ViewController&lt;/code&gt;で追加してしまうと後から変更しても、&lt;code&gt;UIPageViewController&lt;/code&gt;の設定項目が出てこない。。。&lt;/p&gt;
-
-&lt;h3 id=&#34;ページを表示した時に各uiの位置が一瞬ずれて表示されてしまう場合&#34;&gt;ページを表示した時に各UIの位置が一瞬ずれて表示されてしまう場合&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;AutoLayout&lt;/code&gt;の基準が&lt;code&gt;LayoutGuide&lt;/code&gt;になっているとダメな場合があるので&lt;code&gt;View&lt;/code&gt;を基準に変えてみる&lt;br /&gt;
-（例えば上部は&lt;code&gt;TopLayoutGuide&lt;/code&gt;ではなく、&lt;code&gt;View&lt;/code&gt;からにする。&lt;code&gt;Constrain to margins&lt;/code&gt;はチェックを外す）&lt;/p&gt;
-
-&lt;h3 id=&#34;container-viewの中のviewcontrollerを取得する&#34;&gt;Container Viewの中のViewControllerを取得する&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;Container View&lt;/code&gt;と&lt;code&gt;ChildViewController&lt;/code&gt;を繋ぐ&lt;code&gt;segue&lt;/code&gt;の&lt;code&gt;destination&lt;/code&gt;から取得できる&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;private weak var pager: PagerViewController!
-
-override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    switch segue.destination {
-    case let vc as PagerViewController:
-        pager = vc
-    default: break
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ちなみに、今回は&lt;code&gt;Container View&lt;/code&gt;の&lt;code&gt;PagerViewController&lt;/code&gt;は1つなので上記の判定だが、
-同じクラスのものが複数ある場合は、&lt;code&gt;segue&lt;/code&gt;の&lt;code&gt;identifier&lt;/code&gt;で判定すれば良い
-（もちろん、&lt;code&gt;Storyboard&lt;/code&gt;上で別々のIDを設定しておく）&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 7+&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/EndlessPage&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Provisioning Profileの有効期限をアプリ内で取得</title>
-      <link>https://mike-neko.github.io/blog/provisioning/</link>
-      <pubDate>Wed, 07 Dec 2016 19:18:57 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/provisioning/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;AdHoc&lt;/code&gt;で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
-その有効期限をアプリ内から確認する方法&lt;/p&gt;
-
-&lt;p&gt;確認自体はipaを解凍して見れば良いのだけど、エンタープライズの様にアプリ内で出したい場合は、
-この方法であらかじめ設定画面とかに仕込むと良いかもしれない&lt;/p&gt;
-
-&lt;p&gt;もちろん&lt;code&gt;Settings.bundle&lt;/code&gt;や直接アプリ内にリテラルとして持たすのも方法の一つだが、
-それだと更新の度に余分な作業が発生したり更新忘れとかのミスも発生したりしがちなので、
-この方法に行き着いた感じ&lt;/p&gt;
-
-&lt;p&gt;（プロビジョニングプロファイルはアーカイブ時に確定されるので、
-アプリバージョンのようにビルドスクリプトに仕込んでといった技は使えない。
-Xcode7以前はdryrunでビルド設定を出力させてそこから特定ということもできたが、
-Xcode8からの自動にした場合は使えないっぽい）&lt;/p&gt;
-
-&lt;h2 id=&#34;方法&#34;&gt;方法&lt;/h2&gt;
-
-&lt;p&gt;ipa作成時のプロビジョニングプロファイルについてまとめると、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;プロビジョニングプロファイルの中身はほぼ&lt;code&gt;plist&lt;/code&gt;(XML)&lt;/li&gt;
-&lt;li&gt;有効期限はプロビジョニングプロファイルの中の&lt;code&gt;ExpirationDate&lt;/code&gt;に&lt;code&gt;Date&lt;/code&gt;(NSDate)で記載&lt;/li&gt;
-&lt;li&gt;プロビジョニングプロファイルはアプリのパッケージの中に
-&lt;code&gt;embedded.mobileprovision&lt;/code&gt;という名前で同梱&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;これを踏まえてコードにすると、以下の感じになる&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bdbedbb280883dff96b6a5a7062c67bd.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;まずは1行目にあるように、同梱されているプロビジョニングを取得する&lt;br /&gt;
-&lt;strong&gt;デバッグ実行時には正しく取得できないので注意！&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;次に5〜14行目にあるように、&lt;code&gt;plist&lt;/code&gt;として必要な部分のみに加工。
-（不要部分があると変換に失敗するので）&lt;br /&gt;
-抜き出したら&lt;code&gt;PropertyListSerialization&lt;/code&gt;で&lt;code&gt;Dictionary&lt;/code&gt;に変換して有効期限を抜き出す&lt;/p&gt;
-
-&lt;p&gt;あとは、画面に表示させる為に文字列に変換してやって完了
-（例では余裕を持って1日前の日付にしている）&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>multipart/form-dataによるファイルのアップロード</title>
-      <link>https://mike-neko.github.io/blog/multipart/</link>
-      <pubDate>Tue, 06 Dec 2016 22:04:28 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/multipart/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;（&lt;code&gt;Alamofire&lt;/code&gt;とかのライブラリを使った方が幸せになれると思うが）
-HTMLのフォームからの送信と同じ様な&lt;code&gt;multipart&lt;/code&gt;によるアップロードをiOSからする方法&lt;/p&gt;
-
-&lt;h2 id=&#34;要件&#34;&gt;要件&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;タイトル（文字列）とファイルを一緒にサーバへアップロード&lt;/li&gt;
-&lt;li&gt;アップロード先は同じホストの&lt;code&gt;upload.php&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;サーバからはjsonで結果が返ってくる&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;htmlの場合&#34;&gt;HTMLの場合&lt;/h2&gt;
-
-&lt;p&gt;上記要件でかつアップロードと同じ画面内で結果を表示させたい場合、
-&lt;code&gt;jQuery&lt;/code&gt;などを全く使わずに素のHTMLで書くと&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/9c53de2d62a4be94dd26131479b52c6f.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;もし、ajaxではなく送信結果は次の画面で表示させる様な場合だと&lt;code&gt;&amp;lt;form&amp;gt;&lt;/code&gt;タグは
-&lt;code&gt;&amp;lt;form name=&amp;quot;upload&amp;quot; enctype=&amp;quot;multipart/form-data&amp;quot; action=&amp;quot;upload.php&amp;quot; method=&amp;quot;post&amp;quot;&amp;gt;&lt;/code&gt;
-とする必要がある&lt;/p&gt;
-
-&lt;h2 id=&#34;iosの場合&#34;&gt;iOSの場合&lt;/h2&gt;
-
-&lt;p&gt;もし単一のファイルのアップロードだけなら、&lt;code&gt;URLSession&lt;/code&gt;の&lt;code&gt;uploadTask(with:〜&lt;/code&gt;でOKだが、
-他のデータやファイルも付加したい場合は自分で&lt;code&gt;multipart&lt;/code&gt;のリクエストを生成する必要がある&lt;/p&gt;
-
-&lt;p&gt;とりあえずHTMLと同じものをベタ書き(+エラー省略)すると、&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/3825cf1ea22cb4f1a1469a33c44097ff.js&#34;&gt;&lt;/script&gt;
-
-&lt;h3 id=&#34;boundary文字列&#34;&gt;boundary文字列&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;multipart&lt;/code&gt;の場合、データの区切りを表すためにデータ内に含まれない様なバウンダリ文字列が必要となる&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let boundary = String(format: &amp;quot;----iOSURLSessionBoundary.%08x%08x&amp;quot;, arc4random(), arc4random())
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;今回は&lt;code&gt;Alamofire&lt;/code&gt;を参考に送信元のプログラムとランダムな数字を組合せた文字列を生成している&lt;/p&gt;
-
-&lt;h3 id=&#34;bodyの生成&#34;&gt;bodyの生成&lt;/h3&gt;
-
-&lt;p&gt;フォームのデータの場合の構造は&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)[CRLF]
-Content-Disposition: form-data; name=&amp;quot;フォームの名前&amp;quot;[CRLF]
-[CRLF]
-(フォームのデータ)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;となる&lt;/p&gt;
-
-&lt;p&gt;ファイルの場合の構造は&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)[CRLF]
-Content-Disposition: form-data; name=&amp;quot;フォームの名前&amp;quot;; filename=&amp;quot;ファイル名&amp;quot;[CRLF]
-Content-Type: &amp;quot;ファイルのタイプ&amp;quot;[CRLF]
-[CRLF]
-(ファイルのデータ)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;となる&lt;/p&gt;
-
-&lt;p&gt;各構造をバイナリ(&lt;code&gt;Data&lt;/code&gt;型)にしたものを必要な分だけ組合せて、最後に&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)--[CRLF]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;をつけたものがbody部分のデータとなる&lt;/p&gt;
-
-&lt;p&gt;今回の例だとフォームデータが一つとファイルデータが一つなので、
-それぞれ一つずつを追加し最後にフッタを付けたものをbodyに入れている&lt;/p&gt;
-
-&lt;h3 id=&#34;headerの生成&#34;&gt;headerの生成&lt;/h3&gt;
-
-&lt;p&gt;フィールドにセットすべきなのは以下の2つ&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&amp;ldquo;Content-Type&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;Content-Length&amp;rdquo;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;code&gt;Content-Type&lt;/code&gt;にはタイプとバウンダリ文字列を以下のように指定する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;multipart/form-data; boundary=（バウンダリ文字列）
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;Content-Length&lt;/code&gt;は普通にbodyのサイズを入れればOK&lt;/p&gt;
-
-&lt;h3 id=&#34;送信&#34;&gt;送信&lt;/h3&gt;
-
-&lt;p&gt;送信は&lt;code&gt;uploadTask&lt;/code&gt;だと&lt;code&gt;multipart&lt;/code&gt;指定ができないので&lt;code&gt;dataTask&lt;/code&gt;で行う。
-それ以外は通常の&lt;code&gt;dataTask&lt;/code&gt;のやり方でOK&lt;/p&gt;
-
-&lt;h2 id=&#34;参考-サーバの処理-php&#34;&gt;参考：サーバの処理(PHP)&lt;/h2&gt;
-
-&lt;p&gt;今回サーバ側で検証用に使ったのは以下のソース&lt;br /&gt;
-（送信されてきたファイルはそのまま専用のディレクトリに格納し結果をJSONで返すだけ）&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// &amp;quot;upload&amp;quot;のディレクトリに書き込み権限が必要
-$dir = __DIR__ . &#39;/upload/&#39;;
-$path = $dir . basename($_FILES[&#39;filename&#39;][&#39;name&#39;]);
-
-$data[&#39;result&#39;] = &#39;アップロード失敗&#39;;
-if (move_uploaded_file($_FILES[&#39;filename&#39;][&#39;tmp_name&#39;], $path)) {
-    chmod($path, 0666);
-    $data[&#39;result&#39;] = date(&amp;quot;H:i:s&amp;quot;) . &#39; &#39; . $_POST[&#39;title&#39;] . &#39; アップロード成功&#39;;
-}
-
-header(&#39;Content-Type: application/json&#39;);
-echo json_encode($data);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;PHP公式：&lt;a href=&#34;http://php.net/manual/ja/features.file-upload.post-method.php&#34;&gt;POST メソッドによるアップロード&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;MDN公式：&lt;a href=&#34;https://developer.mozilla.org/ja/docs/Web/Guide/Using_FormData_Objects&#34;&gt;FormData オブジェクトの利用&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
-&lt;li&gt;PHP 7&lt;/li&gt;
-&lt;li&gt;Chrome&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>WebRTCをiOSネイティブで使う(実装編)</title>
-      <link>https://mike-neko.github.io/blog/webrtc-ios/</link>
-      <pubDate>Wed, 30 Nov 2016 01:38:22 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/webrtc-ios/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;iOSで&lt;code&gt;WebRTC&lt;/code&gt;を使ったビデオチャットを作る方法&lt;/p&gt;
-
-&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;../webrtc-build&#34;&gt;準備編&lt;/a&gt;を参考にフレームワークを組み込む&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Info.plist&lt;/code&gt;に以下を書き込む（※）
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Privacy - Camera Usage Description&lt;/code&gt;（カメラを使うのに必要）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Privacy - Microphone Usage Description&lt;/code&gt;（マイクを使うのに必要）&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;※iOS10から必須。ないとアプリが強制終了する。
-それぞれの値は使う理由の説明を入れておく&lt;/em&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;シグナリング&#34;&gt;シグナリング&lt;/h2&gt;
-
-&lt;p&gt;WebRTCはP2P通信なので何らかの方法で相手と端末(&lt;code&gt;Peer&lt;/code&gt;)や
-通信経路(&lt;code&gt;ICE Candidate&lt;/code&gt;)の情報をやり取りする必要がある&lt;/p&gt;
-
-&lt;p&gt;つまり、何らかのWebRTCとは別の方法で端末間の通信を確立させておくことが必要となる&lt;/p&gt;
-
-&lt;p&gt;といってもテキストベースの情報をやり取りできれば良いので、
-特にややこしい訳ではない（もちろん接続管理はそれなりに必要だが）ので、
-node.jsのsocket.ioで自前のサーバを立てるのも良いし、
-サービスとして提供されているサーバを介してやりとりしても良い&lt;/p&gt;
-
-&lt;p&gt;今回のサンプルでは完全にローカルなネットワークで、かつ、iOS同士限定なので
-サーバが不要な&lt;code&gt;Multipeer Connectivity Framework&lt;/code&gt;を使っている
-（詳細は&lt;a href=&#34;../multipeer/&#34;&gt;こちら&lt;/a&gt;）&lt;/p&gt;
-
-&lt;h2 id=&#34;実装&#34;&gt;実装&lt;/h2&gt;
-
-&lt;p&gt;ビデオチャットは1対1で動画と音声をやりとりするタイプとする&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;生成したコネクション(&lt;code&gt;RTCPeerConnection&lt;/code&gt;)とローカル / リモートストリーム(&lt;code&gt;RTCMediaStream&lt;/code&gt;)はクラスのプロパティにして、
-必ずstrongで保持されるようにしておくこと&lt;br /&gt;
-これを忘れると正常に接続ができていても画像が出ない原因となるので注意！&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;接続の準備&#34;&gt;接続の準備&lt;/h3&gt;
-
-&lt;p&gt;最初に自分が相手に送る動画と音声のストリームを準備する。
-なお、カメラへのアクセスやカメラのライブ映像の表示はほぼフレームワークがカバーしてくれる&lt;/p&gt;
-
-&lt;h4 id=&#34;ローカルストリームの生成&#34;&gt;ローカルストリームの生成&lt;/h4&gt;
-
-&lt;p&gt;ビデオ（ライブ映像）ストリームを生成して端末のカメラと紐づける&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let factory = RTCPeerConnectionFactory()
-localStream = factory.mediaStream(withStreamId: &amp;quot;MIKE-VIDEOCHAT&amp;quot;)
-let video = factory.avFoundationVideoSource(with: nil)
-let track = factory.videoTrack(with: video, trackId: &amp;quot;MIKE-VIDEOCHAT-V0&amp;quot;)
-localStream.addVideoTrack(track)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;オーディオ（音声）ストリームを生成する
-（こちらは特に指定しなくても端末のマイクと紐付けされるみたい）&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;localStream.addAudioTrack(factory.audioTrack(withTrackId: &amp;quot;MIKE-VIDEOCHAT-A0&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;表示用のビューの生成&#34;&gt;表示用のビューの生成&lt;/h4&gt;
-
-&lt;p&gt;相手に送信している映像を確認できるよう、表示用のView
-(&lt;code&gt;RTCEAGLVideoView&lt;/code&gt;というOpenGLを利用して動画を表示する専用のView)
-と端末のカメラを紐づける&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// localView: ViewController内に置いた表示用ビューのコンテナ
-let local = RTCEAGLVideoView(frame: localView.bounds)
-localView.addSubview(local)
-track.add(local)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これで端末のフロントカメラの映像が自動で表示されるようになる&lt;/p&gt;
-
-&lt;h4 id=&#34;接続の生成&#34;&gt;接続の生成&lt;/h4&gt;
-
-&lt;p&gt;ビデオチャットなのでVideoとAudioを必須と指定して&lt;code&gt;RTCPeerConnection&lt;/code&gt;を生成する。
-またローカルストリームを接続と紐づけて相手に送信できるようにする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// peer: RTCPeerConnection
-let constraints = RTCMediaConstraints(
-  mandatoryConstraints: [&amp;quot;OfferToReceiveVideo&amp;quot;: kRTCMediaConstraintsValueTrue,
-                         &amp;quot;OfferToReceiveAudio&amp;quot;: kRTCMediaConstraintsValueTrue],
-   optionalConstraints: nil)
-peer = factory.peerConnection(with: RTCConfiguration(),
-                       constraints: constraints,
-                          delegate: self)
-peer.add(localStream)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;接続の開始&#34;&gt;接続の開始&lt;/h3&gt;
-
-&lt;p&gt;接続の準備ができればシグナリングを行なって相手と接続を確立させる&lt;/p&gt;
+&lt;p&gt;って時に自己署名証明書（オレオレ証明書）を使ってしのぐ方法。&lt;/p&gt;
 
 &lt;p&gt;流れとしては、&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;端末Aがofferを送信&lt;/li&gt;
-&lt;li&gt;端末Bが端末Aのofferを受信&lt;/li&gt;
-&lt;li&gt;端末Bが端末Aへanswerを送信&lt;/li&gt;
-&lt;li&gt;端末Aが端末Bのanswerを受信&lt;/li&gt;
-&lt;li&gt;ICEをやりとりしてP2Pで接続を確立&lt;/li&gt;
+&lt;li&gt;オレオレ証明書を作ってサーバへ設定&lt;/li&gt;
+&lt;li&gt;iOS端末へオレオレ証明書をインストール&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;となる&lt;/p&gt;
+&lt;p&gt;となる。&lt;br /&gt;
+ポイントはオレオレ証明書のインストール部分で、その手順をメモしておく。&lt;/p&gt;
 
-&lt;h4 id=&#34;端末a-offerの送信&#34;&gt;[端末A] offerの送信&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;証明書の作成のあたりは&lt;a href=&#34;../docker/&#34;&gt;Docker構築メモ&lt;/a&gt;を参照&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;p&gt;&lt;code&gt;peer.offer&lt;/code&gt;で生成したローカルの情報を&lt;code&gt;peer.setLocalDescription&lt;/code&gt;で設定すると、
-offerとなる&lt;code&gt;SDP&lt;/code&gt;（Peerの情報）が取得できるので、それを相手へ送信する&lt;/p&gt;
+&lt;h2 id=&#34;注意&#34;&gt;！注意！&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code&gt;peer.offer(for: constraints) { (description, error) in
-  guard let localDescription = description, error == nil else {
-    print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-    return
-  }
-  self.peer.setLocalDescription(localDescription) { error in
-    guard error == nil,
-          let state = self.peer.signalingState,
-          case .haveLocalOffer = state else {
-      print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-      return
-    }
-    // localDescription.sdp(=offer)を相手へ送信する
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;検証はiOS9でのみ。iOS10は未検証。
+（ローカル環境でのATSの挙動が変わりそう！？）&lt;/p&gt;
 
-&lt;h4 id=&#34;端末b-offerの受信-answerの送信&#34;&gt;[端末B] offerの受信 / answerの送信&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;は&lt;code&gt;2.2&lt;/code&gt;の操作方法。&lt;/p&gt;
 
-&lt;p&gt;受信した&lt;code&gt;SDP&lt;/code&gt;から&lt;code&gt;RTCSessionDescription&lt;/code&gt;でリモートの情報を生成し&lt;code&gt;peer.setRemoteDescription&lt;/code&gt;で設定する&lt;/p&gt;
+&lt;p&gt;また、&lt;strong&gt;セキュリティ面で危険&lt;/strong&gt;なのでくれぐれもオレオレ証明書の容量・用法には気をつけること&lt;/p&gt;
 
-&lt;p&gt;offerを正常に設定できれば、&lt;code&gt;peer.answer&lt;/code&gt;でローカルの情報を生成し&lt;code&gt;peer.setLocalDescription&lt;/code&gt;で設定すると、
-answerとなる&lt;code&gt;SDP&lt;/code&gt;が取得できるので、それを相手へ返信する&lt;/p&gt;
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code&gt;// sdp: 受信した端末Aのoffer
-let remoteDescription = RTCSessionDescription(type: .offer, sdp: sdp)
-peer.setRemoteDescription(remoteDescription) { error in
-  guard error == nil,
-        let state = self.peer.signalingState, 
-        case .haveRemoteOffer = state else {
-    print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-    return
-  }
-  self.peer.answer(for: constraints) { (description, error) in
-    guard let localDescription = description, error == nil else {
-      print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-      return
-    }
-    self.peer.setLocalDescription(localDescription) { error in
-      guard error == nil else {
-        print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-        return
-      }
-      // localDescription.sdp(=answer)を相手へ送信する
-    }
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;前提：サーバへのオレオレ証明書は設定済みの状態&lt;/p&gt;
 
-&lt;h4 id=&#34;端末a-answerの受信&#34;&gt;[端末A] answerの受信&lt;/h4&gt;
+&lt;h3 id=&#34;準備&#34;&gt;準備&lt;/h3&gt;
 
-&lt;p&gt;相手から返信された&lt;code&gt;SDP&lt;/code&gt;から&lt;code&gt;RTCSessionDescription&lt;/code&gt;でリモートの情報を生成し&lt;code&gt;peer.setRemoteDescription&lt;/code&gt;で設定する&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;オレオレ証明書&lt;code&gt;server.crt&lt;/code&gt;を作成しておく&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Apple Configurator2&lt;/code&gt;をインストールしておく&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;pre&gt;&lt;code&gt;// sdp: 受信した端末Bのanswer
-let remoteDescription = RTCSessionDescription(type: .answer, sdp: sdp)
-peer.setRemoteDescription(remoteDescription) { error in
-  guard error == nil else {
-    print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-    return
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;構成プロファイルの作成&#34;&gt;構成プロファイルの作成&lt;/h3&gt;
 
-&lt;h4 id=&#34;iceの送受信&#34;&gt;ICEの送受信&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;のメニューの&lt;code&gt;ファイル&lt;/code&gt;から&lt;code&gt;新規プロファイル&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;左側の&lt;code&gt;証明書&lt;/code&gt;の項目を選択し&lt;code&gt;構成&lt;/code&gt;ボタンを押下&lt;/li&gt;
+&lt;li&gt;ファイル選択画面でオレオレ証明書(&lt;code&gt;server.crt&lt;/code&gt;)を選択して開く&lt;/li&gt;
+&lt;li&gt;メニューの&lt;code&gt;ファイル&lt;/code&gt;から&lt;code&gt;保存&lt;/code&gt;を選択し、適当な名前をつけて保存&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;SDPのやり取りとは別に通信経路(&lt;code&gt;ICE Candidate&lt;/code&gt;)もやり取りする必要がある&lt;/p&gt;
+&lt;h3 id=&#34;端末へインストール&#34;&gt;端末へインストール&lt;/h3&gt;
 
-&lt;p&gt;こちらは単純に相手に渡すべき&lt;code&gt;ICE Candidate&lt;/code&gt;があると、&lt;code&gt;RTCPeerConnectionDelegate&lt;/code&gt;の&lt;code&gt;didGenerate&lt;/code&gt;が呼ばれるのでそれを相手へ送信する&lt;/p&gt;
+&lt;p&gt;以下のどちらかの方法でインストールする&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
-  // candidate.sdp(=ICE)を相手へ送信する
-}
-&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;apple-configurator経由&#34;&gt;Apple Configurator経由&lt;/h4&gt;
 
-&lt;p&gt;受信した側は、&lt;code&gt;SDP&lt;/code&gt;から&lt;code&gt;RTCIceCandidate&lt;/code&gt;を生成して&lt;code&gt;RTCPeerConnection&lt;/code&gt;に追加する&lt;/p&gt;
+&lt;p&gt;Macと端末の有線接続が必要&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;let can = RTCIceCandidate(sdp: sdp, sdpMLineIndex: 0, sdpMid: nil)
-peer.add(can)
-&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;に接続中の端末が表示されるので選択&lt;/li&gt;
+&lt;li&gt;ツールバーの&lt;code&gt;追加&lt;/code&gt;ボタンから&lt;code&gt;プロファイル&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;作成した構成プロファイルを選択&lt;/li&gt;
+&lt;li&gt;iOS端末の画面がインストール画面に変わるので、&lt;code&gt;インストール&lt;/code&gt;x3&lt;br /&gt;
+（プロファイルのインストールはConfiguratorから操作不可）&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;これは何度か行われる&lt;/p&gt;
+&lt;h4 id=&#34;ネットワーク経由&#34;&gt;ネットワーク経由&lt;/h4&gt;
 
-&lt;h3 id=&#34;リモートストリームの受信&#34;&gt;リモートストリームの受信&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;適当なサーバに構成プロファイルを置いてダウンロードできるようにする&lt;/li&gt;
+&lt;li&gt;iOS端末のSafariから該当のURLへアクセス&lt;/li&gt;
+&lt;li&gt;インストール画面になるので&lt;code&gt;インストール&lt;/code&gt;x3&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;&lt;code&gt;ICE&lt;/code&gt;のやり取りで接続が確立されると、&lt;code&gt;RTCPeerConnectionDelegate&lt;/code&gt;の&lt;code&gt;didAdd&lt;/code&gt;が呼び出されて、
-相手側からのリモートストリームが渡される&lt;/p&gt;
+&lt;p&gt;なお、証明書だけをインストールしてもアプリからは接続できないので、
+&lt;code&gt;構成プロファイル&lt;/code&gt;を作ってからインストールするのが大事！&lt;/p&gt;
 
-&lt;p&gt;今回はVideoとAudioの両方のストリームがくるはずなので、それを表示用のViewと紐づける&lt;/p&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
-&lt;pre&gt;&lt;code&gt;func peerConnection(_ peerConnection: RTCPeerConnection, 
-                       didAdd stream: RTCMediaStream) {
-  // remoteView: ViewController内に置いた表示用ビューのコンテナ
-  let remote = RTCEAGLVideoView(frame: remoteView.bounds)
-  remoteView.addSubview(remote)
-  stream.videoTracks.last?.add(remote)
-  remoteStream = stream
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これで相手の映像が表示されてチャットができるようになる&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Appleのテクニカルノート：&lt;a href=&#34;https://developer.apple.com/library/ios/technotes/tn2326/_index.html&#34;&gt;TLSのテスト用証明書の作成&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;macOS 10.12&lt;/li&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
+&lt;li&gt;OS X 10.11.5&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.4&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>jazzyの使い方 その1</title>
+      <link>https://mike-neko.github.io/blog/jazzy-cmd/</link>
+      <pubDate>Sat, 03 Sep 2016 00:12:14 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/jazzy-cmd/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;Swiftのドキュメント生成ツールの&lt;a href=&#34;https://github.com/realm/jazzy&#34;&gt;jazzy&lt;/a&gt;の使い方。
+その1はコマンド周りのメモ。&lt;/p&gt;
+
+&lt;h2 id=&#34;ドキュメント生成時のコマンド&#34;&gt;ドキュメント生成時のコマンド&lt;/h2&gt;
+
+&lt;p&gt;主に自分個人で使う時のコマンドは以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;jazzy -o Documents --min-acl internal --skip-undocumented -a M.Ike -x SYMROOT=/private/tmp/jazzy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;o-documents&#34;&gt;&amp;rdquo;-o Documents&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;-o [フォルダ]&lt;/code&gt;でドキュメントを出力するフォルダを指定する。&lt;br /&gt;
+なお、フォルダが存在しない場合は自動で作成される。&lt;/p&gt;
+
+&lt;p&gt;今回の指定だと以下の場所にフォルダが生成される&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Sample                 # 対象のプロジェクトのフォルダ
+  ├─ Sample            # Xcodeのソースなど一式
+  ├─ Sample.xcodeproj  # Xcodeのプロジェクトファイル
+  └─ Documents         # この中に生成されたドキュメント一式が入る
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;min-acl-internal&#34;&gt;&amp;rdquo;&amp;ndash;min-acl internal&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;--min-acl [private | internal | public]&lt;/code&gt;で出力の対象を指定する。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Swift2.x&lt;/code&gt;では&lt;code&gt;public&lt;/code&gt;は使わずに、明示的な&lt;code&gt;private&lt;/code&gt;か暗黙的な&lt;code&gt;internal&lt;/code&gt;しか使わない
+（※複数のモジュールを利用しない場合）
+ので、&lt;code&gt;internal&lt;/code&gt;以上で設定している。&lt;/p&gt;
+
+&lt;h3 id=&#34;skip-undocumented&#34;&gt;&amp;rdquo;&amp;ndash;skip-undocumented&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;この設定をすると、ドキュメントコメントのないソースからはドキュメントを生成しなくなる。&lt;/p&gt;
+
+&lt;p&gt;さらに&lt;code&gt;documentation-coverage&lt;/code&gt;の対象からも除外される。&lt;/p&gt;
+
+&lt;h3 id=&#34;a&#34;&gt;&amp;rdquo;-a&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;作者名の指定。
+別に個人用なので必要もないが、ないと見栄えが悪いのでつけている。&lt;/p&gt;
+
+&lt;h3 id=&#34;x-symroot-private-tmp-jazzy&#34;&gt;&amp;rdquo;-x SYMROOT=/private/tmp/jazzy&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;-x arg1,arg2,…argN,&lt;/code&gt;で&lt;code&gt;xcodebuild&lt;/code&gt;時のビルドオプションを指定できる。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;jazzy&lt;/code&gt;を使うと&lt;code&gt;build&lt;/code&gt;というビルドの一時ファイルの入ったディレクトリが
+プロジェクトのフォルダ内に生成されてしまう。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;.gitignore&lt;/code&gt;でちゃんと指定しているので実害はないが、一時ファイルが生成されるのは気持ち悪い。。。&lt;/p&gt;
+
+&lt;p&gt;という訳で、これを指定すれば&lt;code&gt;jazzy&lt;/code&gt;利用時の一時ファイルを
+&lt;code&gt;/private/tmp/jazzy&lt;/code&gt;(テンポラリフォルダ)へ出力させることができ、
+同じフォルダ内に&lt;code&gt;build&lt;/code&gt;フォルダが生成されなくなる。
+（テンポラリフォルダは再起動時に消去される）&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;ただしXcodeのプロジェクトの設定によっては、別の環境変数を書き換える必要あり&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;使っていないもの&#34;&gt;使っていないもの&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;-c&lt;/code&gt;をつけると、ドキュメント作成前に元のデータを全部消してくれるので、
+本来はつけておいた方が良いオプション。&lt;/p&gt;
+
+&lt;p&gt;が、ヘルプにもあるように、指定した出力先のフォルダが&lt;strong&gt;問答無用で削除&lt;/strong&gt;されてしまう。。。&lt;br /&gt;
+開発中はターミナルから手打ち（コピペ）して使うことが多いので、
+間違って指定してしまった！という悲劇を防ぐ為、これは指定していない&lt;/p&gt;
+
+&lt;p&gt;（確実に作りたい時は手動で削除で対応。
+ビルド用のシェルスクリプトを組んでいる場合はつけている）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.6&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;jazzy 0.7.0&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>APNs Provider API(http2)を利用する(iOS)</title>
+      <link>https://mike-neko.github.io/blog/http2apns-ios/</link>
+      <pubDate>Thu, 25 Aug 2016 23:00:38 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/http2apns-ios/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;iOSのAPNsをAPI経由で使う方法。
+しかもiOS端末からPush通知を送信する方法。&lt;/p&gt;
+
+&lt;p&gt;前回の&lt;a href=&#34;../http2apns/&#34;&gt;Node.jsからAPNsを使う方法&lt;/a&gt;の派生ネタ。
+&lt;code&gt;APNs Provider API&lt;/code&gt;はhttp2とクライアント証明書に対応さえしていればPushを送れるので、
+それならiOS端末からでも良けるよね？って試してみた。&lt;/p&gt;
+
+&lt;h2 id=&#34;環境構築&#34;&gt;環境構築&lt;/h2&gt;
+
+&lt;p&gt;iOSならiOS9から&lt;code&gt;http2&lt;/code&gt;に対応しているので、証明書の準備のみ必要。&lt;/p&gt;
+
+&lt;p&gt;証明書の準備方法は、以前の&lt;a href=&#34;../perfect-push/&#34;&gt;Perfect APNs編&lt;/a&gt;の手順で&lt;code&gt;apns.p12&lt;/code&gt;を書き出せばOK。
+&lt;code&gt;.pem&lt;/code&gt;の作成やCAルート証明書は不要。&lt;/p&gt;
+
+&lt;h2 id=&#34;実装&#34;&gt;実装&lt;/h2&gt;
+
+&lt;p&gt;ポイントは&lt;code&gt;https&lt;/code&gt;のクライアント認証を実装すること。
+それができれば後はPOST形式でAPIを呼び出すだけなので簡単（APIについては&lt;a href=&#34;../http2apns/&#34;&gt;前回記事&lt;/a&gt;参照）&lt;/p&gt;
+
+&lt;h3 id=&#34;クライアント認証&#34;&gt;クライアント認証&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;NSURLSession&lt;/code&gt;でクライアント認証を実装するには、&lt;code&gt;NSURLSessionDelegate&lt;/code&gt;の
+&lt;code&gt;URLSession(_:didReceiveChallenge:completionHandler:)&lt;/code&gt;を実装する。&lt;/p&gt;
+
+&lt;p&gt;サーバからクライアント認証が要求されると、このデリゲートメソッドが呼ばれるので、
+クライアント証明書を読み込んで&lt;code&gt;NSURLCredential&lt;/code&gt;にして渡してあげればOK。&lt;/p&gt;
+
+&lt;p&gt;注意点は、他の認証（通常のSSL/TLS認証とかBasic認証）時も全て呼び出されるので、その実装を忘れないこと！&lt;/p&gt;
+
+&lt;p&gt;以上を踏まえると、実装はこんな感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -&amp;gt; Void) {
+    switch challenge.protectionSpace.authenticationMethod {
+    // 通常のhttpsのSSL/TLS認証
+    case NSURLAuthenticationMethodServerTrust:
+      // デフォルトの動作をさせる
+      completionHandler(.PerformDefaultHandling, nil)
+    // httpsのクライアント認証
+    case NSURLAuthenticationMethodClientCertificate:
+      // clientCredential(あらかじめクライアント証明書から生成した認証情報)を
+      // 利用して認証をかける
+      completionHandler(.UseCredential, clientCredential)
+    // その他の認証
+    default:
+      completionHandler(.PerformDefaultHandling, nil)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;クライアント証明書の読み込み&#34;&gt;クライアント証明書の読み込み&lt;/h3&gt;
+
+&lt;p&gt;クライアントの証明書は&lt;code&gt;p12&lt;/code&gt;形式を利用する。
+証明書からは&lt;code&gt;SecPKCS12Import&lt;/code&gt;を使って認証情報を取り出し、&lt;code&gt;NSURLCredential&lt;/code&gt;を生成する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// アプリにバンドルされているクライアント証明書(apns.p12)
+guard let url = NSBundle.mainBundle().
+  URLForResource(&amp;quot;apns&amp;quot;, withExtension: &amp;quot;p12&amp;quot;) else { return }
+guard let p12data = NSData(contentsOfURL: p12URL) else { return }
+
+let passphrase = &amp;quot;0000&amp;quot;     // 証明書のパスフレーズ
+let options = [kSecImportExportPassphrase as String : passphrase]
+
+var items: CFArray?
+guard SecPKCS12Import(p12data, options, &amp;amp;items) == errSecSuccess
+  else { return }
+guard let cfarr = items else { return }
+guard let certEntry = (cfarr as Array).first as? [String: AnyObject]
+  else { return }
+
+let identity = certEntry[&amp;quot;identity&amp;quot;] as! SecIdentity
+let certificates = certEntry[&amp;quot;chain&amp;quot;] as? [AnyObject]
+let clientCredential = NSURLCredential(identity: identity,
+                                       certificates: certificates,
+                                       persistence: .ForSession)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;今回はサンプルなのでクライアント証明書はアプリにバンドルしているが、通常はキーチェーンにいれておくべき。&lt;/p&gt;
+
+&lt;p&gt;なお、クライアント証明書の中身はPush送信用の一つだけが入っている前提。&lt;/p&gt;
+
+&lt;p&gt;小ネタなのが、&lt;code&gt;certEntry[&amp;quot;identity&amp;quot;] as! SecIdentity&lt;/code&gt;という部分。
+&lt;code&gt;AnyObject&lt;/code&gt;から&lt;code&gt;SecIdentity&lt;/code&gt;への変換は常に成功するので&lt;code&gt;as?&lt;/code&gt;にはできないみたい。
+詳細は&lt;a href=&#34;https://forums.developer.apple.com/thread/11171&#34;&gt;公式フォーラム&lt;/a&gt;を参照。&lt;/p&gt;
+
+&lt;h3 id=&#34;apnsの送信&#34;&gt;APNsの送信&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;// デバイストークン
+let deviceToken = &amp;quot;00fc13adff785122b4ad28809a3420982341241421348097878e577c991de8f0&amp;quot;
+// 通知内容
+let payload = &amp;quot;{\&amp;quot;aps\&amp;quot;:{\&amp;quot;alert\&amp;quot;:\&amp;quot;Hello!\&amp;quot;}}&amp;quot;
+
+// 開発環境向けURL
+guard let url = NSURL(string: &amp;quot;https://api.development.push.apple.com/3/device/&amp;quot;)
+  else { return }
+let request = NSMutableURLRequest(URL: url.URLByAppendingPathComponent(deviceToken))
+request.HTTPMethod = &amp;quot;POST&amp;quot;
+request.HTTPBody = payload.dataUsingEncoding(NSUTF8StringEncoding)
+
+let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
+session.dataTaskWithRequest(request).resume()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;送信時のポイントは、デリゲートを指定しておくことと、&lt;code&gt;completionHandler&lt;/code&gt;形式のメソッドを使わないこと。
+使ってしまうとデリゲートが呼び出されなくなり、クライアント認証が通らなくなる。&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;今回は本当にネタ。多分使い道はないと思う。。。&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.12 Beta&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/WebRTCVideoChat&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;クライアント証明書を上書きして使う必要があるので注意！&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/APNs_iOS&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
-      <title>WebRTCをiOSネイティブで使う(準備編)</title>
-      <link>https://mike-neko.github.io/blog/webrtc-build/</link>
-      <pubDate>Tue, 29 Nov 2016 23:24:55 +0900</pubDate>
+      <title>APNs Provider API(http2)を利用する(Node.js)</title>
+      <link>https://mike-neko.github.io/blog/http2apns/</link>
+      <pubDate>Thu, 11 Aug 2016 17:16:16 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/webrtc-build/</guid>
+      <guid>https://mike-neko.github.io/blog/http2apns/</guid>
       <description>
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;iOSのブラウザでは&lt;code&gt;WebRTC&lt;/code&gt;がサポートされていないので、利用したい場合は
-ネイティブのフレームワークを使う必要がある。&lt;/p&gt;
+&lt;p&gt;iOSのAPNsをAPI経由で使う方法。
+サーバサイドは&lt;code&gt;Node.js&lt;/code&gt;を利用。&lt;/p&gt;
 
-&lt;p&gt;今回の準備編では公式のフレームワークを使うにあたってフレームワークの生成と組み込みまでの手順について&lt;/p&gt;
+&lt;h3 id=&#34;apns-provider-api&#34;&gt;APNs Provider API&lt;/h3&gt;
 
-&lt;p&gt;ただ、これが結構面倒で、ソースをダウンロードして一からビルドしないといけないし、
-その方法が公式に明記されていないというおまけ付き&lt;/p&gt;
-
-&lt;p&gt;普段、GitHubやCarthageに頼りきっている身には大変だった・・・&lt;/p&gt;
-
-&lt;h2 id=&#34;フレームワークの生成&#34;&gt;フレームワークの生成&lt;/h2&gt;
-
-&lt;p&gt;まずは、作業用の適当なフォルダを作っておく&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;mkdir 作業用のフォルダ
-cd 作業用のフォルダ
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ビルド用のツールをインストールする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew update
-brew install git
-brew install python
-git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ソースをダウンロードする&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;以下、ものすごく時間と容量をくうので注意！&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;export PATH=`pwd`/depot_tools:&amp;quot;$PATH&amp;quot;
-fetch --nohooks webrtc_ios
-gclient sync
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ビルドする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd src
-webrtc/build/ios/build_ios_libs.sh
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;成功すれば、&lt;code&gt;src/out_ios_libs/&lt;/code&gt;の中に&lt;code&gt;WebRTC.framework&lt;/code&gt;ができている&lt;/p&gt;
-
-&lt;h2 id=&#34;組み込み&#34;&gt;組み込み&lt;/h2&gt;
-
-&lt;p&gt;組み込み自体は他のサードパーティのフレームワークと一緒だが、ポイントは&lt;/p&gt;
+&lt;p&gt;利用するために必要なのは、&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Embedded Binaries&lt;/code&gt;で追加&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;で&lt;code&gt;Bitcode&lt;/code&gt;を無効にする&lt;/li&gt;
+&lt;li&gt;http2のPOST送信&lt;/li&gt;
+&lt;li&gt;クライアント認証用の証明書&lt;/li&gt;
+&lt;li&gt;CAルート証明書（必要な場合のみ）&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;というあたり&lt;/p&gt;
+&lt;p&gt;となる。
+なお、&lt;code&gt;http2&lt;/code&gt;対応が必要なのは送信のみなので、サーバ自体はhttp2対応にしなくてもOK。&lt;/p&gt;
 
-&lt;p&gt;また、&lt;code&gt;Video&lt;/code&gt;を使う場合はシミュレータが使えないので注意&lt;/p&gt;
+&lt;p&gt;従来のソケット通信経由でAPNsを送信するのと比較すると、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;実装が簡単&lt;/li&gt;
+&lt;li&gt;1つのデバイストークン毎に結果が取得できる&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;というのが大きなメリット。&lt;/p&gt;
+
+&lt;p&gt;特に以前は、環境の異なるトークンを送信すると、いきなりソケットの接続自体が切断される・・・
+みたいな挙動があって確実に全件送信させるのは結構大変だったけど、API方式ではそういったのはなさそう。&lt;/p&gt;
+
+&lt;p&gt;パフォーマンス的にどうなのかは不明。&lt;/p&gt;
+
+&lt;h3 id=&#34;送信形式&#34;&gt;送信形式&lt;/h3&gt;
+
+&lt;p&gt;環境毎のAppleのサーバへPOSTリクエストを送ることでPush通知が送信される。&lt;br /&gt;
+指定する内容自体は従来のものと同じなので、詳細な内容は公式を参照のこと。&lt;/p&gt;
+
+&lt;h4 id=&#34;アドレス&#34;&gt;アドレス&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;開発 : &lt;code&gt;https://api.development.push.apple.com/3/device/&amp;lt;デバイストークン&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;商用 : &lt;code&gt;https://api.push.apple.com/3/device/&amp;lt;デバイストークン&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;ヘッダ&#34;&gt;ヘッダ&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;apns-topic&lt;/code&gt; : 送信対象のアプリのバンドルID&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apns-id&lt;/code&gt; : 通知ID。指定しなければAPNs側で自動生成&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apns-expiration&lt;/code&gt; : 通知が無効になり破棄できるようになる有効期限&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apns-priority&lt;/code&gt; : 優先度&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;ボディ&#34;&gt;ボディ&lt;/h4&gt;
+
+&lt;p&gt;JSON形式の通知ペイロード&lt;/p&gt;
+
+&lt;h4 id=&#34;レスポンス&#34;&gt;レスポンス&lt;/h4&gt;
+
+&lt;p&gt;送信の受付に成功した場合はステータスコードが&lt;code&gt;200&lt;/code&gt;で返ってくる。&lt;/p&gt;
+
+&lt;p&gt;失敗した場合は、それ以外のステータスコードと、コードに応じてより詳細なエラー内容がボディで返ってくる。&lt;/p&gt;
+
+&lt;h2 id=&#34;環境構築&#34;&gt;環境構築&lt;/h2&gt;
+
+&lt;p&gt;もしかすると、&lt;code&gt;OpenSSL&lt;/code&gt;は最新に上げておいた方がいいかも知れない。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Node.js&lt;/code&gt;は現時点(6.3.1)では&lt;code&gt;http2&lt;/code&gt;には対応していないので、
+&lt;a href=&#34;https://www.npmjs.com/package/http2&#34;&gt;http2&lt;/a&gt;というモジュールをインストールしておく。&lt;/p&gt;
+
+&lt;h3 id=&#34;証明書&#34;&gt;証明書&lt;/h3&gt;
+
+&lt;p&gt;証明書の準備方法は、以前の&lt;a href=&#34;../perfect-push/&#34;&gt;Perfect APNs編&lt;/a&gt;と同じ。
+ただし、今回はMacに直接インストールした&lt;code&gt;Node.js&lt;/code&gt;を使うので、CAルート証明書は不要。&lt;/p&gt;
+
+&lt;h2 id=&#34;実装&#34;&gt;実装&lt;/h2&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/2f2f9f9130ef1d46872894b115a4b0c3.js&#34;&gt;&lt;/script&gt;
+
+&lt;h3 id=&#34;クライアント証明書の指定&#34;&gt;クライアント証明書の指定&lt;/h3&gt;
+
+&lt;p&gt;22,23行目にあるように、クライアント証明書と鍵を読み込んで指定する。
+（もちろん各ファイルを同じフォルダ内に置いておくのを忘れないように）&lt;/p&gt;
+
+&lt;p&gt;もし、証明書の秘密鍵のパスフレーズを設定している時は、25行目のように設定が必要。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;（8/24 追記）&lt;/em&gt;&lt;/strong&gt;
+&lt;del&gt;証明書の中が送信対象アプリ単独のもの（他の証明書や鍵を含んでいない）であれば、
+&lt;code&gt;apns-topic&lt;/code&gt;は指定しなくても送信可能。&lt;br /&gt;
+通常の手順で生成した場合は単独のはずなので、指定は不要。&lt;/del&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;（11/20 追記）&lt;/em&gt;&lt;/strong&gt;
+開発環境では上記の通りだが、本番環境では指定がないとエラーが発生する為、必須の様子&lt;/p&gt;
+
+&lt;h3 id=&#34;通知内容の設定&#34;&gt;通知内容の設定&lt;/h3&gt;
+
+&lt;p&gt;送信形式の項目で述べたように、ヘッダにバンドルIDを設定(10−12,21行目)する。&lt;/p&gt;
+
+&lt;p&gt;デバイストークンは、URLの一部として設定する(20行目)。&lt;/p&gt;
+
+&lt;p&gt;通知ペイロードは、44行目にあるようにボディとして書き出す。&lt;/p&gt;
 
 &lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://webrtc.org/native-code/&#34;&gt;WebRTC公式&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html&#34;&gt;APNs Provider API&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/jp/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW1&#34;&gt;日本語ドキュメント&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;macOS 10.12&lt;/li&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
+&lt;li&gt;OS X 10.12 Beta&lt;/li&gt;
+&lt;li&gt;Node.js 6.3.1&lt;/li&gt;
+&lt;li&gt;OpenSSL 1.0.2&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
     
     <item>
-      <title>MultipeerConnectivityでP2P通信</title>
-      <link>https://mike-neko.github.io/blog/multipeer/</link>
-      <pubDate>Tue, 29 Nov 2016 18:40:09 +0900</pubDate>
+      <title>GitHubにタグ付けする</title>
+      <link>https://mike-neko.github.io/blog/gittag/</link>
+      <pubDate>Tue, 02 Aug 2016 21:36:00 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/multipeer/</guid>
+      <guid>https://mike-neko.github.io/blog/gittag/</guid>
       <description>
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;iOS同士限定になるが、&lt;code&gt;Multipeer Connectivity Framework&lt;/code&gt;でお手軽にP2P通信をさせる方法&lt;/p&gt;
+&lt;p&gt;GitHubにタグを付ける方法。
+&lt;code&gt;GitHub Desktop&lt;/code&gt;はブランチ周りはサポートしているけどタグ関係はサポートしていないのでメモしておく。&lt;/p&gt;
 
-&lt;p&gt;今回は特に&lt;code&gt;MCBrowserViewController&lt;/code&gt;を使わずに実装してみた&lt;/p&gt;
-
-&lt;h2 id=&#34;使い方&#34;&gt;使い方&lt;/h2&gt;
-
-&lt;p&gt;おおまかな流れは&lt;/p&gt;
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;code&gt;MCSession&lt;/code&gt;で接続を開く&lt;br /&gt;
-同時に&lt;code&gt;MCNearbyServiceAdvertiser&lt;/code&gt;で他の端末からの接続を待機&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;MCNearbyServiceBrowser&lt;/code&gt;で待機している端末を探す&lt;br /&gt;
-見つかれば、招待して接続を確立する&lt;/li&gt;
-&lt;li&gt;招待された側が招待を受け入れれば接続が確立されるので、データをやりとりできる&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GitHub Desktop&lt;/code&gt;でタグ付けしたいリポジトリを選択する&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;タグをつけたいコミットを選択し、チェックサムをコピーする&lt;br /&gt;
+（下図の赤枠で囲んだ部分だけでOK）
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-08-02-gittag/checksum.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li&gt;メニューの&lt;code&gt;Repository&lt;/code&gt;から&lt;code&gt;Open in Terminal&lt;/code&gt;を選択してターミナルを開く&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ターミナルで以下を実行しタグを付ける&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git tag -a [タグ名] -m &amp;quot;メッセージ&amp;quot; [タグ付けするコミットのチェックサム]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例）&lt;code&gt;git tag -a v1.0 -m &amp;quot;drop only&amp;quot; 2a49b78&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ターミナルで以下を実行しタグが付いたか確認する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git show [タグ名]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例）&lt;code&gt;git show v1.0&lt;/code&gt;&lt;br /&gt;
+（タグの一覧を見たい場合は&lt;code&gt;git tag&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;タグをプッシュする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 特定のタグだけ
+git push origin [タグ名]
+// プッシュされていない全てのタグ
+git push origin --tags
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;となる&lt;/p&gt;
+&lt;h2 id=&#34;githubの状態&#34;&gt;GitHubの状態&lt;/h2&gt;
 
-&lt;p&gt;&lt;em&gt;なお、各種デリゲートはメインスレッドで呼び出されるとは限らないので、
-UIを操作する場合は注意すること&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;タグをプッシュすると、GitHub上でも確認できるようになる。&lt;br /&gt;
+GitHubではタグは主にリリースと関連づける前提の様子。&lt;/p&gt;
 
-&lt;h3 id=&#34;接続の開始&#34;&gt;接続の開始&lt;/h3&gt;
+&lt;p&gt;例だと、以下のような感じで反映される。&lt;/p&gt;
 
-&lt;p&gt;各端末は&lt;code&gt;Peer&lt;/code&gt;（ピア）と呼ばれ、相手に表示させる表示名を設定できる。
-自端末をあらわす&lt;code&gt;Peer&lt;/code&gt;を生成したら、それを使って接続を開始する&lt;/p&gt;
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-08-02-gittag/github.png&#34; /&gt;
+&lt;/figure&gt;
 
-&lt;pre&gt;&lt;code&gt;let peerID = MCPeerID(displayName: &amp;quot;表示名&amp;quot;)
-session = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .none)
-session.delegate = self
-&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;さらに他の端末から見える状態にする為に&lt;code&gt;MCNearbyServiceAdvertiser&lt;/code&gt;を設定する。
-サービス名は相手を検索するのに使用するIDの様なものなので、かぶらないものを指定する&lt;/p&gt;
+&lt;p&gt;タグをつけておくと、zipで直接落とせるので便利！&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;advertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType: &amp;quot;サービス名&amp;quot;)
-advertiser.delegate = self
-advertiser.startAdvertisingPeer()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ここまでの手順でいわば接続の待ち受け状態となる&lt;/p&gt;
-
-&lt;h3 id=&#34;相手の検索と接続の確立&#34;&gt;相手の検索と接続の確立&lt;/h3&gt;
-
-&lt;p&gt;相手を検索するには、&lt;code&gt;MCNearbyServiceBrowser&lt;/code&gt;を利用する。
-サービス名には&lt;code&gt;Advertiser&lt;/code&gt;で設定したのと同じものを指定する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;browser = MCNearbyServiceBrowser(peer: peerID, serviceType: &amp;quot;サービス名&amp;quot;)
-browser.delegate = self
-browser.startBrowsingForPeers()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;指定したサービス名と同じPeerが見つかると&lt;code&gt;MCNearbyServiceBrowserDelegate&lt;/code&gt;の&lt;code&gt;foundPeer&lt;/code&gt;が呼び出される&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func browser(_ browser: MCNearbyServiceBrowser,
-      foundPeer peerID: MCPeerID,
-withDiscoveryInfo info: [String : String]?) {
-    print(&amp;quot;found: \(peerID)&amp;quot;)
-    browser.invitePeer(peerID, to: session, withContext: nil, timeout: 0)
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;見つかった相手に、&lt;code&gt;invitePeer&lt;/code&gt;で接続を招待することができる。
-招待された側には、&lt;code&gt;MCNearbyServiceAdvertiserDelegate&lt;/code&gt;の&lt;code&gt;didReceiveInvitationFromPeer&lt;/code&gt;が呼び出される&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func advertiser(_ advertiser: MCNearbyServiceAdvertiser,
-  didReceiveInvitationFromPeer peerID: MCPeerID,
-                  withContext context: Data?,
-                    invitationHandler: @escaping (Bool, MCSession?) -&amp;gt; Void) {
-    print(&amp;quot;InvitationFrom: \(peerID)&amp;quot;)
-    invitationHandler(true, session)
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;invitationHandler&lt;/code&gt;の第一引数で&lt;code&gt;true&lt;/code&gt;を渡すと招待を受け入れたことになり接続が確立される。&lt;/p&gt;
-
-&lt;h3 id=&#34;データの送受信&#34;&gt;データの送受信&lt;/h3&gt;
-
-&lt;p&gt;接続が確立されればデータのやりとりが出来る様になる。
-データのやりとりには&lt;/p&gt;
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Data / NSData&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;URL / NSURL&lt;/code&gt;でのリソース&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Stream / NSStream&lt;/code&gt;でのストリーム&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://git-scm.com/book/ja/v2/Git-%E3%81%AE%E5%9F%BA%E6%9C%AC-%E3%82%BF%E3%82%B0&#34;&gt;Git の基本 - タグ&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>KVOを利用する(Swift)</title>
+      <link>https://mike-neko.github.io/blog/swift-kvo/</link>
+      <pubDate>Mon, 25 Jul 2016 22:55:03 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/swift-kvo/</guid>
+      <description>
 
-&lt;p&gt;のどれかを使う&lt;/p&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;一番シンプルな&lt;code&gt;Data&lt;/code&gt;の場合、&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;で&lt;code&gt;KVO&lt;/code&gt;を利用する方法について。特に&lt;code&gt;context&lt;/code&gt;を一意の識別子として使いたい場合の方法。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;session.send(data, toPeers: session.connectedPeers, with: .reliable)
+&lt;h2 id=&#34;サンプルコード&#34;&gt;サンプルコード&lt;/h2&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5f00c1927b3cede0376c575147956112.js&#34;&gt;&lt;/script&gt;
+
+&lt;h2 id=&#34;ポイント&#34;&gt;ポイント&lt;/h2&gt;
+
+&lt;h3 id=&#34;nsobject-を継承する&#34;&gt;&lt;code&gt;NSObject&lt;/code&gt;を継承する&lt;/h3&gt;
+
+&lt;p&gt;監視対象も監視するクラスも両方とも&lt;code&gt;NSObject&lt;/code&gt;のサブクラスであることが必要。&lt;/p&gt;
+
+&lt;p&gt;監視対象（サンプルでは&lt;code&gt;Target&lt;/code&gt;）で継承しなかった場合、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&#39;NSUnknownKeyException&#39;, reason: &#39;[&amp;lt;〜.ViewController 0x〜&amp;gt; addObserver:&amp;lt;〜.ViewController 0x〜&amp;gt; forKeyPath:@&amp;quot;target.valueA&amp;quot; options:3 context:0x〜] was sent to an object that is not KVC-compliant for the &amp;quot;target&amp;quot; property.&#39;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;とすると、接続を確立しているPeer全てにデータを送信できる。
-&lt;code&gt;.reliable&lt;/code&gt;にするとデータの送信順が保証され、
-&lt;code&gt;.unreliable&lt;/code&gt;にすると送信順が保証されない代わりに即時にデータが送られる&lt;/p&gt;
+&lt;p&gt;といった実行時エラーが発生する。&lt;/p&gt;
 
-&lt;p&gt;送信されたデータは、&lt;code&gt;MCSessionDelegate&lt;/code&gt;の各メソッドで受け取ることができる。
-&lt;code&gt;Data&lt;/code&gt;の場合だと、&lt;/p&gt;
+&lt;p&gt;監視する側だとそもそも&lt;code&gt;addObserver&lt;/code&gt;などが利用できない。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+&lt;h3 id=&#34;プロパティには-dynamic-をつける&#34;&gt;プロパティには&lt;code&gt;dynamic&lt;/code&gt;をつける&lt;/h3&gt;
+
+&lt;p&gt;監視対象のプロパティ（&lt;code&gt;addObserver&lt;/code&gt;で追加するプロパティ）は必ず&lt;code&gt;dynamic&lt;/code&gt;をつけること。&lt;/p&gt;
+
+&lt;p&gt;もし、これをつけ忘れると、エラーにはならないが、通知も来ない状態
+（＝変更されても&lt;code&gt;observeValueForKeyPath&lt;/code&gt;が呼ばれない）
+という判りにくいバグになってしまう。&lt;/p&gt;
+
+&lt;h3 id=&#34;アクセスコントロールに注意&#34;&gt;アクセスコントロールに注意&lt;/h3&gt;
+
+&lt;p&gt;プロパティが別クラスのオブジェクト?の場合、&lt;code&gt;private&lt;/code&gt;にすると&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&#39;NSUnknownKeyException&#39;, reason: &#39;[&amp;lt;〜.ViewController 0x〜&amp;gt; addObserver:&amp;lt;〜.ViewController 0x〜&amp;gt; forKeyPath:@&amp;quot;target.valueA&amp;quot; options:3 context:0x〜] was sent to an object that is not KVC-compliant for the &amp;quot;target&amp;quot; property.&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;といった実行時エラーが発生する。&lt;/p&gt;
+
+&lt;p&gt;サンプルだと、&lt;code&gt;value1&lt;/code&gt;と&lt;code&gt;value2&lt;/code&gt;は&lt;code&gt;private&lt;/code&gt;でも問題無いが、&lt;code&gt;target&lt;/code&gt;は&lt;code&gt;private&lt;/code&gt;ではエラーになる。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;String&lt;/code&gt;や&lt;code&gt;Int&lt;/code&gt;ではエラーにならないのは確認したが、具体的な条件は未調査・・・&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;識別子としての-context-の指定&#34;&gt;識別子としての&lt;code&gt;context&lt;/code&gt;の指定&lt;/h3&gt;
+
+&lt;p&gt;通常の指定方法は参考リンクの通り（&lt;code&gt;private var myContext = 0&lt;/code&gt;）。
+ただ、今回のサンプルでは、キー値の指定とまとめて以下のようにしている。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;private struct KeyContext {
+    static var value1 = &amp;quot;value1&amp;quot;
+    ...
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;で受け取れる&lt;/p&gt;
+&lt;p&gt;というのも、&lt;code&gt;context&lt;/code&gt;には一意なアドレスを渡すべきなので、&lt;code&gt;static&lt;/code&gt;によりアドレスを確保している。
+（通常の指定方法ではグローバル変数にして一意なアドレスを確保）&lt;/p&gt;
+
+&lt;p&gt;なお、&lt;code&gt;private&lt;/code&gt;なのは単に他からアクセスさせないようにしたい（する必要がない）からで、
+&lt;code&gt;struct&lt;/code&gt;の中で宣言しているのは、名前空間のようにしたかったからである。
+よって、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;private var value1 = &amp;quot;value1&amp;quot;
+...
+
+class ViewController: UIViewController {
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と言った書き方でも同じ。&lt;/p&gt;
+
+&lt;h3 id=&#34;通知の登録-解除&#34;&gt;通知の登録 / 解除&lt;/h3&gt;
+
+&lt;h4 id=&#34;呼び出しタイミング&#34;&gt;呼び出しタイミング&lt;/h4&gt;
+
+&lt;h5 id=&#34;登録時&#34;&gt;登録時&lt;/h5&gt;
+
+&lt;p&gt;サンプルでは&lt;code&gt;UIViewController&lt;/code&gt;なので、&lt;code&gt;viewWillAppear&lt;/code&gt;で登録しているが、
+通常は&lt;code&gt;init&lt;/code&gt;での登録が良さげ。&lt;/p&gt;
+
+&lt;h5 id=&#34;解除時&#34;&gt;解除時&lt;/h5&gt;
+
+&lt;p&gt;サンプルでは登録が&lt;code&gt;viewWillAppear&lt;/code&gt;なので、対となる&lt;code&gt;viewWillDisappear&lt;/code&gt;で解除しているが、
+通常は&lt;code&gt;deinit&lt;/code&gt;での登録が良い。&lt;/p&gt;
+
+&lt;h4 id=&#34;登録方法&#34;&gt;登録方法&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;addObserver(self, forKeyPath: KeyContext.value1, options: .New, context: &amp;amp;KeyContext.value1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;Objective-C&lt;/code&gt;との相違点は、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;KeyPath&lt;/code&gt;に&lt;code&gt;self&lt;/code&gt;がいらない&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;options&lt;/code&gt;を複数指定する時は、&lt;code&gt;|&lt;/code&gt;ではなく配列（例：&lt;code&gt;[.New, .Old]&lt;/code&gt;）で渡す&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;context&lt;/code&gt;へのポインタは&lt;code&gt;&amp;amp;&lt;/code&gt;だけで良い&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;といったあたり。&lt;/p&gt;
+
+&lt;h3 id=&#34;通知の受信&#34;&gt;通知の受信&lt;/h3&gt;
+
+&lt;p&gt;今回は、&lt;code&gt;context&lt;/code&gt;を識別子として利用しているので、&lt;code&gt;switch&lt;/code&gt;でまとめて比較しているが、&lt;code&gt;defalut&lt;/code&gt;の時にちゃんと&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を呼ぶこと。これがないと、もし親クラスで何か監視をしていた場合に処理が正しく行われないので。
+（当然、自身の監視対象だった場合は呼ばない）&lt;/p&gt;
+
+&lt;p&gt;なお、&lt;code&gt;case&lt;/code&gt;に監視対象のプロパティを書き忘れると、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;An -observeValueForKeyPath:ofObject:change:context: message was received but not handled.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;の実行時エラーとなる。&lt;/p&gt;
+
+&lt;h4 id=&#34;値の取得&#34;&gt;値の取得&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;// Change Dictionary Keys: 
+// NSKeyValueChangeNewKeyとかNSKeyValueChangeOldKeyとか
+let value = change?[&amp;quot;Change Dictionary Keys&amp;quot;] as? &amp;quot;データ型&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と書けば希望のデータ型へ変換して取得できる。
+&lt;code&gt;NSNull&lt;/code&gt;や型が違う場合などは、最終的に&lt;code&gt;nil&lt;/code&gt;が入るのでサンプルのように
+&lt;code&gt;guard&lt;/code&gt;ではじくのがスマート。&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/AdoptingCocoaDesignPatterns.html#//apple_ref/doc/uid/TP40014216-CH7-ID12&#34;&gt;Using Swift with Cocoa and Objective-C (Swift 2.2)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>SceneKitでMetalのシェーダを利用する(SCNProgram)</title>
+      <link>https://mike-neko.github.io/blog/metalshader-scenekit/</link>
+      <pubDate>Sun, 10 Jul 2016 18:28:58 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metalshader-scenekit/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Metal&lt;/code&gt;を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
+なので、その面倒な部分を&lt;code&gt;SceneKit&lt;/code&gt;に任せたいという時の話。&lt;/p&gt;
+
+&lt;p&gt;今回は描画周りに&lt;code&gt;Metal&lt;/code&gt;のシェーダを使うパターン。&lt;/p&gt;
+
+&lt;p&gt;主に&lt;code&gt;SceneKit&lt;/code&gt;でカスタムシェーダを使いたい場合は、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;SCNProgram&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SCNShadable&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SCNTechnique&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;といった辺りがあるみたい。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;SCNTechnique&lt;/code&gt;はマルチパスのレンダリングに使うのがメインっぽい。
+&lt;del&gt;（これも試したけどシェーダへカスタム変数を渡す辺りでつまずいて放置）&lt;/del&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;SCNShadable&lt;/code&gt;は&lt;code&gt;Metal&lt;/code&gt;での使えそうなサンプルがなかったので断念。&lt;/p&gt;
+
+&lt;p&gt;という訳で、WWDCのセッションの資料にあった&lt;code&gt;SCNProgram&lt;/code&gt;を使って実装。&lt;/p&gt;
+
+&lt;h2 id=&#34;下準備&#34;&gt;下準備&lt;/h2&gt;
+
+&lt;p&gt;プロジェクトはXcodeのデフォルトのテンプレートの&lt;code&gt;Game&lt;/code&gt;を流用している。
+作成時の&lt;code&gt;Game Technology&lt;/code&gt;では&lt;code&gt;SceneKit&lt;/code&gt;を選択する。&lt;/p&gt;
+
+&lt;h3 id=&#34;scenekitの設定&#34;&gt;SceneKitの設定&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Main.storeyboard&lt;/code&gt;を開き、&lt;code&gt;Game View Controller&lt;/code&gt;の&lt;code&gt;SceneKit View&lt;/code&gt;の
+&lt;code&gt;Rendering API&lt;/code&gt;を&lt;code&gt;Metal&lt;/code&gt;にする&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;GameViewController&lt;/code&gt;の&lt;code&gt;viewDidLoad&lt;/code&gt;の中のライト周りのコードを削除&lt;br /&gt;
+（今回のシェーダはライトを使わないもので不必要なので消す）&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;scnprogramの作成&#34;&gt;SCNProgramの作成&lt;/h3&gt;
+
+&lt;p&gt;以下のようにして&lt;code&gt;SCNProgram&lt;/code&gt;を生成してシェーダの関数名を設定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let program = SCNProgram()
+program.vertexFunctionName = &amp;quot;textureVertex&amp;quot;
+program.fragmentFunctionName = &amp;quot;textureFragment&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;生成した&lt;code&gt;SCNProgram&lt;/code&gt;を適用させたいマテリアルに設定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let material = ship.childNodes.first?.geometry?.firstMaterial!
+material.program = program
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;シェーダの準備&#34;&gt;シェーダの準備&lt;/h3&gt;
+
+&lt;p&gt;通常どおり&lt;code&gt;Metal&lt;/code&gt;のファイルを追加した後に、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;SceneKit/scn_metal&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とする。
+これは後述の&lt;code&gt;SceneKit&lt;/code&gt;とデータのやりとりに必要。&lt;/p&gt;
+
+&lt;h2 id=&#34;データの渡し方&#34;&gt;データの渡し方&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;SceneKit&lt;/code&gt;から描画に必要なデータ（座標や変換行列、テクスチャなど）を
+シェーダへ渡す方法&lt;/p&gt;
+
+&lt;h3 id=&#34;vertexshader側&#34;&gt;VertexShader側&lt;/h3&gt;
+
+&lt;h4 id=&#34;頂点属性-位置とか法線とかuv座標とか&#34;&gt;頂点属性（位置とか法線とかuv座標とか）&lt;/h4&gt;
+
+&lt;p&gt;まずは、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct VertexInput {
+    float3 position [[ attribute(SCNVertexSemanticPosition) ]];
+    float2 texcoord [[ attribute(SCNVertexSemanticTexcoord0) ]];
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という感じで、頂点属性の中で必要なものを構造体で定義する。
+すると、変数名の後ろの&lt;code&gt;Attribute Qualifier&lt;/code&gt;(&amp;rdquo;[[]]&amp;ldquo;で囲まれた部分)で指定したものが
+&lt;code&gt;[[stage_in]]&lt;/code&gt;にバインドされて自動で渡されてくる。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;指定できるものはドキュメントの&lt;code&gt;Table 1 
+SceneKit Vertex Attribute Qualifiers for Metal Shaders&lt;/code&gt;を参照&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&#34;フレーム定数-ビューの変換行列など&#34;&gt;フレーム定数（ビューの変換行列など）&lt;/h4&gt;
+
+&lt;p&gt;あらかじめ&lt;code&gt;SCNSceneBuffer&lt;/code&gt;という構造体が用意されており、これらはその中に入っている。
+このデータは&lt;code&gt;[[buffer(0)]]&lt;/code&gt;にバインドされて渡されてくる。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;構造体の定義はドキュメントの&lt;code&gt;Frame-Constant Data&lt;/code&gt;の項目を参照&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&#34;ノード毎のデータ-モデルの変換行列など&#34;&gt;ノード毎のデータ（モデルの変換行列など）&lt;/h4&gt;
+
+&lt;p&gt;これは、あらかじめ用意された構造体がなく、代わりに必要なものをピックアップして
+以下のように自分で構造体を定義する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct NodeBuffer {
+    float4x4 modelViewProjectionTransform;
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;すると、そのデータが&lt;code&gt;[[buffer(1)]]&lt;/code&gt;にバインドされてシェーダに渡される。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ピックアップできるものはドキュメントの&lt;code&gt;Listing 1 
+Available Fields for Per-Node Shader Data&lt;/code&gt;を参照&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&#34;カスタム変数&#34;&gt;カスタム変数&lt;/h4&gt;
+
+&lt;p&gt;上記以外の変数は構造体として定義が必要。定義自体は通常通りに行う。
+ただし、バインドされるバッファは2以降になる。&lt;/p&gt;
+
+&lt;h4 id=&#34;実装&#34;&gt;実装&lt;/h4&gt;
+
+&lt;p&gt;まとめると、&lt;code&gt;VertexShader&lt;/code&gt;の宣言部分は以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vertex output myVertex(input in [[ stage_in ]],
+                       constant SCNSceneBuffer&amp;amp; scn_frame [[ buffer(0) ]],
+                       constant NodeBuffer&amp;amp; scn_node [[ buffer(1) ]],
+                       constant CustomBuffer&amp;amp; custom [[ buffer(2) ]]) {
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ここでの重要なポイントは&lt;strong&gt;引数名&lt;/strong&gt;。
+- &lt;code&gt;scn_frame&lt;/code&gt;と&lt;code&gt;scn_node&lt;/code&gt;は固定&lt;br /&gt;
+（違う名前にすると正しくバインドされない）
+- カスタム変数の引数名&lt;code&gt;custom&lt;/code&gt;は&lt;code&gt;SceneKit&lt;/code&gt;からデータを渡す時に使う&lt;/p&gt;
+
+&lt;p&gt;中での処理は必要な計算をして、それを&lt;code&gt;FragmentShader&lt;/code&gt;に渡すという、
+通常の&lt;code&gt;Metal&lt;/code&gt;のシェーダと同じ実装を行う。&lt;/p&gt;
+
+&lt;h3 id=&#34;fragmentshader側&#34;&gt;FragmentShader側&lt;/h3&gt;
+
+&lt;h4 id=&#34;テクスチャ&#34;&gt;テクスチャ&lt;/h4&gt;
+
+&lt;p&gt;テクスチャを利用したい場合は、特に事前の定義などは不要で通常通り宣言する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;fragment half4 textureFragment(VertexOut in [[ stage_in ]],
+                               texture2d&amp;lt;float&amp;gt; texture [[ texture(0) ]]) {
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ただしここでも重要なポイントは&lt;strong&gt;引数名&lt;/strong&gt;（詳細は後述）。&lt;/p&gt;
+
+&lt;h3 id=&#34;scenekit側&#34;&gt;SceneKit側&lt;/h3&gt;
+
+&lt;p&gt;カスタム変数とテクスチャ以外は自動でバインドされる&lt;br /&gt;
+（＝SceneKit側の処理は特にない）&lt;/p&gt;
+
+&lt;h4 id=&#34;カスタム変数-1&#34;&gt;カスタム変数&lt;/h4&gt;
+
+&lt;p&gt;シェーダ側と同じ構造体のデータを準備する辺りは通常通り。&lt;/p&gt;
+
+&lt;p&gt;そのデータをシェーダ側にバインドするのは以下のように&lt;code&gt;setValue&lt;/code&gt;を利用する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var custom = CustomBuffer(color: float4(0, 0, 0, 1))
+material.setValue(NSData(bytes: &amp;amp;custom, length:sizeof(CustomBuffer)),
+                  forKey: &amp;quot;custom&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;setValue&lt;/code&gt;は&lt;code&gt;SCNProgram&lt;/code&gt;をセットしたのと同じ対象（今回は&lt;code&gt;material&lt;/code&gt;）に行う。&lt;br /&gt;
+また、&lt;code&gt;value&lt;/code&gt;は&lt;code&gt;NSData&lt;/code&gt;としてバイナリで渡し、&lt;code&gt;key&lt;/code&gt;はシェーダでの宣言と同じ名前にする。&lt;/p&gt;
+
+&lt;h4 id=&#34;テクスチャ-1&#34;&gt;テクスチャ&lt;/h4&gt;
+
+&lt;p&gt;今回のモデルではマテリアルの&lt;code&gt;diffuse&lt;/code&gt;にテクスチャが設定されているので、まずそれを取得する。
+その後、&lt;code&gt;SCNMaterialProperty&lt;/code&gt;の形式にしてから変数と同様に&lt;code&gt;setValue&lt;/code&gt;する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;guard let contents = material.diffuse.contents else { return }
+material.setValue(SCNMaterialProperty(contents: contents),
+                  forKey: &amp;quot;texture&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ポイントは、&lt;code&gt;SCNMaterialProperty&lt;/code&gt;を生成しなおしてからセットすること。&lt;br /&gt;
+直接&lt;code&gt;diffuse&lt;/code&gt;の中のデータを&lt;code&gt;setValue&lt;/code&gt;すると正しくデータが渡されない。&lt;/p&gt;
+
+&lt;h4 id=&#34;命名の注意点&#34;&gt;命名の注意点&lt;/h4&gt;
+
+&lt;p&gt;シェーダの引数名と&lt;code&gt;SceneKit&lt;/code&gt;側で&lt;code&gt;setValue&lt;/code&gt;の&lt;code&gt;key&lt;/code&gt;は一致させる必要がある。&lt;/p&gt;
+
+&lt;p&gt;さらに大事な点として、&lt;code&gt;setValue&lt;/code&gt;は&lt;code&gt;KVO&lt;/code&gt;を利用しているので、
+命名時にはオブジェクトのプロパティとかぶる様な名前をつけてはいけない。&lt;br /&gt;
+（例えば&lt;code&gt;color&lt;/code&gt;などは実行時にエラーログが出て連携ができない）&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;今回はサンプルもなくとても苦戦した。。。特にシェーダとSceneKit間のデータのやりとり辺りは、
+ドキュメントにも細かく書いてなくて苦労した。&lt;br /&gt;
+妙に親切に頂点属性などをバインドしてくれると思ったら、
+引数名固定だったり、テクスチャの再生成が必要だったりと落とし穴もいっぱい・・・&lt;/p&gt;
+
+&lt;p&gt;あと、引数名がスネークケースなのもいただけない。
+他がキャメルケースなのでここは統一して欲しかった。&lt;/p&gt;
+
+&lt;p&gt;ただ、Metalのバインドの辺りの仕組みはどうなっているのか興味深いので、
+もっといろいろ触ってみたい。&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Apple公式ドキュメント(&lt;a href=&#34;https://developer.apple.com/reference/scenekit/scnprogram&#34;&gt;SCNProgram&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.5&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
-&lt;p&gt;上記を元に2台の端末同士でP2Pで単純なテキストを送受信するクラスのソースは以下のとおり&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalShaderSceneKit&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>WKWebViewの内容をPDFで保存する(Swift)</title>
+      <link>https://mike-neko.github.io/blog/webview-pdf/</link>
+      <pubDate>Thu, 23 Jun 2016 00:13:25 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/webview-pdf/</guid>
+      <description>
 
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/00e0e04fd7bdf4c3e9378fc6d8e0a11a.js&#34;&gt;&lt;/script&gt;
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;使い方は、&lt;/p&gt;
+&lt;p&gt;昔に&lt;code&gt;UIWebView&lt;/code&gt;でやっていたものを最新の&lt;code&gt;WKWebView&lt;/code&gt;+&lt;code&gt;Swift&lt;/code&gt;で書き換えた時のメモ。&lt;/p&gt;
 
-&lt;h4 id=&#34;接続の開始-1&#34;&gt;接続の開始&lt;/h4&gt;
+&lt;p&gt;内容は大したことないのだけれど、検索で引っかかるWebの資料がiOS9の実機で動かなかったので残しておく。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;P2PConnectivity.manager.start(
-    serviceType: &amp;quot;MIKE-SIMPLE-P2P&amp;quot;,
-    displayName: UIDevice.current.name,
-    stateChangeHandler: { state in
-        // 接続状況の変化した時の処理
-    }, recieveHandler: { data in
-        // データを受信した時の処理
-    }
-)
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;内容全体の取得&#34;&gt;内容全体の取得&lt;/h3&gt;
+
+&lt;p&gt;今回は&lt;code&gt;WebView&lt;/code&gt;の中身全体をPDF化したいので、PDF化する時に表示中のコンテンツがビュー内に収まるように、
+コンテンツの表示位置（&lt;code&gt;scrollView.contentOffset&lt;/code&gt;）を初期位置に戻し、
+ビュー自体のサイズも表示ページのサイズ（&lt;code&gt;scrollView.contentSize&lt;/code&gt;）に拡大している。&lt;/p&gt;
+
+&lt;p&gt;また、以下のようにPDFのページのサイズもコンテンツと同じサイズに設定している。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// frameの中身はコンテンツのサイズ
+UIGraphicsBeginPDFPageWithInfo(frame, nil)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;データの送信&#34;&gt;データの送信&lt;/h4&gt;
+&lt;p&gt;（つまり、書き出し時には一瞬画面がちらついてしまうので、気になる場合は
+&lt;code&gt;ViewController&lt;/code&gt;の&lt;code&gt;view&lt;/code&gt;にマスクとなるビューを&lt;code&gt;addSubView&lt;/code&gt;して隠すこと）&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;// 送信
-P2PConnectivity.manager.send(message: &amp;quot;送信するテキスト&amp;quot;)
+&lt;p&gt;&lt;strong&gt;ただし、あまりにコンテンツが長い場合は、うまく描画されないので注意！&lt;/strong&gt;&lt;br /&gt;
+（例えば、Google検索結果とかだと半分ぐらいから下は空白状態になったり、全く空白になったりする）&lt;/p&gt;
+
+&lt;p&gt;なお、端末によっても状況が異なるようで、対処方法は未調査。。。&lt;/p&gt;
+
+&lt;h3 id=&#34;pdfへの書き出し&#34;&gt;PDFへの書き出し&lt;/h3&gt;
+
+&lt;p&gt;今回は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;webView.scrollView.drawViewHierarchyInRect(frame, afterScreenUpdates: true)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;終了&#34;&gt;終了&lt;/h4&gt;
+&lt;p&gt;としてWebView内のコンテンツをPDFに書き出ししている。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;P2PConnectivity.manager.stop()
+&lt;p&gt;ちまたにある資料では、この部分が、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;webView.scrollView.layer.renderInContext(context)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;という感じ&lt;/p&gt;
+&lt;p&gt;のようになっているのが多いが、iOS9の実機では、
+&lt;code&gt;CGImageCreateWithImageProvider: invalid image provider: NULL&lt;/code&gt;
+のエラーが出て書き出しが出来なくなっている。（他のOSは未検証）&lt;/p&gt;
+
+&lt;p&gt;なお、&lt;code&gt;drawViewHierarchyInRect&lt;/code&gt;の方が速いらしいが、個人的には、
+わざわざコンテキストの取得がいらなくなったのがありがたい。
+（よく書く場所を間違えて取得に失敗する凡ミスをしていたので）&lt;/p&gt;
+
+&lt;h3 id=&#34;pdfのファイル保存&#34;&gt;PDFのファイル保存&lt;/h3&gt;
+
+&lt;p&gt;PDFをファイルとして保存したい場合は、&lt;code&gt;UIGraphicsBeginPDFContextToFile&lt;/code&gt;を利用するが、
+このメソッドは既存のファイルを問答無用で上書きするので注意すること。&lt;/p&gt;
+
+&lt;p&gt;もし、サーバへ送信などでデータが欲しい場合は、&lt;code&gt;UIGraphicsBeginPDFContextToData&lt;/code&gt;を利用すれば、
+&lt;code&gt;NSData&lt;/code&gt;で取得できる。&lt;/p&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
+&lt;li&gt;OS X 10.11.5&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/WebView2PDF&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
-      <title>VPN上のWindows機へ接続</title>
-      <link>https://mike-neko.github.io/blog/vpn-win/</link>
-      <pubDate>Sun, 27 Nov 2016 22:50:47 +0900</pubDate>
+      <title>QRコードの読み取りサンプル(Swift) その2</title>
+      <link>https://mike-neko.github.io/blog/qr-reader/</link>
+      <pubDate>Thu, 16 Jun 2016 21:17:36 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/vpn-win/</guid>
+      <guid>https://mike-neko.github.io/blog/qr-reader/</guid>
       <description>
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;&lt;code&gt;SSH&lt;/code&gt;が入っていないVPN上のWindowsへアクセスする方法&lt;/p&gt;
-
-&lt;p&gt;この場合、踏み台となる&lt;code&gt;SSH&lt;/code&gt;が入った別のマシンが必要となる&lt;/p&gt;
-
-&lt;p&gt;今回の検証環境は以下の通り&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;ローカル：Mac OS 10.11(※)&lt;/li&gt;
-&lt;li&gt;VPN
-
-&lt;ul&gt;
-&lt;li&gt;CentOS 6.8(踏み台)&lt;/li&gt;
-&lt;li&gt;Windows(SQLServer)&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;※ macOS 10.12(sierra)は&lt;code&gt;PPTP&lt;/code&gt;でのVPN接続がOSではサポートされていないので注意！&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;接続のイメージは以下の通り&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;    Mac
-     |
-(VPN / SSH)
-     |
-   CentOS(192.168.10.1 / 踏み台) - Windows(192.168.10.2 / SQLServer)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;remotedesktopでログイン&#34;&gt;RemoteDesktopでログイン&lt;/h2&gt;
-
-&lt;p&gt;Windowsなので遠隔で操作するには&lt;code&gt;RemoteDesktop&lt;/code&gt;を利用&lt;/p&gt;
-
-&lt;h3 id=&#34;sshの接続方法&#34;&gt;SSHの接続方法&lt;/h3&gt;
-
-&lt;p&gt;以下の形式でSSH接続する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ssh -C -L 3389:(WindowsのIP):3389 (踏み台のIP)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;例えば、上述の環境でCentOSの&lt;code&gt;user&lt;/code&gt;でログインする場合だと、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ssh -C -L 3389:192.168.10.2:3389 user@192.168.10.1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;で接続する&lt;/p&gt;
-
-&lt;h3 id=&#34;remotedesktopの設定&#34;&gt;RemoteDesktopの設定&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;PC name:&lt;code&gt;localhost&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;User name: Windowsのユーザ名&lt;/li&gt;
-&lt;li&gt;Password: Windowsのパスワード&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;ポイントはホストが&lt;code&gt;localhost&lt;/code&gt;になること&lt;/p&gt;
-
-&lt;h2 id=&#34;sql-serverへ接続&#34;&gt;SQL Serverへ接続&lt;/h2&gt;
-
-&lt;h3 id=&#34;sshの接続方法-1&#34;&gt;SSHの接続方法&lt;/h3&gt;
-
-&lt;p&gt;以下の形式でSSH接続する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ssh -C -L (DBのポート):(WindowsのIP):(DBのポート) (踏み台のIP)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;例えば、上述の環境でCentOSの&lt;code&gt;user&lt;/code&gt;、SQLServerのポートが&lt;code&gt;1433&lt;/code&gt;でログインする場合だと、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ssh -C -L 1433:192.168.10.2:1433 user@192.168.10.1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;で接続する&lt;/p&gt;
-
-&lt;h3 id=&#34;db接続設定&#34;&gt;DB接続設定&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;ホスト:&lt;code&gt;localhost&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;ポート:1433&lt;/li&gt;
-&lt;li&gt;DB名: そのまま&lt;/li&gt;
-&lt;li&gt;DBユーザ: そのまま&lt;/li&gt;
-&lt;li&gt;DBパスワード: そのまま&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>VagrantでCentOS6.8を使う </title>
-      <link>https://mike-neko.github.io/blog/vagrant-cent/</link>
-      <pubDate>Tue, 08 Nov 2016 21:32:51 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/vagrant-cent/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;野良BOXは自力で問題ないか検証するほどの腕がないので、公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;Vagrantfile&lt;/code&gt;を作成&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;mkdir -p （適当なフォルダ）
-cd （上で作ったフォルダ）
-vagrant init bento/centos-6.8
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;code&gt;Vagrantfile&lt;/code&gt;を編集(サーバとして使いたいので以下のように編集)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# config.vm.network &amp;quot;forwarded_port&amp;quot;, guest: 80, host: 8080
-# ↓コメントを外す＋ポートは空いているものを指定
-config.vm.network &amp;quot;forwarded_port&amp;quot;, guest: 8010, host: 8010
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;# config.vm.network &amp;quot;private_network&amp;quot;, ip: &amp;quot;192.168.33.10&amp;quot;
-# ↓コメントを外す＋IPは空いているものを指定
-config.vm.network &amp;quot;private_network&amp;quot;, ip: &amp;quot;192.168.33.10&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;# Centos6.8限定で以下も追記(※1 詳細は後述)
-config.vm.provider &amp;quot;virtualbox&amp;quot; do |vb|
-vb.customize [&amp;quot;modifyvm&amp;quot;, :id, &amp;quot;--cableconnected1&amp;quot;, &amp;quot;on&amp;quot;]
-end
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;起動する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;vagrant up
-vagrant ssh
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;トラブルシューティング&#34;&gt;トラブルシューティング&lt;/h2&gt;
-
-&lt;h3 id=&#34;vagrant-up-で-private-key-で先に進まずエラーになる&#34;&gt;vagrant up で private key で先に進まずエラーになる&lt;/h3&gt;
-
-&lt;p&gt;エラーは以下の感じでCentOS6.8で発生(6.7は問題無し)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Timed out while waiting for the machine to boot. This means that
-Vagrant was unable to communicate with the guest machine within
-the configured (&amp;quot;config.vm.boot_timeout&amp;quot; value) time period.
-
-If you look above, you should be able to see the error(s) that
-Vagrant had when attempting to connect to the machine. These errors
-are usually good hints as to what may be wrong.
-
-If you&#39;re using a custom box, make sure that networking is properly
-working and you&#39;re able to connect to the machine. It is a common
-problem that networking isn&#39;t setup properly in these boxes.
-Verify that authentication configurations are also setup properly,
-as well.
-
-If the box appears to be booting properly, you may want to increase
-the timeout (&amp;quot;config.vm.boot_timeout&amp;quot;) value.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;対応策&#34;&gt;対応策&lt;/h4&gt;
-
-&lt;p&gt;ググると色々出てくるが、CentOS6.8で発生する場合は、前述の※1を&lt;code&gt;Vagrantfile&lt;/code&gt;に追記しておけば大丈夫。&lt;br /&gt;
-（というか他の方法は効果なしだった・・・）&lt;/p&gt;
-
-&lt;h3 id=&#34;ファイルの共有ができない&#34;&gt;ファイルの共有ができない&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;vagrant up&lt;/code&gt;で以下のエラーが出ている&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Vagrant was unable to mount VirtualBox shared folders. This is usually
-because the filesystem &amp;quot;vboxsf&amp;quot; is not available. This filesystem is
-made available via the VirtualBox Guest Additions and kernel module.
-Please verify that these guest additions are properly installed in the
-guest. This is not a bug in Vagrant and is usually caused by a faulty
-Vagrant box. For context, the command attempted was:
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;対応策-1&#34;&gt;対応策&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;まずはエラーを一旦無視してログインし、カーネルをアップデート&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;vagrant ssh
-su                     # pass:&amp;quot;vagrant&amp;quot;
-yum -y update kernel
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;アップデートが完了すれば&lt;code&gt;exit&lt;/code&gt;を2回でログアウトする&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;code&gt;Guest Additions&lt;/code&gt;をインストール&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;vagrant plugin install vagrant-vbguest
-vagrant vbguest
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;リロードをかけてエラーが出なければOK&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;vagrant reload
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h1 id=&#34;環境&#34;&gt;環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Mac 10.11&lt;/li&gt;
-&lt;li&gt;VirtualBox 5.0.28&lt;/li&gt;
-&lt;li&gt;Vagrant 1.8.6
-
-&lt;ul&gt;
-&lt;li&gt;CentOS6.7&lt;/li&gt;
-&lt;li&gt;CentOS6.8&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>CentOSからOracleへ接続</title>
-      <link>https://mike-neko.github.io/blog/oracle-cent/</link>
-      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/oracle-cent/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;CentOSのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
-
-&lt;p&gt;Macの場合は&lt;a href=&#34;../oracle-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;h3 id=&#34;oracleのドライバのインストール&#34;&gt;Oracleのドライバのインストール&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;サーバのアーキテクチャを確認&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;uname -a
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index.html&#34;&gt;Oracle Instant Client&lt;/a&gt;から
-1で確認した環境の&lt;code&gt;basic&lt;/code&gt;と&lt;code&gt;SDK&lt;/code&gt;をダウンロードしサーバへ保存&lt;br /&gt;
-(今回は&lt;code&gt;x86_64&lt;/code&gt;だったので&lt;code&gt;Version 12.1.0.2 (x86_64)&lt;/code&gt;の&lt;code&gt;rpm&lt;/code&gt;を選択。以降このバージョンが前提)&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd (保存した場所)
-su
-rpm -ivh oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
-rpm -ivh oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;パスを通す&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;vi /etc/profile
-# 以下の行を追加
-export LD_LIBRARY_PATH=/usr/lib/oracle/12.1/client64/lib:$LD_LIBRARY_PATH
-export PATH=/usr/lib/oracle/12.1/client64/bin:$PATH
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;追記したら保存して終了し&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;source /etc/profile
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;で強制反映させる&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;peclのインストール&#34;&gt;peclのインストール&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;以下でインストール
-&lt;code&gt;
-yum -y install --enablerepo=remi --enablerepo=remi-php56 php-pear
-&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;oci8のインストール&#34;&gt;oci8のインストール&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;pecl&lt;/code&gt;からインストールするので&lt;code&gt;DTrace&lt;/code&gt;サポートを有効にする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;yum -y install systemtap-sdt-devel
-export PHP_DTRACE=yes
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;以前に書いたQRコードの読み取りサンプルの別バージョン。
+今回はカメラ不要で画像データから直接QRコードを読み取りが可能。&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;ちなみにこれをしないと&lt;code&gt;error: oci8_dtrace_gen.h: No such file or director&lt;/code&gt;というエラーになる。
-詳細は&lt;a href=&#34;http://php.net/manual/ja/oci8.dtrace.php&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;&lt;/li&gt;
+&lt;p&gt;過去の記事（&lt;a href=&#34;../code-reader/&#34;&gt;QRコードの読み取りサンプル&lt;/a&gt;）&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;li&gt;&lt;p&gt;&lt;code&gt;oci8&lt;/code&gt;をバージョン（Ver.2.0.12）を指定してインストール&lt;/p&gt;
+&lt;p&gt;サンプルでは、カメラロールから画像を取得し、認識できたQRコードを切り出して表示している。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;pecl install oci8-2.0.12
+&lt;p&gt;今回の認識部分は、&lt;code&gt;CoreImage&lt;/code&gt;の&lt;code&gt;CIDetector&lt;/code&gt;を利用している。
+&lt;code&gt;CIDetector&lt;/code&gt;は顔認識や文字認識もできる優れもの。&lt;/p&gt;
+
+&lt;h3 id=&#34;相違点&#34;&gt;相違点&lt;/h3&gt;
+
+&lt;p&gt;前回の&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;を利用した方法との違いは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;画像データから読み取り可能&lt;/li&gt;
+&lt;li&gt;読み取り可能なコードはQRコードのみ&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;といった辺り。複数認識可能なのは変わらない。&lt;/p&gt;
+
+&lt;p&gt;画像データは&lt;code&gt;UIImage&lt;/code&gt;が生成できるデータを用意すれば良いので、
+元データはローカルファイルでもネット上でも、当然カメラからでもOK。&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;qr検出&#34;&gt;QR検出&lt;/h3&gt;
+
+&lt;p&gt;検出のコードはとてもシンプル。&lt;/p&gt;
+
+&lt;p&gt;画像データを&lt;code&gt;CoreImage&lt;/code&gt;の形式へ変換し、検出器にかけるだけ。&lt;/p&gt;
+
+&lt;p&gt;エラー処理を省略して抜粋すると以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let ciimg = CIImage(image: image)!
+let detector = CIDetector(ofType: CIDetectorTypeQRCode,
+                         context: nil, options: nil)
+let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで、検出されたコードの配列が取得される。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;CIQRCodeFeature&lt;/code&gt;には&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;bounds&lt;/code&gt;：コードを検出した領域&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bottomLeft bottomRight topLeft topRight&lt;/code&gt;：コードを検出した位置&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;messageString&lt;/code&gt;：コードに含まれるデータ&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;が入っている。&lt;/p&gt;
+
+&lt;h3 id=&#34;検出位置&#34;&gt;検出位置&lt;/h3&gt;
+
+&lt;p&gt;位置の座標は、画面ではなく画像の座標を基準とした座標で取得される。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;bounds&lt;/code&gt;とそれ以外の&lt;code&gt;bottom〜&lt;/code&gt;や&lt;code&gt;top〜&lt;/code&gt;で取れる座標は、
+検出したQRコードが回転していた場合に異なってくる。&lt;/p&gt;
+
+&lt;p&gt;例えば、斜めの状態のQRコードが検出された場合、
+&lt;code&gt;bounds&lt;/code&gt;は周りの余白部分を含めた正方形の領域が入る。
+それ以外のものにはQRコードの各頂点の座標がそれぞれ入る。&lt;br /&gt;
+（この辺りは実際に斜めの画像を読み込んで見ればよくわかる）&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;このQRコードの検出は&lt;code&gt;iOS8&lt;/code&gt;から可能になっているが、全然把握できていなかったので反省。&lt;/p&gt;
+
+&lt;p&gt;この&lt;code&gt;CIDetector&lt;/code&gt;は他にもいろいろ検出できるので楽しみ。
+他にもまだこういう知らないものがいっぱいあるんだろうな・・・&lt;/p&gt;
+
+&lt;p&gt;なお、&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;との性能などの差は未調査。。。&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.5&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/QRReader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>QRコードの読み取りサンプル(Swift) その1</title>
+      <link>https://mike-neko.github.io/blog/code-reader/</link>
+      <pubDate>Wed, 15 Jun 2016 22:52:40 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/code-reader/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル。&lt;/p&gt;
+
+&lt;p&gt;なお、QRコードに限らず、他のバーコードや顔認識にも対応。対応形式は&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/AVFoundation/Reference/AVMetadataMachineReadableCodeObject_Class/index.html#//apple_ref/doc/constant_group/Machine_Readable_Object_Types&#34;&gt;公式&lt;/a&gt;を参照。地味にiOS8から対応形式が増えている。&lt;/p&gt;
+
+&lt;p&gt;あと、2次元なら同時認識できたりするが、その辺りの詳細は参考リンクの公式FAQが詳しい。&lt;/p&gt;
+
+&lt;p&gt;コード認識自体はもっと詳しい説明がいろんなとこにあるので、ここは他で説明していなそうなところだけ。&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;シリアルキューの利用&#34;&gt;シリアルキューの利用&lt;/h3&gt;
+
+&lt;p&gt;カメラの起動や画像認識は処理が重いので、それぞれ専用のシリアルキューを作成して利用している。&lt;/p&gt;
+
+&lt;p&gt;カメラの設定周りはフリーズ状態になるのを防ぐためだが、最近の端末は起動が早いらしく、キューを使わなくても特に問題無い感じ。&lt;/p&gt;
+
+&lt;h3 id=&#34;avmetadatamachinereadablecodeobject&#34;&gt;AVMetadataMachineReadableCodeObject&lt;/h3&gt;
+
+&lt;p&gt;認識されたコードは&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;のオブジェクトの配列で渡される。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;type&lt;/code&gt;：認識されたコードのフォーマットが逆DNS形式で返ってくる&lt;br /&gt;
+(QRの場合は&lt;code&gt;org.iso.QRCode&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;stringValue&lt;/code&gt;：コードに含まれるデータ&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;プレビュー画面上に認識したコードの枠を表示する&#34;&gt;プレビュー画面上に認識したコードの枠を表示する&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;AVMetadataMachineReadableCodeObject&lt;/code&gt;の中の&lt;code&gt;corners&lt;/code&gt;にコードの座標位置が含まれているが、これはプレビューのViewの座標系とは異なるので、そのままでは使えない。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;AVCaptureVideoPreviewLayer&lt;/code&gt;の&lt;code&gt;transformedMetadataObjectForMetadataObject&lt;/code&gt;で変換後の座標が入った&lt;code&gt;AVMetadataObject&lt;/code&gt;が取得できるので、その中の&lt;code&gt;bounds&lt;/code&gt;を使って枠線を描画している。&lt;/p&gt;
+
+&lt;p&gt;（以前は手動でちゃんとプレビュー画面上の座標に変換していたが、今回、この簡単に変換できるメソッドを発見！&lt;code&gt;AVCaptureVideoPreviewLayer&lt;/code&gt;の方もちゃんと調べていれば・・・）&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;昔iOS7で使えるようになった時に試したものを、Swiftで書き直し＋αしたコード。やはりSwiftはわかりやすく、かつエラー処理もしっかり書いても、Objective-Cよりコードが少ないので良い。&lt;/p&gt;
+
+&lt;p&gt;以前は結構カメラの起動もコードの読み取りも時間がかかっていたのだが、今回はかなりスピードアップした感じがした。iPhoneのカメラの進化もすごいということか。ただ、バッテリーには優しくないので常に使うのは厳しそう・・・&lt;/p&gt;
+
+&lt;p&gt;&lt;del&gt;あと、カメラをわざわざ起動しなくても画像を直接認識してくれるようになって欲しい。&lt;/del&gt;
+(6/17追記：方法が判ったので&lt;a href=&#34;../qr-reader/&#34;&gt;その2&lt;/a&gt;を作成した)&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/technotes/tn2325/_index.html&#34;&gt;AV Foundation iOS Machine Readable Code Detection FAQ&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 7.3&lt;/li&gt;
+&lt;li&gt;iOS 9.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/CodeReader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;カメラ不要なバージョンは&lt;a href=&#34;../qr-reader/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Perfect APNs編</title>
+      <link>https://mike-neko.github.io/blog/perfect-push/</link>
+      <pubDate>Mon, 11 Apr 2016 19:45:28 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/perfect-push/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその3&lt;/p&gt;
+
+&lt;p&gt;今回はiOSのプッシュ通知を送信する方法について&lt;/p&gt;
+
+&lt;p&gt;Perfectは最新のAPNsの通信形式に対応していて、細かなエラーレスポンスを取れるのがメリット。
+なので、開発用としては大変使いやすい&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;p&gt;Push通知はサーバ側で微妙に必要とされる証明書が変わったりするのがややこしいところ。
+PerfectでPush通知を送るのに必要なものは以下の通り&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;サーバ
+
+&lt;ul&gt;
+&lt;li&gt;APNs用証明書と秘密鍵&lt;/li&gt;
+&lt;li&gt;CAルート証明書&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;クライアント
+
+&lt;ul&gt;
+&lt;li&gt;プロビジョニングプロファイル&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;登録-プロビジョニングプロファイルと証明書の作成&#34;&gt;登録〜プロビジョニングプロファイルと証明書の作成&lt;/h3&gt;
+
+&lt;p&gt;証明書の取得には&lt;code&gt;AppID&lt;/code&gt;の登録やら結構手順があって大変だが、まずは以下のリンク先の通りに作業をすればOK&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;oci8の最新版だとPHP7以降の為、2.0系を指定する&lt;/p&gt;
-&lt;/blockquote&gt;&lt;/li&gt;
+&lt;p&gt;Qiita:&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;li&gt;&lt;p&gt;インストール中にプロンプトが出れば、&lt;/p&gt;
+&lt;p&gt;なお、最後の手順の&lt;code&gt;APNs用証明書(.p12)&lt;/code&gt;を書き出す時のファイル名は&lt;code&gt;apns.p12&lt;/code&gt;とする&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;instantclient,/usr/lib/oracle/12.1/client64/lib
+&lt;h3 id=&#34;サーバ用の証明書の準備&#34;&gt;サーバ用の証明書の準備&lt;/h3&gt;
+
+&lt;h4 id=&#34;apns用証明書-pem&#34;&gt;APNs用証明書(.pem)&lt;/h4&gt;
+
+&lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_cert.pem&lt;/code&gt;を作成する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd [apns.p12を書き出した場所]
+openssl pkcs12 -clcerts -nokeys -out apns_dev_cert.pem -in apns.p12
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;と入力&lt;/p&gt;&lt;/li&gt;
+&lt;h4 id=&#34;秘密鍵-pem&#34;&gt;秘密鍵(.pem)&lt;/h4&gt;
 
-&lt;li&gt;&lt;p&gt;PHPの設定
-&lt;code&gt;php.ini&lt;/code&gt;に以下を設定&lt;/p&gt;
+&lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_key.pem&lt;/code&gt;を作成する&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;extension=oci8.so
+&lt;pre&gt;&lt;code&gt;cd [apns.p12を書き出した場所]
+openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;（場所が判らない時は&lt;code&gt;php -i | grep php.ini&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;&lt;code&gt;Enter PEM pass phrase:&lt;/code&gt;と秘密鍵のパスフレーズを聞かれるので、適当なものを入れる。
+後でサーバに設定するので忘れないように・・・&lt;/p&gt;
 
-&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+&lt;h4 id=&#34;caルート証明書&#34;&gt;CAルート証明書&lt;/h4&gt;
 
-&lt;pre&gt;&lt;code&gt;php --ri oci8
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;APNsとサーバで接続する為に&lt;code&gt;Entrust&lt;/code&gt;の証明書が必要なので、以下からダウンロードする&lt;/p&gt;
 
-&lt;p&gt;を実行して、&lt;/p&gt;
+&lt;p&gt;Entrust.net Certificate Authority (2048)：
+&lt;a href=&#34;https://www.entrust.com/root-certificates/entrust_2048_ca.cer&#34;&gt;entrust_2048_ca.cer&lt;/a&gt;&lt;br /&gt;
+（&lt;a href=&#34;https://www.entrust.com/get-support/ssl-certificate-support/root-certificate-downloads/&#34;&gt;Entrustの証明書DLページ&lt;/a&gt; - Entrust.net Certificate Authority (2048) - Download）&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;（略）
-OCI8 Support =&amp;gt; enabled
-（略）
-OCI8 Version =&amp;gt; 2.0.12
-（略）
-Oracle Run-time Client Library Version =&amp;gt; 12.1.0.2.0
-Oracle Compile-time Instant Client Version =&amp;gt; 12.1
-&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;iosアプリの作成&#34;&gt;iOSアプリの作成&lt;/h3&gt;
 
-&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;とりあえず、必要最低限でPush通知を受信できる状態にする。
+デバイストークンの更新等には未対応なので注意&lt;/p&gt;
 
-&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+&lt;h4 id=&#34;プロジェクトの設定&#34;&gt;プロジェクトの設定&lt;/h4&gt;
 
-&lt;p&gt;Macの場合の&lt;a href=&#34;../oracle-mac/&#34;&gt;PHPからの接続&lt;/a&gt;を参照&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ダウンロードしたプロビジョニングプロファイルをダブルクリックしてインストール&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Bundle Identifier&lt;/code&gt;を&lt;code&gt;AppID&lt;/code&gt;取得時のものと一緒にする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Provisioning Profile&lt;/code&gt;をインストールしたプロビジョニングプロファイルにする&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;アプリの実装&#34;&gt;アプリの実装&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;AppDelegate&lt;/code&gt;に以下の実装をする&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;didFinishLaunchingWithOptions&lt;/code&gt;でPush通知の登録&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;didRegisterForRemoteNotificationsWithDeviceToken&lt;/code&gt;でデバイストークンを受信&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;コードにすると以下の通り
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/8000f2d8dc5b37773323065e867e2e4d.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;これを実機上で実行すると、端末のデバイストークンがログ出力される&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;デバッグ実行を停止させると、Push通知が届かない場合があるので、デバッグ実行したままにするか
+再度実機上からアクティブにしてバックグラウンドに落としておく。&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;また、マルチタスクから終了させても届かない場合があるので、注意&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;サーバへ証明書の設置&#34;&gt;サーバへ証明書の設置&lt;/h3&gt;
+
+&lt;p&gt;基礎編の&lt;a href=&#34;../perfect-2/&#34;&gt;ビルドでファイルを配置する&lt;/a&gt;の方法で証明書を配置する&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;対象のファイル
+
+&lt;ul&gt;
+&lt;li&gt;apns_dev_cert.pem&lt;/li&gt;
+&lt;li&gt;apns_dev_key.pem&lt;/li&gt;
+&lt;li&gt;entrust_2048_ca.cer&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Copy Files&lt;/code&gt;の設定
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Destination&lt;/code&gt;:Products Directory&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Subpath&lt;/code&gt;:空白&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;（&lt;code&gt;webroot&lt;/code&gt;へのドキュメントの配置とは別に&lt;code&gt;Copy Files&lt;/code&gt;を設定する）&lt;/p&gt;
+
+&lt;h3 id=&#34;サーバの実装&#34;&gt;サーバの実装&lt;/h3&gt;
+
+&lt;p&gt;サーバ側での実装は主に2つ。
+ひとつは証明書を&lt;code&gt;NotificationPusher&lt;/code&gt;に初期設定するのと、
+もう一つは実際にPush通知を送る実装&lt;/p&gt;
+
+&lt;p&gt;初期設定は一度だけ行えばOKなので、（実環境では送信毎にチェックした方が良いけど）
+今回は&lt;code&gt;PerfectServerModuleInit&lt;/code&gt;で行う&lt;/p&gt;
+
+&lt;p&gt;Push通知の送信は、&lt;code&gt;IOSNotificationItem&lt;/code&gt;の配列
+（ここのenumの使い方は参考になる）で送信内容を作成し、
+&lt;code&gt;NotificationPusher().pushIOS&lt;/code&gt;で送信を行う&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/821b3dced86e0eb741563e23c43fed0f.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;この実装でサーバにアクセスする度に、Push通知が端末へ送られる。
+送信時の結果は、ブラウザに表示される（エラーであればエラー内容）&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;今回の一番大変だったのはEntrustの証明書の置き場が変わっていたこと。。。
+逆に言えばそれ以外はとても簡単にPush通知を送れる環境を作れた感じ&lt;/p&gt;
+
+&lt;p&gt;巷にはたくさんAPNsに対応したフレームワークやサービスがあるけど、
+開発用としては、このPerfectが一番手軽で確実だと思う。
+なにせ環境構築は不要で、Xcodeでプロジェクトを作って
+少し実装すれば良いだけという素晴らしさ！&lt;/p&gt;
+
+&lt;p&gt;もちろん、商用はAWSとかがオススメだけど。。。&lt;/p&gt;
 
 &lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/book.oci8.php&#34;&gt;Oracle OCI8&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Pecl公式 &lt;a href=&#34;https://pecl.php.net/package/oci8&#34;&gt;oci8&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html&#34;&gt;Orcale Instant Client&lt;/a&gt;
-(下の方にインストール方法)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Perfect 導入編&lt;a href=&#34;../perfect-1/&#34;&gt;その1&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Perfect 基礎編&lt;a href=&#34;../perfect-2/&#34;&gt;その2&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;CentOS6.8&lt;/li&gt;
-&lt;li&gt;PHP 5.6.27 + OCI8 2.0.12&lt;/li&gt;
-&lt;li&gt;Oracle Instant Client 12.1.0.2.0&lt;/li&gt;
-&lt;li&gt;DBサーバ OracleDB(Win)&lt;/li&gt;
+&lt;li&gt;OS X 10.11.4&lt;/li&gt;
+&lt;li&gt;Xcode 7.3&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
     
     <item>
-      <title>CentOSからSQLServerへ接続</title>
-      <link>https://mike-neko.github.io/blog/mssql-cent/</link>
-      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      <title>Perfect 基礎編</title>
+      <link>https://mike-neko.github.io/blog/perfect-2/</link>
+      <pubDate>Sun, 10 Apr 2016 23:09:11 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/mssql-cent/</guid>
+      <guid>https://mike-neko.github.io/blog/perfect-2/</guid>
       <description>
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;CentOSのPHP5.6から&lt;code&gt;PDO_ODBC&lt;/code&gt;でSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
+&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその2&lt;/p&gt;
 
-&lt;p&gt;Macの場合は&lt;a href=&#34;../mssql-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;基礎編ではルーティングやリクエストの処理方法のあたりまで&lt;/p&gt;
 
-&lt;p&gt;なおCentOSからであれば&lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;も可能だが、公式ドライバがあるこちらを試してみた&lt;/p&gt;
+&lt;h2 id=&#34;urlルーティング&#34;&gt;URLルーティング&lt;/h2&gt;
 
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+&lt;p&gt;サンプルを見ると、ルーティングは大きくわけて&lt;/p&gt;
 
-&lt;h3 id=&#34;sqlserverのドライバのインストール&#34;&gt;SQLServerのドライバのインストール&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;mustache&lt;/code&gt;テンプレートエンジンのページを&lt;code&gt;PageHandler&lt;/code&gt;に登録&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Routing&lt;/code&gt;に&lt;code&gt;RequestHandler&lt;/code&gt;を登録&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;の2種類がある様子&lt;/p&gt;
+
+&lt;p&gt;設定はいずれも&lt;code&gt;PerfectServerModuleInit()&lt;/code&gt;の中で行う&lt;/p&gt;
+
+&lt;h3 id=&#34;pagehandlerでのルーティング&#34;&gt;PageHandlerでのルーティング&lt;/h3&gt;
+
+&lt;p&gt;Webアプリなどでの固定ページの表示向け&lt;br /&gt;
+公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/PerfectExamples/blob/master/Sources/Authenticator/#authenticator&#34;&gt;Authenticator&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;例えば、&lt;code&gt;http://0.0.0.0:8181/admin/&lt;/code&gt;というページを表示させたい時の流れとしては、&lt;/p&gt;
+
+&lt;h4 id=&#34;表示するページを-mustache-のテンプレートで作成&#34;&gt;表示するページを&lt;code&gt;mustache&lt;/code&gt;のテンプレートで作成&lt;/h4&gt;
+
+&lt;p&gt;例だと&lt;code&gt;admin.mustache&lt;/code&gt;というファイル名にし、先頭のところで&lt;code&gt;handler:AdminHandler&lt;/code&gt;と指定する&lt;br /&gt;
+ポイントは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;先頭の&lt;code&gt;handler:&lt;/code&gt;の部分で対応する&lt;code&gt;PageHandler&lt;/code&gt;の名前を指定&lt;/li&gt;
+&lt;li&gt;ファイル名がアクセスする際のディレクトリと対応&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;テンプレートをプロジェクトへ追加&#34;&gt;テンプレートをプロジェクトへ追加&lt;/h4&gt;
+
+&lt;p&gt;後述の小ネタにある「ドキュメントの配置」の方法で、&lt;code&gt;admin.mustache&lt;/code&gt;がドキュメントルートへ配置されるように設定する&lt;/p&gt;
+
+&lt;h4 id=&#34;pagehandler-を作成&#34;&gt;&lt;code&gt;PageHandler&lt;/code&gt;を作成&lt;/h4&gt;
+
+&lt;p&gt;ページにアクセスがあった時の処理を行う為の&lt;code&gt;PageHandler&lt;/code&gt;を継承したクラスを作る&lt;br /&gt;
+（クラス名は任意だが、わかりやすいように&lt;code&gt;AdminHandler&lt;/code&gt;としておく）&lt;/p&gt;
+
+&lt;p&gt;作ったクラスを&lt;code&gt;PageHandlerRegistry.addPageHandler&lt;/code&gt;で登録する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PageHandlerRegistry.addPageHandler(&amp;quot;AdminHandler&amp;quot;) {
+// (r: WebResponse) -&amp;gt; PageHandler in
+  return AdminHandler()
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ポイントは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;addPageHandler&lt;/code&gt;の一つ目の引数の文字列は、テンプレートの中で指定したhandlerと同じにする&lt;/li&gt;
+&lt;li&gt;リクエストの詳細な情報で分岐させたい時は、コメントアウトを外し&lt;code&gt;WebResponse&lt;/code&gt;の情報を使う&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;PageHandler&lt;/code&gt;の中では、テンプレートに流し込む変数のDictionaryを生成する&lt;/p&gt;
+
+&lt;h3 id=&#34;requesthandlerでのルーティング&#34;&gt;RequestHandlerでのルーティング&lt;/h3&gt;
+
+&lt;p&gt;APIとかブログのような動的なページ向け&lt;br /&gt;
+公式の参考になるサンプルは&lt;a href=&#34;https://github.com/PerfectlySoft/PerfectExamples/blob/master/Sources/URL%20Routing/#url-routing&#34;&gt;URL Routing&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;例えば、REST APIで&lt;code&gt;http://0.0.0.0:8181/user/mike&lt;/code&gt;の&lt;code&gt;GET&lt;/code&gt;でmikeというユーザの情報を取得したい時の流れとしては、&lt;/p&gt;
+
+&lt;h4 id=&#34;ルーティングを設定&#34;&gt;ルーティングを設定&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Routing&lt;/code&gt;でルーティングのルール（HTTPのメソッドやURLなど）を&lt;code&gt;RouteMap&lt;/code&gt;を使って設定する&lt;/p&gt;
+
+&lt;p&gt;例だと、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Routing.Routes[&amp;quot;GET&amp;quot;, &amp;quot;/user/{id}&amp;quot;] = { _ in return UserHandler() }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;となる。ポイントは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;HTTPのメソッドが指定できる&lt;br /&gt;
+（指定する場合は一つ目にする）&lt;/li&gt;
+&lt;li&gt;URL部分は配列で複数指定できる&lt;/li&gt;
+&lt;li&gt;ルール部分では&lt;code&gt;{}&lt;/code&gt;で囲うと&lt;code&gt;RequestHandler&lt;/code&gt;へ値を渡せる&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;*&lt;/code&gt;が使える&lt;/li&gt;
+&lt;li&gt;クロージャで対応する&lt;code&gt;RequestHandler&lt;/code&gt;を指定する&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;requesthandler-を作成&#34;&gt;&lt;code&gt;RequestHandler&lt;/code&gt;を作成&lt;/h4&gt;
+
+&lt;p&gt;クライアントへ返すレスポンスを生成する為の&lt;code&gt;RequestHandler&lt;/code&gt;を継承したクラスを作る&lt;br /&gt;
+（クラス名は任意だが、わかりやすいように&lt;code&gt;UserHandler&lt;/code&gt;としておく）&lt;/p&gt;
+
+&lt;p&gt;URLで指定されたユーザ名をそのままJSONで返す場合は以下の感じ
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/55c5d91b5b1d7a309289f5d0b2a12edd.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;これで、&lt;code&gt;http://0.0.0.0:8181/user/mike&lt;/code&gt;にアクセスすると&lt;code&gt;{ user: &amp;quot;mike&amp;quot; }&lt;/code&gt;と返ってくる&lt;/p&gt;
+
+&lt;h4 id=&#34;ルーティング設定の確認&#34;&gt;ルーティング設定の確認&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Routing.Routes.description&lt;/code&gt;で設定をダンプできる。これ、かなり便利！&lt;/p&gt;
+
+&lt;h2 id=&#34;リクエストの処理&#34;&gt;リクエストの処理&lt;/h2&gt;
+
+&lt;p&gt;URLパラメータやPOSTのボディの中身は、&lt;code&gt;WebRequest&lt;/code&gt;の中に格納されている&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;http://0.0.0.0:8181/hoge?key1=value1&amp;amp;key2=value2&lt;/code&gt;とした場合、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func handleRequest(request: WebRequest, response: WebResponse) {
+  request.queryString()  // key1=value1&amp;amp;key2=value2
+  request.queryParams    // [(&amp;quot;key1&amp;quot;, &amp;quot;value1&amp;quot;), (&amp;quot;key2&amp;quot;, &amp;quot;value2&amp;quot;)]
+  request.params()       // [(&amp;quot;key1&amp;quot;, &amp;quot;value1&amp;quot;), (&amp;quot;key2&amp;quot;, &amp;quot;value2&amp;quot;)]
+  request.param(&amp;quot;key1&amp;quot;)  // value1
+  request.param(&amp;quot;key3&amp;quot;, defaultValue: &amp;quot;value3&amp;quot;)  // value3
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;POSTで&lt;code&gt;{ &amp;quot;count&amp;quot;=100 }&lt;/code&gt;を送った場合、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func handleRequest(request: WebRequest, response: WebResponse) {
+  let body = request.postBodyString
+  let json = try! JSONDecoder().decode(body) as! JSONDictionaryType
+  json[&amp;quot;count&amp;quot;]  // 100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;といった感じで取得できる&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;ドキュメントの配置&#34;&gt;ドキュメントの配置&lt;/h3&gt;
+
+&lt;p&gt;Xcode経由で起動している時に、サーバからドキュメントへアクセスできるようにする方法。なお、ドキュメントルートはデフォルトで&lt;code&gt;./webroot/&lt;/code&gt;が設定されている&lt;/p&gt;
+
+&lt;h4 id=&#34;documentrootのパスを変更する&#34;&gt;DocumentRootのパスを変更する&lt;/h4&gt;
+
+&lt;p&gt;状況によってはソースから改変するのもアリだが、起動時に立ち上がるGUIから変更するのが手軽。&lt;code&gt;Choose...&lt;/code&gt;でフォルダ位置を選択できる。
+ただし、注意すべきなのは&lt;code&gt;Document Root&lt;/code&gt;のテキストフィールド内でキー操作(return)しないと変更と認識されずに保存されない点
+（これにはまってソースまで見てようやく気付いた・・・）。変更後はサーバの再起動が必要（というか勝手にされるはず）&lt;/p&gt;
+
+&lt;p&gt;この方法だとサーバを起動したままでもドキュメントを変更できるが、一方でパスの設定が必要となる&lt;/p&gt;
+
+&lt;h4 id=&#34;ビルドでファイルを配置する&#34;&gt;ビルドでファイルを配置する&lt;/h4&gt;
+
+&lt;p&gt;前回の導入編で使った方法で、デフォルトの&lt;code&gt;./webroot/&lt;/code&gt;を使いたい場合用&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;su
-yum -y update
-yum -y install yum-utils
-yum-config-manager --add-repo https://apt-mo.trafficmanager.net/yumrepos/mssql-rhel6-release/
-yum-config-manager --enable mssql-rhel6-release
-wget &amp;quot;http://aka.ms/msodbcrhelpublickey/dpgswdist.v1.asc&amp;quot;
-rpm --import dpgswdist.v1.asc
-yum -y remove unixODBC
-yum -y install msodbcsql # 途中にライセンスの承諾確認あり
-yum -y install unixODBC-utf16-devel
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;ODBCドライバの確認&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;vi /etc/odbcinst.ini
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;として、以下のような文言があればOK&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[ODBC Driver 13 for SQL Server]
-Description=Microsoft ODBC Driver 13 for SQL Server
-Driver=/opt/microsoft/msodbcsql/lib64/libmsodbcsql-13.0.so.1.0
-UsageCount=1
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;作成したプロジェクトを選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;TARGETS&lt;/code&gt;でプロジェクト名と同じもの、&lt;code&gt;Build Phases&lt;/code&gt;タブを選択&lt;/li&gt;
+&lt;li&gt;左上の&lt;code&gt;＋&lt;/code&gt;をクリックして、&lt;code&gt;New Copy Files Phases&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Destination&lt;/code&gt;で&lt;code&gt;Products Directory&lt;/code&gt;を選択&lt;br /&gt;
+&lt;code&gt;Subpath&lt;/code&gt;に&lt;code&gt;webroot&lt;/code&gt;と入力&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Name&lt;/code&gt;の下の方にある&lt;code&gt;＋&lt;/code&gt;をクリックし、追加ファイルを選択して&lt;code&gt;Add&lt;/code&gt;&lt;br /&gt;
+（プロジェクトに未追加のファイルの場合は&lt;code&gt;Add Other...&lt;/code&gt;からで）&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;odbcドライバの設定&#34;&gt;ODBCドライバの設定&lt;/h3&gt;
+&lt;h3 id=&#34;同一lan内からのアクセス&#34;&gt;同一LAN内からのアクセス&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;sudo vi /etc/odbcinst.ini
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;例えば同じルータに繋がっているiPhoneから、Mac上で動いているPerfectのサーバに接続する方法&lt;/p&gt;
 
-&lt;p&gt;として、次のような設定を追記する&lt;/p&gt;
+&lt;p&gt;起動時に立ち上がるGUIの&lt;code&gt;Server Address&lt;/code&gt;をMacに割り当てられているIPアドレスに変更すればOK。
+（変更後にreturnで確定を忘れずに・・・）
+ポートも変更できるが、&lt;code&gt;80&lt;/code&gt;とかはroot権限が必要と怒られて変更できないので注意&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;[(ドライバ名として判り易い名称)]
-Driver = （odbcinst.iniの[]で囲まれたドライバ名）
-Description = (適当な説明)
-Trace = Yes
-Server = (サーバのIP)
-Port = (サーバのポート)
-Database = (データベース名)
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;（今回は既に&lt;a href=&#34;../docker/&#34;&gt;Docker+nginxを構築&lt;/a&gt;してあったので、nginxのリバースプロキシの設定でさくっと対応）&lt;/p&gt;
 
-&lt;p&gt;上記の例の場合だと、&lt;/p&gt;
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
 
-&lt;pre&gt;&lt;code&gt;[SQLServer]
-Driver = ODBC Driver 13 for SQL Server
-Description = For Develop
-Trace = Yes
-Server = 192.168.0.10
-Port = 1433
-Database = sample
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;普段、クライアント（iOSアプリ）側で使っている開発環境と全く同じ環境でサーバの開発が出来るというのは、
+想像以上に便利というかストレスフリーな感じ&lt;/p&gt;
 
-&lt;p&gt;といった感じになる&lt;/p&gt;
+&lt;p&gt;もちろん、PerfectではCocoaが使えないというのはあるし、物足りない感じはしなくも無いが。。。&lt;/p&gt;
 
-&lt;h3 id=&#34;pdo-odbcのインストール&#34;&gt;PDO_ODBCのインストール&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;yum -y install --enablerepo=remi --enablerepo=remi-php56 php-pdo php-odbc
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;php -i | grep odbc
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;を実行して、&lt;code&gt;PDO drivers&lt;/code&gt;に&lt;code&gt;odbc&lt;/code&gt;が表示されていればOK&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
-
-&lt;p&gt;PDOのDSNの指定は以下の通り&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$driver = &#39;SQLServer&#39;;      // odbc.iniで設定したドライバ名
-$user = &#39;test&#39;;             // ユーザ名
-$pass = &#39;1234&#39;;             // パスワード
-
-$pdo = new PDO(&#39;odbc:&#39; . $driver, $user, $pass); 
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;ただ、そのあたりのカバーを目指しての&lt;code&gt;Perfect&lt;/code&gt;という命名なんだろうと勝手に想像&lt;/p&gt;
 
 &lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/ref.pdo-odbc.php&#34;&gt;PDO_ODBC&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Microsoft公式 &lt;a href=&#34;https://blogs.technet.microsoft.com/dataplatforminsider/2016/10/25/odbc-driver-13-0-for-sql-server-linux-is-now-released/&#34;&gt;ODBC Driver 13.0 for SQL Server&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.chrismanahan.com/creating-a-web-service-swift-perfect&#34;&gt;Creating a Web Service for Your App in Swift with Perfect&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;CentOS6.8&lt;/li&gt;
-&lt;li&gt;PHP 5.6.27 + PDO_ODBC&lt;/li&gt;
-&lt;li&gt;ODBC Driver 13.0 for SQL Server&lt;/li&gt;
-&lt;li&gt;DBサーバ SQLServer Express 2016(Win)&lt;/li&gt;
+&lt;li&gt;OS X 10.11.4&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Xcode 7.3&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Perfect 導入編&lt;a href=&#34;../perfect-1/&#34;&gt;その1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Perfect APNs編&lt;a href=&#34;../perfect-push/&#34;&gt;その3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
     
     <item>
-      <title>MacからOracleへ接続</title>
-      <link>https://mike-neko.github.io/blog/oracle-mac/</link>
-      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      <title>Perfect 導入編</title>
+      <link>https://mike-neko.github.io/blog/perfect-1/</link>
+      <pubDate>Fri, 08 Apr 2016 22:25:06 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/oracle-mac/</guid>
+      <guid>https://mike-neko.github.io/blog/perfect-1/</guid>
       <description>
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;MacのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
+&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその1&lt;/p&gt;
 
-&lt;p&gt;CentOSの場合は&lt;a href=&#34;../oracle-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;導入編ではベースとなるプロジェクトを一から作るあたりまで&lt;/p&gt;
+
+&lt;h2 id=&#34;きっかけ&#34;&gt;きっかけ&lt;/h2&gt;
+
+&lt;p&gt;Perfectがついに1.0になったというのを聞きつけてGitHubのREADMEを見てると、、、&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;WebSockets &amp;amp; iOS Push Notifications&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Perfect now includes a &lt;strong&gt;WebSockets&lt;/strong&gt; server and support for handling your own server-side &lt;strong&gt;iOS push notifications&lt;/strong&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;ってのを発見！&lt;/p&gt;
+
+&lt;p&gt;ちょうど、Push通知周りの実験をしたかったこともあり、さっそく手を出すことに〜&lt;/p&gt;
 
 &lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
-&lt;h3 id=&#34;oracleのドライバのインストール&#34;&gt;Oracleのドライバのインストール&lt;/h3&gt;
+&lt;h3 id=&#34;下準備&#34;&gt;下準備&lt;/h3&gt;
 
-&lt;p&gt;今回は&lt;code&gt;Version 12.1.0.2 (64-bit)&lt;/code&gt;は選択。手順などはこのバージョンが前提&lt;/p&gt;
+&lt;h4 id=&#34;github-https-github-com-perfectlysoft-perfect-からperfectをダウンロードする&#34;&gt;&lt;a href=&#34;https://github.com/PerfectlySoft/Perfect&#34;&gt;GitHub&lt;/a&gt;からPerfectをダウンロードする&lt;/h4&gt;
 
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index.html&#34;&gt;Oracle Instant Client&lt;/a&gt;から&lt;code&gt;basic&lt;/code&gt;と&lt;code&gt;SDK&lt;/code&gt;をダウンロード&lt;br /&gt;
-&lt;em&gt;公式の&lt;a href=&#34;http://php.net/manual/ja/oci8.requirements.php&#34;&gt;要件&lt;/a&gt;にあるように&lt;code&gt;OracleDB&lt;/code&gt;と&lt;code&gt;PHP&lt;/code&gt;のバージョンに合ったものを選択&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;ダウンロードしたら適当な場所に展開しておく&lt;/p&gt;
 
-&lt;li&gt;&lt;p&gt;1を全て同じフォルダへ解凍する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd （ダウンロード先）
-unzip instantclient-basic-macos.x64-12.1.0.2.0.zip
-unzip instantclient-sdk-macos.x64-12.1.0.2.0.zip
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;(Ver.12であれば&lt;code&gt;instantclient_12_1&lt;/code&gt;というフォルダ内に全ファイルが解凍された状態になればOK)&lt;br /&gt;
-&lt;strong&gt;フォルダ名がバージョンになっているので解凍したフォルダ名をそのまま使うこと！&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;2をフォルダごと適当な場所に移動&lt;br /&gt;
-（今回は&lt;code&gt;/Library/Oracle/&lt;/code&gt;へ移動）&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;ライブラリのシンボリックリンクを作成&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd /Library/Oracle/instantclient_12_1/
-ln -s libclntsh.dylib.12.1 libclntsh.dylib
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;パスを通す&lt;br /&gt;
-&lt;code&gt;.bash_profile&lt;/code&gt;に以下を追記&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;export DYLD_LIBRARY_PATH=/Library/Oracle/instantclient_12_1
-export PATH=$PATH:$DYLD_LIBRARY_PATH
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;追記したら保存し、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;source ~/.bash_profile
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;で強制反映させる&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;oci8をインストール&#34;&gt;OCI8をインストール&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;以下はすでにPHPをインストール済かつ&lt;code&gt;PECL&lt;/code&gt;が使えない場合なので、
-通常はPHPインストールと同時にしてしまうか&lt;code&gt;PECL&lt;/code&gt;で追加が恐らく楽&lt;/em&gt;&lt;br /&gt;
-（手持ちの環境では&lt;code&gt;PECL&lt;/code&gt;がなぜか使えなかったので以下の手順）&lt;/p&gt;
+&lt;h4 id=&#34;xcodeにテンプレートを追加&#34;&gt;Xcodeにテンプレートを追加&lt;/h4&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;OCI8（Ver.2.0.12）を&lt;code&gt;PECL&lt;/code&gt;の&lt;a href=&#34;https://pecl.php.net/package/oci8&#34;&gt;該当ページ&lt;/a&gt;からダウンロード&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;解凍する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd （ダウンロード先）
-tar -zxf oci8-2.0.12.tgz
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;makeする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd oci8-2.0.12
-phpize
-./configure -with-oci8=shared,instantclient,/Library/Oracle/instantclient_12_1
-make install
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;modules&lt;/code&gt;の中に&lt;code&gt;oci8.so&lt;/code&gt;ができていればOK&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;ライブラリを移動&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sudo mv modules/oci8.so /Library/Oracle 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;（とりあえず今回はここで）&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;PHPの設定
-&lt;code&gt;php.ini&lt;/code&gt;に以下の2つの項目を設定&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;extension_dir = &amp;quot;/Library/Oracle&amp;quot; # oci8.soを置いた場所
-extension=oci8.so
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;（ファイルの場所が判らない時は&lt;code&gt;php -i | grep php.ini&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;php --ri oci8
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;を実行して、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;（略）
-OCI8 Support =&amp;gt; enabled
-（略）
-OCI8 Version =&amp;gt; 2.0.12
-（略）
-Oracle Run-time Client Library Version =&amp;gt; 12.1.0.2.0
-Oracle Compile-time Instant Client Version =&amp;gt; 12.1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;~/Library/Developer/Xcode&lt;/code&gt;をFinderで開く&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Xcode&lt;/code&gt;直下に(無ければ)&lt;code&gt;Templates&lt;/code&gt;というフォルダを作成&lt;/li&gt;
+&lt;li&gt;その&lt;code&gt;Templates&lt;/code&gt;直下に(無ければ)&lt;code&gt;Project Template&lt;/code&gt;というフォルダを作成&lt;/li&gt;
+&lt;li&gt;ダウンロードしておいたPerfectのプロジェクトの中（&lt;code&gt;Perfect-master/Extras/Xcode Templates/Perfect/&lt;/code&gt;）にある&lt;code&gt;Perfect Server Framework.xctemplate&lt;/code&gt;のフォルダを丸ごとコピー&lt;/li&gt;
+&lt;li&gt;3で作ったフォルダに4のフォルダを貼り付け&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+&lt;h3 id=&#34;プロジェクトの作成&#34;&gt;プロジェクトの作成&lt;/h3&gt;
 
-&lt;p&gt;フレームワークなどを使わずにそのまま接続する場合は、&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;ワークスペース名：&lt;code&gt;SmapleBasePerfect&lt;/code&gt;&lt;br /&gt;
+ プロジェクト名：&lt;code&gt;SampleServer&lt;/code&gt;&lt;/em&gt;&lt;br /&gt;
+で作成する前提での手順&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;$user = &#39;test&#39;;             // ユーザ名
-$pass = &#39;1234&#39;;             // パスワード
-$host = &#39;192.168.0.10&#39;;     // ホスト
-$port = &#39;1521&#39;;             // ポート番号
-$db = &#39;sample&#39;;             // データベース名（サービス名）
+&lt;h4 id=&#34;ワークスペースの作成&#34;&gt;ワークスペースの作成&lt;/h4&gt;
 
-$conn = oci_connect(
-  $user,
-  $pass,
-  &#39;(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)&#39;
-  . &#39;(HOST=&#39; . $host . &#39;)(PORT=&#39; . $port . &#39;)))&#39; 
-  . &#39;(CONNECT_DATA=(SERVICE_NAME=&#39; . $db . &#39;)))&#39;]
-);
-&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;Xcodeのメニューの&lt;code&gt;File&lt;/code&gt;-&lt;code&gt;New&lt;/code&gt;-&lt;code&gt;Workspace...&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;ワークスペース名と保存先のフォルダを選択(作成)して&lt;code&gt;Save&lt;/code&gt;&lt;br /&gt;
+（ワークスペースはプロジェクトと違ってフォルダは自動作成されないので注意）&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;といった感じで接続できる&lt;/p&gt;
+&lt;p&gt;自動で空のワークスペースの画面が開かれるので、そのままの状態で次の手順へ&lt;/p&gt;
 
-&lt;h2 id=&#34;phpstormの設定&#34;&gt;PHPStormの設定&lt;/h2&gt;
+&lt;h4 id=&#34;プロジェクトの作成-1&#34;&gt;プロジェクトの作成&lt;/h4&gt;
 
-&lt;p&gt;&lt;code&gt;PHPStorm&lt;/code&gt;から接続したい場合は、&lt;code&gt;Oracle Instant Client&lt;/code&gt;はVer.12以上が必要&lt;/p&gt;
-
-&lt;p&gt;設定は以下の感じ&lt;/p&gt;
-
+&lt;ol&gt;
+&lt;li&gt;Xcodeのメニューの&lt;code&gt;File&lt;/code&gt;-&lt;code&gt;New&lt;/code&gt;-&lt;code&gt;Project...&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;左側の&lt;code&gt;OS X&lt;/code&gt;-&lt;code&gt;Project Template&lt;/code&gt;の中から&lt;code&gt;Perfect Server Framework&lt;/code&gt;を選択して&lt;code&gt;Next&lt;/code&gt;（下図）
 &lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-11-03-oracle-mac/phpstorm.png&#34; /&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-04-08-perfect-1/template.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li&gt;プロジェクト名などを適宜入力して&lt;code&gt;Next&lt;/code&gt;&lt;br /&gt;
+（プロジェクト名はワークスペースと同じにできない）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Add to:&lt;/code&gt;でワークスペース名を選択する&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;保存先を選択して&lt;code&gt;Create&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;デフォルトで下のようなプロジェクトが生成される
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-04-08-perfect-1/project.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;h4 id=&#34;perfectを追加&#34;&gt;Perfectを追加&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;ダウンロードしておいたPerfectのプロジェクト直下にある&lt;code&gt;PerfectLib&lt;/code&gt;と&lt;code&gt;PerfectServer&lt;/code&gt;のフォルダを丸ごとコピー&lt;/li&gt;
+&lt;li&gt;プロジェクトのフォルダと同じ階層に貼り付け&lt;/li&gt;
+&lt;li&gt;XcodeのProject Navigator(上のイメージの部分)の何もないところで右クリック&lt;/li&gt;
+&lt;li&gt;出てきたメニューから&lt;code&gt;Add files to &amp;quot;ワークスペース名&amp;quot;...&lt;/code&gt;を選択&lt;br /&gt;
+（もしプロジェクト名が出てきたら3からやり直し）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Copy items into ...&lt;/code&gt;はチェック無、&lt;code&gt;Create groups ...&lt;/code&gt;にチェック有にする&lt;br /&gt;
+（無い場合は&lt;code&gt;Option&lt;/code&gt;をクリック）&lt;/li&gt;
+&lt;li&gt;1と2でコピーしたフォルダの中から&lt;code&gt;PerfectLib.xcodeproj&lt;/code&gt;を選択して&lt;code&gt;Add&lt;/code&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;PerfectServer.xcodeproj&lt;/code&gt;についても3からの同じ手順で追加&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;スキームの設定&#34;&gt;スキームの設定&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Xcodeのメニューの&lt;code&gt;Product&lt;/code&gt;-&lt;code&gt;Scheme&lt;/code&gt;-&lt;code&gt;Manage Schemes...&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;プロジェクト名と同じスキームを選択して&lt;code&gt;Edit...&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;左側で&lt;code&gt;Run&lt;/code&gt;、右側の&lt;code&gt;Info&lt;/code&gt;タグを選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Executable&lt;/code&gt;で&lt;code&gt;PerfectServer HTTP.app&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;下の方にある&lt;code&gt;Shared&lt;/code&gt;にチェック&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Close&lt;/code&gt;で閉じる&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;フレームワークの追加&#34;&gt;フレームワークの追加&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;作成したプロジェクトを選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;TARGETS&lt;/code&gt;でプロジェクト名と同じもの、&lt;code&gt;General&lt;/code&gt;タブを選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Linked Frameworks and Libraries&lt;/code&gt;の&lt;code&gt;＋&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;PerfectLib.framework&lt;/code&gt;で&lt;code&gt;OSX&lt;/code&gt;の方を選択して&lt;code&gt;Add&lt;/code&gt;
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-04-08-perfect-1/framework.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;ドキュメントを配置&#34;&gt;ドキュメントを配置&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Build Phases&lt;/code&gt;タブを選択&lt;/li&gt;
+&lt;li&gt;左上の&lt;code&gt;＋&lt;/code&gt;をクリックして、&lt;code&gt;New Copy Files Phases&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Destination&lt;/code&gt;で&lt;code&gt;Products Directory&lt;/code&gt;を選択&lt;br /&gt;
+&lt;code&gt;Subpath&lt;/code&gt;に&lt;code&gt;webroot&lt;/code&gt;と入力&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Name&lt;/code&gt;の下の方にある&lt;code&gt;＋&lt;/code&gt;をクリックし、&lt;code&gt;index.mustache&lt;/code&gt;を選択して&lt;code&gt;Add&lt;/code&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;動作確認&#34;&gt;動作確認&lt;/h2&gt;
+
+&lt;p&gt;Xcodeで&lt;code&gt;SampleServer&lt;/code&gt;のスキームで&lt;code&gt;Run&lt;/code&gt;して、GUIが立ち上がるとサーバが動作した状態となる&lt;/p&gt;
+
+&lt;p&gt;その状態で&lt;code&gt;http://0.0.0.0:8181/&lt;/code&gt;にアクセスして、「Hello, world!」と出ればひとまずOK&lt;/p&gt;
+
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
+
+&lt;p&gt;意外に日本語の、特にMac上で動かす場合の資料が少なくて苦労した&lt;br /&gt;
+それとこういうのを触る度にサーバ周りの知識が足りないのを痛感する・・・&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://code-me-dirty.blogspot.jp/2016/02/creating-perfect-swift-server.html&#34;&gt;Create a Perfect Swift Server Project(from scratch) in Xcode&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.4&lt;/li&gt;
+&lt;li&gt;Xcode 7.3&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/SampleBasePerfect&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Perfect 基礎編&lt;a href=&#34;../perfect-2/&#34;&gt;その2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Perfect APNs編&lt;a href=&#34;../perfect-push/&#34;&gt;その3&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>IPアドレス取得のサンプル(Swift)</title>
+      <link>https://mike-neko.github.io/blog/ipaddress/</link>
+      <pubDate>Mon, 07 Mar 2016 23:59:45 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/ipaddress/</guid>
+      <description>
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;以下はSwift2の情報で古い為、注意！&lt;/em&gt;&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;&lt;em&gt;Swift3版のソースは&lt;a href=&#34;https://github.com/mike-neko/NetworkInfo&#34;&gt;こちら&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;&lt;em&gt;(解説はそのうちに・・・・)&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;iOS端末のIPアドレスを取得するサンプル。Cの関数呼び出し周りも含めてSwiftにて実装。&lt;/p&gt;
+
+&lt;p&gt;一応、Apple公式の方法でIPv6only環境でも動作確認済。&lt;/p&gt;
+
+&lt;h3 id=&#34;実装概要&#34;&gt;実装概要&lt;/h3&gt;
+
+&lt;p&gt;アドレス取得の実装は&lt;code&gt;NetworkInfo&lt;/code&gt;にまとまっている。
+実装の中身自体はよくあるIPアドレスの取得のコード。&lt;/p&gt;
+
+&lt;p&gt;サンプルでは、IPアドレスの一覧を取得して&lt;code&gt;TableView&lt;/code&gt;に表示している。&lt;/p&gt;
+
+&lt;p&gt;細かい点は実際のソースを参照のこと。&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;cの関数呼び出し&#34;&gt;Cの関数呼び出し&lt;/h3&gt;
+
+&lt;p&gt;端末内部のネットワーク情報を取得する為に、&lt;code&gt;getifaddrs&lt;/code&gt;や&lt;code&gt;inet_ntop&lt;/code&gt;などの関数を呼び出すが、
+通常のCであればファイルの頭で&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;ifaddrs.h&amp;gt;
+#include &amp;lt;sys/socket.h&amp;gt;
+#include &amp;lt;netinet/in.h&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とするが、Swiftなので&lt;code&gt;Bridging-Header.h&lt;/code&gt;を用意して、そこに&lt;code&gt;include&lt;/code&gt;を書く。&lt;/p&gt;
+
+&lt;p&gt;あと、ヘッダを追加した後にはビルド設定の&lt;code&gt;Objective-C Bridging Header&lt;/code&gt;も忘れずに変更。&lt;/p&gt;
+
+&lt;h3 id=&#34;デバイス&#34;&gt;デバイス&lt;/h3&gt;
+
+&lt;p&gt;とりあえず今回は、IPアドレスを取りたいだけなので、WiFi(&lt;code&gt;en0&lt;/code&gt;)とCellular(&lt;code&gt;pdp_ip0&lt;/code&gt;)の
+デバイスのみチェックしている。&lt;/p&gt;
+
+&lt;h3 id=&#34;swiftの言語的なこと&#34;&gt;Swiftの言語的なこと&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;defer&lt;/code&gt;がとっても便利。これのおかげでリソースの解放のような後始末が必要なコードが、
+とても簡単にかけるし処理漏れもなくなるので素晴らしい！&lt;br /&gt;
+(これが無いと今回のように処理の中でエラーで返すような場合はコードが面倒になる)&lt;/p&gt;
+
+&lt;p&gt;ポインタが見えなくなったり、型が厳格になってC系のソースの移植が面倒に思えるけど、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;対応する型への変換（特に&lt;code&gt;UnsafePointer&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;C++の&lt;code&gt;-&amp;gt;&lt;/code&gt;に相当するのが&lt;code&gt;memory&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;同じく&lt;code&gt;[]&lt;/code&gt;に相当するのが&lt;code&gt;advancedBy&lt;/code&gt;(今回は出てこないけど)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;と言ったあたりを押さえておけばOKな気がする。&lt;/p&gt;
+
+&lt;p&gt;確かに冗長な感じは否めないが、型は書かなくても済むことが多いし、
+逆に一度正しく変換しておけば後はコンパイラで型チェックが行われるのは安心できる。&lt;/p&gt;
+
+&lt;p&gt;この辺りのバランス感覚がSwiftは絶妙だと思う。&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/UnderstandingandPreparingfortheIPv6Transition/UnderstandingandPreparingfortheIPv6Transition.html&#34;&gt;IPv6only環境の確認方法&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html&#34;&gt;CのAPIをSwiftで使う方法&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 7.2&lt;/li&gt;
+&lt;li&gt;iOS 9.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;li&gt;Mac OS 10.11.3(NAT64ネットワーク)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/NetworkInfo/releases/tag/swift2&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Metalによる砂のシミュレーションもどき</title>
+      <link>https://mike-neko.github.io/blog/metal-sand/</link>
+      <pubDate>Thu, 25 Feb 2016 22:05:16 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal-sand/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
+パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。&lt;/p&gt;
+
+&lt;p&gt;なお、これも約26万パーティクルで60FPSを維持している。&lt;/p&gt;
+
+&lt;h2 id=&#34;動作イメージ&#34;&gt;動作イメージ&lt;/h2&gt;
+
+&lt;p&gt;&lt;blockquote class=&#34;instagram-media&#34; data-instgrm-version=&#34;6&#34; style=&#34; background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);&#34;&gt;&lt;div style=&#34;padding:8px;&#34;&gt; &lt;div style=&#34; background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;&#34;&gt; &lt;div style=&#34; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;&#34;&gt;&lt;/div&gt;&lt;/div&gt;&lt;p style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;&#34;&gt;&lt;a href=&#34;https://www.instagram.com/p/BCX1ylEFQd_/&#34; style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;&#34; target=&#34;_blank&#34;&gt;@m_ike__が投稿した動画&lt;/a&gt; - &lt;time style=&#34; font-family:Arial,sans-serif; font-size:14px; line-height:17px;&#34; datetime=&#34;2016-02-29T13:51:35+00:00&#34;&gt;2016 2月 29 5:51午前 PST&lt;/time&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt; &lt;script async defer src=&#34;//platform.instagram.com/en_US/embeds.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;（2色にして拡大してみたけど、動画だとイマイチになってしまった・・・）&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;砂の動き&#34;&gt;砂の動き&lt;/h3&gt;
+
+&lt;p&gt;タイトルに「もどき」とある通り、砂の動きは粒子法などのちゃんとした物理計算をしているわけではないが、GameGems本の中の地形生成の粒子堆積を参考にしている。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;h4 id=&#34;フラクタル地形生成-粒子堆積&#34;&gt;フラクタル地形生成-粒子堆積&lt;/h4&gt;
+
+&lt;p&gt;&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-02-25-metal-sand/gems4-19-3.png&#34; /&gt;
 &lt;/figure&gt;
 
+出典：Game Programming Gems&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/book.oci8.php&#34;&gt;Oracle OCI8&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html&#34;&gt;Orcale Instant Client&lt;/a&gt;
-(下の方にインストール方法)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Mac 10.11&lt;/li&gt;
-&lt;li&gt;PHP 5.6.27 + OCI8 2.0.12&lt;/li&gt;
-&lt;li&gt;Oracle Instant Client 12.1.0.2.0&lt;/li&gt;
-&lt;li&gt;DBサーバ OracleDB(Win)&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>MacからSQLServerへ接続</title>
-      <link>https://mike-neko.github.io/blog/mssql-mac/</link>
-      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/mssql-mac/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;MacのPHP5.6からSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
-
-&lt;p&gt;CentOSの場合は&lt;a href=&#34;../mssql-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;子ネタ&#34;&gt;子ネタ&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;SQLServer&lt;/code&gt;へPHPから接続するには以下の方法がある&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-sqlsrv.php&#34;&gt;PDO_SQLSR&lt;/a&gt;&lt;br /&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Windows版のPHPでしか使えない&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-dblib.php&#34;&gt;PDO_DBLIB&lt;/a&gt;&lt;br /&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;FreeTDS&lt;/code&gt;ライブラリを利用する&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Windows版はPHP5.3以降使えない&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-odbc.php&#34;&gt;PDO_ODBC&lt;/a&gt;&lt;br /&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Microsoftのドライバが必要(Win or Linuxのみ) =&amp;gt; &lt;strong&gt;Macは使えない&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;という訳で、Macからの場合は&lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;一択、
-Linuxの場合は&lt;code&gt;PDO_ODBC&lt;/code&gt;+公式ドライバ（おすすめ？） or &lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;となる&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;h3 id=&#34;freetdsのインストール&#34;&gt;FreeTDSのインストール&lt;/h3&gt;
+&lt;p&gt;上図にあるように、&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;で&lt;code&gt;FreeTDS&lt;/code&gt;をインストール&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew install freetds
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;code&gt;FreeTDS&lt;/code&gt;の接続確認&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;tsql -H (SQLServerのアドレス) -p (ポート) -U (ユーザ名) -P (パスワード)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;として&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;locale is &amp;quot;ja_JP.UTF-8&amp;quot;
-locale charset is &amp;quot;UTF-8&amp;quot;
-using default charset &amp;quot;UTF-8&amp;quot;
-1&amp;gt; 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;のようになれば&lt;code&gt;exit&lt;/code&gt;で終了&lt;br /&gt;
-&lt;code&gt;1&amp;gt;&lt;/code&gt;の部分の数字が変わっていく場合は接続がうまくいっていない&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;粒子を地面（粒子）にぶつかるまで落下させる&lt;/li&gt;
+&lt;li&gt;ぶつかった地点の周囲で最も低い地点を探す&lt;br /&gt;
+見つからなければそこに粒子を固定（地面化）させて終了&lt;/li&gt;
+&lt;li&gt;2で見つかった地点に粒子を移動させる&lt;/li&gt;
+&lt;li&gt;1に戻って落下させ続ける&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;em&gt;試した開発環境ではかなりの頻度でタイムアウトのエラーが出ていたので何度か試してみること&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;という動きをGPUで計算している。&lt;/p&gt;
 
-&lt;h3 id=&#34;pdo-dblibのインストール&#34;&gt;PDO_DBLIBのインストール&lt;/h3&gt;
+&lt;h3 id=&#34;コンピュートシェーダのコード&#34;&gt;コンピュートシェーダのコード&lt;/h3&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/c6997165804cbaa25402.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;流れとしては、&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;で&lt;code&gt;PDO_DBLIB&lt;/code&gt;をインストール&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew install homebrew/php/php56-pdo-dblib
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;php --ri pdo_dblib
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;を実行して、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;PDO Driver for FreeTDS/Sybase DB-lib =&amp;gt; enabled
-Flavour =&amp;gt; freetds
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;CPU側で砂の初期位置とy軸への落下速度を設定&lt;/li&gt;
+&lt;li&gt;コンピュートシェーダで砂の動きを計算して描画用バッファへ書き出し&lt;/li&gt;
+&lt;li&gt;バーテックスシェーダとフラグメントシェーダはシンプルにパーティクルを描画&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+&lt;p&gt;となる。&lt;/p&gt;
 
-&lt;p&gt;PDOのDSNの指定は以下の通り&lt;/p&gt;
+&lt;h4 id=&#34;地面との衝突判定&#34;&gt;地面との衝突判定&lt;/h4&gt;
 
-&lt;pre&gt;&lt;code&gt;$user = &#39;test&#39;;             // ユーザ名
-$pass = &#39;1234&#39;;             // パスワード
-$host = &#39;192.168.0.10&#39;;     // ホスト
-$port = &#39;1433&#39;;             // ポート番号
-$db = &#39;sample&#39;;             // データベース名
+&lt;p&gt;今回は地面との衝突の判定のみで、粒子間の衝突などは考慮しない。よって、512*512のバッファ&lt;code&gt;laminateBuffer&lt;/code&gt;を地面に見立てて、各座標の高さを記録している。ここでテクスチャを使っていないのは、コンピュートシェーダではテクスチャの読み書きを同時に行うことができない為。&lt;/p&gt;
 
-$pdo = new PDO(&#39;dblib:host=&#39; . $host . &#39;:&#39; . $port . &#39;;dbname=&#39; $db, 
-               $user, $pass); 
+&lt;p&gt;地面にぶつかったら、元の位置からそれぞれ30度+αずつずらした位置の地面の高さを見て、一番低いところを探す。なお、ここで手を抜いてsincosを使わなければ、四角い山ができてしまう・・・&lt;/p&gt;
+
+&lt;p&gt;一番低いところの判定を&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;min_id = mix((float)min_id, 1.f, not(step(h[1], h[min_id])));
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;phpstormの設定&#34;&gt;PHPStormの設定&lt;/h2&gt;
+&lt;p&gt;としているが、これは&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;PHPStorm&lt;/code&gt;から接続したい場合の設定は以下の感じ&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;min_id = (h[1] &amp;lt;= h[min_id]) ? min_id : 1;
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-11-03-mssql-mac/phpstorm.png&#34; /&gt;
-&lt;/figure&gt;
+&lt;p&gt;と同じである。(Metalの座標系のy軸は上が-になる)&lt;/p&gt;
 
+&lt;p&gt;現在位置が一番低い場所であれば、y軸の速度を0にして粒子を固定する。同時に地面の高さも更新し、次回参照時からはそこが地面の扱いとなる。&lt;/p&gt;
 
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;p&gt;あとはこれをひたすら繰り返していくと山のように積み重なっていく。&lt;/p&gt;
 
-&lt;ul&gt;
-&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/ref.pdo-dblib.php&#34;&gt;PDO_DBLIB&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;FreeTDS &lt;a href=&#34;http://www.freetds.org/&#34;&gt;公式&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;パラメータの調整とかバッファへの書き込みの精度を上げたりするなど、まだまだ改良の余地はありそう。。。&lt;/p&gt;
+
+&lt;p&gt;なんにしても単純な方法を力任せに処理してもちゃんと動くあたり、GPGPUは頼もしい。&lt;/p&gt;
+
+&lt;p&gt;あと、GameGemsの1以外も電子書籍で出ないかなぁ。内容的には古くても色々参考になるし、紙版は置く場所考えるとどうしても買いづらいので&lt;/p&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Mac 10.11&lt;/li&gt;
-&lt;li&gt;PHP 5.6.27 + PDO_DBLIB&lt;/li&gt;
-&lt;li&gt;FreeTDS 1.00.15 (TDS 7.3)&lt;/li&gt;
-&lt;li&gt;DBサーバ SQLServer Express 2016(Win)&lt;/li&gt;
+&lt;li&gt;Xcode 7.2&lt;/li&gt;
+&lt;li&gt;iOS 9.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Guzzle(PHP)でAPNsの同時配信を行う</title>
-      <link>https://mike-neko.github.io/blog/guzzle-apns/</link>
-      <pubDate>Sat, 29 Oct 2016 22:40:57 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/guzzle-apns/</guid>
-      <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
-&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;でiOSのAPNs(Push通知)をお手軽に同時配信する方法&lt;/p&gt;
-
-&lt;p&gt;APNs自体については&lt;a href=&#34;../http2apns/&#34;&gt;APNs Provider API(http2)を利用する(Node.js)&lt;/a&gt;を参照&lt;/p&gt;
-
-&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;自体は&lt;a href=&#34;../guzzle/&#34;&gt;以前の記事&lt;/a&gt;を参照&lt;/p&gt;
-
-&lt;h3 id=&#34;curlの更新&#34;&gt;curlの更新&lt;/h3&gt;
-
-&lt;p&gt;APNsを使うには&lt;code&gt;http2&lt;/code&gt;が必要かつ非同期で実行したいので、&lt;code&gt;curl&lt;/code&gt;をインストールし直す&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;homebrew&lt;/code&gt;を使っている場合は以下の感じ&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew install curl --with-nghttp2 --with-openssl
-brew link curl --force
-brew reinstall php56 --with-homebrew-curl
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;なお、自分で試した時は上記だけでは&lt;code&gt;http2&lt;/code&gt;が有効にならなかったので、
-アンイストールした方が確実かもしれない&lt;/p&gt;
-
-&lt;p&gt;更新後に&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;curl -V
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;として&lt;code&gt;http2&lt;/code&gt;が出ていればOK&lt;/p&gt;
-
-&lt;h2 id=&#34;guzzleの使い方&#34;&gt;Guzzleの使い方&lt;/h2&gt;
-
-&lt;h3 id=&#34;http2で通信する&#34;&gt;http2で通信する&lt;/h3&gt;
-
-&lt;p&gt;オプションで指定するだけでOK&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;version&#39; =&amp;gt; 2.0]);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;post送信&#34;&gt;POST送信&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;body&lt;/code&gt;はリクエスト時のオプションとして以下の感じで指定する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$client = new Client();
-$response = $client-&amp;gt;request(&#39;POST&#39;, $url, [&#39;body&#39; =&amp;gt; $body]);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;body&lt;/code&gt;の中身を&lt;code&gt;JSON&lt;/code&gt;にしたい時は、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[&#39;body&#39; =&amp;gt; json_encode($json])]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;という形にして渡す&lt;/p&gt;
-
-&lt;h3 id=&#34;クライアント証明書をつける&#34;&gt;クライアント証明書をつける&lt;/h3&gt;
-
-&lt;p&gt;これもオプションで指定するだけでOK&lt;/p&gt;
-
-&lt;p&gt;例えば同じ階層内に&lt;code&gt;apns_dev.pem&lt;/code&gt;という証明書（パスフレーズ&lt;code&gt;0000&lt;/code&gt;）に置いた場合は、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;cert&#39; =&amp;gt; [&#39;apns_dev.pem&#39;, &#39;0000&#39;]]);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;あえていうなら、&lt;code&gt;pem&lt;/code&gt;形式の証明書を作るのがちょっと面倒&lt;/p&gt;
-
-&lt;h2 id=&#34;apnsの同時配信&#34;&gt;APNsの同時配信&lt;/h2&gt;
-
-&lt;p&gt;APNsは通知内容をJSONで指定することと、前回の並列リクエストを併せると、以下のコードで同時配信が実現できる&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/dcc15bedbc4d42e4e8b1c31119f3c63a.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;（※配信環境はSandBox向け）&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;PHP 5.6&lt;/li&gt;
-&lt;li&gt;Guzzle 6.2.2&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalSand&#34;&gt;こちら&lt;/a&gt;(&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>
     </item>
     

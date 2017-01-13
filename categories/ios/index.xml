@@ -1266,97 +1266,6 @@ P2PConnectivity.manager.send(message: &amp;quot;送信するテキスト&amp;quo
     </item>
     
     <item>
-      <title>Guzzle(PHP)でAPNsの同時配信を行う</title>
-      <link>https://mike-neko.github.io/blog/guzzle-apns/</link>
-      <pubDate>Sat, 29 Oct 2016 22:40:57 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/guzzle-apns/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;でiOSのAPNs(Push通知)をお手軽に同時配信する方法&lt;/p&gt;
-
-&lt;p&gt;APNs自体については&lt;a href=&#34;../http2apns/&#34;&gt;APNs Provider API(http2)を利用する(Node.js)&lt;/a&gt;を参照&lt;/p&gt;
-
-&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;自体は&lt;a href=&#34;../guzzle/&#34;&gt;以前の記事&lt;/a&gt;を参照&lt;/p&gt;
-
-&lt;h3 id=&#34;curlの更新&#34;&gt;curlの更新&lt;/h3&gt;
-
-&lt;p&gt;APNsを使うには&lt;code&gt;http2&lt;/code&gt;が必要かつ非同期で実行したいので、&lt;code&gt;curl&lt;/code&gt;をインストールし直す&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;homebrew&lt;/code&gt;を使っている場合は以下の感じ&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew install curl --with-nghttp2 --with-openssl
-brew link curl --force
-brew reinstall php56 --with-homebrew-curl
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;なお、自分で試した時は上記だけでは&lt;code&gt;http2&lt;/code&gt;が有効にならなかったので、
-アンイストールした方が確実かもしれない&lt;/p&gt;
-
-&lt;p&gt;更新後に&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;curl -V
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;として&lt;code&gt;http2&lt;/code&gt;が出ていればOK&lt;/p&gt;
-
-&lt;h2 id=&#34;guzzleの使い方&#34;&gt;Guzzleの使い方&lt;/h2&gt;
-
-&lt;h3 id=&#34;http2で通信する&#34;&gt;http2で通信する&lt;/h3&gt;
-
-&lt;p&gt;オプションで指定するだけでOK&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;version&#39; =&amp;gt; 2.0]);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;post送信&#34;&gt;POST送信&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;body&lt;/code&gt;はリクエスト時のオプションとして以下の感じで指定する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$client = new Client();
-$response = $client-&amp;gt;request(&#39;POST&#39;, $url, [&#39;body&#39; =&amp;gt; $body]);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;body&lt;/code&gt;の中身を&lt;code&gt;JSON&lt;/code&gt;にしたい時は、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[&#39;body&#39; =&amp;gt; json_encode($json])]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;という形にして渡す&lt;/p&gt;
-
-&lt;h3 id=&#34;クライアント証明書をつける&#34;&gt;クライアント証明書をつける&lt;/h3&gt;
-
-&lt;p&gt;これもオプションで指定するだけでOK&lt;/p&gt;
-
-&lt;p&gt;例えば同じ階層内に&lt;code&gt;apns_dev.pem&lt;/code&gt;という証明書（パスフレーズ&lt;code&gt;0000&lt;/code&gt;）に置いた場合は、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;cert&#39; =&amp;gt; [&#39;apns_dev.pem&#39;, &#39;0000&#39;]]);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;あえていうなら、&lt;code&gt;pem&lt;/code&gt;形式の証明書を作るのがちょっと面倒&lt;/p&gt;
-
-&lt;h2 id=&#34;apnsの同時配信&#34;&gt;APNsの同時配信&lt;/h2&gt;
-
-&lt;p&gt;APNsは通知内容をJSONで指定することと、前回の並列リクエストを併せると、以下のコードで同時配信が実現できる&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/dcc15bedbc4d42e4e8b1c31119f3c63a.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;（※配信環境はSandBox向け）&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;PHP 5.6&lt;/li&gt;
-&lt;li&gt;Guzzle 6.2.2&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
       <title>UIScrollViewのAutoLayoutをStoryboardのみで設定</title>
       <link>https://mike-neko.github.io/blog/scrollview/</link>
       <pubDate>Sun, 23 Oct 2016 22:28:33 +0900</pubDate>
@@ -1451,7 +1360,7 @@ ScrollViewの&lt;code&gt;ContentSize&lt;/code&gt;の高さがあらかじめ決�
     </item>
     
     <item>
-      <title>NotificationCenter(Swift3)の使い方</title>
+      <title>NotificationCenterの使い方</title>
       <link>https://mike-neko.github.io/blog/notification/</link>
       <pubDate>Sun, 23 Oct 2016 18:30:34 +0900</pubDate>
       
@@ -1569,323 +1478,168 @@ NotificationCenter.default.addObserver(self,
     </item>
     
     <item>
-      <title>ATS有効の状態でオレオレ証明書を使って通信する(iOS9)</title>
-      <link>https://mike-neko.github.io/blog/ios-cert/</link>
-      <pubDate>Tue, 06 Sep 2016 00:35:57 +0900</pubDate>
+      <title>UnityからOpenCVを利用する(iOS)</title>
+      <link>https://mike-neko.github.io/blog/unity-opencv/</link>
+      <pubDate>Tue, 07 Jun 2016 00:56:50 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/ios-cert/</guid>
+      <guid>https://mike-neko.github.io/blog/unity-opencv/</guid>
       <description>
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;&lt;code&gt;ATS&lt;/code&gt;が有効の場合、SSL/TLS通信でないと通信自体ができない。&lt;/p&gt;
+&lt;p&gt;UnityからiOSのネイティブプラグイン経由で&lt;code&gt;OpenCV&lt;/code&gt;でカメラを利用するサンプル&lt;/p&gt;
 
-&lt;p&gt;が、開発時はローカル環境だったりドメイン自体がなかったりで正式なSSL証明書を使えないことが多い・・・
-かといって、ATSをOFFにして開発するのも・・・&lt;/p&gt;
-
-&lt;p&gt;って時に自己署名証明書（オレオレ証明書）を使ってしのぐ方法。&lt;/p&gt;
-
-&lt;p&gt;流れとしては、&lt;/p&gt;
+&lt;p&gt;内容としては、&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;オレオレ証明書を作ってサーバへ設定&lt;/li&gt;
-&lt;li&gt;iOS端末へオレオレ証明書をインストール&lt;/li&gt;
+&lt;li&gt;OpenCV経由で端末のカメラ画像を取得&lt;/li&gt;
+&lt;li&gt;取得した画像をOpenCVで処理（シンプルにグレースケールへ変換）&lt;/li&gt;
+&lt;li&gt;ネイティブプラグイン経由でUnity側(C#)へ渡す&lt;/li&gt;
+&lt;li&gt;Unity側でテクスチャを生成して表示する&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;となる。&lt;br /&gt;
-ポイントはオレオレ証明書のインストール部分で、その手順をメモしておく。&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;証明書の作成のあたりは&lt;a href=&#34;../docker/&#34;&gt;Docker構築メモ&lt;/a&gt;を参照&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&#34;注意&#34;&gt;！注意！&lt;/h2&gt;
-
-&lt;p&gt;検証はiOS9でのみ。iOS10は未検証。
-（ローカル環境でのATSの挙動が変わりそう！？）&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;は&lt;code&gt;2.2&lt;/code&gt;の操作方法。&lt;/p&gt;
-
-&lt;p&gt;また、&lt;strong&gt;セキュリティ面で危険&lt;/strong&gt;なのでくれぐれもオレオレ証明書の容量・用法には気をつけること&lt;/p&gt;
+&lt;p&gt;といった流れになる&lt;/p&gt;
 
 &lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
-&lt;p&gt;前提：サーバへのオレオレ証明書は設定済みの状態&lt;/p&gt;
+&lt;h3 id=&#34;opencvのフレームワークの準備&#34;&gt;OpenCVのフレームワークの準備&lt;/h3&gt;
 
-&lt;h3 id=&#34;準備&#34;&gt;準備&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://opencv.org/downloads.html&#34;&gt;公式のダウンロードページ&lt;/a&gt;から&lt;code&gt;for iOS&lt;/code&gt;の&lt;strong&gt;Ver.2系&lt;/strong&gt;をダウンロードする&lt;br /&gt;
+（サンプルでは&lt;a href=&#34;https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/opencv2.framework.zip/download&#34;&gt;Ver.2.4.13&lt;/a&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ダウンロードしたファイルを解凍して&lt;code&gt;opencv2.framework&lt;/code&gt;を取り出しておく&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;なお、Ver.2を利用したのは、作成時点ではVer.3だとエラーが出てしまったので・・・
+多分ソースからビルドするかバージョン上がれば、Ver.3系でも問題ないかと&lt;/p&gt;
+
+&lt;h3 id=&#34;iosネイティブ部分のソースを作成&#34;&gt;iOSネイティブ部分のソースを作成&lt;/h3&gt;
+
+&lt;p&gt;OpenCVがC++なので、言語は&lt;code&gt;Objective-C++&lt;/code&gt;を利用する&lt;br /&gt;
+(残念ながらSwiftはC++を扱うことができないのでObjC一択)&lt;/p&gt;
+
+&lt;p&gt;それに伴い、忘れずにファイルの拡張子を&lt;code&gt;.mm&lt;/code&gt;にしておくこと&lt;br /&gt;
+ただその場合、ヘッダファイル（&lt;code&gt;.hpp&lt;/code&gt;）はUnityがプラグインのファイルとして認識してくれないので、
+今回は一つのファイルに収まるように書いている&lt;br /&gt;
+（通常の&lt;code&gt;.h&lt;/code&gt;はちゃんと認識してくれるのに・・・）&lt;/p&gt;
+
+&lt;p&gt;プラグインの呼び出しは以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[iOS]
+OpenCV(C++)での処理
+ |
+ObjC++のクラスでラップ
+ |
+Cの関数でラッパークラスをエクスポート
+ |
+[Unity]
+C#でDLLimportして呼び出し
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ObjC++で一旦ラップしているのは、OpenCV部分の開発は別にXCode上で行う為。
+ただ、場合によってはメソッド呼び出しが遅いのでそこは注意&lt;/p&gt;
+
+&lt;p&gt;ネイティブ側のソースの全文は以下の通り
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bf258536e5414e25b1e147c8b5e7834d.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;通常のopencv周りの処理-4-51行目あたり&#34;&gt;通常のOpenCV周りの処理（4〜51行目あたり）&lt;/h4&gt;
+
+&lt;p&gt;ややこしいのが、C++はARC管理外の為、手動でメモリ管理が必要。
+今回はメモリの確保/破棄をラッパークラスの初期化/破棄と合わせて、
+ラッパークラスの生存期間とOpenCVのオブジェクトの生存期間が一致するようにしてある&lt;/p&gt;
+
+&lt;p&gt;カメラの画像の取得は、初期化と同時に&lt;code&gt;cv::VideoCapture&lt;/code&gt;を生成し、
+その後は毎フレーム&lt;code&gt;*camera &amp;gt;&amp;gt; img&lt;/code&gt;で画像を読み込んでいる&lt;/p&gt;
+
+&lt;p&gt;この時、取得された画像のフォーマットは&lt;code&gt;BGR&lt;/code&gt;なのがポイント。
+最終的にUnityのテクスチャのサイズとフォーマット&lt;code&gt;RGBA&lt;/code&gt;に変換してUnity側へ渡す&lt;br /&gt;
+（Unity側では&lt;code&gt;ARGB&lt;/code&gt;の表記なので、最初それで変換してハマってた・・・）&lt;/p&gt;
+
+&lt;h4 id=&#34;プラグインのエントリポイントを用意-54-77行目あたり&#34;&gt;プラグインのエントリポイントを用意（54〜77行目あたり）&lt;/h4&gt;
+
+&lt;p&gt;用意するのはラッパークラス&lt;code&gt;VideoCapture&lt;/code&gt;の生成、毎フレーム呼び出す用、破棄の3つのCの関数&lt;/p&gt;
+
+&lt;p&gt;これを55〜59行目のように宣言してC#へエクスポートする。
+このファイルはC++の扱いになっているので&lt;code&gt;extern &amp;quot;C&amp;quot;&lt;/code&gt;が必要&lt;br /&gt;
+（逆に言うと、C#からはこれ以外が見えない状態となっている）&lt;/p&gt;
+
+&lt;p&gt;関数の本体は61行目以降にあるように、単純にブリッジしているだけ&lt;/p&gt;
+
+&lt;h3 id=&#34;unityでネイティブプラグイン作成&#34;&gt;Unityでネイティブプラグイン作成&lt;/h3&gt;
+
+&lt;h4 id=&#34;unityにネイティブのソース類を組み込む&#34;&gt;Unityにネイティブのソース類を組み込む&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Assets&lt;/code&gt;直下に&lt;code&gt;Plugins&lt;/code&gt;フォルダを作る&lt;/li&gt;
+&lt;li&gt;作成した&lt;code&gt;Plugins&lt;/code&gt;フォルダにiOSネイティブ用のソースファイルを入れる&lt;br /&gt;
+Unityのエディタ上のインスペクタの設定を念のため確認
 
 &lt;ul&gt;
-&lt;li&gt;オレオレ証明書&lt;code&gt;server.crt&lt;/code&gt;を作成しておく&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator2&lt;/code&gt;をインストールしておく&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;構成プロファイルの作成&#34;&gt;構成プロファイルの作成&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;のメニューの&lt;code&gt;ファイル&lt;/code&gt;から&lt;code&gt;新規プロファイル&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;左側の&lt;code&gt;証明書&lt;/code&gt;の項目を選択し&lt;code&gt;構成&lt;/code&gt;ボタンを押下&lt;/li&gt;
-&lt;li&gt;ファイル選択画面でオレオレ証明書(&lt;code&gt;server.crt&lt;/code&gt;)を選択して開く&lt;/li&gt;
-&lt;li&gt;メニューの&lt;code&gt;ファイル&lt;/code&gt;から&lt;code&gt;保存&lt;/code&gt;を選択し、適当な名前をつけて保存&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Select platforms for plugin&lt;/code&gt;：iOS&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Platform settings&lt;/code&gt;：チェック不要&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;同じく&lt;code&gt;Plugins&lt;/code&gt;フォルダにダウンロードしておいた&lt;code&gt;opencv2.framework&lt;/code&gt;を丸ごと入れる&lt;br /&gt;
+Unity上ではフォルダとして認識されて、中にいろいろあればOK&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;端末へインストール&#34;&gt;端末へインストール&lt;/h3&gt;
+&lt;h4 id=&#34;コンポーネントの作成&#34;&gt;コンポーネントの作成&lt;/h4&gt;
 
-&lt;p&gt;以下のどちらかの方法でインストールする&lt;/p&gt;
+&lt;p&gt;ネイティブの画像データからテクスチャを生成し、
+そのテクスチャを指定した&lt;code&gt;Renderer&lt;/code&gt;のマテリアルにセットするコンポーネントを作成&lt;/p&gt;
 
-&lt;h4 id=&#34;apple-configurator経由&#34;&gt;Apple Configurator経由&lt;/h4&gt;
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5ea8d851f18b163ae6a70f6a05ccd4d1.js&#34;&gt;&lt;/script&gt;
 
-&lt;p&gt;Macと端末の有線接続が必要&lt;/p&gt;
+&lt;p&gt;当然、ネイティブプラグイン部分は、iOS上での実行時しか動かないので、
+該当部分は&lt;code&gt;#if UNITY_IOS&lt;/code&gt;〜&lt;code&gt;#endif&lt;/code&gt;でエディタ実行時にエラーにならないようにしておく&lt;/p&gt;
+
+&lt;p&gt;ネイティブ側で準備したエントリポイントを利用する為にインポートの宣言（16〜26行目あたり）が必要&lt;/p&gt;
+
+&lt;p&gt;Cの関数宣言をそのままC#での宣言にするが、同じデータ型がC#にない場合は対応するデータ型を代わりに指定する
+（今回だと&lt;code&gt;void*&lt;/code&gt;が&lt;code&gt;IntPtr&lt;/code&gt;）&lt;/p&gt;
+
+&lt;p&gt;なお、構造体をやりとりするような場合は&lt;code&gt;マーシャリング&lt;/code&gt;が必要となるので結構面倒&lt;/p&gt;
+
+&lt;p&gt;宣言すれば後は通常のメソッドと同じ様に利用できる。ただし、C側と引数などが異なっていた場合は、
+実行時にエラーとなるので注意&lt;/p&gt;
+
+&lt;p&gt;後は、コンポーネントのライフサイクルと、キャプチャ用とテクスチャのオブジェクトのライフサイクルを一致させればOK&lt;/p&gt;
+
+&lt;h4 id=&#34;シーン作成&#34;&gt;シーン作成&lt;/h4&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;に接続中の端末が表示されるので選択&lt;/li&gt;
-&lt;li&gt;ツールバーの&lt;code&gt;追加&lt;/code&gt;ボタンから&lt;code&gt;プロファイル&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;作成した構成プロファイルを選択&lt;/li&gt;
-&lt;li&gt;iOS端末の画面がインストール画面に変わるので、&lt;code&gt;インストール&lt;/code&gt;x3&lt;br /&gt;
-（プロファイルのインストールはConfiguratorから操作不可）&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&#34;ネットワーク経由&#34;&gt;ネットワーク経由&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;適当なサーバに構成プロファイルを置いてダウンロードできるようにする&lt;/li&gt;
-&lt;li&gt;iOS端末のSafariから該当のURLへアクセス&lt;/li&gt;
-&lt;li&gt;インストール画面になるので&lt;code&gt;インストール&lt;/code&gt;x3&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;なお、証明書だけをインストールしてもアプリからは接続できないので、
-&lt;code&gt;構成プロファイル&lt;/code&gt;を作ってからインストールするのが大事！&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+&lt;li&gt;キャプチャしたテクスチャ用の&lt;code&gt;Material&lt;/code&gt;を作成
 
 &lt;ul&gt;
-&lt;li&gt;Appleのテクニカルノート：&lt;a href=&#34;https://developer.apple.com/library/ios/technotes/tn2326/_index.html&#34;&gt;TLSのテスト用証明書の作成&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;li&gt;&lt;code&gt;Shader&lt;/code&gt;で&lt;code&gt;Unlit/Texture&lt;/code&gt;を選択&lt;br /&gt;
+（キャプチャ画像にライトが反映して光らないように）&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Quad&lt;/code&gt;でテクスチャを貼るオブジェクトを作成
+
+&lt;ul&gt;
+&lt;li&gt;Scaleを&lt;code&gt;X:3, Y:4, Z:1&lt;/code&gt;にする&lt;br /&gt;
+（数値はキャプチャ画像のアスペクト比と合わせる）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Material&lt;/code&gt;に1で作成したマテリアルをセット&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;プラグインのコンポーネントを追加
+
+&lt;ul&gt;
+&lt;li&gt;プラグインの&lt;code&gt;renderTarget&lt;/code&gt;に自身をセット&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
+
+&lt;p&gt;サンプルでは出てこないけど、C#のアンマネージドの辺りが、ObjCやSwiftに比べると結構大変な気がした。
+慣れてないからかも知れないけど、特にメモリ周りやマーシャリングはいずれちゃんと勉強しないと&lt;/p&gt;
+
+&lt;p&gt;あと、OpenCV周りの細かい挙動もまだ把握しきれていないので調べたい&lt;/p&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;OS X 10.11.5&lt;/li&gt;
-&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.4&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>jazzyの使い方 その1</title>
-      <link>https://mike-neko.github.io/blog/jazzy-cmd/</link>
-      <pubDate>Sat, 03 Sep 2016 00:12:14 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/jazzy-cmd/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;Swiftのドキュメント生成ツールの&lt;a href=&#34;https://github.com/realm/jazzy&#34;&gt;jazzy&lt;/a&gt;の使い方。
-その1はコマンド周りのメモ。&lt;/p&gt;
-
-&lt;h2 id=&#34;ドキュメント生成時のコマンド&#34;&gt;ドキュメント生成時のコマンド&lt;/h2&gt;
-
-&lt;p&gt;主に自分個人で使う時のコマンドは以下の通り&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;jazzy -o Documents --min-acl internal --skip-undocumented -a M.Ike -x SYMROOT=/private/tmp/jazzy
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;o-documents&#34;&gt;&amp;rdquo;-o Documents&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;-o [フォルダ]&lt;/code&gt;でドキュメントを出力するフォルダを指定する。&lt;br /&gt;
-なお、フォルダが存在しない場合は自動で作成される。&lt;/p&gt;
-
-&lt;p&gt;今回の指定だと以下の場所にフォルダが生成される&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Sample                 # 対象のプロジェクトのフォルダ
-  ├─ Sample            # Xcodeのソースなど一式
-  ├─ Sample.xcodeproj  # Xcodeのプロジェクトファイル
-  └─ Documents         # この中に生成されたドキュメント一式が入る
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;min-acl-internal&#34;&gt;&amp;rdquo;&amp;ndash;min-acl internal&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;--min-acl [private | internal | public]&lt;/code&gt;で出力の対象を指定する。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Swift2.x&lt;/code&gt;では&lt;code&gt;public&lt;/code&gt;は使わずに、明示的な&lt;code&gt;private&lt;/code&gt;か暗黙的な&lt;code&gt;internal&lt;/code&gt;しか使わない
-（※複数のモジュールを利用しない場合）
-ので、&lt;code&gt;internal&lt;/code&gt;以上で設定している。&lt;/p&gt;
-
-&lt;h3 id=&#34;skip-undocumented&#34;&gt;&amp;rdquo;&amp;ndash;skip-undocumented&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;この設定をすると、ドキュメントコメントのないソースからはドキュメントを生成しなくなる。&lt;/p&gt;
-
-&lt;p&gt;さらに&lt;code&gt;documentation-coverage&lt;/code&gt;の対象からも除外される。&lt;/p&gt;
-
-&lt;h3 id=&#34;a&#34;&gt;&amp;rdquo;-a&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;作者名の指定。
-別に個人用なので必要もないが、ないと見栄えが悪いのでつけている。&lt;/p&gt;
-
-&lt;h3 id=&#34;x-symroot-private-tmp-jazzy&#34;&gt;&amp;rdquo;-x SYMROOT=/private/tmp/jazzy&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;-x arg1,arg2,…argN,&lt;/code&gt;で&lt;code&gt;xcodebuild&lt;/code&gt;時のビルドオプションを指定できる。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;jazzy&lt;/code&gt;を使うと&lt;code&gt;build&lt;/code&gt;というビルドの一時ファイルの入ったディレクトリが
-プロジェクトのフォルダ内に生成されてしまう。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;.gitignore&lt;/code&gt;でちゃんと指定しているので実害はないが、一時ファイルが生成されるのは気持ち悪い。。。&lt;/p&gt;
-
-&lt;p&gt;という訳で、これを指定すれば&lt;code&gt;jazzy&lt;/code&gt;利用時の一時ファイルを
-&lt;code&gt;/private/tmp/jazzy&lt;/code&gt;(テンポラリフォルダ)へ出力させることができ、
-同じフォルダ内に&lt;code&gt;build&lt;/code&gt;フォルダが生成されなくなる。
-（テンポラリフォルダは再起動時に消去される）&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;ただしXcodeのプロジェクトの設定によっては、別の環境変数を書き換える必要あり&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;使っていないもの&#34;&gt;使っていないもの&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;-c&lt;/code&gt;をつけると、ドキュメント作成前に元のデータを全部消してくれるので、
-本来はつけておいた方が良いオプション。&lt;/p&gt;
-
-&lt;p&gt;が、ヘルプにもあるように、指定した出力先のフォルダが&lt;strong&gt;問答無用で削除&lt;/strong&gt;されてしまう。。。&lt;br /&gt;
-開発中はターミナルから手打ち（コピペ）して使うことが多いので、
-間違って指定してしまった！という悲劇を防ぐ為、これは指定していない&lt;/p&gt;
-
-&lt;p&gt;（確実に作りたい時は手動で削除で対応。
-ビルド用のシェルスクリプトを組んでいる場合はつけている）&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.6&lt;/li&gt;
-&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
-&lt;li&gt;jazzy 0.7.0&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>APNs Provider API(http2)を利用する(iOS)</title>
-      <link>https://mike-neko.github.io/blog/http2apns-ios/</link>
-      <pubDate>Thu, 25 Aug 2016 23:00:38 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/http2apns-ios/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;iOSのAPNsをAPI経由で使う方法。
-しかもiOS端末からPush通知を送信する方法。&lt;/p&gt;
-
-&lt;p&gt;前回の&lt;a href=&#34;../http2apns/&#34;&gt;Node.jsからAPNsを使う方法&lt;/a&gt;の派生ネタ。
-&lt;code&gt;APNs Provider API&lt;/code&gt;はhttp2とクライアント証明書に対応さえしていればPushを送れるので、
-それならiOS端末からでも良けるよね？って試してみた。&lt;/p&gt;
-
-&lt;h2 id=&#34;環境構築&#34;&gt;環境構築&lt;/h2&gt;
-
-&lt;p&gt;iOSならiOS9から&lt;code&gt;http2&lt;/code&gt;に対応しているので、証明書の準備のみ必要。&lt;/p&gt;
-
-&lt;p&gt;証明書の準備方法は、以前の&lt;a href=&#34;../perfect-push/&#34;&gt;Perfect APNs編&lt;/a&gt;の手順で&lt;code&gt;apns.p12&lt;/code&gt;を書き出せばOK。
-&lt;code&gt;.pem&lt;/code&gt;の作成やCAルート証明書は不要。&lt;/p&gt;
-
-&lt;h2 id=&#34;実装&#34;&gt;実装&lt;/h2&gt;
-
-&lt;p&gt;ポイントは&lt;code&gt;https&lt;/code&gt;のクライアント認証を実装すること。
-それができれば後はPOST形式でAPIを呼び出すだけなので簡単（APIについては&lt;a href=&#34;../http2apns/&#34;&gt;前回記事&lt;/a&gt;参照）&lt;/p&gt;
-
-&lt;h3 id=&#34;クライアント認証&#34;&gt;クライアント認証&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;NSURLSession&lt;/code&gt;でクライアント認証を実装するには、&lt;code&gt;NSURLSessionDelegate&lt;/code&gt;の
-&lt;code&gt;URLSession(_:didReceiveChallenge:completionHandler:)&lt;/code&gt;を実装する。&lt;/p&gt;
-
-&lt;p&gt;サーバからクライアント認証が要求されると、このデリゲートメソッドが呼ばれるので、
-クライアント証明書を読み込んで&lt;code&gt;NSURLCredential&lt;/code&gt;にして渡してあげればOK。&lt;/p&gt;
-
-&lt;p&gt;注意点は、他の認証（通常のSSL/TLS認証とかBasic認証）時も全て呼び出されるので、その実装を忘れないこと！&lt;/p&gt;
-
-&lt;p&gt;以上を踏まえると、実装はこんな感じ&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -&amp;gt; Void) {
-    switch challenge.protectionSpace.authenticationMethod {
-    // 通常のhttpsのSSL/TLS認証
-    case NSURLAuthenticationMethodServerTrust:
-      // デフォルトの動作をさせる
-      completionHandler(.PerformDefaultHandling, nil)
-    // httpsのクライアント認証
-    case NSURLAuthenticationMethodClientCertificate:
-      // clientCredential(あらかじめクライアント証明書から生成した認証情報)を
-      // 利用して認証をかける
-      completionHandler(.UseCredential, clientCredential)
-    // その他の認証
-    default:
-      completionHandler(.PerformDefaultHandling, nil)
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;クライアント証明書の読み込み&#34;&gt;クライアント証明書の読み込み&lt;/h3&gt;
-
-&lt;p&gt;クライアントの証明書は&lt;code&gt;p12&lt;/code&gt;形式を利用する。
-証明書からは&lt;code&gt;SecPKCS12Import&lt;/code&gt;を使って認証情報を取り出し、&lt;code&gt;NSURLCredential&lt;/code&gt;を生成する。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// アプリにバンドルされているクライアント証明書(apns.p12)
-guard let url = NSBundle.mainBundle().
-  URLForResource(&amp;quot;apns&amp;quot;, withExtension: &amp;quot;p12&amp;quot;) else { return }
-guard let p12data = NSData(contentsOfURL: p12URL) else { return }
-
-let passphrase = &amp;quot;0000&amp;quot;     // 証明書のパスフレーズ
-let options = [kSecImportExportPassphrase as String : passphrase]
-
-var items: CFArray?
-guard SecPKCS12Import(p12data, options, &amp;amp;items) == errSecSuccess
-  else { return }
-guard let cfarr = items else { return }
-guard let certEntry = (cfarr as Array).first as? [String: AnyObject]
-  else { return }
-
-let identity = certEntry[&amp;quot;identity&amp;quot;] as! SecIdentity
-let certificates = certEntry[&amp;quot;chain&amp;quot;] as? [AnyObject]
-let clientCredential = NSURLCredential(identity: identity,
-                                       certificates: certificates,
-                                       persistence: .ForSession)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;今回はサンプルなのでクライアント証明書はアプリにバンドルしているが、通常はキーチェーンにいれておくべき。&lt;/p&gt;
-
-&lt;p&gt;なお、クライアント証明書の中身はPush送信用の一つだけが入っている前提。&lt;/p&gt;
-
-&lt;p&gt;小ネタなのが、&lt;code&gt;certEntry[&amp;quot;identity&amp;quot;] as! SecIdentity&lt;/code&gt;という部分。
-&lt;code&gt;AnyObject&lt;/code&gt;から&lt;code&gt;SecIdentity&lt;/code&gt;への変換は常に成功するので&lt;code&gt;as?&lt;/code&gt;にはできないみたい。
-詳細は&lt;a href=&#34;https://forums.developer.apple.com/thread/11171&#34;&gt;公式フォーラム&lt;/a&gt;を参照。&lt;/p&gt;
-
-&lt;h3 id=&#34;apnsの送信&#34;&gt;APNsの送信&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;// デバイストークン
-let deviceToken = &amp;quot;00fc13adff785122b4ad28809a3420982341241421348097878e577c991de8f0&amp;quot;
-// 通知内容
-let payload = &amp;quot;{\&amp;quot;aps\&amp;quot;:{\&amp;quot;alert\&amp;quot;:\&amp;quot;Hello!\&amp;quot;}}&amp;quot;
-
-// 開発環境向けURL
-guard let url = NSURL(string: &amp;quot;https://api.development.push.apple.com/3/device/&amp;quot;)
-  else { return }
-let request = NSMutableURLRequest(URL: url.URLByAppendingPathComponent(deviceToken))
-request.HTTPMethod = &amp;quot;POST&amp;quot;
-request.HTTPBody = payload.dataUsingEncoding(NSUTF8StringEncoding)
-
-let config = NSURLSessionConfiguration.defaultSessionConfiguration()
-let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
-session.dataTaskWithRequest(request).resume()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;送信時のポイントは、デリゲートを指定しておくことと、&lt;code&gt;completionHandler&lt;/code&gt;形式のメソッドを使わないこと。
-使ってしまうとデリゲートが呼び出されなくなり、クライアント認証が通らなくなる。&lt;/p&gt;
-
-&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
-
-&lt;p&gt;今回は本当にネタ。多分使い道はないと思う。。。&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.12 Beta&lt;/li&gt;
+&lt;li&gt;Unity 5.3.4f1&lt;/li&gt;
 &lt;li&gt;Xcode 7.3.1&lt;/li&gt;
 &lt;li&gt;iOS 9.3.2&lt;/li&gt;
 &lt;li&gt;iPhone 6+&lt;/li&gt;
@@ -1893,136 +1647,436 @@ session.dataTaskWithRequest(request).resume()
 
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
-&lt;p&gt;&lt;strong&gt;クライアント証明書を上書きして使う必要があるので注意！&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/UnityOpenCV&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/APNs_iOS&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;ただし、上記ソースには&lt;code&gt;opencv2.framework&lt;/code&gt;が含まれていない&lt;br /&gt;
+（Githubの100MB制限にかかってしまったので）&lt;br /&gt;
+動かすには、&lt;code&gt;OpenCVのフレームワークの準備&lt;/code&gt;の項目で準備した
+&lt;code&gt;opencv2.framework&lt;/code&gt;を手動で&lt;code&gt;UnityOpenCV/Assets/Plugins/&lt;/code&gt;直下に追加する必要がある。&lt;/p&gt;
 </description>
     </item>
     
     <item>
-      <title>APNs Provider API(http2)を利用する(Node.js)</title>
-      <link>https://mike-neko.github.io/blog/http2apns/</link>
-      <pubDate>Thu, 11 Aug 2016 17:16:16 +0900</pubDate>
+      <title>nginxをhttp2に対応させる</title>
+      <link>https://mike-neko.github.io/blog/nginx-http2/</link>
+      <pubDate>Fri, 03 Jun 2016 21:29:36 +0900</pubDate>
       
-      <guid>https://mike-neko.github.io/blog/http2apns/</guid>
+      <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
       <description>
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;iOSのAPNsをAPI経由で使う方法。
-サーバサイドは&lt;code&gt;Node.js&lt;/code&gt;を利用。&lt;/p&gt;
+&lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
 
-&lt;h3 id=&#34;apns-provider-api&#34;&gt;APNs Provider API&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;過去の記事（&lt;a href=&#34;../docker/&#34;&gt;Dockerでの開発環境&lt;/a&gt;）&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;p&gt;利用するために必要なのは、&lt;/p&gt;
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
 
-&lt;ul&gt;
-&lt;li&gt;http2のPOST送信&lt;/li&gt;
-&lt;li&gt;クライアント認証用の証明書&lt;/li&gt;
-&lt;li&gt;CAルート証明書（必要な場合のみ）&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;ベースは前回構築したnginx+Dockerで通信はオレオレ証明書によるSSLを前提。&lt;/p&gt;
 
-&lt;p&gt;となる。
-なお、&lt;code&gt;http2&lt;/code&gt;対応が必要なのは送信のみなので、サーバ自体はhttp2対応にしなくてもOK。&lt;/p&gt;
-
-&lt;p&gt;従来のソケット通信経由でAPNsを送信するのと比較すると、&lt;/p&gt;
+&lt;p&gt;主な変更点は以下の通り&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;実装が簡単&lt;/li&gt;
-&lt;li&gt;1つのデバイストークン毎に結果が取得できる&lt;/li&gt;
+&lt;li&gt;OpenSSL 1.0.2&lt;/li&gt;
+&lt;li&gt;nginx 1.10.0&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;というのが大きなメリット。&lt;/p&gt;
+&lt;p&gt;いずれもhttp2対応させる為にバージョンアップが必要。&lt;/p&gt;
 
-&lt;p&gt;特に以前は、環境の異なるトークンを送信すると、いきなりソケットの接続自体が切断される・・・
-みたいな挙動があって確実に全件送信させるのは結構大変だったけど、API方式ではそういったのはなさそう。&lt;/p&gt;
+&lt;p&gt;なお、iOSは&lt;strong&gt;iOS9&lt;/strong&gt;からhttp2へ対応している。&lt;/p&gt;
 
-&lt;p&gt;パフォーマンス的にどうなのかは不明。&lt;/p&gt;
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
-&lt;h3 id=&#34;送信形式&#34;&gt;送信形式&lt;/h3&gt;
+&lt;h3 id=&#34;事前準備&#34;&gt;事前準備&lt;/h3&gt;
 
-&lt;p&gt;環境毎のAppleのサーバへPOSTリクエストを送ることでPush通知が送信される。&lt;br /&gt;
-指定する内容自体は従来のものと同じなので、詳細な内容は公式を参照のこと。&lt;/p&gt;
+&lt;p&gt;http2での通信かどうかの確認用に以下のChromeのプラグインを入れておく。&lt;/p&gt;
 
-&lt;h4 id=&#34;アドレス&#34;&gt;アドレス&lt;/h4&gt;
+&lt;p&gt;&lt;a href=&#34;https://chrome.google.com/webstore/detail/http2-and-spdy-indicator/mpbpobfflnpcgagjijhmgnchggcjblin/related?hl=ja&#34;&gt;HTTP/2 and SPDY indicator&lt;/a&gt;&lt;br /&gt;
+（Firefox用もあるみたいなのでお好きな方で）&lt;/p&gt;
 
-&lt;ul&gt;
-&lt;li&gt;開発 : &lt;code&gt;https://api.development.push.apple.com/3/device/&amp;lt;デバイストークン&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;商用 : &lt;code&gt;https://api.push.apple.com/3/device/&amp;lt;デバイストークン&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;http2での通信だと稲妻が青色になるので確認が楽。&lt;/p&gt;
 
-&lt;h4 id=&#34;ヘッダ&#34;&gt;ヘッダ&lt;/h4&gt;
+&lt;h3 id=&#34;macでの作業&#34;&gt;Macでの作業&lt;/h3&gt;
 
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;apns-topic&lt;/code&gt; : 送信対象のアプリのバンドルID&lt;br /&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;apns-id&lt;/code&gt; : 通知ID。指定しなければAPNs側で自動生成&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;apns-expiration&lt;/code&gt; : 通知が無効になり破棄できるようになる有効期限&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;apns-priority&lt;/code&gt; : 優先度&lt;/li&gt;
-&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;OpenSSLを最新にあげる&lt;br /&gt;
+OpenSSLの更新方法：&lt;a href=&#34;http://qiita.com/Chrowa3/items/b04e772be959cdda9ac3&#34;&gt;Mac OS X の openssl を最新の状態にする&lt;/a&gt;&lt;br /&gt;
+ポイントは&lt;code&gt;upgrade&lt;/code&gt;にすること（普段使う&lt;code&gt;update&lt;/code&gt;ではない）&lt;/p&gt;&lt;/li&gt;
 
-&lt;h4 id=&#34;ボディ&#34;&gt;ボディ&lt;/h4&gt;
+&lt;li&gt;&lt;p&gt;nginxをアンイストールする&lt;/p&gt;
 
-&lt;p&gt;JSON形式の通知ペイロード&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;brew uninstall nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 
-&lt;h4 id=&#34;レスポンス&#34;&gt;レスポンス&lt;/h4&gt;
+&lt;li&gt;&lt;p&gt;nginxをhttp2モジュール付きでインストールする&lt;/p&gt;
 
-&lt;p&gt;送信の受付に成功した場合はステータスコードが&lt;code&gt;200&lt;/code&gt;で返ってくる。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;brew install nginx --with-http2
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 
-&lt;p&gt;失敗した場合は、それ以外のステータスコードと、コードに応じてより詳細なエラー内容がボディで返ってくる。&lt;/p&gt;
+&lt;li&gt;&lt;p&gt;nginxのconfを編集&lt;br /&gt;
+&lt;code&gt;HTTPS server&lt;/code&gt;の設定が&lt;code&gt;listen  443 ssl;&lt;/code&gt;となっているはずなので、&lt;code&gt;http2&lt;/code&gt;を追加する。&lt;/p&gt;
 
-&lt;h2 id=&#34;環境構築&#34;&gt;環境構築&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;server {
+listen  443 ssl http2;
+...
+}
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;もしかすると、&lt;code&gt;OpenSSL&lt;/code&gt;は最新に上げておいた方がいいかも知れない。&lt;/p&gt;
+&lt;p&gt;追加したらnginxを再起動する&lt;/p&gt;&lt;/li&gt;
 
-&lt;p&gt;&lt;code&gt;Node.js&lt;/code&gt;は現時点(6.3.1)では&lt;code&gt;http2&lt;/code&gt;には対応していないので、
-&lt;a href=&#34;https://www.npmjs.com/package/http2&#34;&gt;http2&lt;/a&gt;というモジュールをインストールしておく。&lt;/p&gt;
+&lt;li&gt;&lt;p&gt;ChromeからMacへアクセスしてみて青い稲妻になっていれば&lt;code&gt;nginx&lt;/code&gt;の設定は成功&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;h3 id=&#34;証明書&#34;&gt;証明書&lt;/h3&gt;
+&lt;h3 id=&#34;ios端末での通信&#34;&gt;iOS端末での通信&lt;/h3&gt;
 
-&lt;p&gt;証明書の準備方法は、以前の&lt;a href=&#34;../perfect-push/&#34;&gt;Perfect APNs編&lt;/a&gt;と同じ。
-ただし、今回はMacに直接インストールした&lt;code&gt;Node.js&lt;/code&gt;を使うので、CAルート証明書は不要。&lt;/p&gt;
+&lt;p&gt;iOS9以降の&lt;code&gt;NSURLSession&lt;/code&gt;での通信であれば、特に設定など不要で自動で&lt;code&gt;http2&lt;/code&gt;になる。&lt;/p&gt;
 
-&lt;h2 id=&#34;実装&#34;&gt;実装&lt;/h2&gt;
+&lt;p&gt;なお、規格上は&lt;code&gt;http&lt;/code&gt;のみでも対応しているがiOSでどうかは未検証。&lt;/p&gt;
 
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/2f2f9f9130ef1d46872894b115a4b0c3.js&#34;&gt;&lt;/script&gt;
+&lt;h3 id=&#34;ログ設定&#34;&gt;ログ設定&lt;/h3&gt;
 
-&lt;h3 id=&#34;クライアント証明書の指定&#34;&gt;クライアント証明書の指定&lt;/h3&gt;
+&lt;p&gt;iOS端末からの通信も&lt;code&gt;http2&lt;/code&gt;になっているかの確認は、&lt;code&gt;nginx&lt;/code&gt;のログで判別する。&lt;/p&gt;
 
-&lt;p&gt;22,23行目にあるように、クライアント証明書と鍵を読み込んで指定する。
-（もちろん各ファイルを同じフォルダ内に置いておくのを忘れないように）&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http2&lt;/code&gt;の場合は、&lt;code&gt;log_format&lt;/code&gt;の&lt;code&gt;$http2&lt;/code&gt;に&lt;code&gt;h2&lt;/code&gt;と入ってくる。&lt;br /&gt;
+詳細は以下のページを参考に&lt;br /&gt;
+&lt;a href=&#34;http://d.hatena.ne.jp/ASnoKaze/20150818/1439896998&#34;&gt;nginxでアクセスログにhttp2の通信か出力する&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;もし、証明書の秘密鍵のパスフレーズを設定している時は、25行目のように設定が必要。&lt;/p&gt;
+&lt;h2 id=&#34;過去情報&#34;&gt;過去情報&lt;/h2&gt;
 
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;（8/24 追記）&lt;/em&gt;&lt;/strong&gt;
-&lt;del&gt;証明書の中が送信対象アプリ単独のもの（他の証明書や鍵を含んでいない）であれば、
-&lt;code&gt;apns-topic&lt;/code&gt;は指定しなくても送信可能。&lt;br /&gt;
-通常の手順で生成した場合は単独のはずなので、指定は不要。&lt;/del&gt;&lt;/p&gt;
+&lt;p&gt;標準の&lt;code&gt;nginx&lt;/code&gt;に&lt;code&gt;http2&lt;/code&gt;モジュールがないと思っていたら、
+実はちゃんとあったので訂正。&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;（11/20 追記）&lt;/em&gt;&lt;/strong&gt;
-開発環境では上記の通りだが、本番環境では指定がないとエラーが発生する為、必須の様子&lt;/p&gt;
+&lt;p&gt;もったいないので、&lt;code&gt;nginx-full&lt;/code&gt;の情報を残しておく。&lt;/p&gt;
 
-&lt;h3 id=&#34;通知内容の設定&#34;&gt;通知内容の設定&lt;/h3&gt;
+&lt;h3 id=&#34;nginx-full&#34;&gt;nginx-full&lt;/h3&gt;
 
-&lt;p&gt;送信形式の項目で述べたように、ヘッダにバンドルIDを設定(10−12,21行目)する。&lt;/p&gt;
+&lt;p&gt;通常の&lt;code&gt;Homebrew&lt;/code&gt;の&lt;code&gt;nginx&lt;/code&gt;ではオプションのモジュールが少ないので、
+標準では足りないモジュールをインストールしたい時は&lt;code&gt;nginx-full&lt;/code&gt;をインストールする。&lt;/p&gt;
 
-&lt;p&gt;デバイストークンは、URLの一部として設定する(20行目)。&lt;/p&gt;
+&lt;p&gt;例） nginxをhttp2モジュール付きでインストールする&lt;/p&gt;
 
-&lt;p&gt;通知ペイロードは、44行目にあるようにボディとして書き出す。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;brew tap homebrew/nginx
+brew install nginx-full --with-http2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;モジュールの一覧は以下で確認すること。
+（&lt;a href=&#34;https://nginx.org/en/docs/http/ngx_http_v2_module.html&#34;&gt;公式&lt;/a&gt;のモジュールの情報?とは違うようなのでこれで確認）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew info nginx-full
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html&#34;&gt;APNs Provider API&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/jp/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW1&#34;&gt;日本語ドキュメント&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kannokanno.hatenablog.com/entry/2014/02/10/134920&#34;&gt;Mac - homebrewでnginxを入れるときはnginx-fullを入れよう&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;OS X 10.12 Beta&lt;/li&gt;
-&lt;li&gt;Node.js 6.3.1&lt;/li&gt;
-&lt;li&gt;OpenSSL 1.0.2&lt;/li&gt;
+&lt;li&gt;OS X 10.11.5&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
 &lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Docker構築メモ</title>
+      <link>https://mike-neko.github.io/blog/docker/</link>
+      <pubDate>Mon, 04 Apr 2016 00:35:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/docker/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;なお、ローカルの開発用ということでセキュリティは考慮していないので注意&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;要件&#34;&gt;要件&lt;/h3&gt;
+
+&lt;p&gt;主にAPIでサーバとやりとりするアプリの開発用なので以下の感じ&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHPとDBが使えること&lt;/li&gt;
+&lt;li&gt;同一LAN内の別の端末からアクセスできること&lt;/li&gt;
+&lt;li&gt;SSLが使えること（iOS用）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
+
+&lt;h4 id=&#34;構成イメージ&#34;&gt;構成イメージ&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;Mac   (192.168.0.2) == ルータ(192.168.0.1) == iPhone(192.168.0.3)  
+｜  
+VM    (192.168.99.1)  
+｜  
+Docker(192.168.99.100)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;()内はIPアドレス&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;ゴールは、iPhone上から&lt;code&gt;https://192.168.0.2&lt;/code&gt;へアクセスするとページが表示(APIの通信)できればOK。&lt;/p&gt;
+
+&lt;h4 id=&#34;mac上-ホストos&#34;&gt;Mac上(ホストOS)&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;MacOS 10.11.3(El Capitan)&lt;/li&gt;
+&lt;li&gt;VirtualBox 5.0.14&lt;/li&gt;
+&lt;li&gt;DockerToolBox 1.10.2&lt;/li&gt;
+&lt;li&gt;nginx 1.8.1&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;docker上-ゲストos&#34;&gt;Docker上(ゲストOS)&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Apache&lt;/li&gt;
+&lt;li&gt;PHP 5系の最新&lt;br /&gt;
+(Xdebug)&lt;/li&gt;
+&lt;li&gt;MariaDB&lt;br /&gt;
+(phpmyadmin)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;手順&#34;&gt;手順&lt;/h1&gt;
+
+&lt;h3 id=&#34;dockerのインストール&#34;&gt;Dockerのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.docker.com/products/docker-toolbox&#34;&gt;公式&lt;/a&gt;から&lt;code&gt;DockerToolBox&lt;/code&gt;をダウンロードしてインストールを実行&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;途中で&lt;code&gt;Docker Quickstart Terminal&lt;/code&gt;のアイコンがでてきたら起動させる&lt;br /&gt;
+（忘れたらアプリケーションにもあるのでそちらから）&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;すると勝手にVM作成やらネットワーク設定をしてくれる親切設計なのでクジラが出てくるまで待つ&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;dockercomposeの設定&#34;&gt;DockerComposeの設定&lt;/h3&gt;
+
+&lt;p&gt;Dockerはコンテナをパーツのように組み合わせて環境を作っていく。&lt;/p&gt;
+
+&lt;p&gt;そのコンテナを作成する際の基本的な流れは&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;使いたいもののイメージを見つける&lt;br /&gt;
+(無ければ&lt;code&gt;Dockerfile&lt;/code&gt;を自力で書く)&lt;/li&gt;
+&lt;li&gt;タグを指定してイメージをダウンロード&lt;/li&gt;
+&lt;li&gt;コンテナの作成&lt;br /&gt;
+(もし足りない設定などあれば&lt;code&gt;Dockerfile&lt;/code&gt;でカスマイズ)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;となる。&lt;/p&gt;
+
+&lt;p&gt;イメージの検索からコンテナの取得は公式GUIの&lt;code&gt;Kitematic (Beta)&lt;/code&gt;を使うと一気にしてくれるので便利。&lt;/p&gt;
+
+&lt;p&gt;ただ、この方法だと引数の指定が多かったり複数のコンテナを利用する場合は大変なので、
+&lt;code&gt;DockerCompose&lt;/code&gt;を用いて管理する。&lt;/p&gt;
+
+&lt;h4 id=&#34;事前準備&#34;&gt;事前準備&lt;/h4&gt;
+
+&lt;p&gt;まずは適当な場所に、コンテナ毎の&lt;code&gt;Dockerfile&lt;/code&gt;や設定ファイルなどを
+まとめておくディレクトリを作ってカレントディレクトリとする。
+今回のディレクトリ構成は、以下のようにする。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;docker
+ ├─ docker-compose.yml
+ ├─ mariadb              # MariaDB用のフォルダ
+ |   └─ my.cnf
+ ├─ php                  # PHP用のフォルダ
+ |   ├─ Dockerfile
+ |   └─ php.ini
+ └─ www                  # Apacheのドキュメントルート
+     └─ index.html       # 動作確認用のHTML
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;apache-php&#34;&gt;Apache+PHP&lt;/h4&gt;
+
+&lt;p&gt;ApacheはPHPに同梱されているものを使うのが便利なので、&lt;code&gt;apache&lt;/code&gt;がついているタグのものを使う。
+今回は&lt;a href=&#34;https://hub.docker.com/_/php/&#34;&gt;公式&lt;/a&gt;で5系の一番新しいバージョンの&lt;code&gt;5.6.18-apache&lt;/code&gt;を選択。&lt;/p&gt;
+
+&lt;p&gt;で、&lt;code&gt;php.ini&lt;/code&gt;の設定と追加で入れたい拡張モジュール（特に&lt;code&gt;Xdebug&lt;/code&gt;）を&lt;code&gt;Dockerfile&lt;/code&gt;でカスタムしておく。&lt;/p&gt;
+
+&lt;p&gt;DockerComposeの設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php:
+  build: ./php/　　　　　　　　# php/Dockerfileからビルド
+  ports:
+    - &amp;quot;80:80&amp;quot;　　　　　　　　　# 80ポートを公開
+  volumes:
+    - ./www:/var/www/html   # ドキュメントルートを指定
+  links:
+    - mariadb:mysql         # DBとの接続を指定
+  container_name: php
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これでMac上からは、&lt;code&gt;http://192.168.99.100/index.html&lt;/code&gt;へアクセスすると、
+&lt;code&gt;www/index.html&lt;/code&gt;が表示される。&lt;/p&gt;
+
+&lt;h4 id=&#34;mariadb-phpmyadmin&#34;&gt;MariaDB+phpMyAdmin&lt;/h4&gt;
+
+&lt;p&gt;特に変更点もないのでイメージは公式の最新をそのままを使う。&lt;/p&gt;
+
+&lt;p&gt;DockerComposeの設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mariadb:
+  image: mariadb:latest           # 常に最新版を使う
+  environment:
+    MYSQL_ROOT_PASSWORD: pass     # ルートのパスワード
+    MYSQL_DATABASE: docker        # DB名
+    MYSQL_USER: docker            # ユーザ名
+    MYSQL_PASSWORD: docker        # パスワード
+  volumes:                        # my.cnfの設定
+    - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
+  container_name: mariadb
+
+phpmyadmin:
+  image: phpmyadmin/phpmyadmin:latest
+  container_name: myadmin
+  ports:
+    - &amp;quot;8080:80&amp;quot;                   # 8080ポートを公開して80へフォワード
+  links:
+    - mariadb:db
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これでMac上からは、&lt;code&gt;http://192.168.99.100:8080&lt;/code&gt;へアクセスすると、
+&lt;code&gt;phpMyAdmin&lt;/code&gt;のログイン画面が表示され、&lt;code&gt;docker/docker&lt;/code&gt;でログインが可能。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;注意点としてこの状態ではDBの永続化はできていないので、コンテナを削除するとDBの内容も消える&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;ios端末からのアクセス&#34;&gt;iOS端末からのアクセス&lt;/h3&gt;
+
+&lt;p&gt;ここまでの状態だとMacからしかアクセスできないので、Mac上で&lt;code&gt;nginx&lt;/code&gt;をリバースプロキシとして動かし、
+他のiOS端末からアクセスできるようにする。&lt;/p&gt;
+
+&lt;p&gt;また、iOS9のATSへ対応する為にSSLでアクセスできるようにする。ただしローカル環境なのでオレオレ証明書を利用する。&lt;/p&gt;
+
+&lt;h4 id=&#34;nginxのインストール&#34;&gt;nginxのインストール&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;でインストールする。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew update
+brew install nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;インストールできたら、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;nginx -t
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で設定ファイルの場所を確認し、適当なエディタで開いてリバースプロキシの設定をする。
+コメントにしてあるのがデフォルトの設定。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http {
+  server {
+    #listen       8080;
+    listen       80;
+    location / {
+      # root   html;
+      # index  index.html index.htm;
+      proxy_pass http://127.0.0.1:8080;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;sslの証明書について&#34;&gt;SSLの証明書について&lt;/h4&gt;
+
+&lt;p&gt;今回はnginx部分だけSSLに対応させる。（dockerはHTTPのまま）&lt;/p&gt;
+
+&lt;p&gt;オレオレ証明書作成のiOS向けの設定のポイントは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;SHA256で証明書を作成する&lt;br /&gt;
+(デフォルトだとSHA1になる)&lt;/li&gt;
+&lt;li&gt;Safari以外からアクセスする場合は、証明書作成時のCommonNameをIPアドレスにする&lt;br /&gt;
+(つまりIP固定が必要)&lt;/li&gt;
+&lt;li&gt;端末へ証明書のインストールが必要&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;もし、上の条件が満たせない場合は、ATSの設定を変えるとか個別に認証処理を書くなどして回避する必要がある。
+（回避できないのもあるけど）&lt;/p&gt;
+
+&lt;h4 id=&#34;sslの証明書の作成&#34;&gt;SSLの証明書の作成&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;openssl genrsa -out server.key 2048
+openssl req -new -key server.key &amp;gt; server.csr
+openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &amp;gt; server.crt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（オレオレ証明書の各項目は&lt;code&gt;CommonName&lt;/code&gt;以外は空白でも動作する）&lt;/p&gt;
+
+&lt;p&gt;生成された&lt;code&gt;server.key&lt;/code&gt;と&lt;code&gt;server.crt&lt;/code&gt;をnginxの設定ファイルと同じディレクトリに置く。&lt;/p&gt;
+
+&lt;p&gt;iOS端末へは&lt;code&gt;server.crt&lt;/code&gt;をインストールする。
+&lt;del&gt;（メール添付か適当なWEB上に置いてインストール）&lt;/del&gt;&lt;br /&gt;
+※環境によってうまくいかないことがあったので、より確実な構成プロファイル経由にすること
+（手順は&lt;a href=&#34;../ios-cert/&#34;&gt;ATS有効の状態でオレオレ証明書を使って通信する(iOS9)&lt;/a&gt;を参照）&lt;/p&gt;
+
+&lt;p&gt;nginxの設定ファイルに以下を追加する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;server {
+  listen       443 ssl;
+  server_name  localhost;
+
+  ssl_certificate      server.crt;
+  ssl_certificate_key  server.key;
+
+  location / {
+    proxy_pass http://127.0.0.1:8080;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;vmの設定&#34;&gt;VMの設定&lt;/h4&gt;
+
+&lt;p&gt;DockerはVirtualBox上で動いているので、VMのポートフォワードを設定が必要となる。
+設定は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;VBoxManage controlvm &amp;quot;default&amp;quot; natpf1 &amp;quot;nginx,tcp,127.0.0.1,8080,,80&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とする。VirtualBoxを起動して、&lt;code&gt;default-設定-ネットワーク-アダプター1-ポートフォワーディング&lt;/code&gt;からでもOK。&lt;/p&gt;
+
+&lt;h2 id=&#34;起動&#34;&gt;起動&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Dockerを起動させる&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;docker-compose.yml&lt;/code&gt;を置いた場所をカレントディレクトリにする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;docker-compose up -d&lt;/code&gt;でコンテナを起動&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sudo nginx&lt;/code&gt;でnginxを起動&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;これでiPhone上からは、&lt;code&gt;https://192.168.0.2/index.html&lt;/code&gt;へアクセスすると、
+&lt;code&gt;www/index.html&lt;/code&gt;が表示される。
+（ただし、オレオレ証明書なので認証の警告などは出る）&lt;/p&gt;
+
+&lt;h1 id=&#34;追記&#34;&gt;追記&lt;/h1&gt;
+
+&lt;p&gt;Docker起動時に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ERROR: Couldn&#39;t connect to Docker daemon - you might need to run `docker-machine start default`.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というエラーが出る場合は、VMの設定の&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;VBoxManage controlvm &amp;quot;default&amp;quot; natpf1 &amp;quot;nginx,tcp,127.0.0.1,8080,,80&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;をしてから起動し直すと大丈夫っぽい。なお、原因は不明・・・&lt;/p&gt;
+
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
+
+&lt;p&gt;開発環境をプラグインみたいな感じで構築していけるのと構築内容がテキストで残るのはあとあと楽。&lt;/p&gt;
+
+&lt;p&gt;ただ、サーバ環境とまるまる同じものを構築するならVagrantの方が良いのかも・・・
+でも、Dockerはいろいろな環境を次々に試すのには便利なので、使い分けが大事そう。&lt;/p&gt;
+
+&lt;h1 id=&#34;ファイル一式&#34;&gt;ファイル一式&lt;/h1&gt;
+
+&lt;p&gt;実際の各イメージのDockerfileや設定ファイルをまとめたものは
+&lt;a href=&#34;https://github.com/mike-neko/Docker/tree/master/SSLWebServer&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

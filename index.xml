@@ -1359,7 +1359,7 @@ P2PConnectivity.manager.send(message: &amp;quot;送信するテキスト&amp;quo
     </item>
     
     <item>
-      <title>VagrantでCentOS6.8を使う </title>
+      <title>VagrantでCentOS6.8を使う</title>
       <link>https://mike-neko.github.io/blog/vagrant-cent/</link>
       <pubDate>Tue, 08 Nov 2016 21:32:51 +0900</pubDate>
       
@@ -1368,7 +1368,7 @@ P2PConnectivity.manager.send(message: &amp;quot;送信するテキスト&amp;quo
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
-&lt;p&gt;野良BOXは自力で問題ないか検証するほどの腕がないので、公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
+&lt;p&gt;野良BOXはちょっと怖いので公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
 
 &lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 

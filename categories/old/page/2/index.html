@@ -46,11 +46,23 @@
 
       
         <li class="sidebar-nav-item">
-            <a href="/categories/old">old&nbsp;(47)</a>
+            <a href="/categories/ios">ios&nbsp;(13)</a>
         </li>
       
         <li class="sidebar-nav-item">
-            <a href="/categories/others">others&nbsp;(1)</a>
+            <a href="/categories/mac">mac&nbsp;(6)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(20)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(16)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
         </li>
       
         <li class="sidebar-nav-item">
@@ -62,33 +74,39 @@
 
       <li>
         
-          &nbsp;<a href="/tags/code">code&nbsp;(19)</a>&nbsp;
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/docker">docker&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
         
           &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
         
           &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
         
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
           &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
-        
-          &nbsp;<a href="/tags/ios">ios&nbsp;(23)</a>&nbsp;
-        
-          &nbsp;<a href="/tags/memo">memo&nbsp;(25)</a>&nbsp;
         
           &nbsp;<a href="/tags/metal">metal&nbsp;(6)</a>&nbsp;
         
-          &nbsp;<a href="/tags/objc">objc&nbsp;(1)</a>&nbsp;
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/perfect">perfect&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/server">server&nbsp;(22)</a>&nbsp;
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift2">swift2&nbsp;(6)</a>&nbsp;
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift3">swift3&nbsp;(2)</a>&nbsp;
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
         
-          &nbsp;<a href="/tags/unity">unity&nbsp;(2)</a>&nbsp;
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
         
       </li>
     </ul>
@@ -130,213 +148,254 @@
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/oracle-cent/">CentOSからOracleへ接続</a>
+        <a href="https://mike-neko.github.io/blog/perfect-push/">Perfect APNs編</a>
       </h1>
-      <span class="post-date">Nov 3, 2016
+      <span class="post-date">Apr 11, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/memo">memo</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a><a class="label" href="https://mike-neko.github.io/tags/apns">apns</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p>CentOSのPHP5.6から別サーバで動いているOracleのDBへ<code>oci8</code>で接続する方法</p>
+<p>サーバーサイドSwiftフレームワークの<a href="https://perfect.org/">Perfect</a>の使い方のメモその3</p>
 
-      <a href="https://mike-neko.github.io/blog/oracle-cent/">Read On &rarr;</a>
+<p>今回はiOSのプッシュ通知を送信する方法について</p>
+
+<p>Perfectは最新のAPNsの通信形式に対応していて、細かなエラーレスポンスを取れるのがメリット。
+なので、開発用としては大変使いやすい</p>
+
+      <a href="https://mike-neko.github.io/blog/perfect-push/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/mssql-cent/">CentOSからSQLServerへ接続</a>
+        <a href="https://mike-neko.github.io/blog/perfect-2/">Perfect 基礎編</a>
       </h1>
-      <span class="post-date">Nov 3, 2016
+      <span class="post-date">Apr 10, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/memo">memo</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p>CentOSのPHP5.6から<code>PDO_ODBC</code>でSQLServer(MSSQL)へ接続する方法</p>
+<p>サーバーサイドSwiftフレームワークの<a href="https://perfect.org/">Perfect</a>の使い方のメモその2</p>
 
-      <a href="https://mike-neko.github.io/blog/mssql-cent/">Read On &rarr;</a>
+<p>基礎編ではルーティングやリクエストの処理方法のあたりまで</p>
+
+      <a href="https://mike-neko.github.io/blog/perfect-2/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/oracle-mac/">MacからOracleへ接続</a>
+        <a href="https://mike-neko.github.io/blog/perfect-1/">Perfect 導入編</a>
       </h1>
-      <span class="post-date">Nov 3, 2016
+      <span class="post-date">Apr 8, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/memo">memo</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p>MacのPHP5.6から別サーバで動いているOracleのDBへ<code>oci8</code>で接続する方法</p>
+<p>サーバーサイドSwiftフレームワークの<a href="https://perfect.org/">Perfect</a>の使い方のメモその1</p>
 
-      <a href="https://mike-neko.github.io/blog/oracle-mac/">Read On &rarr;</a>
+<p>導入編ではベースとなるプロジェクトを一から作るあたりまで</p>
+
+      <a href="https://mike-neko.github.io/blog/perfect-1/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/mssql-mac/">MacからSQLServerへ接続</a>
+        <a href="https://mike-neko.github.io/blog/ipaddress/">IPアドレス取得のサンプル(Swift)</a>
       </h1>
-      <span class="post-date">Nov 3, 2016
+      <span class="post-date">Mar 7, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/memo">memo</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a><a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
       </span>
       
-      <h2 id="概要">概要</h2>
+      <p><strong><em>以下はSwift2の情報で古い為、注意！</em></strong><br />
+<strong><em>Swift3版のソースは<a href="https://github.com/mike-neko/NetworkInfo">こちら</a></em></strong><br />
+<strong><em>(解説はそのうちに・・・・)</em></strong></p>
 
-<p>MacのPHP5.6からSQLServer(MSSQL)へ接続する方法</p>
+<h2 id="概要">概要</h2>
 
-      <a href="https://mike-neko.github.io/blog/mssql-mac/">Read On &rarr;</a>
+<p>iOS端末のIPアドレスを取得するサンプル。Cの関数呼び出し周りも含めてSwiftにて実装。</p>
+
+<p>一応、Apple公式の方法でIPv6only環境でも動作確認済。</p>
+
+      <a href="https://mike-neko.github.io/blog/ipaddress/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/guzzle-apns/">Guzzle(PHP)でAPNsの同時配信を行う</a>
+        <a href="https://mike-neko.github.io/blog/metal-sand/">Metalによる砂のシミュレーションもどき</a>
       </h1>
-      <span class="post-date">Oct 29, 2016
+      <span class="post-date">Feb 25, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/memo">memo</a><a class="label" href="https://mike-neko.github.io/tags/code">code</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p><code>Guzzle</code>でiOSのAPNs(Push通知)をお手軽に同時配信する方法</p>
+<p>MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
+パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。</p>
 
-      <a href="https://mike-neko.github.io/blog/guzzle-apns/">Read On &rarr;</a>
+<p>なお、これも約26万パーティクルで60FPSを維持している。</p>
+
+<h2 id="動作イメージ">動作イメージ</h2>
+
+      <a href="https://mike-neko.github.io/blog/metal-sand/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/guzzle/">Guzzleで非同期の並列リクエストを行う</a>
+        <a href="https://mike-neko.github.io/blog/objc-exception/">SwiftでNSExceptionを処理する</a>
       </h1>
-      <span class="post-date">Oct 29, 2016
+      <span class="post-date">Feb 20, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/memo">memo</a><a class="label" href="https://mike-neko.github.io/tags/code">code</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a><a class="label" href="https://mike-neko.github.io/tags/objc">objc</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p><code>PHP</code>のHTTPクライアント(<a href="http://docs.guzzlephp.org/en/latest/">Guzzle</a>)で非同期の並列リクエストを行う方法</p>
+<p>ObjectiveCで書かれた<code>NSException</code>を発生させるソースをSwiftから利用したい時の処理方法。</p>
 
-      <a href="https://mike-neko.github.io/blog/guzzle/">Read On &rarr;</a>
+<p><code>NSException</code>は、ObjectiveCの<code>@try ~ @catch ~ @finally</code>でしか例外処理を行えない。例外処理を書いていない時は、実行時エラーとして処理される。つまり、Swiftから<code>NSException</code>を発生させるコードを呼び出して例外が起きると、問答無用でアプリが落ちてしまう・・・</p>
+
+      <a href="https://mike-neko.github.io/blog/objc-exception/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/scrollview/">UIScrollViewのAutoLayoutをStoryboardのみで設定</a>
+        <a href="https://mike-neko.github.io/blog/metal-image/">MetalのGPGPUによるパーティクルデモ</a>
       </h1>
-      <span class="post-date">Oct 23, 2016
+      <span class="post-date">Feb 11, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/code">code</a><a class="label" href="https://mike-neko.github.io/tags/swift3">Swift3</a>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p>Storyboard上だけでUIScrollViewのAutoLayoutを完結させる方法。
-中のUIを動的に追加や削除しないのであればコードを書く必要もないし、
-<code>UILabel</code>のようにコンテンツに応じて動的に高さが変わるようなものにも対応可能</p>
+<p>読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。</p>
 
-      <a href="https://mike-neko.github.io/blog/scrollview/">Read On &rarr;</a>
+<p>画像サイズが512*512、1ピクセル=1パーティクルに分解するので、約26万個のパーティクルを動かしているが、60FPSを維持している。約100万まで増やすとiPhone6+で30FPSぐらいとなる。</p>
+
+<p>そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。</p>
+
+<h2 id="動作イメージ">動作イメージ</h2>
+
+      <a href="https://mike-neko.github.io/blog/metal-image/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/notification/">NotificationCenter(Swift3)の使い方</a>
+        <a href="https://mike-neko.github.io/blog/metal-function/">Metal組み込み関数</a>
       </h1>
-      <span class="post-date">Oct 23, 2016
+      <span class="post-date">Jan 28, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/code">code</a><a class="label" href="https://mike-neko.github.io/tags/swift3">Swift3</a>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a>
       </span>
       
-      <p>旧<code>NSNotification</code>がSwift3でちょっと変更が入ったので使い方と＋αのエクステンションのまとめ</p>
+      <h2 id="metalのシェーダで利用できる関数のまとめ">Metalのシェーダで利用できる関数のまとめ</h2>
 
-      <a href="https://mike-neko.github.io/blog/notification/">Read On &rarr;</a>
+<h4 id="hlsl-glslは各言語との対比">HLSL/GLSLは各言語との対比</h4>
+
+<ul>
+<li>(空白) : 同じ</li>
+<li>ー : 該当なし</li>
+<li>△ : 同等の関数があるが詳細が異なる</li>
+<li>(関数名) : 挙動は同じだが、名前が別の関数がある</li>
+</ul>
+
+      <a href="https://mike-neko.github.io/blog/metal-function/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/redis-sakura/">さくらのレンタルサーバでredisを使う</a>
+        <a href="https://mike-neko.github.io/blog/metal-noise/">MetalのGPGPUによるPerlinノイズ</a>
       </h1>
-      <span class="post-date">Oct 15, 2016
+      <span class="post-date">Jan 25, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/memo">memo</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p>さくらのレンタルサーバ（スタンダード）に<a href="http://redis.io/">redis</a>をインストールする方法のメモ</p>
+<p>GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。</p>
 
-      <a href="https://mike-neko.github.io/blog/redis-sakura/">Read On &rarr;</a>
+<p>パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
+デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。</p>
+
+<h2 id="動作イメージ">動作イメージ</h2>
+
+      <a href="https://mike-neko.github.io/blog/metal-noise/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/easyinstall-sakura/">さくらのレンタルサーバでeasy_installを使う</a>
+        <a href="https://mike-neko.github.io/blog/metal-model/">MetalKitのSwift版サンプル</a>
       </h1>
-      <span class="post-date">Oct 15, 2016
+      <span class="post-date">Jan 22, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/memo">memo</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p>さくらのレンタルサーバ（スタンダード）でいつのまにか
-<a href="http://setuptools.readthedocs.io/en/latest/easy_install.html">easy_install</a>
-が使えるようになっていたので使い方のメモ</p>
+<p>元ネタのApple公式の<a href="https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html">MetalKitEssentials</a>をSwiftで書き直し＋αしたもの。
+内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
+シェーダもいたってシンプルでライトもなし。<br />
+ちなみに、MetalKitは<strong>iOS9以降</strong>でしか使えないので注意。</p>
 
-      <a href="https://mike-neko.github.io/blog/easyinstall-sakura/">Read On &rarr;</a>
+      <a href="https://mike-neko.github.io/blog/metal-model/">Read On &rarr;</a>
       
     </div>
     
@@ -360,21 +419,12 @@
         class="active"><a href="/categories/old/page/2/">2</a></li>
         
         <li
-        ><a href="/categories/old/page/3/">3</a></li>
-        
-        <li
-        ><a href="/categories/old/page/4/">4</a></li>
-        
-        <li
-        ><a href="/categories/old/page/5/">5</a></li>
-        
-        <li
-        >
-        <a href="/categories/old/page/3/" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        class="disabled">
+        <a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
         </li>
         
         <li>
-            <a href="/categories/old/page/5/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+            <a href="/categories/old/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
         </li>
         
     </ul>

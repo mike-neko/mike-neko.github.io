@@ -46,11 +46,23 @@
 
       
         <li class="sidebar-nav-item">
-            <a href="/categories/old">old&nbsp;(47)</a>
+            <a href="/categories/ios">ios&nbsp;(13)</a>
         </li>
       
         <li class="sidebar-nav-item">
-            <a href="/categories/others">others&nbsp;(1)</a>
+            <a href="/categories/mac">mac&nbsp;(6)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(20)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(16)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
         </li>
       
         <li class="sidebar-nav-item">
@@ -62,33 +74,39 @@
 
       <li>
         
-          &nbsp;<a href="/tags/code">code&nbsp;(19)</a>&nbsp;
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/docker">docker&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
         
           &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
         
           &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
         
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
           &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
-        
-          &nbsp;<a href="/tags/ios">ios&nbsp;(23)</a>&nbsp;
-        
-          &nbsp;<a href="/tags/memo">memo&nbsp;(25)</a>&nbsp;
         
           &nbsp;<a href="/tags/metal">metal&nbsp;(6)</a>&nbsp;
         
-          &nbsp;<a href="/tags/objc">objc&nbsp;(1)</a>&nbsp;
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/perfect">perfect&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/server">server&nbsp;(22)</a>&nbsp;
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift2">swift2&nbsp;(6)</a>&nbsp;
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift3">swift3&nbsp;(2)</a>&nbsp;
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
         
-          &nbsp;<a href="/tags/unity">unity&nbsp;(2)</a>&nbsp;
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
         
       </li>
     </ul>
@@ -130,218 +148,226 @@
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/library2/">GitHubの自作ライブラリを公開する（ライブラリ編）</a>
+        <a href="https://mike-neko.github.io/blog/ios-cert/">ATS有効の状態でオレオレ証明書を使って通信する(iOS9)</a>
       </h1>
-      <span class="post-date">Dec 14, 2016
+      <span class="post-date">Sep 6, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/github">github</a><a class="label" href="https://mike-neko.github.io/tags/memo">memo</a>
+      <a class="label" href="https://mike-neko.github.io/tags/ssl">ssl</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p><code>Swift</code>の自作ライブラリ(<a href="https://github.com/mike-neko/Kanagata">Kanagata</a>)をGitHubに公開するにあたってのメモ。
-その2ではマルチプラットフォーム対応とライブラリ管理ツールの導入についての内容</p>
+<p><code>ATS</code>が有効の場合、SSL/TLS通信でないと通信自体ができない。</p>
 
-      <a href="https://mike-neko.github.io/blog/library2/">Read On &rarr;</a>
+<p>が、開発時はローカル環境だったりドメイン自体がなかったりで正式なSSL証明書を使えないことが多い・・・
+かといって、ATSをOFFにして開発するのも・・・</p>
+
+<p>って時に自己署名証明書（オレオレ証明書）を使ってしのぐ方法。</p>
+
+      <a href="https://mike-neko.github.io/blog/ios-cert/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/library1/">GitHubの自作ライブラリを公開する（CI導入編）</a>
+        <a href="https://mike-neko.github.io/blog/jazzy-cmd/">jazzyの使い方 その1</a>
       </h1>
-      <span class="post-date">Dec 14, 2016
+      <span class="post-date">Sep 3, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/github">github</a><a class="label" href="https://mike-neko.github.io/tags/memo">memo</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p><code>Swift</code>の自作ライブラリ(<a href="https://github.com/mike-neko/Kanagata">Kanagata</a>)をGitHubに公開するにあたってのメモ。
-その1ではCIの導入周りについての内容</p>
+<p>Swiftのドキュメント生成ツールの<a href="https://github.com/realm/jazzy">jazzy</a>の使い方。
+その1はコマンド周りのメモ。</p>
 
-      <a href="https://mike-neko.github.io/blog/library1/">Read On &rarr;</a>
+      <a href="https://mike-neko.github.io/blog/jazzy-cmd/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/pageview/">UIPageViewControllerのエンドレス化などなど</a>
+        <a href="https://mike-neko.github.io/blog/http2apns-ios/">APNs Provider API(http2)を利用する(iOS)</a>
       </h1>
-      <span class="post-date">Dec 13, 2016
+      <span class="post-date">Aug 25, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/code">code</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a><a class="label" href="https://mike-neko.github.io/tags/apns">apns</a><a class="label" href="https://mike-neko.github.io/tags/http2">http2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p><code>UIPageViewController</code>をエンドレスでページ切り替えする方法とかその他小ネタ</p>
+<p>iOSのAPNsをAPI経由で使う方法。
+しかもiOS端末からPush通知を送信する方法。</p>
 
-      <a href="https://mike-neko.github.io/blog/pageview/">Read On &rarr;</a>
+      <a href="https://mike-neko.github.io/blog/http2apns-ios/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/provisioning/">Provisioning Profileの有効期限をアプリ内で取得</a>
+        <a href="https://mike-neko.github.io/blog/http2apns/">APNs Provider API(http2)を利用する(Node.js)</a>
       </h1>
-      <span class="post-date">Dec 7, 2016
+      <span class="post-date">Aug 11, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/code">code</a><a class="label" href="https://mike-neko.github.io/tags/memo">memo</a>
+      <a class="label" href="https://mike-neko.github.io/tags/apns">apns</a><a class="label" href="https://mike-neko.github.io/tags/http2">http2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p><code>AdHoc</code>で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
-その有効期限をアプリ内から確認する方法</p>
+<p>iOSのAPNsをAPI経由で使う方法。
+サーバサイドは<code>Node.js</code>を利用。</p>
 
-      <a href="https://mike-neko.github.io/blog/provisioning/">Read On &rarr;</a>
+      <a href="https://mike-neko.github.io/blog/http2apns/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/multipart/">multipart/form-dataによるファイルのアップロード</a>
+        <a href="https://mike-neko.github.io/blog/gittag/">GitHubにタグ付けする</a>
       </h1>
-      <span class="post-date">Dec 6, 2016
+      <span class="post-date">Aug 2, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/code">code</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+      <a class="label" href="https://mike-neko.github.io/tags/github">github</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p>（<code>Alamofire</code>とかのライブラリを使った方が幸せになれると思うが）
-HTMLのフォームからの送信と同じ様な<code>multipart</code>によるアップロードをiOSからする方法</p>
+<p>GitHubにタグを付ける方法。
+<code>GitHub Desktop</code>はブランチ周りはサポートしているけどタグ関係はサポートしていないのでメモしておく。</p>
 
-      <a href="https://mike-neko.github.io/blog/multipart/">Read On &rarr;</a>
+      <a href="https://mike-neko.github.io/blog/gittag/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/webrtc-ios/">WebRTCをiOSネイティブで使う(実装編)</a>
+        <a href="https://mike-neko.github.io/blog/swift-kvo/">KVOを利用する(Swift)</a>
       </h1>
-      <span class="post-date">Nov 30, 2016
+      <span class="post-date">Jul 25, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/code">code</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p>iOSで<code>WebRTC</code>を使ったビデオチャットを作る方法</p>
+<p><code>Swift</code>で<code>KVO</code>を利用する方法について。特に<code>context</code>を一意の識別子として使いたい場合の方法。</p>
 
-      <a href="https://mike-neko.github.io/blog/webrtc-ios/">Read On &rarr;</a>
+      <a href="https://mike-neko.github.io/blog/swift-kvo/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/webrtc-build/">WebRTCをiOSネイティブで使う(準備編)</a>
+        <a href="https://mike-neko.github.io/blog/metalshader-scenekit/">SceneKitでMetalのシェーダを利用する(SCNProgram)</a>
       </h1>
-      <span class="post-date">Nov 29, 2016
+      <span class="post-date">Jul 10, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/memo">memo</a>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p>iOSのブラウザでは<code>WebRTC</code>がサポートされていないので、利用したい場合は
-ネイティブのフレームワークを使う必要がある。</p>
+<p><code>Metal</code>を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
+なので、その面倒な部分を<code>SceneKit</code>に任せたいという時の話。</p>
 
-<p>今回の準備編では公式のフレームワークを使うにあたってフレームワークの生成と組み込みまでの手順について</p>
+<p>今回は描画周りに<code>Metal</code>のシェーダを使うパターン。</p>
 
-      <a href="https://mike-neko.github.io/blog/webrtc-build/">Read On &rarr;</a>
+      <a href="https://mike-neko.github.io/blog/metalshader-scenekit/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/multipeer/">MultipeerConnectivityでP2P通信</a>
+        <a href="https://mike-neko.github.io/blog/webview-pdf/">WKWebViewの内容をPDFで保存する(Swift)</a>
       </h1>
-      <span class="post-date">Nov 29, 2016
+      <span class="post-date">Jun 23, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/code">code</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p>iOS同士限定になるが、<code>Multipeer Connectivity Framework</code>でお手軽にP2P通信をさせる方法</p>
+<p>昔に<code>UIWebView</code>でやっていたものを最新の<code>WKWebView</code>+<code>Swift</code>で書き換えた時のメモ。</p>
 
-      <a href="https://mike-neko.github.io/blog/multipeer/">Read On &rarr;</a>
+<p>内容は大したことないのだけれど、検索で引っかかるWebの資料がiOS9の実機で動かなかったので残しておく。</p>
+
+      <a href="https://mike-neko.github.io/blog/webview-pdf/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/vpn-win/">VPN上のWindows機へ接続</a>
+        <a href="https://mike-neko.github.io/blog/qr-reader/">QRコードの読み取りサンプル(Swift) その2</a>
       </h1>
-      <span class="post-date">Nov 27, 2016
+      <span class="post-date">Jun 16, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/memo">memo</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p><code>SSH</code>が入っていないVPN上のWindowsへアクセスする方法</p>
+<p>以前に書いたQRコードの読み取りサンプルの別バージョン。
+今回はカメラ不要で画像データから直接QRコードを読み取りが可能。</p>
 
-      <a href="https://mike-neko.github.io/blog/vpn-win/">Read On &rarr;</a>
+      <a href="https://mike-neko.github.io/blog/qr-reader/">Read On &rarr;</a>
       
     </div>
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/vagrant-cent/">VagrantでCentOS6.8を使う </a>
+        <a href="https://mike-neko.github.io/blog/code-reader/">QRコードの読み取りサンプル(Swift) その1</a>
       </h1>
-      <span class="post-date">Nov 8, 2016
+      <span class="post-date">Jun 15, 2016
       
       &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/memo">memo</a><a class="label" href="https://mike-neko.github.io/tags/server">server</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
       <h2 id="概要">概要</h2>
 
-<p>野良BOXは自力で問題ないか検証するほどの腕がないので、公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ</p>
+<p>iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル。</p>
 
-      <a href="https://mike-neko.github.io/blog/vagrant-cent/">Read On &rarr;</a>
+      <a href="https://mike-neko.github.io/blog/code-reader/">Read On &rarr;</a>
       
     </div>
     
@@ -365,21 +391,12 @@ HTMLのフォームからの送信と同じ様な<code>multipart</code>による
         ><a href="/categories/old/page/2/">2</a></li>
         
         <li
-        ><a href="/categories/old/page/3/">3</a></li>
-        
-        <li
-        ><a href="/categories/old/page/4/">4</a></li>
-        
-        <li
-        ><a href="/categories/old/page/5/">5</a></li>
-        
-        <li
         >
         <a href="/categories/old/page/2/" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
         </li>
         
         <li>
-            <a href="/categories/old/page/5/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+            <a href="/categories/old/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
         </li>
         
     </ul>

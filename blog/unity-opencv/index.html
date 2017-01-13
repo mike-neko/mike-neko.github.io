@@ -46,11 +46,23 @@
 
       
         <li class="sidebar-nav-item">
-            <a href="/categories/old">old&nbsp;(47)</a>
+            <a href="/categories/ios">ios&nbsp;(13)</a>
         </li>
       
         <li class="sidebar-nav-item">
-            <a href="/categories/others">others&nbsp;(1)</a>
+            <a href="/categories/mac">mac&nbsp;(6)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(20)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(16)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
         </li>
       
         <li class="sidebar-nav-item">
@@ -62,33 +74,39 @@
 
       <li>
         
-          &nbsp;<a href="/tags/code">code&nbsp;(19)</a>&nbsp;
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/docker">docker&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
         
           &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
         
           &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
         
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
           &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
-        
-          &nbsp;<a href="/tags/ios">ios&nbsp;(23)</a>&nbsp;
-        
-          &nbsp;<a href="/tags/memo">memo&nbsp;(25)</a>&nbsp;
         
           &nbsp;<a href="/tags/metal">metal&nbsp;(6)</a>&nbsp;
         
-          &nbsp;<a href="/tags/objc">objc&nbsp;(1)</a>&nbsp;
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/perfect">perfect&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/server">server&nbsp;(22)</a>&nbsp;
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift2">swift2&nbsp;(6)</a>&nbsp;
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift3">swift3&nbsp;(2)</a>&nbsp;
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
         
-          &nbsp;<a href="/tags/unity">unity&nbsp;(2)</a>&nbsp;
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
         
       </li>
     </ul>
@@ -121,17 +139,17 @@
     <h1>UnityからOpenCVを利用する(iOS)</h1>
     <span class="post-date">Jun 7, 2016 
     
-    &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/unity">unity</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/ios">ios</a><a class="label" href="https://mike-neko.github.io/tags/code">code</a><a class="label" href="https://mike-neko.github.io/tags/unity">unity</a>
+    <a class="label" href="https://mike-neko.github.io/tags/opencv">opencv</a><a class="label" href="https://mike-neko.github.io/tags/objc">objc</a>
     </span>
     
 
 <h2 id="概要">概要</h2>
 
-<p>UnityからiOSのネイティブプラグイン経由で<code>OpenCV</code>でカメラを利用するサンプル。</p>
+<p>UnityからiOSのネイティブプラグイン経由で<code>OpenCV</code>でカメラを利用するサンプル</p>
 
 <p>内容としては、</p>
 
@@ -142,7 +160,7 @@
 <li>Unity側でテクスチャを生成して表示する</li>
 </ol>
 
-<p>といった流れになる。</p>
+<p>といった流れになる</p>
 
 <h2 id="手順">手順</h2>
 
@@ -155,20 +173,20 @@
 <li><p>ダウンロードしたファイルを解凍して<code>opencv2.framework</code>を取り出しておく</p></li>
 </ol>
 
-<p>なお、Ver.2を利用したのは、作成時点ではVer.3だとエラーが出てしまったので。
-多分ソースからビルドするかバージョン上がれば、Ver.3系でも問題ないかと。</p>
+<p>なお、Ver.2を利用したのは、作成時点ではVer.3だとエラーが出てしまったので・・・
+多分ソースからビルドするかバージョン上がれば、Ver.3系でも問題ないかと</p>
 
 <h3 id="iosネイティブ部分のソースを作成">iOSネイティブ部分のソースを作成</h3>
 
-<p>OpenCVがC++なので、言語は<code>Objective-C++</code>を利用する。<br />
+<p>OpenCVがC++なので、言語は<code>Objective-C++</code>を利用する<br />
 (残念ながらSwiftはC++を扱うことができないのでObjC一択)</p>
 
-<p>それに伴い、忘れずにファイルの拡張子を<code>.mm</code>にしておくこと。<br />
+<p>それに伴い、忘れずにファイルの拡張子を<code>.mm</code>にしておくこと<br />
 ただその場合、ヘッダファイル（<code>.hpp</code>）はUnityがプラグインのファイルとして認識してくれないので、
-今回は一つのファイルに収まるように書いている。<br />
+今回は一つのファイルに収まるように書いている<br />
 （通常の<code>.h</code>はちゃんと認識してくれるのに・・・）</p>
 
-<p>プラグインの呼び出しは以下の感じ。</p>
+<p>プラグインの呼び出しは以下の感じ</p>
 
 <pre><code>[iOS]
 OpenCV(C++)での処理
@@ -182,33 +200,33 @@ C#でDLLimportして呼び出し
 </code></pre>
 
 <p>ObjC++で一旦ラップしているのは、OpenCV部分の開発は別にXCode上で行う為。
-ただ、場合によってはメソッド呼び出しが遅いのでそこは注意。</p>
+ただ、場合によってはメソッド呼び出しが遅いのでそこは注意</p>
 
-<p>ネイティブ側のソースの全文は以下の通り。
+<p>ネイティブ側のソースの全文は以下の通り
 <script type="text/javascript" src="https://gist.github.com/bf258536e5414e25b1e147c8b5e7834d.js"></script></p>
 
 <h4 id="通常のopencv周りの処理-4-51行目あたり">通常のOpenCV周りの処理（4〜51行目あたり）</h4>
 
 <p>ややこしいのが、C++はARC管理外の為、手動でメモリ管理が必要。
 今回はメモリの確保/破棄をラッパークラスの初期化/破棄と合わせて、
-ラッパークラスの生存期間とOpenCVのオブジェクトの生存期間が一致するようにしてある。</p>
+ラッパークラスの生存期間とOpenCVのオブジェクトの生存期間が一致するようにしてある</p>
 
 <p>カメラの画像の取得は、初期化と同時に<code>cv::VideoCapture</code>を生成し、
-その後は毎フレーム<code>*camera &gt;&gt; img</code>で画像を読み込んでいる。</p>
+その後は毎フレーム<code>*camera &gt;&gt; img</code>で画像を読み込んでいる</p>
 
 <p>この時、取得された画像のフォーマットは<code>BGR</code>なのがポイント。
-最終的にUnityのテクスチャのサイズとフォーマット<code>RGBA</code>に変換してUnity側へ渡す。<br />
+最終的にUnityのテクスチャのサイズとフォーマット<code>RGBA</code>に変換してUnity側へ渡す<br />
 （Unity側では<code>ARGB</code>の表記なので、最初それで変換してハマってた・・・）</p>
 
 <h4 id="プラグインのエントリポイントを用意-54-77行目あたり">プラグインのエントリポイントを用意（54〜77行目あたり）</h4>
 
-<p>用意するのはラッパークラス<code>VideoCapture</code>の生成、毎フレーム呼び出す用、破棄の3つのCの関数。</p>
+<p>用意するのはラッパークラス<code>VideoCapture</code>の生成、毎フレーム呼び出す用、破棄の3つのCの関数</p>
 
 <p>これを55〜59行目のように宣言してC#へエクスポートする。
-このファイルはC++の扱いになっているので<code>extern &quot;C&quot;</code>が必要。<br />
+このファイルはC++の扱いになっているので<code>extern &quot;C&quot;</code>が必要<br />
 （逆に言うと、C#からはこれ以外が見えない状態となっている）</p>
 
-<p>関数の本体は61行目以降にあるように、単純にブリッジしているだけ。</p>
+<p>関数の本体は61行目以降にあるように、単純にブリッジしているだけ</p>
 
 <h3 id="unityでネイティブプラグイン作成">Unityでネイティブプラグイン作成</h3>
 
@@ -230,24 +248,24 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 <h4 id="コンポーネントの作成">コンポーネントの作成</h4>
 
 <p>ネイティブの画像データからテクスチャを生成し、
-そのテクスチャを指定した<code>Renderer</code>のマテリアルにセットするコンポーネントを作成。</p>
+そのテクスチャを指定した<code>Renderer</code>のマテリアルにセットするコンポーネントを作成</p>
 
 <script type="text/javascript" src="https://gist.github.com/5ea8d851f18b163ae6a70f6a05ccd4d1.js"></script>
 
 <p>当然、ネイティブプラグイン部分は、iOS上での実行時しか動かないので、
-該当部分は<code>#if UNITY_IOS</code>〜<code>#endif</code>でエディタ実行時にエラーにならないようにしておく。</p>
+該当部分は<code>#if UNITY_IOS</code>〜<code>#endif</code>でエディタ実行時にエラーにならないようにしておく</p>
 
-<p>ネイティブ側で準備したエントリポイントを利用する為にインポートの宣言（16〜26行目あたり）が必要。</p>
+<p>ネイティブ側で準備したエントリポイントを利用する為にインポートの宣言（16〜26行目あたり）が必要</p>
 
-<p>Cの関数宣言をそのままC#での宣言にするが、同じデータ型がC#にない場合は対応するデータ型を代わりに指定する。
+<p>Cの関数宣言をそのままC#での宣言にするが、同じデータ型がC#にない場合は対応するデータ型を代わりに指定する
 （今回だと<code>void*</code>が<code>IntPtr</code>）</p>
 
-<p>なお、構造体をやりとりするような場合は<code>マーシャリング</code>が必要となるので結構面倒。</p>
+<p>なお、構造体をやりとりするような場合は<code>マーシャリング</code>が必要となるので結構面倒</p>
 
 <p>宣言すれば後は通常のメソッドと同じ様に利用できる。ただし、C側と引数などが異なっていた場合は、
-実行時にエラーとなるので注意。</p>
+実行時にエラーとなるので注意</p>
 
-<p>後は、コンポーネントのライフサイクルと、キャプチャ用とテクスチャのオブジェクトのライフサイクルを一致させればOK。</p>
+<p>後は、コンポーネントのライフサイクルと、キャプチャ用とテクスチャのオブジェクトのライフサイクルを一致させればOK</p>
 
 <h4 id="シーン作成">シーン作成</h4>
 
@@ -275,9 +293,9 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 <h1 id="感想">感想</h1>
 
 <p>サンプルでは出てこないけど、C#のアンマネージドの辺りが、ObjCやSwiftに比べると結構大変な気がした。
-慣れてないからかも知れないけど、特にメモリ周りやマーシャリングはいずれちゃんと勉強しないと。</p>
+慣れてないからかも知れないけど、特にメモリ周りやマーシャリングはいずれちゃんと勉強しないと</p>
 
-<p>あと、OpenCV周りの細かい挙動もまだ把握しきれていないので調べたい。</p>
+<p>あと、OpenCV周りの細かい挙動もまだ把握しきれていないので調べたい</p>
 
 <h1 id="開発環境">開発環境</h1>
 
@@ -293,7 +311,7 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
 
 <p><a href="https://github.com/mike-neko/UnityOpenCV">こちら</a></p>
 
-<p>ただし、上記ソースには<code>opencv2.framework</code>が含まれていない。<br />
+<p>ただし、上記ソースには<code>opencv2.framework</code>が含まれていない<br />
 （Githubの100MB制限にかかってしまったので）<br />
 動かすには、<code>OpenCVのフレームワークの準備</code>の項目で準備した
 <code>opencv2.framework</code>を手動で<code>UnityOpenCV/Assets/Plugins/</code>直下に追加する必要がある。</p>
