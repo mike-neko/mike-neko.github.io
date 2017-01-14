@@ -159,9 +159,7 @@
       <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
-      <h2 id="概要">概要</h2>
-
-<p><code>Metal</code>を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
+      <p><code>Metal</code>を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
 なので、その面倒な部分を<code>SceneKit</code>に任せたいという時の話。</p>
 
 <p>今回は描画周りに<code>Metal</code>のシェーダを使うパターン。</p>
@@ -183,9 +181,7 @@
       <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
-      <h2 id="概要">概要</h2>
-
-<p>MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
+      <p>MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
 パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。</p>
 
 <p>なお、これも約26万パーティクルで60FPSを維持している。</p>
@@ -209,9 +205,7 @@
       <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
-      <h2 id="概要">概要</h2>
-
-<p>読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。</p>
+      <p>読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。</p>
 
 <p>画像サイズが512*512、1ピクセル=1パーティクルに分解するので、約26万個のパーティクルを動かしているが、60FPSを維持している。約100万まで増やすとiPhone6+で30FPSぐらいとなる。</p>
 
@@ -264,9 +258,7 @@
       <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
-      <h2 id="概要">概要</h2>
-
-<p>GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。</p>
+      <p>GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。</p>
 
 <p>パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
 デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。</p>
@@ -290,9 +282,7 @@
       <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
       </span>
       
-      <h2 id="概要">概要</h2>
-
-<p>元ネタのApple公式の<a href="https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html">MetalKitEssentials</a>をSwiftで書き直し＋αしたもの。
+      <p>元ネタのApple公式の<a href="https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html">MetalKitEssentials</a>をSwiftで書き直し＋αしたもの。
 内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
 シェーダもいたってシンプルでライトもなし。<br />
 ちなみに、MetalKitは<strong>iOS9以降</strong>でしか使えないので注意。</p>

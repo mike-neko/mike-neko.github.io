@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/library2/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
 その2ではマルチプラットフォーム対応とライブラリ管理ツールの導入についての内容&lt;/p&gt;
 
@@ -226,8 +224,6 @@ end
       
       <guid>https://mike-neko.github.io/blog/library1/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
 その1ではCIの導入周りについての内容&lt;/p&gt;
@@ -477,8 +473,6 @@ script:
       <guid>https://mike-neko.github.io/blog/oracle-mac/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;MacのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
 
 &lt;p&gt;CentOSの場合は&lt;a href=&#34;../oracle-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
@@ -646,8 +640,6 @@ $conn = oci_connect(
       <guid>https://mike-neko.github.io/blog/mssql-mac/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;MacのPHP5.6からSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
 
 &lt;p&gt;CentOSの場合は&lt;a href=&#34;../mssql-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
@@ -778,8 +770,6 @@ $pdo = new PDO(&#39;dblib:host=&#39; . $host . &#39;:&#39; . $port . &#39;;dbnam
       <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
 
 &lt;blockquote&gt;
@@ -905,8 +895,6 @@ brew install nginx-full --with-http2
       
       <guid>https://mike-neko.github.io/blog/docker/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
 

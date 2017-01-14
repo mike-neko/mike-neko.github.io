@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/guzzle-apns/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;でiOSのAPNs(Push通知)をお手軽に同時配信する方法&lt;/p&gt;
 
 &lt;p&gt;APNs自体については&lt;a href=&#34;../http2apns/&#34;&gt;APNs Provider API(http2)を利用する(Node.js)&lt;/a&gt;を参照&lt;/p&gt;
@@ -107,8 +105,6 @@ $response = $client-&amp;gt;request(&#39;POST&#39;, $url, [&#39;body&#39; =&amp;
       
       <guid>https://mike-neko.github.io/blog/http2apns-ios/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOSのAPNsをAPI経由で使う方法。
 しかもiOS端末からPush通知を送信する方法。&lt;/p&gt;
@@ -245,8 +241,6 @@ session.dataTaskWithRequest(request).resume()
       <guid>https://mike-neko.github.io/blog/http2apns/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;iOSのAPNsをAPI経由で使う方法。
 サーバサイドは&lt;code&gt;Node.js&lt;/code&gt;を利用。&lt;/p&gt;
 
@@ -371,8 +365,6 @@ session.dataTaskWithRequest(request).resume()
       
       <guid>https://mike-neko.github.io/blog/perfect-push/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその3&lt;/p&gt;
 

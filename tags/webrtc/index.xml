@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/webrtc-ios/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;iOSで&lt;code&gt;WebRTC&lt;/code&gt;を使ったビデオチャットを作る方法&lt;/p&gt;
 
 &lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
@@ -256,8 +254,6 @@ peer.add(can)
       
       <guid>https://mike-neko.github.io/blog/webrtc-build/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOSのブラウザでは&lt;code&gt;WebRTC&lt;/code&gt;がサポートされていないので、利用したい場合は
 ネイティブのフレームワークを使う必要がある。&lt;/p&gt;

@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/ios-cert/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;ATS&lt;/code&gt;が有効の場合、SSL/TLS通信でないと通信自体ができない。&lt;/p&gt;
 
 &lt;p&gt;が、開発時はローカル環境だったりドメイン自体がなかったりで正式なSSL証明書を使えないことが多い・・・
@@ -121,8 +119,6 @@
       <guid>https://mike-neko.github.io/blog/jazzy-cmd/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;Swiftのドキュメント生成ツールの&lt;a href=&#34;https://github.com/realm/jazzy&#34;&gt;jazzy&lt;/a&gt;の使い方。
 その1はコマンド周りのメモ。&lt;/p&gt;
 
@@ -210,8 +206,6 @@
       
       <guid>https://mike-neko.github.io/blog/http2apns-ios/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOSのAPNsをAPI経由で使う方法。
 しかもiOS端末からPush通知を送信する方法。&lt;/p&gt;
@@ -348,8 +342,6 @@ session.dataTaskWithRequest(request).resume()
       <guid>https://mike-neko.github.io/blog/http2apns/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;iOSのAPNsをAPI経由で使う方法。
 サーバサイドは&lt;code&gt;Node.js&lt;/code&gt;を利用。&lt;/p&gt;
 
@@ -475,8 +467,6 @@ session.dataTaskWithRequest(request).resume()
       <guid>https://mike-neko.github.io/blog/gittag/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;GitHubにタグを付ける方法。
 &lt;code&gt;GitHub Desktop&lt;/code&gt;はブランチ周りはサポートしているけどタグ関係はサポートしていないのでメモしておく。&lt;/p&gt;
 
@@ -545,8 +535,6 @@ GitHubではタグは主にリリースと関連づける前提の様子。&lt;/
       
       <guid>https://mike-neko.github.io/blog/swift-kvo/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;で&lt;code&gt;KVO&lt;/code&gt;を利用する方法について。特に&lt;code&gt;context&lt;/code&gt;を一意の識別子として使いたい場合の方法。&lt;/p&gt;
 
@@ -696,8 +684,6 @@ let value = change?[&amp;quot;Change Dictionary Keys&amp;quot;] as? &amp;quot;�
       
       <guid>https://mike-neko.github.io/blog/metalshader-scenekit/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;Metal&lt;/code&gt;を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
 なので、その面倒な部分を&lt;code&gt;SceneKit&lt;/code&gt;に任せたいという時の話。&lt;/p&gt;
@@ -930,8 +916,6 @@ material.setValue(SCNMaterialProperty(contents: contents),
       <guid>https://mike-neko.github.io/blog/webview-pdf/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;昔に&lt;code&gt;UIWebView&lt;/code&gt;でやっていたものを最新の&lt;code&gt;WKWebView&lt;/code&gt;+&lt;code&gt;Swift&lt;/code&gt;で書き換えた時のメモ。&lt;/p&gt;
 
 &lt;p&gt;内容は大したことないのだけれど、検索で引っかかるWebの資料がiOS9の実機で動かなかったので残しておく。&lt;/p&gt;
@@ -1010,8 +994,6 @@ UIGraphicsBeginPDFPageWithInfo(frame, nil)
       
       <guid>https://mike-neko.github.io/blog/qr-reader/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;以前に書いたQRコードの読み取りサンプルの別バージョン。
 今回はカメラ不要で画像データから直接QRコードを読み取りが可能。&lt;/p&gt;
@@ -1111,8 +1093,6 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
       <guid>https://mike-neko.github.io/blog/code-reader/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル。&lt;/p&gt;
 
 &lt;p&gt;なお、QRコードに限らず、他のバーコードや顔認識にも対応。対応形式は&lt;a href=&#34;https://developer.apple.com/library/prerelease/ios/documentation/AVFoundation/Reference/AVMetadataMachineReadableCodeObject_Class/index.html#//apple_ref/doc/constant_group/Machine_Readable_Object_Types&#34;&gt;公式&lt;/a&gt;を参照。地味にiOS8から対応形式が増えている。&lt;/p&gt;
@@ -1185,8 +1165,6 @@ let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
       
       <guid>https://mike-neko.github.io/blog/perfect-push/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその3&lt;/p&gt;
 
@@ -1363,8 +1341,6 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
       
       <guid>https://mike-neko.github.io/blog/perfect-2/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその2&lt;/p&gt;
 
@@ -1566,8 +1542,6 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
       <guid>https://mike-neko.github.io/blog/perfect-1/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその1&lt;/p&gt;
 
 &lt;p&gt;導入編ではベースとなるプロジェクトを一から作るあたりまで&lt;/p&gt;
@@ -1736,8 +1710,6 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;strong&gt;&lt;em&gt;Swift3版のソースは&lt;a href=&#34;https://github.com/mike-neko/NetworkInfo&#34;&gt;こちら&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt;&lt;br /&gt;
 &lt;strong&gt;&lt;em&gt;(解説はそのうちに・・・・)&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;iOS端末のIPアドレスを取得するサンプル。Cの関数呼び出し周りも含めてSwiftにて実装。&lt;/p&gt;
 
 &lt;p&gt;一応、Apple公式の方法でIPv6only環境でも動作確認済。&lt;/p&gt;
@@ -1822,8 +1794,6 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
       
       <guid>https://mike-neko.github.io/blog/metal-sand/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
 パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。&lt;/p&gt;

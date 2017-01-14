@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/library2/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
 その2ではマルチプラットフォーム対応とライブラリ管理ツールの導入についての内容&lt;/p&gt;
 
@@ -226,8 +224,6 @@ end
       
       <guid>https://mike-neko.github.io/blog/library1/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
 その1ではCIの導入周りについての内容&lt;/p&gt;
@@ -477,8 +473,6 @@ script:
       <guid>https://mike-neko.github.io/blog/pageview/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;UIPageViewController&lt;/code&gt;をエンドレスでページ切り替えする方法とかその他小ネタ&lt;/p&gt;
 
 &lt;p&gt;エンドレスの挙動は、最後のページから次へ進むと最初のページへ、最初のページからさらに戻ると最後のページへ移動する感じ。
@@ -588,8 +582,6 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
       <guid>https://mike-neko.github.io/blog/provisioning/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;AdHoc&lt;/code&gt;で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
 その有効期限をアプリ内から確認する方法&lt;/p&gt;
 
@@ -647,8 +639,6 @@ Xcode8からの自動にした場合は使えないっぽい）&lt;/p&gt;
       
       <guid>https://mike-neko.github.io/blog/multipart/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;（&lt;code&gt;Alamofire&lt;/code&gt;とかのライブラリを使った方が幸せになれると思うが）
 HTMLのフォームからの送信と同じ様な&lt;code&gt;multipart&lt;/code&gt;によるアップロードをiOSからする方法&lt;/p&gt;
@@ -789,8 +779,6 @@ echo json_encode($data);
       
       <guid>https://mike-neko.github.io/blog/webrtc-ios/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOSで&lt;code&gt;WebRTC&lt;/code&gt;を使ったビデオチャットを作る方法&lt;/p&gt;
 
@@ -1030,8 +1018,6 @@ peer.add(can)
       <guid>https://mike-neko.github.io/blog/webrtc-build/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;iOSのブラウザでは&lt;code&gt;WebRTC&lt;/code&gt;がサポートされていないので、利用したい場合は
 ネイティブのフレームワークを使う必要がある。&lt;/p&gt;
 
@@ -1112,8 +1098,6 @@ webrtc/build/ios/build_ios_libs.sh
       
       <guid>https://mike-neko.github.io/blog/multipeer/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOS同士限定になるが、&lt;code&gt;Multipeer Connectivity Framework&lt;/code&gt;でお手軽にP2P通信をさせる方法&lt;/p&gt;
 
@@ -1272,8 +1256,6 @@ P2PConnectivity.manager.send(message: &amp;quot;送信するテキスト&amp;quo
       
       <guid>https://mike-neko.github.io/blog/scrollview/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;Storyboard上だけでUIScrollViewのAutoLayoutを完結させる方法。
 中のUIを動的に追加や削除しないのであればコードを書く必要もないし、
@@ -1485,8 +1467,6 @@ NotificationCenter.default.addObserver(self,
       <guid>https://mike-neko.github.io/blog/unity-opencv/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;UnityからiOSのネイティブプラグイン経由で&lt;code&gt;OpenCV&lt;/code&gt;でカメラを利用するサンプル&lt;/p&gt;
 
 &lt;p&gt;内容としては、&lt;/p&gt;
@@ -1664,8 +1644,6 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
       <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
 
 &lt;blockquote&gt;
@@ -1791,8 +1769,6 @@ brew install nginx-full --with-http2
       
       <guid>https://mike-neko.github.io/blog/docker/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
 

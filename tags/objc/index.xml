@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/unity-opencv/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;UnityからiOSのネイティブプラグイン経由で&lt;code&gt;OpenCV&lt;/code&gt;でカメラを利用するサンプル&lt;/p&gt;
 
 &lt;p&gt;内容としては、&lt;/p&gt;
@@ -195,8 +193,6 @@ Unity上ではフォルダとして認識されて、中にいろいろあれば
       
       <guid>https://mike-neko.github.io/blog/objc-exception/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;ObjectiveCで書かれた&lt;code&gt;NSException&lt;/code&gt;を発生させるソースをSwiftから利用したい時の処理方法。&lt;/p&gt;
 

@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/ios-cert/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;ATS&lt;/code&gt;が有効の場合、SSL/TLS通信でないと通信自体ができない。&lt;/p&gt;
 
 &lt;p&gt;が、開発時はローカル環境だったりドメイン自体がなかったりで正式なSSL証明書を使えないことが多い・・・
@@ -120,8 +118,6 @@
       
       <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
 
@@ -248,8 +244,6 @@ brew install nginx-full --with-http2
       
       <guid>https://mike-neko.github.io/blog/docker/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
 

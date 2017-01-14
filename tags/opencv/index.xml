@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/unity-opencv/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;UnityからiOSのネイティブプラグイン経由で&lt;code&gt;OpenCV&lt;/code&gt;でカメラを利用するサンプル&lt;/p&gt;
 
 &lt;p&gt;内容としては、&lt;/p&gt;

@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
 
 &lt;blockquote&gt;
@@ -144,8 +142,6 @@ brew install nginx-full --with-http2
       
       <guid>https://mike-neko.github.io/blog/docker/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
 

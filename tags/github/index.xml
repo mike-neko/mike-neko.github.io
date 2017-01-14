@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/library2/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
 その2ではマルチプラットフォーム対応とライブラリ管理ツールの導入についての内容&lt;/p&gt;
 
@@ -226,8 +224,6 @@ end
       
       <guid>https://mike-neko.github.io/blog/library1/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
 その1ではCIの導入周りについての内容&lt;/p&gt;
@@ -476,8 +472,6 @@ script:
       
       <guid>https://mike-neko.github.io/blog/gittag/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;GitHubにタグを付ける方法。
 &lt;code&gt;GitHub Desktop&lt;/code&gt;はブランチ周りはサポートしているけどタグ関係はサポートしていないのでメモしておく。&lt;/p&gt;

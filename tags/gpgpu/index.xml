@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/metal-sand/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
 パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。&lt;/p&gt;
 
@@ -123,8 +121,6 @@
       
       <guid>https://mike-neko.github.io/blog/metal-image/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。&lt;/p&gt;
 
@@ -1056,8 +1052,6 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
       
       <guid>https://mike-neko.github.io/blog/metal-noise/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。&lt;/p&gt;
 

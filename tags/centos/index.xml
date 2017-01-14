@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/vpn-win/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;SSH&lt;/code&gt;が入っていないVPN上のWindowsへアクセスする方法&lt;/p&gt;
 
 &lt;p&gt;この場合、踏み台となる&lt;code&gt;SSH&lt;/code&gt;が入った別のマシンが必要となる&lt;/p&gt;
@@ -109,8 +107,6 @@
       
       <guid>https://mike-neko.github.io/blog/vagrant-cent/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;野良BOXはちょっと怖いので公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
 
@@ -236,8 +232,6 @@ vagrant vbguest
       
       <guid>https://mike-neko.github.io/blog/oracle-cent/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;CentOSのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
 
@@ -378,8 +372,6 @@ Oracle Compile-time Instant Client Version =&amp;gt; 12.1
       
       <guid>https://mike-neko.github.io/blog/mssql-cent/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;CentOSのPHP5.6から&lt;code&gt;PDO_ODBC&lt;/code&gt;でSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
 

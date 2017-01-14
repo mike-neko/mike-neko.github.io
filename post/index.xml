@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/library2/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
 その2ではマルチプラットフォーム対応とライブラリ管理ツールの導入についての内容&lt;/p&gt;
 
@@ -226,8 +224,6 @@ end
       
       <guid>https://mike-neko.github.io/blog/library1/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
 その1ではCIの導入周りについての内容&lt;/p&gt;
@@ -477,8 +473,6 @@ script:
       <guid>https://mike-neko.github.io/blog/pageview/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;UIPageViewController&lt;/code&gt;をエンドレスでページ切り替えする方法とかその他小ネタ&lt;/p&gt;
 
 &lt;p&gt;エンドレスの挙動は、最後のページから次へ進むと最初のページへ、最初のページからさらに戻ると最後のページへ移動する感じ。
@@ -588,8 +582,6 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
       <guid>https://mike-neko.github.io/blog/provisioning/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;AdHoc&lt;/code&gt;で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
 その有効期限をアプリ内から確認する方法&lt;/p&gt;
 
@@ -647,8 +639,6 @@ Xcode8からの自動にした場合は使えないっぽい）&lt;/p&gt;
       
       <guid>https://mike-neko.github.io/blog/multipart/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;（&lt;code&gt;Alamofire&lt;/code&gt;とかのライブラリを使った方が幸せになれると思うが）
 HTMLのフォームからの送信と同じ様な&lt;code&gt;multipart&lt;/code&gt;によるアップロードをiOSからする方法&lt;/p&gt;
@@ -789,8 +779,6 @@ echo json_encode($data);
       
       <guid>https://mike-neko.github.io/blog/webrtc-ios/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOSで&lt;code&gt;WebRTC&lt;/code&gt;を使ったビデオチャットを作る方法&lt;/p&gt;
 
@@ -1030,8 +1018,6 @@ peer.add(can)
       <guid>https://mike-neko.github.io/blog/webrtc-build/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;iOSのブラウザでは&lt;code&gt;WebRTC&lt;/code&gt;がサポートされていないので、利用したい場合は
 ネイティブのフレームワークを使う必要がある。&lt;/p&gt;
 
@@ -1112,8 +1098,6 @@ webrtc/build/ios/build_ios_libs.sh
       
       <guid>https://mike-neko.github.io/blog/multipeer/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;iOS同士限定になるが、&lt;code&gt;Multipeer Connectivity Framework&lt;/code&gt;でお手軽にP2P通信をさせる方法&lt;/p&gt;
 
@@ -1273,8 +1257,6 @@ P2PConnectivity.manager.send(message: &amp;quot;送信するテキスト&amp;quo
       <guid>https://mike-neko.github.io/blog/vpn-win/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;SSH&lt;/code&gt;が入っていないVPN上のWindowsへアクセスする方法&lt;/p&gt;
 
 &lt;p&gt;この場合、踏み台となる&lt;code&gt;SSH&lt;/code&gt;が入った別のマシンが必要となる&lt;/p&gt;
@@ -1365,8 +1347,6 @@ P2PConnectivity.manager.send(message: &amp;quot;送信するテキスト&amp;quo
       
       <guid>https://mike-neko.github.io/blog/vagrant-cent/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;野良BOXはちょっと怖いので公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
 
@@ -1492,8 +1472,6 @@ vagrant vbguest
       
       <guid>https://mike-neko.github.io/blog/oracle-cent/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;CentOSのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
 
@@ -1635,8 +1613,6 @@ Oracle Compile-time Instant Client Version =&amp;gt; 12.1
       <guid>https://mike-neko.github.io/blog/mssql-cent/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;CentOSのPHP5.6から&lt;code&gt;PDO_ODBC&lt;/code&gt;でSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
 
 &lt;p&gt;Macの場合は&lt;a href=&#34;../mssql-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
@@ -1757,8 +1733,6 @@ $pdo = new PDO(&#39;odbc:&#39; . $driver, $user, $pass);
       
       <guid>https://mike-neko.github.io/blog/oracle-mac/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;MacのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
 
@@ -1927,8 +1901,6 @@ $conn = oci_connect(
       <guid>https://mike-neko.github.io/blog/mssql-mac/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;MacのPHP5.6からSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
 
 &lt;p&gt;CentOSの場合は&lt;a href=&#34;../mssql-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
@@ -2058,8 +2030,6 @@ $pdo = new PDO(&#39;dblib:host=&#39; . $host . &#39;:&#39; . $port . &#39;;dbnam
       
       <guid>https://mike-neko.github.io/blog/guzzle-apns/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;でiOSのAPNs(Push通知)をお手軽に同時配信する方法&lt;/p&gt;
 

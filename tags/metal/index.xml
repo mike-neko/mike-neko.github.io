@@ -17,8 +17,6 @@
       <guid>https://mike-neko.github.io/blog/metalshader-scenekit/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;&lt;code&gt;Metal&lt;/code&gt;を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
 なので、その面倒な部分を&lt;code&gt;SceneKit&lt;/code&gt;に任せたいという時の話。&lt;/p&gt;
 
@@ -250,8 +248,6 @@ material.setValue(SCNMaterialProperty(contents: contents),
       <guid>https://mike-neko.github.io/blog/metal-sand/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
 パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。&lt;/p&gt;
 
@@ -356,8 +352,6 @@ material.setValue(SCNMaterialProperty(contents: contents),
       
       <guid>https://mike-neko.github.io/blog/metal-image/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。&lt;/p&gt;
 
@@ -1290,8 +1284,6 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
       <guid>https://mike-neko.github.io/blog/metal-noise/</guid>
       <description>
 
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
 &lt;p&gt;GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。&lt;/p&gt;
 
 &lt;p&gt;パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
@@ -1415,8 +1407,6 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
       
       <guid>https://mike-neko.github.io/blog/metal-model/</guid>
       <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;元ネタのApple公式の&lt;a href=&#34;https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html&#34;&gt;MetalKitEssentials&lt;/a&gt;をSwiftで書き直し＋αしたもの。
 内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
