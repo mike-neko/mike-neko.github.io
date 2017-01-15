@@ -10,19 +10,19 @@
     <atom:link href="https://mike-neko.github.io/tags/ssl/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>ATS有効の状態でオレオレ証明書を使って通信する(iOS9)</title>
+      <title>ATS有効の状態でオレオレ証明書を使って通信する</title>
       <link>https://mike-neko.github.io/blog/ios-cert/</link>
       <pubDate>Tue, 06 Sep 2016 00:35:57 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/ios-cert/</guid>
       <description>
 
-&lt;p&gt;&lt;code&gt;ATS&lt;/code&gt;が有効の場合、SSL/TLS通信でないと通信自体ができない。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ATS&lt;/code&gt;が有効の場合、SSL/TLS通信でないと通信自体ができない&lt;/p&gt;
 
 &lt;p&gt;が、開発時はローカル環境だったりドメイン自体がなかったりで正式なSSL証明書を使えないことが多い・・・
 かといって、ATSをOFFにして開発するのも・・・&lt;/p&gt;
 
-&lt;p&gt;って時に自己署名証明書（オレオレ証明書）を使ってしのぐ方法。&lt;/p&gt;
+&lt;p&gt;って時に自己署名証明書（オレオレ証明書）を使ってしのぐ方法&lt;/p&gt;
 
 &lt;p&gt;流れとしては、&lt;/p&gt;
 
@@ -31,19 +31,20 @@
 &lt;li&gt;iOS端末へオレオレ証明書をインストール&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;となる。&lt;br /&gt;
-ポイントはオレオレ証明書のインストール部分で、その手順をメモしておく。&lt;/p&gt;
+&lt;p&gt;となる&lt;/p&gt;
 
-&lt;blockquote&gt;
-&lt;p&gt;証明書の作成のあたりは&lt;a href=&#34;../docker/&#34;&gt;Docker構築メモ&lt;/a&gt;を参照&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;最初の証明書の作成については、&lt;a href=&#34;../docker/&#34;&gt;Docker構築メモ&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;p&gt;ポイントとなるオレオレ証明書のインストール部分については以下の通り&lt;/p&gt;
 
 &lt;h2 id=&#34;注意&#34;&gt;！注意！&lt;/h2&gt;
 
-&lt;p&gt;検証はiOS9でのみ。iOS10は未検証。
-（ローカル環境でのATSの挙動が変わりそう！？）&lt;/p&gt;
+&lt;p&gt;&lt;del&gt;検証はiOS9でのみiOS10は未検証
+（ローカル環境でのATSの挙動が変わりそう！？）&lt;/del&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;は&lt;code&gt;2.2&lt;/code&gt;の操作方法。&lt;/p&gt;
+&lt;p&gt;(2016/12/10追記) iOS9とiOS10両方で動作を確認済&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;は&lt;code&gt;2.2&lt;/code&gt;の操作方法&lt;/p&gt;
 
 &lt;p&gt;また、&lt;strong&gt;セキュリティ面で危険&lt;/strong&gt;なのでくれぐれもオレオレ証明書の容量・用法には気をつけること&lt;/p&gt;
 
@@ -103,10 +104,10 @@
 &lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;OS X 10.11.5&lt;/li&gt;
-&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.4&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;li&gt;OS X 10.11.5 / 10.12.1&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1 / 8.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.4 / 10.1.1&lt;/li&gt;
+&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>

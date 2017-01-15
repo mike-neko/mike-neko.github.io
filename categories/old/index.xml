@@ -6,110 +6,8 @@
     <description>Recent content in Old on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Tue, 06 Sep 2016 00:35:57 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 03 Sep 2016 00:12:14 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/old/index.xml" rel="self" type="application/rss+xml" />
-    
-    <item>
-      <title>ATS有効の状態でオレオレ証明書を使って通信する(iOS9)</title>
-      <link>https://mike-neko.github.io/blog/ios-cert/</link>
-      <pubDate>Tue, 06 Sep 2016 00:35:57 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/ios-cert/</guid>
-      <description>
-
-&lt;p&gt;&lt;code&gt;ATS&lt;/code&gt;が有効の場合、SSL/TLS通信でないと通信自体ができない。&lt;/p&gt;
-
-&lt;p&gt;が、開発時はローカル環境だったりドメイン自体がなかったりで正式なSSL証明書を使えないことが多い・・・
-かといって、ATSをOFFにして開発するのも・・・&lt;/p&gt;
-
-&lt;p&gt;って時に自己署名証明書（オレオレ証明書）を使ってしのぐ方法。&lt;/p&gt;
-
-&lt;p&gt;流れとしては、&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;オレオレ証明書を作ってサーバへ設定&lt;/li&gt;
-&lt;li&gt;iOS端末へオレオレ証明書をインストール&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;となる。&lt;br /&gt;
-ポイントはオレオレ証明書のインストール部分で、その手順をメモしておく。&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;証明書の作成のあたりは&lt;a href=&#34;../docker/&#34;&gt;Docker構築メモ&lt;/a&gt;を参照&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&#34;注意&#34;&gt;！注意！&lt;/h2&gt;
-
-&lt;p&gt;検証はiOS9でのみ。iOS10は未検証。
-（ローカル環境でのATSの挙動が変わりそう！？）&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;は&lt;code&gt;2.2&lt;/code&gt;の操作方法。&lt;/p&gt;
-
-&lt;p&gt;また、&lt;strong&gt;セキュリティ面で危険&lt;/strong&gt;なのでくれぐれもオレオレ証明書の容量・用法には気をつけること&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;p&gt;前提：サーバへのオレオレ証明書は設定済みの状態&lt;/p&gt;
-
-&lt;h3 id=&#34;準備&#34;&gt;準備&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;オレオレ証明書&lt;code&gt;server.crt&lt;/code&gt;を作成しておく&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator2&lt;/code&gt;をインストールしておく&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;構成プロファイルの作成&#34;&gt;構成プロファイルの作成&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;のメニューの&lt;code&gt;ファイル&lt;/code&gt;から&lt;code&gt;新規プロファイル&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;左側の&lt;code&gt;証明書&lt;/code&gt;の項目を選択し&lt;code&gt;構成&lt;/code&gt;ボタンを押下&lt;/li&gt;
-&lt;li&gt;ファイル選択画面でオレオレ証明書(&lt;code&gt;server.crt&lt;/code&gt;)を選択して開く&lt;/li&gt;
-&lt;li&gt;メニューの&lt;code&gt;ファイル&lt;/code&gt;から&lt;code&gt;保存&lt;/code&gt;を選択し、適当な名前をつけて保存&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;端末へインストール&#34;&gt;端末へインストール&lt;/h3&gt;
-
-&lt;p&gt;以下のどちらかの方法でインストールする&lt;/p&gt;
-
-&lt;h4 id=&#34;apple-configurator経由&#34;&gt;Apple Configurator経由&lt;/h4&gt;
-
-&lt;p&gt;Macと端末の有線接続が必要&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;Apple Configurator&lt;/code&gt;に接続中の端末が表示されるので選択&lt;/li&gt;
-&lt;li&gt;ツールバーの&lt;code&gt;追加&lt;/code&gt;ボタンから&lt;code&gt;プロファイル&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;作成した構成プロファイルを選択&lt;/li&gt;
-&lt;li&gt;iOS端末の画面がインストール画面に変わるので、&lt;code&gt;インストール&lt;/code&gt;x3&lt;br /&gt;
-（プロファイルのインストールはConfiguratorから操作不可）&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&#34;ネットワーク経由&#34;&gt;ネットワーク経由&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;適当なサーバに構成プロファイルを置いてダウンロードできるようにする&lt;/li&gt;
-&lt;li&gt;iOS端末のSafariから該当のURLへアクセス&lt;/li&gt;
-&lt;li&gt;インストール画面になるので&lt;code&gt;インストール&lt;/code&gt;x3&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;なお、証明書だけをインストールしてもアプリからは接続できないので、
-&lt;code&gt;構成プロファイル&lt;/code&gt;を作ってからインストールするのが大事！&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Appleのテクニカルノート：&lt;a href=&#34;https://developer.apple.com/library/ios/technotes/tn2326/_index.html&#34;&gt;TLSのテスト用証明書の作成&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.5&lt;/li&gt;
-&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.4&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
     
     <item>
       <title>jazzyの使い方 その1</title>
@@ -1889,6 +1787,135 @@ openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalSand&#34;&gt;こちら&lt;/a&gt;(&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>SwiftでNSExceptionを処理する</title>
+      <link>https://mike-neko.github.io/blog/objc-exception/</link>
+      <pubDate>Sat, 20 Feb 2016 08:10:44 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/objc-exception/</guid>
+      <description>
+
+&lt;p&gt;ObjectiveCで書かれた&lt;code&gt;NSException&lt;/code&gt;を発生させるソースをSwiftから利用したい時の処理方法。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;NSException&lt;/code&gt;は、ObjectiveCの&lt;code&gt;@try ~ @catch ~ @finally&lt;/code&gt;でしか例外処理を行えない。例外処理を書いていない時は、実行時エラーとして処理される。つまり、Swiftから&lt;code&gt;NSException&lt;/code&gt;を発生させるコードを呼び出して例外が起きると、問答無用でアプリが落ちてしまう・・・&lt;/p&gt;
+
+&lt;p&gt;対応策としては、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;元のコードもSwiftで書き換えてしまう&lt;/li&gt;
+&lt;li&gt;そもそも例外は起きるはずがないので&lt;del&gt;落ちていい&lt;/del&gt;無視する&lt;/li&gt;
+&lt;li&gt;該当のメソッドを呼び出す部分をブリッジするラッパを作る&lt;/li&gt;
+&lt;li&gt;なんとかしてSwiftで&lt;code&gt;NSException&lt;/code&gt;の例外を処理する&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;といった感じになると思うが、サードパーティのライブラリとかだと1や2の方法が取れない場合がある。
+3も該当のメソッドが多ければ作業量が多くなるし、ソースの見通しも悪くなる。&lt;/p&gt;
+
+&lt;p&gt;なので、今回は4の方法で例外を処理する方法についてメモしておく。&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;p&gt;基本的な考えた方は3と同じで、ObjectiveCでしか処理できない部分だけラップしてしまえ〜となる。
+まずは以下の様なブリッジ用のObjectiveCのクラスを作る。（&lt;code&gt;Bridging-Header&lt;/code&gt;への追加も忘れずに）&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5add082e4f51059161ce.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;中は見ての通り、例外処理のそれぞれの中身をクロージャ（ブロック）でブリッジ用のクラスに渡している。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;nonnull&lt;/code&gt;や&lt;code&gt;nullable&lt;/code&gt;をつけているのは、Swift側から呼び出す時に&lt;code&gt;Optional&lt;/code&gt;になるかどうかを制御する為。&lt;code&gt;finally&lt;/code&gt;は不要なことも多々あるので&lt;code&gt;nil&lt;/code&gt;を渡せる様に&lt;code&gt;nullable&lt;/code&gt;にしている。&lt;/p&gt;
+
+&lt;p&gt;（意図して処理がないことを明示させる為に空ブロックではなく&lt;code&gt;nil&lt;/code&gt;を渡せる様にしている）&lt;/p&gt;
+
+&lt;h3 id=&#34;使い方&#34;&gt;使い方&lt;/h3&gt;
+
+&lt;p&gt;Swiftから呼び出す時は以下の感じ。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ObjC_Exception.objC_try({ _ in
+  // NSExceptionが起きるかもしれない処理
+},
+
+objC_catch: { (NSException) in
+  // 例外発生時の処理
+},
+
+objC_finally: { _ in
+  // 後処理とか...
+})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;finally&lt;/code&gt;が不要であれば、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ObjC_Exception.objC_try({ _ in
+  // NSExceptionが起きるかもしれない処理
+},
+
+objC_catch: { (NSException) in
+  // 例外発生時の処理
+},
+
+objC_finally: nil)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;もし複数の&lt;code&gt;catch&lt;/code&gt;が使いたい場合は、これを元に拡張すればOK。&lt;/p&gt;
+
+&lt;h3 id=&#34;nonnullやnullableのアノテーションについて&#34;&gt;nonnullやnullableのアノテーションについて&lt;/h3&gt;
+
+&lt;p&gt;ObjectiveC側でアノテーションを指定すると、Swiftとの連携時のメソッドの型にも反映される。&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;ObjC&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Swift&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;変換前(ObjC)&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;変換後(Swift)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;未指定&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;(型)!&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Hoge*&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Hoge!&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;nonull&lt;br&gt;_Nonnull&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;(型)&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Hoge* _Nonnull&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Hoge&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;nullable&lt;br&gt;_Nullable&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;(型)?&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Hoge* _Nullable&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Hoge?&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;例えば、今回のメソッドをSwiftから呼び出す時は&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ObjC_Exception.objC_try(objC_try: () -&amp;gt; Void, objC_catch: (NSException) -&amp;gt; Void, objC_finally: (() -&amp;gt; Void)?)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という形式になっていて、&lt;code&gt;objC_finally&lt;/code&gt;を&lt;code&gt;nullable&lt;/code&gt;にしたので、ちゃんと&lt;code&gt;?&lt;/code&gt;のついた&lt;code&gt;Optional&lt;/code&gt;になっているし、それ以外は&lt;code&gt;nonnull&lt;/code&gt;なので型がそのまま使われている。&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 7.2&lt;/li&gt;
+&lt;li&gt;iOS 9.2&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/ObjC_Exception&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
