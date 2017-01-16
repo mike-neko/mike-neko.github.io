@@ -6,96 +6,8 @@
     <description>Recent content in Swift2 on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sat, 03 Sep 2016 00:12:14 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 25 Aug 2016 23:00:38 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/tags/swift2/index.xml" rel="self" type="application/rss+xml" />
-    
-    <item>
-      <title>jazzyの使い方 その1</title>
-      <link>https://mike-neko.github.io/blog/jazzy-cmd/</link>
-      <pubDate>Sat, 03 Sep 2016 00:12:14 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/jazzy-cmd/</guid>
-      <description>
-
-&lt;p&gt;Swiftのドキュメント生成ツールの&lt;a href=&#34;https://github.com/realm/jazzy&#34;&gt;jazzy&lt;/a&gt;の使い方。
-その1はコマンド周りのメモ。&lt;/p&gt;
-
-&lt;h2 id=&#34;ドキュメント生成時のコマンド&#34;&gt;ドキュメント生成時のコマンド&lt;/h2&gt;
-
-&lt;p&gt;主に自分個人で使う時のコマンドは以下の通り&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;jazzy -o Documents --min-acl internal --skip-undocumented -a M.Ike -x SYMROOT=/private/tmp/jazzy
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;o-documents&#34;&gt;&amp;rdquo;-o Documents&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;-o [フォルダ]&lt;/code&gt;でドキュメントを出力するフォルダを指定する。&lt;br /&gt;
-なお、フォルダが存在しない場合は自動で作成される。&lt;/p&gt;
-
-&lt;p&gt;今回の指定だと以下の場所にフォルダが生成される&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Sample                 # 対象のプロジェクトのフォルダ
-  ├─ Sample            # Xcodeのソースなど一式
-  ├─ Sample.xcodeproj  # Xcodeのプロジェクトファイル
-  └─ Documents         # この中に生成されたドキュメント一式が入る
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;min-acl-internal&#34;&gt;&amp;rdquo;&amp;ndash;min-acl internal&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;--min-acl [private | internal | public]&lt;/code&gt;で出力の対象を指定する。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Swift2.x&lt;/code&gt;では&lt;code&gt;public&lt;/code&gt;は使わずに、明示的な&lt;code&gt;private&lt;/code&gt;か暗黙的な&lt;code&gt;internal&lt;/code&gt;しか使わない
-（※複数のモジュールを利用しない場合）
-ので、&lt;code&gt;internal&lt;/code&gt;以上で設定している。&lt;/p&gt;
-
-&lt;h3 id=&#34;skip-undocumented&#34;&gt;&amp;rdquo;&amp;ndash;skip-undocumented&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;この設定をすると、ドキュメントコメントのないソースからはドキュメントを生成しなくなる。&lt;/p&gt;
-
-&lt;p&gt;さらに&lt;code&gt;documentation-coverage&lt;/code&gt;の対象からも除外される。&lt;/p&gt;
-
-&lt;h3 id=&#34;a&#34;&gt;&amp;rdquo;-a&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;作者名の指定。
-別に個人用なので必要もないが、ないと見栄えが悪いのでつけている。&lt;/p&gt;
-
-&lt;h3 id=&#34;x-symroot-private-tmp-jazzy&#34;&gt;&amp;rdquo;-x SYMROOT=/private/tmp/jazzy&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;-x arg1,arg2,…argN,&lt;/code&gt;で&lt;code&gt;xcodebuild&lt;/code&gt;時のビルドオプションを指定できる。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;jazzy&lt;/code&gt;を使うと&lt;code&gt;build&lt;/code&gt;というビルドの一時ファイルの入ったディレクトリが
-プロジェクトのフォルダ内に生成されてしまう。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;.gitignore&lt;/code&gt;でちゃんと指定しているので実害はないが、一時ファイルが生成されるのは気持ち悪い。。。&lt;/p&gt;
-
-&lt;p&gt;という訳で、これを指定すれば&lt;code&gt;jazzy&lt;/code&gt;利用時の一時ファイルを
-&lt;code&gt;/private/tmp/jazzy&lt;/code&gt;(テンポラリフォルダ)へ出力させることができ、
-同じフォルダ内に&lt;code&gt;build&lt;/code&gt;フォルダが生成されなくなる。
-（テンポラリフォルダは再起動時に消去される）&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;ただしXcodeのプロジェクトの設定によっては、別の環境変数を書き換える必要あり&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;使っていないもの&#34;&gt;使っていないもの&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;-c&lt;/code&gt;をつけると、ドキュメント作成前に元のデータを全部消してくれるので、
-本来はつけておいた方が良いオプション。&lt;/p&gt;
-
-&lt;p&gt;が、ヘルプにもあるように、指定した出力先のフォルダが&lt;strong&gt;問答無用で削除&lt;/strong&gt;されてしまう。。。&lt;br /&gt;
-開発中はターミナルから手打ち（コピペ）して使うことが多いので、
-間違って指定してしまった！という悲劇を防ぐ為、これは指定していない&lt;/p&gt;
-
-&lt;p&gt;（確実に作りたい時は手動で削除で対応。
-ビルド用のシェルスクリプトを組んでいる場合はつけている）&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.6&lt;/li&gt;
-&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
-&lt;li&gt;jazzy 0.7.0&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
     
     <item>
       <title>APNs Provider API(http2)を利用する(iOS)</title>
@@ -1985,6 +1897,75 @@ computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: thre
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalCompute&#34;&gt;こちら&lt;/a&gt; (&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MetalKitのSwift版サンプル</title>
+      <link>https://mike-neko.github.io/blog/metal-model/</link>
+      <pubDate>Fri, 22 Jan 2016 00:23:56 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal-model/</guid>
+      <description>
+
+&lt;p&gt;元ネタのApple公式の&lt;a href=&#34;https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html&#34;&gt;MetalKitEssentials&lt;/a&gt;をSwiftで書き直し＋αしたもの。
+内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
+シェーダもいたってシンプルでライトもなし。&lt;br /&gt;
+ちなみに、MetalKitは&lt;strong&gt;iOS9以降&lt;/strong&gt;でしか使えないので注意。&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;h3 id=&#34;はじめに&#34;&gt;はじめに&lt;/h3&gt;
+
+&lt;p&gt;一番最初につまずいたのは、ビルド自体が通らず、Metalのフレームワークのインポートでエラーになる！ってこと。当然、コードを書く時にも自動補完は効かないしエラーでまくるし・・・&lt;br /&gt;
+で、原因はターゲットでシュミレータを選択していたこと。実行できないのは知っていたけど、まさかビルドすら通らないのは予想外。。。&lt;/p&gt;
+
+&lt;h3 id=&#34;バッファへのアクセス&#34;&gt;バッファへのアクセス&lt;/h3&gt;
+
+&lt;p&gt;今回、一番書き方が判らなくて苦労したのがこれ。単にVertexBufferへのポインタを取得して、中のデータを読み書きしたいだけなのだが、当然、Swiftがメモリへの直アクセスを許してくれるわけはなく・・・&lt;/p&gt;
+
+&lt;p&gt;上がObjective-Cで書いた場合で下がSwiftの場合：&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/1a7595b9b8cbe769a74d.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;Swiftでは、まずポインタ&lt;code&gt;p&lt;/code&gt;を明示的に取得し、それから&lt;code&gt;memory()&lt;/code&gt;で&lt;code&gt;VertexUniforms&lt;/code&gt;の型へ変換し、それを通して中のデータへアクセスするという手間が必要。やはりSwiftは型にうるさい。&lt;/p&gt;
+
+&lt;p&gt;なお、このサンプルでは配列ではないので&lt;code&gt;p.memory()&lt;/code&gt;だが、バッファの内容が配列になっていてインデックスでアクセスしたい場合は、&lt;code&gt;p.advancedBy(i).memory()&lt;/code&gt;(iがインデックス)とする。&lt;/p&gt;
+
+&lt;p&gt;ちょっと面倒だけど、暗黙的な「わかる人にはわかる」といった曖昧さを排除し、ポインタの状態やメモリにアクセスしていることを明示させているのは、Swiftの良さの一つだと思う。&lt;/p&gt;
+
+&lt;h3 id=&#34;シェーダ用の構造体&#34;&gt;シェーダ用の構造体&lt;/h3&gt;
+
+&lt;p&gt;今回、シェーダにデータを渡す時の型（構造体）を、シェーダのファイルとSwift上でそれぞれ同じ宣言をしている。これは、Swiftから直接Cのファイルを見に行けない為。ブリッジヘッダを使ったりすれば重複して宣言しなくてよさそうだけど、未検証。Swift上ではSwiftの構造体を使えた方が便利かなと思ったので（結局使わなかったけど）&lt;/p&gt;
+
+&lt;p&gt;なお、当然ながら&lt;strong&gt;メモリのアライメントには注意が必要&lt;/strong&gt;(&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Metal/Reference/MetalShadingLanguageGuide/data-types/data-types.html#//apple_ref/doc/uid/TP40014364-CH2-SW15&#34;&gt;公式:アライメント一覧&lt;/a&gt;)なので、必要に応じてパディングすること。ちなみに忘れると画面が心霊現象みたくなったり表示されなかったり・・・&lt;/p&gt;
+
+&lt;h3 id=&#34;simd&#34;&gt;SIMD&lt;/h3&gt;
+
+&lt;p&gt;Xcode7からようやくSIMDがサポート。これでvectorやmatrixのベタなコードを書く or 持ってくる必要がなくなった。（でも移動や回転とかはやっぱり自前が必要）&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;import simd&lt;/code&gt;で使えるようになる。&lt;code&gt;MetalKit&lt;/code&gt;のインポートでも良い。&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;正直なところ、Unityとかに慣れてしまった身にとって、Metalは結構大変だった。。。日本語の資料も少ないし、公式の資料もまだまだObjective-Cが多い感じ。&lt;br /&gt;
+といっても、DirectXのダラダラとした初期化とかに比べると、機種依存がなく簡潔で楽。久々に3Dの基礎を振り返る良い機会になったと思う。&lt;br /&gt;
+結局まあ、Unityとかが偉大すぎるという当たり前の結論に到達。&lt;/p&gt;
+
+&lt;p&gt;触っていて、良い！と思ったのは、バグで描画がおかしくなったりしても、影響が端末だけに限られて作業しているMacは無事なこと。&lt;br /&gt;
+昔々のDirectXでしょっちゅうブルースクリーンを出してしまい、コードが消えたりPC不安定になっていた人なので、これはとても助かった。&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 7.2&lt;/li&gt;
+&lt;li&gt;iOS 9.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalModel&#34;&gt;こちら&lt;/a&gt; (&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>
     </item>
     

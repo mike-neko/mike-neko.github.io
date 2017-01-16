@@ -474,7 +474,7 @@ script:
       <description>
 
 &lt;p&gt;GitHubにタグを付ける方法。
-&lt;code&gt;GitHub Desktop&lt;/code&gt;はブランチ周りはサポートしているけどタグ関係はサポートしていないのでメモしておく。&lt;/p&gt;
+&lt;code&gt;GitHub Desktop&lt;/code&gt;はブランチ周りはサポートしているけどタグ関係はサポートしていないのでメモしておく&lt;/p&gt;
 
 &lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
 
@@ -515,9 +515,9 @@ git push origin --tags
 &lt;h2 id=&#34;githubの状態&#34;&gt;GitHubの状態&lt;/h2&gt;
 
 &lt;p&gt;タグをプッシュすると、GitHub上でも確認できるようになる。&lt;br /&gt;
-GitHubではタグは主にリリースと関連づける前提の様子。&lt;/p&gt;
+GitHubではタグは主にリリースと関連づける前提の様子&lt;/p&gt;
 
-&lt;p&gt;例だと、以下のような感じで反映される。&lt;/p&gt;
+&lt;p&gt;例だと、以下のような感じで反映される&lt;/p&gt;
 
 &lt;figure&gt;
 	&lt;img src=&#34;https://mike-neko.github.io/media/2016-08-02-gittag/github.png&#34; /&gt;

@@ -46,7 +46,7 @@
 
       
         <li class="sidebar-nav-item">
-            <a href="/categories/ios">ios&nbsp;(14)</a>
+            <a href="/categories/ios">ios&nbsp;(15)</a>
         </li>
       
         <li class="sidebar-nav-item">
@@ -54,7 +54,7 @@
         </li>
       
         <li class="sidebar-nav-item">
-            <a href="/categories/old">old&nbsp;(19)</a>
+            <a href="/categories/old">old&nbsp;(17)</a>
         </li>
       
         <li class="sidebar-nav-item">
@@ -66,7 +66,7 @@
         </li>
       
         <li class="sidebar-nav-item">
-            <a href="/categories/web">web&nbsp;(2)</a>
+            <a href="/categories/web">web&nbsp;(3)</a>
         </li>
       
 
@@ -102,7 +102,7 @@
         
           &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift2">swift2&nbsp;(16)</a>&nbsp;
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(15)</a>&nbsp;
         
           &nbsp;<a href="/tags/swift3">swift3&nbsp;(11)</a>&nbsp;
         
@@ -139,16 +139,16 @@
     <h1>jazzyの使い方 その1</h1>
     <span class="post-date">Sep 3, 2016 
     
-    &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
+    
     </span>
     
 
 <p>Swiftのドキュメント生成ツールの<a href="https://github.com/realm/jazzy">jazzy</a>の使い方。
-その1はコマンド周りのメモ。</p>
+その1はコマンド周りのメモ</p>
 
 <h2 id="ドキュメント生成時のコマンド">ドキュメント生成時のコマンド</h2>
 
@@ -159,8 +159,8 @@
 
 <h3 id="o-documents">&rdquo;-o Documents&rdquo;</h3>
 
-<p><code>-o [フォルダ]</code>でドキュメントを出力するフォルダを指定する。<br />
-なお、フォルダが存在しない場合は自動で作成される。</p>
+<p><code>-o [フォルダ]</code>でドキュメントを出力するフォルダを指定する<br />
+なお、フォルダが存在しない場合は自動で作成される</p>
 
 <p>今回の指定だと以下の場所にフォルダが生成される</p>
 
@@ -172,35 +172,33 @@
 
 <h3 id="min-acl-internal">&rdquo;&ndash;min-acl internal&rdquo;</h3>
 
-<p><code>--min-acl [private | internal | public]</code>で出力の対象を指定する。</p>
+<p><code>--min-acl [private | internal | public]</code>で出力の対象を指定する</p>
 
 <p><code>Swift2.x</code>では<code>public</code>は使わずに、明示的な<code>private</code>か暗黙的な<code>internal</code>しか使わない
-（※複数のモジュールを利用しない場合）
-ので、<code>internal</code>以上で設定している。</p>
+（※ライブラリではない通常のソースの場合）ので、<code>internal</code>以上で設定している</p>
 
 <h3 id="skip-undocumented">&rdquo;&ndash;skip-undocumented&rdquo;</h3>
 
-<p>この設定をすると、ドキュメントコメントのないソースからはドキュメントを生成しなくなる。</p>
+<p>この設定をすると、ドキュメントコメントのないソースからはドキュメントを生成しなくなる</p>
 
-<p>さらに<code>documentation-coverage</code>の対象からも除外される。</p>
+<p>さらに<code>documentation-coverage</code>の対象からも除外される</p>
 
 <h3 id="a">&rdquo;-a&rdquo;</h3>
 
-<p>作者名の指定。
-別に個人用なので必要もないが、ないと見栄えが悪いのでつけている。</p>
+<p>作者名の指定。別に個人用なので必要もないが、ないと見栄えが悪いのでつけている</p>
 
 <h3 id="x-symroot-private-tmp-jazzy">&rdquo;-x SYMROOT=/private/tmp/jazzy&rdquo;</h3>
 
-<p><code>-x arg1,arg2,…argN,</code>で<code>xcodebuild</code>時のビルドオプションを指定できる。</p>
+<p><code>-x arg1,arg2,…argN,</code>で<code>xcodebuild</code>時のビルドオプションを指定できる</p>
 
 <p><code>jazzy</code>を使うと<code>build</code>というビルドの一時ファイルの入ったディレクトリが
-プロジェクトのフォルダ内に生成されてしまう。</p>
+プロジェクトのフォルダ内に生成されてしまう</p>
 
 <p><code>.gitignore</code>でちゃんと指定しているので実害はないが、一時ファイルが生成されるのは気持ち悪い。。。</p>
 
 <p>という訳で、これを指定すれば<code>jazzy</code>利用時の一時ファイルを
 <code>/private/tmp/jazzy</code>(テンポラリフォルダ)へ出力させることができ、
-同じフォルダ内に<code>build</code>フォルダが生成されなくなる。
+同じフォルダ内に<code>build</code>フォルダが生成されなくなる
 （テンポラリフォルダは再起動時に消去される）</p>
 
 <p><em>ただしXcodeのプロジェクトの設定によっては、別の環境変数を書き換える必要あり</em></p>
@@ -208,13 +206,13 @@
 <h3 id="使っていないもの">使っていないもの</h3>
 
 <p><code>-c</code>をつけると、ドキュメント作成前に元のデータを全部消してくれるので、
-本来はつけておいた方が良いオプション。</p>
+本来はつけておいた方が良いオプション</p>
 
 <p>が、ヘルプにもあるように、指定した出力先のフォルダが<strong>問答無用で削除</strong>されてしまう。。。<br />
 開発中はターミナルから手打ち（コピペ）して使うことが多いので、
 間違って指定してしまった！という悲劇を防ぐ為、これは指定していない</p>
 
-<p>（確実に作りたい時は手動で削除で対応。
+<p>（確実に作りたい時は手動で削除で対応
 ビルド用のシェルスクリプトを組んでいる場合はつけている）</p>
 
 <h1 id="開発環境">開発環境</h1>
