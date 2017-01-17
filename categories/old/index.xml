@@ -145,131 +145,6 @@ session.dataTaskWithRequest(request).resume()
     </item>
     
     <item>
-      <title>APNs Provider API(http2)を利用する(Node.js)</title>
-      <link>https://mike-neko.github.io/blog/http2apns/</link>
-      <pubDate>Thu, 11 Aug 2016 17:16:16 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/http2apns/</guid>
-      <description>
-
-&lt;p&gt;iOSのAPNsをAPI経由で使う方法。
-サーバサイドは&lt;code&gt;Node.js&lt;/code&gt;を利用。&lt;/p&gt;
-
-&lt;h3 id=&#34;apns-provider-api&#34;&gt;APNs Provider API&lt;/h3&gt;
-
-&lt;p&gt;利用するために必要なのは、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;http2のPOST送信&lt;/li&gt;
-&lt;li&gt;クライアント認証用の証明書&lt;/li&gt;
-&lt;li&gt;CAルート証明書（必要な場合のみ）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;となる。
-なお、&lt;code&gt;http2&lt;/code&gt;対応が必要なのは送信のみなので、サーバ自体はhttp2対応にしなくてもOK。&lt;/p&gt;
-
-&lt;p&gt;従来のソケット通信経由でAPNsを送信するのと比較すると、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;実装が簡単&lt;/li&gt;
-&lt;li&gt;1つのデバイストークン毎に結果が取得できる&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;というのが大きなメリット。&lt;/p&gt;
-
-&lt;p&gt;特に以前は、環境の異なるトークンを送信すると、いきなりソケットの接続自体が切断される・・・
-みたいな挙動があって確実に全件送信させるのは結構大変だったけど、API方式ではそういったのはなさそう。&lt;/p&gt;
-
-&lt;p&gt;パフォーマンス的にどうなのかは不明。&lt;/p&gt;
-
-&lt;h3 id=&#34;送信形式&#34;&gt;送信形式&lt;/h3&gt;
-
-&lt;p&gt;環境毎のAppleのサーバへPOSTリクエストを送ることでPush通知が送信される。&lt;br /&gt;
-指定する内容自体は従来のものと同じなので、詳細な内容は公式を参照のこと。&lt;/p&gt;
-
-&lt;h4 id=&#34;アドレス&#34;&gt;アドレス&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;開発 : &lt;code&gt;https://api.development.push.apple.com/3/device/&amp;lt;デバイストークン&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;商用 : &lt;code&gt;https://api.push.apple.com/3/device/&amp;lt;デバイストークン&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;ヘッダ&#34;&gt;ヘッダ&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;apns-topic&lt;/code&gt; : 送信対象のアプリのバンドルID&lt;br /&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;apns-id&lt;/code&gt; : 通知ID。指定しなければAPNs側で自動生成&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;apns-expiration&lt;/code&gt; : 通知が無効になり破棄できるようになる有効期限&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;apns-priority&lt;/code&gt; : 優先度&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;ボディ&#34;&gt;ボディ&lt;/h4&gt;
-
-&lt;p&gt;JSON形式の通知ペイロード&lt;/p&gt;
-
-&lt;h4 id=&#34;レスポンス&#34;&gt;レスポンス&lt;/h4&gt;
-
-&lt;p&gt;送信の受付に成功した場合はステータスコードが&lt;code&gt;200&lt;/code&gt;で返ってくる。&lt;/p&gt;
-
-&lt;p&gt;失敗した場合は、それ以外のステータスコードと、コードに応じてより詳細なエラー内容がボディで返ってくる。&lt;/p&gt;
-
-&lt;h2 id=&#34;環境構築&#34;&gt;環境構築&lt;/h2&gt;
-
-&lt;p&gt;もしかすると、&lt;code&gt;OpenSSL&lt;/code&gt;は最新に上げておいた方がいいかも知れない。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Node.js&lt;/code&gt;は現時点(6.3.1)では&lt;code&gt;http2&lt;/code&gt;には対応していないので、
-&lt;a href=&#34;https://www.npmjs.com/package/http2&#34;&gt;http2&lt;/a&gt;というモジュールをインストールしておく。&lt;/p&gt;
-
-&lt;h3 id=&#34;証明書&#34;&gt;証明書&lt;/h3&gt;
-
-&lt;p&gt;証明書の準備方法は、以前の&lt;a href=&#34;../perfect-push/&#34;&gt;Perfect APNs編&lt;/a&gt;と同じ。
-ただし、今回はMacに直接インストールした&lt;code&gt;Node.js&lt;/code&gt;を使うので、CAルート証明書は不要。&lt;/p&gt;
-
-&lt;h2 id=&#34;実装&#34;&gt;実装&lt;/h2&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/2f2f9f9130ef1d46872894b115a4b0c3.js&#34;&gt;&lt;/script&gt;
-
-&lt;h3 id=&#34;クライアント証明書の指定&#34;&gt;クライアント証明書の指定&lt;/h3&gt;
-
-&lt;p&gt;22,23行目にあるように、クライアント証明書と鍵を読み込んで指定する。
-（もちろん各ファイルを同じフォルダ内に置いておくのを忘れないように）&lt;/p&gt;
-
-&lt;p&gt;もし、証明書の秘密鍵のパスフレーズを設定している時は、25行目のように設定が必要。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;（8/24 追記）&lt;/em&gt;&lt;/strong&gt;
-&lt;del&gt;証明書の中が送信対象アプリ単独のもの（他の証明書や鍵を含んでいない）であれば、
-&lt;code&gt;apns-topic&lt;/code&gt;は指定しなくても送信可能。&lt;br /&gt;
-通常の手順で生成した場合は単独のはずなので、指定は不要。&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;（11/20 追記）&lt;/em&gt;&lt;/strong&gt;
-開発環境では上記の通りだが、本番環境では指定がないとエラーが発生する為、必須の様子&lt;/p&gt;
-
-&lt;h3 id=&#34;通知内容の設定&#34;&gt;通知内容の設定&lt;/h3&gt;
-
-&lt;p&gt;送信形式の項目で述べたように、ヘッダにバンドルIDを設定(10−12,21行目)する。&lt;/p&gt;
-
-&lt;p&gt;デバイストークンは、URLの一部として設定する(20行目)。&lt;/p&gt;
-
-&lt;p&gt;通知ペイロードは、44行目にあるようにボディとして書き出す。&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html&#34;&gt;APNs Provider API&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/jp/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW1&#34;&gt;日本語ドキュメント&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.12 Beta&lt;/li&gt;
-&lt;li&gt;Node.js 6.3.1&lt;/li&gt;
-&lt;li&gt;OpenSSL 1.0.2&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
       <title>KVOを利用する(Swift)</title>
       <link>https://mike-neko.github.io/blog/swift-kvo/</link>
       <pubDate>Mon, 25 Jul 2016 22:55:03 +0900</pubDate>
@@ -2690,6 +2565,130 @@ particles[index].color.a -= (1 - f.x * f.y * f.z) * 0.1 * rnd_d * 3;
 &lt;li&gt;OpenGL4.5：&lt;a href=&#34;https://www.opengl.org/sdk/docs/reference_card/opengl45-reference-card.pdf&#34;&gt;API Reference Card&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;DirectX：&lt;a href=&#34;https://msdn.microsoft.com/ja-jp/library/bb509611.aspx&#34;&gt;組み込み関数 (DirectX HLSL)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MetalのGPGPUによるPerlinノイズ</title>
+      <link>https://mike-neko.github.io/blog/metal-noise/</link>
+      <pubDate>Mon, 25 Jan 2016 19:41:59 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal-noise/</guid>
+      <description>
+
+&lt;p&gt;GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。&lt;/p&gt;
+
+&lt;p&gt;パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
+デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。&lt;/p&gt;
+
+&lt;h2 id=&#34;動作イメージ&#34;&gt;動作イメージ&lt;/h2&gt;
+
+&lt;p&gt;&lt;blockquote class=&#34;instagram-media&#34; data-instgrm-captioned data-instgrm-version=&#34;6&#34; style=&#34; background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);&#34;&gt;&lt;div style=&#34;padding:8px;&#34;&gt; &lt;div style=&#34; background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;&#34;&gt; &lt;div style=&#34; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;&#34;&gt;&lt;/div&gt;&lt;/div&gt; &lt;p style=&#34; margin:8px 0 0 0; padding:0 4px;&#34;&gt; &lt;a href=&#34;https://www.instagram.com/p/BBATaXDFQW1/&#34; style=&#34; color:#000; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none; word-wrap:break-word;&#34; target=&#34;_blank&#34;&gt;ノイズ生成デモ&lt;/a&gt;&lt;/p&gt; &lt;p style=&#34; color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;&#34;&gt;@m_ike__が投稿した動画 - &lt;time style=&#34; font-family:Arial,sans-serif; font-size:14px; line-height:17px;&#34; datetime=&#34;2016-01-26T13:57:16+00:00&#34;&gt;2016 1月 26 5:57午前 PST&lt;/time&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt; &lt;script async defer src=&#34;//platform.instagram.com/en_US/embeds.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;p&gt;ソース自体はGPUGemsのサンプルをほぼほぼ書き換えただけなので、ノイズ生成のアルゴリズムなどは参考リンクの方で。。。&lt;/p&gt;
+
+&lt;h3 id=&#34;ノイズ生成の流れ&#34;&gt;ノイズ生成の流れ&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;初期化時に順列テーブル&lt;code&gt;permBuffer&lt;/code&gt;を生成&lt;br /&gt;
+初回のみなのでCPU側で生成&lt;br /&gt;
+実行時毎にノイズの模様が変化する様にランダムに並び替えを行う&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;毎フレームごと、ComputeShaderでノイズを生成&lt;br /&gt;
+シェーダは各種パラメータ&lt;code&gt;NoiseParameter&lt;/code&gt;や順列テーブルなどを受け取って、生成した結果をテクスチャに書き込んで返却する&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;2のテクスチャを板ポリに貼って描画する&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;computeshader用の設定&#34;&gt;ComputeShader用の設定&lt;/h3&gt;
+
+&lt;h4 id=&#34;mtkviewの設定&#34;&gt;MTKViewの設定&lt;/h4&gt;
+
+&lt;p&gt;ComputeShaderを利用する場合は、&lt;code&gt;MTKView&lt;/code&gt;の&lt;code&gt;framebufferOnly&lt;/code&gt;を&lt;code&gt;false&lt;/code&gt;にしておくこと。&lt;br /&gt;
+ただし、パフォーマンスに影響を与えるので、利用しない時は触らないこと。&lt;/p&gt;
+
+&lt;h4 id=&#34;waituntilcompleted&#34;&gt;waitUntilCompleted()&lt;/h4&gt;
+
+&lt;p&gt;各種コマンドの実行の終了するまで待機するメソッド。&lt;br /&gt;
+以下のように&lt;code&gt;commandBuffer.commit()&lt;/code&gt;より後に置く。&lt;br /&gt;
+描画時のような毎フレームごとの呼び出しの時は、別途 &lt;code&gt;dispatch_semaphore_wait&lt;/code&gt;で処理を待機するので不要だが、
+初期化時の1回のみ実行するような場合は、これを使って待機させる。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;pre&gt;&lt;code&gt;/* ~~ （ここでGPGPUのコマンド処理） ~~ */
+commandBuffer.commit()
+commandBuffer.waitUntilCompleted()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;スレッド&#34;&gt;スレッド&lt;/h3&gt;
+
+&lt;p&gt;GPGPUは大量のスレッドを並列動作させて圧倒的な処理を行うのが特徴だが、モバイルのGPUのため、スレッドグループ毎の最大のスレッド数は512までになっている(&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Miscellaneous/Conceptual/MetalProgrammingGuide/MetalFeatureSetTables/MetalFeatureSetTables.html&#34;&gt;公式&lt;/a&gt;)。&lt;/p&gt;
+
+&lt;p&gt;なお、スレッド数は32の倍数にするのが良い。nVIDIAの資料(URL忘れた…)によると64−192ぐらいが一番パフォーマンス的に良いらしいがA系チップに当てはまるかは不明。&lt;/p&gt;
+
+&lt;p&gt;今回は以下のように、スレッドグループは1つのみだが、グループのサイズをテクスチャのサイズと同じにしている。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;pre&gt;&lt;code&gt;// スレッドグループの事前設定
+threadgroupSize = MTLSize(width: TexSize, height: TexSize, depth: 1)
+threadgroupCount = MTLSize(width: 1, height: 1, depth: 1)
+
+// コマンドバッファへスレッドグループの設定
+computeEncoder.dispatchThreadgroups(threadgroupSize, threadsPerThreadgroup: threadgroupCount)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;ここでの注意ポイントは、スレッドの&lt;strong&gt;&lt;em&gt;次元&lt;/em&gt;&lt;/strong&gt;に合わせてシェーダ側の引数も変更が必要なこと。
+今回はサイズが2次元(width * height * 1)なので、シェーダ側は&lt;code&gt;uint2 id [[ thread_position_in_grid ]]&lt;/code&gt;と、
+&lt;code&gt;uint2&lt;/code&gt;で受け取ることになる(間違えるとシェーダのコンパイルが通らない親切?仕様)。1次元なら&lt;code&gt;uint&lt;/code&gt;で受け取れば良い。&lt;/p&gt;
+
+&lt;p&gt;また、グループが複数だったり1次元のバッファで2次元のグループサイズを指定している様な場合は、&lt;code&gt;threads_per_grid&lt;/code&gt;や&lt;code&gt;thread_position_in_threadgroup&lt;/code&gt;を追加で受け取る必要がある。詳細は公式の&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/Metal/Reference/MetalShadingLanguageGuide/func-var-qual/func-var-qual.html&#34;&gt;Attribute Qualifiers for Kernel Function Input&lt;/a&gt;の項目を参照。&lt;/p&gt;
+
+&lt;p&gt;同じスレッドグループ内であれば、メモリの共有ができたりするのだが、そのあたりも公式のサンプル&lt;a href=&#34;https://developer.apple.com/library/ios/samplecode/Metal_NBody_Simulation/Introduction/Intro.html&#34;&gt;Metal N-Body&lt;/a&gt;が参考になる。&lt;/p&gt;
+
+&lt;h3 id=&#34;デバッグ&#34;&gt;デバッグ&lt;/h3&gt;
+
+&lt;p&gt;Xcodeの&lt;code&gt;Capture GPU Frame&lt;/code&gt;がとても便利。&lt;/p&gt;
+
+&lt;p&gt;これを使うと、実行中の各バッファやテクスチャのイメージの様子をキャプチャしてくれる。
+バッファのバイナリも見れるので、例えば構造体のアライメントが崩れたりしているのを簡単に見つけることができる。&lt;/p&gt;
+
+&lt;p&gt;また、プロファイル機能も充実していてどこがボトルネックがわかりやすい。&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;Metalの発表を聞いて一番ワクワクして触りたかったのが、このGPGPUだった。これまでMacでは統合開発環境でGPGPUが組めなかった（普通のシェーダだけならUnityがあった）ので、使い慣れたXcodeで触れるのは楽しみだった。&lt;/p&gt;
+
+&lt;p&gt;元々ソース自体はGemsのものや参考リンクのものがあったので、移植しただけ。実際にはパラメータやノイズの加工を工夫すれば、雲になったり地形になったりしていくが、パラメータの調整はどうも苦手というか時間がものすごくかかるので、とりあえず今回はここまでで。&lt;/p&gt;
+
+&lt;p&gt;並列化によってどれくらい高速化するのかとか、モバイルのGPGPUでどのくらいパフォーマンスが上がるのか（もちろんバッファの転送が無いだけでも効果は大きいだろうけど）とかが気になったのだけど、それもまた別の機会に・・・&lt;/p&gt;
+
+&lt;p&gt;にしても、シェーダ関係は環境毎に用語が微妙に変わるのは何とかしてほしい。。。&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;日本語の解説：&lt;a href=&#34;http://postd.cc/understanding-perlin-noise/&#34;&gt;パーリンノイズを理解する(POSTD)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;本家：&lt;a href=&#34;http://mrl.nyu.edu/~perlin/&#34;&gt;Ken Perlin&amp;rsquo;s homepage&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;GPUGems Chapter5：&lt;a href=&#34;http://http.developer.nvidia.com/GPUGems/gpugems_ch05.html&#34;&gt;Implementing Improved Perlin Noise&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;GPUGems2 Chapter26：&lt;a href=&#34;http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter26.html&#34;&gt;Implementing Improved Perlin Noise&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;FragmentShaderで実装や応用例：&lt;a href=&#34;http://www.sci.utah.edu/~leenak/IndStudy_reportfall/Perlin%20Noise%20on%20GPU.html&#34;&gt;Perlin Noise on GPU&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 7.2&lt;/li&gt;
+&lt;li&gt;iOS 9.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/MetalCompute&#34;&gt;こちら&lt;/a&gt; (&lt;em&gt;iOS9 A7以降搭載機種のみ&lt;/em&gt;)&lt;/p&gt;
 </description>
     </item>
     
