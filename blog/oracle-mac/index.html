@@ -287,6 +287,18 @@ $conn = oci_connect(
 </figure>
 
 
+<h1 id="トラブルシューティング">トラブルシューティング</h1>
+
+<p><code>php --ri oci8</code>で表示されるのに<code>Apache</code>上でうまく動かない場合</p>
+
+<p><code>Apache</code>上で<code>phpinfo()</code>を表示させて<code>oci8</code>が同じ様に表示されるかを確認</p>
+
+<p>表示されていないければ<code>Apache Environment</code>を確認して5で設定した環境変数が入っているか確認</p>
+
+<p>詳細は未検証だが、主にmacのデフォルトの<code>Apache</code>を使っている場合に起こる場合があるので、
+その場合は、<a href="https://gist.github.com/srayhunter/5208619">ここ</a>を参照して設定してみる<br />
+（デフォルトの<code>Apache</code>のユーザとシェルのユーザが違うので<code>bash_profile</code>などでは<code>Apache</code>の環境変数を変更できないっぽい）</p>
+
 <h1 id="参考リンク">参考リンク</h1>
 
 <ul>

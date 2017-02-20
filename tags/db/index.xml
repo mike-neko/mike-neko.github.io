@@ -509,6 +509,18 @@ $conn = oci_connect(
 &lt;/figure&gt;
 
 
+&lt;h1 id=&#34;トラブルシューティング&#34;&gt;トラブルシューティング&lt;/h1&gt;
+
+&lt;p&gt;&lt;code&gt;php --ri oci8&lt;/code&gt;で表示されるのに&lt;code&gt;Apache&lt;/code&gt;上でうまく動かない場合&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Apache&lt;/code&gt;上で&lt;code&gt;phpinfo()&lt;/code&gt;を表示させて&lt;code&gt;oci8&lt;/code&gt;が同じ様に表示されるかを確認&lt;/p&gt;
+
+&lt;p&gt;表示されていないければ&lt;code&gt;Apache Environment&lt;/code&gt;を確認して5で設定した環境変数が入っているか確認&lt;/p&gt;
+
+&lt;p&gt;詳細は未検証だが、主にmacのデフォルトの&lt;code&gt;Apache&lt;/code&gt;を使っている場合に起こる場合があるので、
+その場合は、&lt;a href=&#34;https://gist.github.com/srayhunter/5208619&#34;&gt;ここ&lt;/a&gt;を参照して設定してみる&lt;br /&gt;
+（デフォルトの&lt;code&gt;Apache&lt;/code&gt;のユーザとシェルのユーザが違うので&lt;code&gt;bash_profile&lt;/code&gt;などでは&lt;code&gt;Apache&lt;/code&gt;の環境変数を変更できないっぽい）&lt;/p&gt;
+
 &lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
 
 &lt;ul&gt;
