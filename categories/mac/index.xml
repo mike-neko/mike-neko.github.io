@@ -6,8 +6,216 @@
     <description>Recent content in Mac on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 14 Dec 2016 19:52:13 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 22 Feb 2017 23:55:36 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/mac/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Swift3のポインタの基礎知識</title>
+      <link>https://mike-neko.github.io/blog/swift-pointer/</link>
+      <pubDate>Wed, 22 Feb 2017 23:55:36 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/swift-pointer/</guid>
+      <description>
+
+&lt;p&gt;基本的にSwiftからポインタをそのまま扱う機会はほとんどないが、CのAPIやMetal等でポインタを扱う場合用のメモ&lt;/p&gt;
+
+&lt;p&gt;なお、画像などのバイナリデータを単に扱いたいだけの場合は&lt;code&gt;Data&lt;/code&gt;が&lt;code&gt;UInt8&lt;/code&gt;の配列と同等に扱えるようになったのでそっちを使った方が良い&lt;/p&gt;
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;ポインタはメモリ上のデータにアクセスする時に使うものである。
+Swiftの場合、紐付けられている&lt;strong&gt;型&lt;/strong&gt;によって、以下の種類がある&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;UnsafePointer / UnsafeMutablePointer&lt;br /&gt;
+特定の型にバインドされている。タイプセーフである&lt;/li&gt;
+&lt;li&gt;UnsafeRawPointer / UnsafeMutableRawPointer&lt;br /&gt;
+特定の型にバインドされていない。型保証がない&lt;/li&gt;
+&lt;li&gt;UnsafeBufferPointer / UnsafeMutableBufferPointer&lt;br /&gt;
+Unsafe(Mutable)Pointerの配列版&lt;/li&gt;
+&lt;li&gt;UnsafeRawBufferPointer / UnsafeMutableRawBufferPointer&lt;br /&gt;
+Unsafe(Mutable)RawPointerの配列版&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;〜BufferPointer&lt;/code&gt;は、メモリ上に要素（データ）が連続しているバッファの場合に利用出来るポインタで、実体はメモリへのビューである。
+リリースモードでは境界チェックがされずにアクセスされる（デバッグモードではされる）&lt;/p&gt;
+
+&lt;h3 id=&#34;注意事項&#34;&gt;注意事項&lt;/h3&gt;
+
+&lt;p&gt;ポインタを使う場合、自動メモリ管理やアライメントの保証はされない。よってライフサイクルを自分で管理しメモリリークや未定義扱いとなる動作を自分で避けなければならない&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;〜RawPointer&lt;/code&gt;の場合は、タイプセーフではない
+（Rawがついていないものはコンパイラによる型チェックが行われるが、異なるデータ型を強制的に割り当てたような場合は当然未定義の動作となる）&lt;/p&gt;
+
+&lt;h3 id=&#34;ポインタの状態&#34;&gt;ポインタの状態&lt;/h3&gt;
+
+&lt;p&gt;ポインタはポインタの指すメモリの状態によって以下のような状態となる&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;未バインド（未初期化）&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;メモリとバインドされていない状態&lt;/li&gt;
+&lt;li&gt;例：ポインタの宣言直後のような場合&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;バインド済・未初期化&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;メモリとバインドされているが、メモリ上のデータは未初期化&lt;/li&gt;
+&lt;li&gt;例：メモリ確保済だが未初期化のメモリへのポインタ&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;バインド済・初期化済
+
+&lt;ul&gt;
+&lt;li&gt;例：値の設定されているメモリへのポインタ&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;trivial-type&#34;&gt;&lt;code&gt;trivial type&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;型の中に参照を含まないデータ型。単純なバイトのコピーだけで複製できる型のこと&lt;/p&gt;
+
+&lt;h2 id=&#34;unsafepointer-unsafemutablepointer&#34;&gt;UnsafePointer / UnsafeMutablePointer&lt;/h2&gt;
+
+&lt;h3 id=&#34;読み取り&#34;&gt;読み取り&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;バインド済・未初期化：初期化が必要&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;バインド済・初期化済：次のどちらかで読み取る&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let ptr: UnsafePointer&amp;lt;Int&amp;gt; = ...   // 中身は10  
+let i = ptr.pointee                 // Intの10  
+let j = ptr[0]                      // Intの10  
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;書き込み&#34;&gt;書き込み&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;未バインド（未初期化）：&lt;code&gt;allocate(capacity:)&lt;/code&gt;でメモリを確保してバインドできる（メモリは未初期化のまま）&lt;/li&gt;
+&lt;li&gt;バインド済・未初期化：&lt;code&gt;initialize(to:count:)&lt;/code&gt;,&lt;code&gt;initialize(from:)&lt;/code&gt;,&lt;code&gt;moveInitializeMemory(from:count)&lt;/code&gt;を使って初期化&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;バインド済・初期化済：次のどちらかで設定できる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var ptr: UnsafeMutablePointer&amp;lt;Int&amp;gt; = ...
+ptr.pointee = 10
+ptr[0] = 10
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;unsaferawpointer-unsafemutablerawpointer&#34;&gt;UnsafeRawPointer / UnsafeMutableRawPointer&lt;/h2&gt;
+
+&lt;p&gt;読み書きの際にはアライメントに注意すること&lt;/p&gt;
+
+&lt;h3 id=&#34;読み取り-1&#34;&gt;読み取り&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;未バインド（未初期化）：&lt;code&gt;bindMemory(to:count:)&lt;/code&gt;で型にバインドする（rawではないポインタが返される）&lt;/li&gt;
+&lt;li&gt;バインド済・未初期化：バインドした型の値で初期化が必要&lt;br /&gt;
+（=rawでは初期化はできない）&lt;/li&gt;
+&lt;li&gt;バインド済・初期化済：&lt;code&gt;load(fromByteOffset:as:)&lt;/code&gt;で型を指定して読み取り
+（アライメントに注意）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;書き込み-1&#34;&gt;書き込み&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;未バインド（未初期化）：&lt;code&gt;initializeMemory(as:from:)&lt;/code&gt;,&lt;code&gt;moveInitializeMemory(as:from:count)&lt;/code&gt;を使って初期化できる&lt;/li&gt;
+&lt;li&gt;バインド済：&lt;code&gt;storeBytes(of:toByteOffset:as:)&lt;/code&gt;で書き込み可能。ただし&lt;code&gt;trivial type&lt;/code&gt;のみ&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;ポインタ演算&#34;&gt;ポインタ演算&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;+&lt;/code&gt;と&lt;code&gt;-&lt;/code&gt;と&lt;code&gt;[]&lt;/code&gt;(subscript)が利用可能。
+それぞれ指定した数だけオフセット（※）されてアクセスされる&lt;/p&gt;
+
+&lt;p&gt;※UnsafePointer / UnsafeMutablePointerの場合は、その型のバイト数分だけ。UnsafeRawPointer / UnsafeMutableRawPointerの場合は、バイト単位でオフセットされる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// intPointerがIntの[0, 1, 2, 3, 4]のメモリを指している場合
+intPointer + 2      // 2
+intPointer[2]       // 2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;型変換&#34;&gt;型変換&lt;/h2&gt;
+
+&lt;h3 id=&#34;互換性のある別の型に一時的にバインド&#34;&gt;互換性のある別の型に一時的にバインド&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;withMemoryRebound(to:capacity:)&lt;/code&gt;を使う&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 例：Int8 =&amp;gt; UInt8
+uint8Pointer.withMemoryRebound(to: Int8.self, capacity: 8) {
+    // $0
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;別の型に永続的にバインド&#34;&gt;別の型に永続的にバインド&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;RawPointer&lt;/code&gt;にしてから指定の型へバインドしなおす&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 例：UInt8 =&amp;gt; UInt64
+let uint64Pointer = UnsafeRawPointer(uint8Pointer)
+                        .bindMemory(to: UInt64.self, capacity: 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なお、再バインドされるのでこの場合、元のuint8Pointerは&lt;strong&gt;未定義&lt;/strong&gt;になる&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;trivial types同士の場合&lt;br /&gt;
+&lt;code&gt;RawPointer&lt;/code&gt;にしてから&lt;code&gt;load&lt;/code&gt;を使う&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let rawPointer = UnsafeRawPointer(uint64Pointer)
+fullInteger = rawPointer.load(as: UInt64.self)   // OK
+firstByte = rawPointer.load(as: UInt8.self)      // OK
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Mutableの場合は&lt;code&gt;storeBytes(of:toByteOffset:as:)&lt;/code&gt;で設定もできる&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;暗黙の変換とブリッジ&#34;&gt;暗黙の変換とブリッジ&lt;/h3&gt;
+
+&lt;p&gt;関数の引数に渡す時限定で暗黙的なキャストとブリッジをしてくれる&lt;/p&gt;
+
+&lt;p&gt;例えば、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func printInt(atAddress p: UnsafePointer&amp;lt;Int&amp;gt;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というメソッドがある場合、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var value: Int = 23
+printInt(atAddress: &amp;amp;value)         // &amp;amp;をつける
+
+let numbers = [5, 10, 15, 20]       // 配列はlet
+printInt(atAddress: numbers)        // 配列は&amp;amp;不要
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とすれば、自動で&lt;code&gt;UnsafePointer&lt;/code&gt;へ変換して処理される&lt;/p&gt;
+
+&lt;p&gt;もし、&lt;code&gt;printInt&lt;/code&gt;の引数が&lt;code&gt;UnsafeMutablePointer&lt;/code&gt;の場合であれば、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var value: Int = 23
+printInt(atAddress: &amp;amp;value)         // &amp;amp;をつける
+
+var numbers = [5, 10, 15, 20]       // mutableなのでvar
+printInt(atAddress: &amp;amp;numbers)       // inoutなので&amp;amp;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とする&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;注意事項&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;この暗黙の変換によるポインタの有効範囲は該当の関数のスコープ内のみ。
+よって関数からポインタを返してそれを利用するのは禁止（動作は&lt;strong&gt;未定義&lt;/strong&gt;である）&lt;/p&gt;
+
+&lt;p&gt;特に以下のように初期化に使うのは禁止&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var number = 5
+let numberPointer = UnsafePointer&amp;lt;Int&amp;gt;(&amp;amp;number)
+// numberPointerの動作は未定義
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>GitHubの自作ライブラリを公開する（ライブラリ編）</title>
