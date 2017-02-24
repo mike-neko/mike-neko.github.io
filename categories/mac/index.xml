@@ -6,8 +6,202 @@
     <description>Recent content in Mac on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 22 Feb 2017 23:55:36 +0900</lastBuildDate>
+    <lastBuildDate>Fri, 24 Feb 2017 23:44:10 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/mac/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Swift3のポインタの実践編</title>
+      <link>https://mike-neko.github.io/blog/swift-pointerc/</link>
+      <pubDate>Fri, 24 Feb 2017 23:44:10 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/swift-pointerc/</guid>
+      <description>
+
+&lt;p&gt;主にSwiftのポインタとCのポインタとの対比やポインタの変換方法についてのまとめ&lt;/p&gt;
+
+&lt;p&gt;Swiftでのポインタの基礎については&lt;a href=&#34;../swift-pointer&#34;&gt;基礎編&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h2 id=&#34;cのポインタとの対比&#34;&gt;Cのポインタとの対比&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;という型のポインタを表す場合&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;Swift&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;C&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafePointer&amp;lt;Hoge&amp;gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;const Hoge*&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeMutablePointer&amp;lt;Hoge&amp;gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Hoge*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code&gt;void*&lt;/code&gt;(汎用ポインタ)には専用の型が用意されている&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;Swift&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;C&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeRawPointer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;const void*&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeMutableRawPointer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;void*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;なお、ポインタ経由で値を変更したい場合は&lt;code&gt;Mutable&lt;/code&gt;がついている方を、参照のみであればついていない方を使う&lt;/p&gt;
+
+&lt;h2 id=&#34;ポインタへの変換方法&#34;&gt;ポインタへの変換方法&lt;/h2&gt;
+
+&lt;h3 id=&#34;早見表&#34;&gt;早見表&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;right&#34;&gt;変換元&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Hoge&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;UnsafePointer&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;UnsafeRawPointer&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;Hoge&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;1.withUnsafePointer&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;1 -&amp;gt; 3&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;UnsafePointer&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;2.pointee or []&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;3.UnsafeRawPointer()&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;UnsafeRawPointer&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;4 -&amp;gt; 2&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;4.assumingMemoryBound&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code&gt;Mutable&lt;/code&gt;の場合も変換方法は同じであるが、それぞれ&lt;code&gt;Mutable&lt;/code&gt;に対応したものを使う&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;から&lt;code&gt;UnsafeRawPointer&lt;/code&gt;のように直接変換できる方法がない場合は、
+&lt;code&gt;UnsafePointer&lt;/code&gt;に変換してから目的の型へ2段階で変換する&lt;/p&gt;
+
+&lt;p&gt;異なる型同士での変換については&lt;a href=&#34;../swift-pointer&#34;&gt;基礎編&lt;/a&gt;を参照のこと&lt;/p&gt;
+
+&lt;h3 id=&#34;コード例&#34;&gt;コード例&lt;/h3&gt;
+
+&lt;p&gt;前提として、&lt;code&gt;Hoge&lt;/code&gt;は以下の型とする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct Hoge {
+    var x: Float, y: Float, z: Float
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（今回は構造体だが、実体がプリミティブでもクラスでも方法は同じ）&lt;/p&gt;
+
+&lt;h4 id=&#34;1-2-hoge-unsafe-mutable-pointer-hoge&#34;&gt;1.2. Hoge =&amp;gt; Unsafe(Mutable)Pointer =&amp;gt; Hoge&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;をポインタへ変換、変換したポインタ経由で元の&lt;code&gt;Hoge&lt;/code&gt;にアクセスする場合&lt;/p&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Hoge pos;
+pos.x = pox.y = pos.z = 1;
+
+Hoge* p = &amp;amp;pos;
+p-&amp;gt;x = 100;             // pos.x = 100 となる
+(*p).y = 200;           // pos.y = 200 となる
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var pos = Hoge(x: 1, y: 1, z: 1)
+withUnsafeMutablePointer(to: &amp;amp;pos) { 
+    let p: UnsafeMutablePointer&amp;lt;Hoge&amp;gt; = $0
+    p.pointee.x = 100   // pos.x = 100 となる
+    p.pointee.y = 200   // pos.y = 200 となる
+}
+// または以下でも同じ
+withUnsafeMutablePointer(to: &amp;amp;pos) { p in
+    // p が UnsafeMutablePointer&amp;lt;Hoge&amp;gt; となる
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;withUnsafe(Mutable)Pointer&lt;/code&gt;のクロージャは値を返せるからといって&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let p = withUnsafeMutablePointer(to: &amp;amp;pos) { $0 }   // 絶対ダメ
+p.pointee.x = 100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というようにポインタを返す書き方は禁止。
+渡されるポインタが有効なのはクロージャ内だけなので、上記書き方の動作は未定義である&lt;/p&gt;
+
+&lt;p&gt;よって、クロージャ内で処理を完結させるか、Swiftの変数に代入（値コピー）してそれを返すこと&lt;/p&gt;
+
+&lt;h4 id=&#34;3-unsafe-mutable-pointer-unsafe-mutable-rawpointer&#34;&gt;3. Unsafe(Mutable)Pointer =&amp;gt; Unsafe(Mutable)RawPointer&lt;/h4&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pHoge が Hoge* の場合
+void* pRaw = (void*)pHoge;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pHoge が UnsafePointer&amp;lt;Hoge&amp;gt; の場合
+let pRaw = UnsafeRawPointer(pHoge)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;4-unsafe-mutable-rawpointer-unsafe-mutable-pointer&#34;&gt;4. Unsafe(Mutable)RawPointer =&amp;gt; Unsafe(Mutable)Pointer&lt;/h4&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pRaw が void* の場合
+Hoge* pHoge = (Hoge*)pRaw;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pRaw が UnsafeRawPointer の場合
+let pHoge = pRaw.assumingMemoryBound(to: Hoge.self)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://developer.apple.com/library/content/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html#//apple_ref/doc/uid/TP40014216-CH8-ID23&#34;&gt;Interacting with C APIs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://swift.org/migration-guide/se-0107-migrate.html&#34;&gt;UnsafeRawPointer Migration&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Swift3のポインタの基礎知識</title>
@@ -20,6 +214,8 @@
 &lt;p&gt;基本的にSwiftからポインタをそのまま扱う機会はほとんどないが、CのAPIやMetal等でポインタを扱う場合用のメモ&lt;/p&gt;
 
 &lt;p&gt;なお、画像などのバイナリデータを単に扱いたいだけの場合は&lt;code&gt;Data&lt;/code&gt;が&lt;code&gt;UInt8&lt;/code&gt;の配列と同等に扱えるようになったのでそっちを使った方が良い&lt;/p&gt;
+
+&lt;p&gt;実際の使い方は&lt;a href=&#34;../swift-pointerC&#34;&gt;実践編&lt;/a&gt;も参照&lt;/p&gt;
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 

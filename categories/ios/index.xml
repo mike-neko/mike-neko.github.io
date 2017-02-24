@@ -6,8 +6,202 @@
     <description>Recent content in Ios on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 22 Feb 2017 23:55:36 +0900</lastBuildDate>
+    <lastBuildDate>Fri, 24 Feb 2017 23:44:10 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Swift3のポインタの実践編</title>
+      <link>https://mike-neko.github.io/blog/swift-pointerc/</link>
+      <pubDate>Fri, 24 Feb 2017 23:44:10 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/swift-pointerc/</guid>
+      <description>
+
+&lt;p&gt;主にSwiftのポインタとCのポインタとの対比やポインタの変換方法についてのまとめ&lt;/p&gt;
+
+&lt;p&gt;Swiftでのポインタの基礎については&lt;a href=&#34;../swift-pointer&#34;&gt;基礎編&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h2 id=&#34;cのポインタとの対比&#34;&gt;Cのポインタとの対比&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;という型のポインタを表す場合&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;Swift&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;C&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafePointer&amp;lt;Hoge&amp;gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;const Hoge*&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeMutablePointer&amp;lt;Hoge&amp;gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Hoge*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code&gt;void*&lt;/code&gt;(汎用ポインタ)には専用の型が用意されている&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;Swift&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;C&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeRawPointer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;const void*&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeMutableRawPointer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;void*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;なお、ポインタ経由で値を変更したい場合は&lt;code&gt;Mutable&lt;/code&gt;がついている方を、参照のみであればついていない方を使う&lt;/p&gt;
+
+&lt;h2 id=&#34;ポインタへの変換方法&#34;&gt;ポインタへの変換方法&lt;/h2&gt;
+
+&lt;h3 id=&#34;早見表&#34;&gt;早見表&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;right&#34;&gt;変換元&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Hoge&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;UnsafePointer&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;UnsafeRawPointer&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;Hoge&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;1.withUnsafePointer&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;1 -&amp;gt; 3&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;UnsafePointer&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;2.pointee or []&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;3.UnsafeRawPointer()&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;UnsafeRawPointer&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;4 -&amp;gt; 2&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;4.assumingMemoryBound&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code&gt;Mutable&lt;/code&gt;の場合も変換方法は同じであるが、それぞれ&lt;code&gt;Mutable&lt;/code&gt;に対応したものを使う&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;から&lt;code&gt;UnsafeRawPointer&lt;/code&gt;のように直接変換できる方法がない場合は、
+&lt;code&gt;UnsafePointer&lt;/code&gt;に変換してから目的の型へ2段階で変換する&lt;/p&gt;
+
+&lt;p&gt;異なる型同士での変換については&lt;a href=&#34;../swift-pointer&#34;&gt;基礎編&lt;/a&gt;を参照のこと&lt;/p&gt;
+
+&lt;h3 id=&#34;コード例&#34;&gt;コード例&lt;/h3&gt;
+
+&lt;p&gt;前提として、&lt;code&gt;Hoge&lt;/code&gt;は以下の型とする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct Hoge {
+    var x: Float, y: Float, z: Float
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（今回は構造体だが、実体がプリミティブでもクラスでも方法は同じ）&lt;/p&gt;
+
+&lt;h4 id=&#34;1-2-hoge-unsafe-mutable-pointer-hoge&#34;&gt;1.2. Hoge =&amp;gt; Unsafe(Mutable)Pointer =&amp;gt; Hoge&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;をポインタへ変換、変換したポインタ経由で元の&lt;code&gt;Hoge&lt;/code&gt;にアクセスする場合&lt;/p&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Hoge pos;
+pos.x = pox.y = pos.z = 1;
+
+Hoge* p = &amp;amp;pos;
+p-&amp;gt;x = 100;             // pos.x = 100 となる
+(*p).y = 200;           // pos.y = 200 となる
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var pos = Hoge(x: 1, y: 1, z: 1)
+withUnsafeMutablePointer(to: &amp;amp;pos) { 
+    let p: UnsafeMutablePointer&amp;lt;Hoge&amp;gt; = $0
+    p.pointee.x = 100   // pos.x = 100 となる
+    p.pointee.y = 200   // pos.y = 200 となる
+}
+// または以下でも同じ
+withUnsafeMutablePointer(to: &amp;amp;pos) { p in
+    // p が UnsafeMutablePointer&amp;lt;Hoge&amp;gt; となる
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;withUnsafe(Mutable)Pointer&lt;/code&gt;のクロージャは値を返せるからといって&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let p = withUnsafeMutablePointer(to: &amp;amp;pos) { $0 }   // 絶対ダメ
+p.pointee.x = 100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というようにポインタを返す書き方は禁止。
+渡されるポインタが有効なのはクロージャ内だけなので、上記書き方の動作は未定義である&lt;/p&gt;
+
+&lt;p&gt;よって、クロージャ内で処理を完結させるか、Swiftの変数に代入（値コピー）してそれを返すこと&lt;/p&gt;
+
+&lt;h4 id=&#34;3-unsafe-mutable-pointer-unsafe-mutable-rawpointer&#34;&gt;3. Unsafe(Mutable)Pointer =&amp;gt; Unsafe(Mutable)RawPointer&lt;/h4&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pHoge が Hoge* の場合
+void* pRaw = (void*)pHoge;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pHoge が UnsafePointer&amp;lt;Hoge&amp;gt; の場合
+let pRaw = UnsafeRawPointer(pHoge)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;4-unsafe-mutable-rawpointer-unsafe-mutable-pointer&#34;&gt;4. Unsafe(Mutable)RawPointer =&amp;gt; Unsafe(Mutable)Pointer&lt;/h4&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pRaw が void* の場合
+Hoge* pHoge = (Hoge*)pRaw;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pRaw が UnsafeRawPointer の場合
+let pHoge = pRaw.assumingMemoryBound(to: Hoge.self)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://developer.apple.com/library/content/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html#//apple_ref/doc/uid/TP40014216-CH8-ID23&#34;&gt;Interacting with C APIs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://swift.org/migration-guide/se-0107-migrate.html&#34;&gt;UnsafeRawPointer Migration&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Swift3のポインタの基礎知識</title>
@@ -20,6 +214,8 @@
 &lt;p&gt;基本的にSwiftからポインタをそのまま扱う機会はほとんどないが、CのAPIやMetal等でポインタを扱う場合用のメモ&lt;/p&gt;
 
 &lt;p&gt;なお、画像などのバイナリデータを単に扱いたいだけの場合は&lt;code&gt;Data&lt;/code&gt;が&lt;code&gt;UInt8&lt;/code&gt;の配列と同等に扱えるようになったのでそっちを使った方が良い&lt;/p&gt;
+
+&lt;p&gt;実際の使い方は&lt;a href=&#34;../swift-pointerC&#34;&gt;実践編&lt;/a&gt;も参照&lt;/p&gt;
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
@@ -1978,183 +2174,6 @@ NotificationCenter.default.addObserver(self,
 &lt;li&gt;Node.js 6.3.1&lt;/li&gt;
 &lt;li&gt;OpenSSL 1.0.2&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>UnityからOpenCVを利用する(iOS)</title>
-      <link>https://mike-neko.github.io/blog/unity-opencv/</link>
-      <pubDate>Tue, 07 Jun 2016 00:56:50 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/unity-opencv/</guid>
-      <description>
-
-&lt;p&gt;UnityからiOSのネイティブプラグイン経由で&lt;code&gt;OpenCV&lt;/code&gt;でカメラを利用するサンプル&lt;/p&gt;
-
-&lt;p&gt;内容としては、&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;OpenCV経由で端末のカメラ画像を取得&lt;/li&gt;
-&lt;li&gt;取得した画像をOpenCVで処理（シンプルにグレースケールへ変換）&lt;/li&gt;
-&lt;li&gt;ネイティブプラグイン経由でUnity側(C#)へ渡す&lt;/li&gt;
-&lt;li&gt;Unity側でテクスチャを生成して表示する&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;といった流れになる&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;h3 id=&#34;opencvのフレームワークの準備&#34;&gt;OpenCVのフレームワークの準備&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://opencv.org/downloads.html&#34;&gt;公式のダウンロードページ&lt;/a&gt;から&lt;code&gt;for iOS&lt;/code&gt;の&lt;strong&gt;Ver.2系&lt;/strong&gt;をダウンロードする&lt;br /&gt;
-（サンプルでは&lt;a href=&#34;https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/opencv2.framework.zip/download&#34;&gt;Ver.2.4.13&lt;/a&gt;）&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;ダウンロードしたファイルを解凍して&lt;code&gt;opencv2.framework&lt;/code&gt;を取り出しておく&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;なお、Ver.2を利用したのは、作成時点ではVer.3だとエラーが出てしまったので・・・
-多分ソースからビルドするかバージョン上がれば、Ver.3系でも問題ないかと&lt;/p&gt;
-
-&lt;h3 id=&#34;iosネイティブ部分のソースを作成&#34;&gt;iOSネイティブ部分のソースを作成&lt;/h3&gt;
-
-&lt;p&gt;OpenCVがC++なので、言語は&lt;code&gt;Objective-C++&lt;/code&gt;を利用する&lt;br /&gt;
-(残念ながらSwiftはC++を扱うことができないのでObjC一択)&lt;/p&gt;
-
-&lt;p&gt;それに伴い、忘れずにファイルの拡張子を&lt;code&gt;.mm&lt;/code&gt;にしておくこと&lt;br /&gt;
-ただその場合、ヘッダファイル（&lt;code&gt;.hpp&lt;/code&gt;）はUnityがプラグインのファイルとして認識してくれないので、
-今回は一つのファイルに収まるように書いている&lt;br /&gt;
-（通常の&lt;code&gt;.h&lt;/code&gt;はちゃんと認識してくれるのに・・・）&lt;/p&gt;
-
-&lt;p&gt;プラグインの呼び出しは以下の感じ&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[iOS]
-OpenCV(C++)での処理
- |
-ObjC++のクラスでラップ
- |
-Cの関数でラッパークラスをエクスポート
- |
-[Unity]
-C#でDLLimportして呼び出し
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ObjC++で一旦ラップしているのは、OpenCV部分の開発は別にXCode上で行う為。
-ただ、場合によってはメソッド呼び出しが遅いのでそこは注意&lt;/p&gt;
-
-&lt;p&gt;ネイティブ側のソースの全文は以下の通り
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bf258536e5414e25b1e147c8b5e7834d.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;通常のopencv周りの処理-4-51行目あたり&#34;&gt;通常のOpenCV周りの処理（4〜51行目あたり）&lt;/h4&gt;
-
-&lt;p&gt;ややこしいのが、C++はARC管理外の為、手動でメモリ管理が必要。
-今回はメモリの確保/破棄をラッパークラスの初期化/破棄と合わせて、
-ラッパークラスの生存期間とOpenCVのオブジェクトの生存期間が一致するようにしてある&lt;/p&gt;
-
-&lt;p&gt;カメラの画像の取得は、初期化と同時に&lt;code&gt;cv::VideoCapture&lt;/code&gt;を生成し、
-その後は毎フレーム&lt;code&gt;*camera &amp;gt;&amp;gt; img&lt;/code&gt;で画像を読み込んでいる&lt;/p&gt;
-
-&lt;p&gt;この時、取得された画像のフォーマットは&lt;code&gt;BGR&lt;/code&gt;なのがポイント。
-最終的にUnityのテクスチャのサイズとフォーマット&lt;code&gt;RGBA&lt;/code&gt;に変換してUnity側へ渡す&lt;br /&gt;
-（Unity側では&lt;code&gt;ARGB&lt;/code&gt;の表記なので、最初それで変換してハマってた・・・）&lt;/p&gt;
-
-&lt;h4 id=&#34;プラグインのエントリポイントを用意-54-77行目あたり&#34;&gt;プラグインのエントリポイントを用意（54〜77行目あたり）&lt;/h4&gt;
-
-&lt;p&gt;用意するのはラッパークラス&lt;code&gt;VideoCapture&lt;/code&gt;の生成、毎フレーム呼び出す用、破棄の3つのCの関数&lt;/p&gt;
-
-&lt;p&gt;これを55〜59行目のように宣言してC#へエクスポートする。
-このファイルはC++の扱いになっているので&lt;code&gt;extern &amp;quot;C&amp;quot;&lt;/code&gt;が必要&lt;br /&gt;
-（逆に言うと、C#からはこれ以外が見えない状態となっている）&lt;/p&gt;
-
-&lt;p&gt;関数の本体は61行目以降にあるように、単純にブリッジしているだけ&lt;/p&gt;
-
-&lt;h3 id=&#34;unityでネイティブプラグイン作成&#34;&gt;Unityでネイティブプラグイン作成&lt;/h3&gt;
-
-&lt;h4 id=&#34;unityにネイティブのソース類を組み込む&#34;&gt;Unityにネイティブのソース類を組み込む&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;Assets&lt;/code&gt;直下に&lt;code&gt;Plugins&lt;/code&gt;フォルダを作る&lt;/li&gt;
-&lt;li&gt;作成した&lt;code&gt;Plugins&lt;/code&gt;フォルダにiOSネイティブ用のソースファイルを入れる&lt;br /&gt;
-Unityのエディタ上のインスペクタの設定を念のため確認
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Select platforms for plugin&lt;/code&gt;：iOS&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Platform settings&lt;/code&gt;：チェック不要&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;同じく&lt;code&gt;Plugins&lt;/code&gt;フォルダにダウンロードしておいた&lt;code&gt;opencv2.framework&lt;/code&gt;を丸ごと入れる&lt;br /&gt;
-Unity上ではフォルダとして認識されて、中にいろいろあればOK&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&#34;コンポーネントの作成&#34;&gt;コンポーネントの作成&lt;/h4&gt;
-
-&lt;p&gt;ネイティブの画像データからテクスチャを生成し、
-そのテクスチャを指定した&lt;code&gt;Renderer&lt;/code&gt;のマテリアルにセットするコンポーネントを作成&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5ea8d851f18b163ae6a70f6a05ccd4d1.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;当然、ネイティブプラグイン部分は、iOS上での実行時しか動かないので、
-該当部分は&lt;code&gt;#if UNITY_IOS&lt;/code&gt;〜&lt;code&gt;#endif&lt;/code&gt;でエディタ実行時にエラーにならないようにしておく&lt;/p&gt;
-
-&lt;p&gt;ネイティブ側で準備したエントリポイントを利用する為にインポートの宣言（16〜26行目あたり）が必要&lt;/p&gt;
-
-&lt;p&gt;Cの関数宣言をそのままC#での宣言にするが、同じデータ型がC#にない場合は対応するデータ型を代わりに指定する
-（今回だと&lt;code&gt;void*&lt;/code&gt;が&lt;code&gt;IntPtr&lt;/code&gt;）&lt;/p&gt;
-
-&lt;p&gt;なお、構造体をやりとりするような場合は&lt;code&gt;マーシャリング&lt;/code&gt;が必要となるので結構面倒&lt;/p&gt;
-
-&lt;p&gt;宣言すれば後は通常のメソッドと同じ様に利用できる。ただし、C側と引数などが異なっていた場合は、
-実行時にエラーとなるので注意&lt;/p&gt;
-
-&lt;p&gt;後は、コンポーネントのライフサイクルと、キャプチャ用とテクスチャのオブジェクトのライフサイクルを一致させればOK&lt;/p&gt;
-
-&lt;h4 id=&#34;シーン作成&#34;&gt;シーン作成&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;キャプチャしたテクスチャ用の&lt;code&gt;Material&lt;/code&gt;を作成
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Shader&lt;/code&gt;で&lt;code&gt;Unlit/Texture&lt;/code&gt;を選択&lt;br /&gt;
-（キャプチャ画像にライトが反映して光らないように）&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Quad&lt;/code&gt;でテクスチャを貼るオブジェクトを作成
-
-&lt;ul&gt;
-&lt;li&gt;Scaleを&lt;code&gt;X:3, Y:4, Z:1&lt;/code&gt;にする&lt;br /&gt;
-（数値はキャプチャ画像のアスペクト比と合わせる）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Material&lt;/code&gt;に1で作成したマテリアルをセット&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;プラグインのコンポーネントを追加
-
-&lt;ul&gt;
-&lt;li&gt;プラグインの&lt;code&gt;renderTarget&lt;/code&gt;に自身をセット&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
-
-&lt;p&gt;サンプルでは出てこないけど、C#のアンマネージドの辺りが、ObjCやSwiftに比べると結構大変な気がした。
-慣れてないからかも知れないけど、特にメモリ周りやマーシャリングはいずれちゃんと勉強しないと&lt;/p&gt;
-
-&lt;p&gt;あと、OpenCV周りの細かい挙動もまだ把握しきれていないので調べたい&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;OS X 10.11.5&lt;/li&gt;
-&lt;li&gt;Unity 5.3.4f1&lt;/li&gt;
-&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2&lt;/li&gt;
-&lt;li&gt;iPhone 6+&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/UnityOpenCV&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;ただし、上記ソースには&lt;code&gt;opencv2.framework&lt;/code&gt;が含まれていない&lt;br /&gt;
-（Githubの100MB制限にかかってしまったので）&lt;br /&gt;
-動かすには、&lt;code&gt;OpenCVのフレームワークの準備&lt;/code&gt;の項目で準備した
-&lt;code&gt;opencv2.framework&lt;/code&gt;を手動で&lt;code&gt;UnityOpenCV/Assets/Plugins/&lt;/code&gt;直下に追加する必要がある。&lt;/p&gt;
 </description>
     </item>
     
