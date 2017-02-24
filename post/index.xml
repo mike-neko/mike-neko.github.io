@@ -6,8 +6,202 @@
     <description>Recent content in Posts on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 22 Feb 2017 23:55:36 +0900</lastBuildDate>
+    <lastBuildDate>Fri, 24 Feb 2017 23:44:10 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Swift3のポインタの実践編</title>
+      <link>https://mike-neko.github.io/blog/swift-pointerc/</link>
+      <pubDate>Fri, 24 Feb 2017 23:44:10 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/swift-pointerc/</guid>
+      <description>
+
+&lt;p&gt;主にSwiftのポインタとCのポインタとの対比やポインタの変換方法についてのまとめ&lt;/p&gt;
+
+&lt;p&gt;Swiftでのポインタの基礎については&lt;a href=&#34;../swift-pointer&#34;&gt;基礎編&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h2 id=&#34;cのポインタとの対比&#34;&gt;Cのポインタとの対比&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;という型のポインタを表す場合&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;Swift&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;C&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafePointer&amp;lt;Hoge&amp;gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;const Hoge*&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeMutablePointer&amp;lt;Hoge&amp;gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Hoge*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code&gt;void*&lt;/code&gt;(汎用ポインタ)には専用の型が用意されている&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;Swift&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;C&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeRawPointer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;const void*&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeMutableRawPointer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;void*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;なお、ポインタ経由で値を変更したい場合は&lt;code&gt;Mutable&lt;/code&gt;がついている方を、参照のみであればついていない方を使う&lt;/p&gt;
+
+&lt;h2 id=&#34;ポインタへの変換方法&#34;&gt;ポインタへの変換方法&lt;/h2&gt;
+
+&lt;h3 id=&#34;早見表&#34;&gt;早見表&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;right&#34;&gt;変換元&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Hoge&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;UnsafePointer&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;UnsafeRawPointer&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;Hoge&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;1.withUnsafePointer&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;1 -&amp;gt; 3&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;UnsafePointer&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;2.pointee or []&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;3.UnsafeRawPointer()&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;UnsafeRawPointer&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;4 -&amp;gt; 2&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;4.assumingMemoryBound&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code&gt;Mutable&lt;/code&gt;の場合も変換方法は同じであるが、それぞれ&lt;code&gt;Mutable&lt;/code&gt;に対応したものを使う&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;から&lt;code&gt;UnsafeRawPointer&lt;/code&gt;のように直接変換できる方法がない場合は、
+&lt;code&gt;UnsafePointer&lt;/code&gt;に変換してから目的の型へ2段階で変換する&lt;/p&gt;
+
+&lt;p&gt;異なる型同士での変換については&lt;a href=&#34;../swift-pointer&#34;&gt;基礎編&lt;/a&gt;を参照のこと&lt;/p&gt;
+
+&lt;h3 id=&#34;コード例&#34;&gt;コード例&lt;/h3&gt;
+
+&lt;p&gt;前提として、&lt;code&gt;Hoge&lt;/code&gt;は以下の型とする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct Hoge {
+    var x: Float, y: Float, z: Float
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（今回は構造体だが、実体がプリミティブでもクラスでも方法は同じ）&lt;/p&gt;
+
+&lt;h4 id=&#34;1-2-hoge-unsafe-mutable-pointer-hoge&#34;&gt;1.2. Hoge =&amp;gt; Unsafe(Mutable)Pointer =&amp;gt; Hoge&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;をポインタへ変換、変換したポインタ経由で元の&lt;code&gt;Hoge&lt;/code&gt;にアクセスする場合&lt;/p&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Hoge pos;
+pos.x = pox.y = pos.z = 1;
+
+Hoge* p = &amp;amp;pos;
+p-&amp;gt;x = 100;             // pos.x = 100 となる
+(*p).y = 200;           // pos.y = 200 となる
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var pos = Hoge(x: 1, y: 1, z: 1)
+withUnsafeMutablePointer(to: &amp;amp;pos) { 
+    let p: UnsafeMutablePointer&amp;lt;Hoge&amp;gt; = $0
+    p.pointee.x = 100   // pos.x = 100 となる
+    p.pointee.y = 200   // pos.y = 200 となる
+}
+// または以下でも同じ
+withUnsafeMutablePointer(to: &amp;amp;pos) { p in
+    // p が UnsafeMutablePointer&amp;lt;Hoge&amp;gt; となる
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;withUnsafe(Mutable)Pointer&lt;/code&gt;のクロージャは値を返せるからといって&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let p = withUnsafeMutablePointer(to: &amp;amp;pos) { $0 }   // 絶対ダメ
+p.pointee.x = 100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というようにポインタを返す書き方は禁止。
+渡されるポインタが有効なのはクロージャ内だけなので、上記書き方の動作は未定義である&lt;/p&gt;
+
+&lt;p&gt;よって、クロージャ内で処理を完結させるか、Swiftの変数に代入（値コピー）してそれを返すこと&lt;/p&gt;
+
+&lt;h4 id=&#34;3-unsafe-mutable-pointer-unsafe-mutable-rawpointer&#34;&gt;3. Unsafe(Mutable)Pointer =&amp;gt; Unsafe(Mutable)RawPointer&lt;/h4&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pHoge が Hoge* の場合
+void* pRaw = (void*)pHoge;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pHoge が UnsafePointer&amp;lt;Hoge&amp;gt; の場合
+let pRaw = UnsafeRawPointer(pHoge)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;4-unsafe-mutable-rawpointer-unsafe-mutable-pointer&#34;&gt;4. Unsafe(Mutable)RawPointer =&amp;gt; Unsafe(Mutable)Pointer&lt;/h4&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pRaw が void* の場合
+Hoge* pHoge = (Hoge*)pRaw;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pRaw が UnsafeRawPointer の場合
+let pHoge = pRaw.assumingMemoryBound(to: Hoge.self)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://developer.apple.com/library/content/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html#//apple_ref/doc/uid/TP40014216-CH8-ID23&#34;&gt;Interacting with C APIs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://swift.org/migration-guide/se-0107-migrate.html&#34;&gt;UnsafeRawPointer Migration&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Swift3のポインタの基礎知識</title>
@@ -20,6 +214,8 @@
 &lt;p&gt;基本的にSwiftからポインタをそのまま扱う機会はほとんどないが、CのAPIやMetal等でポインタを扱う場合用のメモ&lt;/p&gt;
 
 &lt;p&gt;なお、画像などのバイナリデータを単に扱いたいだけの場合は&lt;code&gt;Data&lt;/code&gt;が&lt;code&gt;UInt8&lt;/code&gt;の配列と同等に扱えるようになったのでそっちを使った方が良い&lt;/p&gt;
+
+&lt;p&gt;実際の使い方は&lt;a href=&#34;../swift-pointerC&#34;&gt;実践編&lt;/a&gt;も参照&lt;/p&gt;
 
 &lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
@@ -2109,136 +2305,6 @@ $conn = oci_connect(
 &lt;li&gt;PHP 5.6.27 + OCI8 2.0.12&lt;/li&gt;
 &lt;li&gt;Oracle Instant Client 12.1.0.2.0&lt;/li&gt;
 &lt;li&gt;DBサーバ OracleDB(Win)&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>MacからSQLServerへ接続</title>
-      <link>https://mike-neko.github.io/blog/mssql-mac/</link>
-      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/mssql-mac/</guid>
-      <description>
-
-&lt;p&gt;MacのPHP5.6からSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
-
-&lt;p&gt;CentOSの場合は&lt;a href=&#34;../mssql-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;子ネタ&#34;&gt;子ネタ&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;SQLServer&lt;/code&gt;へPHPから接続するには以下の方法がある&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-sqlsrv.php&#34;&gt;PDO_SQLSR&lt;/a&gt;&lt;br /&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Windows版のPHPでしか使えない&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-dblib.php&#34;&gt;PDO_DBLIB&lt;/a&gt;&lt;br /&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;FreeTDS&lt;/code&gt;ライブラリを利用する&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Windows版はPHP5.3以降使えない&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-odbc.php&#34;&gt;PDO_ODBC&lt;/a&gt;&lt;br /&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Microsoftのドライバが必要(Win or Linuxのみ) =&amp;gt; &lt;strong&gt;Macは使えない&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;という訳で、Macからの場合は&lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;一択、
-Linuxの場合は&lt;code&gt;PDO_ODBC&lt;/code&gt;+公式ドライバ（おすすめ？） or &lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;となる&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;h3 id=&#34;freetdsのインストール&#34;&gt;FreeTDSのインストール&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;で&lt;code&gt;FreeTDS&lt;/code&gt;をインストール&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew install freetds
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;code&gt;FreeTDS&lt;/code&gt;の接続確認&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;tsql -H (SQLServerのアドレス) -p (ポート) -U (ユーザ名) -P (パスワード)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;として&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;locale is &amp;quot;ja_JP.UTF-8&amp;quot;
-locale charset is &amp;quot;UTF-8&amp;quot;
-using default charset &amp;quot;UTF-8&amp;quot;
-1&amp;gt; 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;のようになれば&lt;code&gt;exit&lt;/code&gt;で終了&lt;br /&gt;
-&lt;code&gt;1&amp;gt;&lt;/code&gt;の部分の数字が変わっていく場合は接続がうまくいっていない&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;em&gt;試した開発環境ではかなりの頻度でタイムアウトのエラーが出ていたので何度か試してみること&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;pdo-dblibのインストール&#34;&gt;PDO_DBLIBのインストール&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;で&lt;code&gt;PDO_DBLIB&lt;/code&gt;をインストール&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew install homebrew/php/php56-pdo-dblib
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;php --ri pdo_dblib
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;を実行して、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;PDO Driver for FreeTDS/Sybase DB-lib =&amp;gt; enabled
-Flavour =&amp;gt; freetds
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
-
-&lt;p&gt;PDOのDSNの指定は以下の通り&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$user = &#39;test&#39;;             // ユーザ名
-$pass = &#39;1234&#39;;             // パスワード
-$host = &#39;192.168.0.10&#39;;     // ホスト
-$port = &#39;1433&#39;;             // ポート番号
-$db = &#39;sample&#39;;             // データベース名
-
-$pdo = new PDO(&#39;dblib:host=&#39; . $host . &#39;:&#39; . $port . &#39;;dbname=&#39; $db, 
-               $user, $pass); 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;phpstormの設定&#34;&gt;PHPStormの設定&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;PHPStorm&lt;/code&gt;から接続したい場合の設定は以下の感じ&lt;/p&gt;
-
-&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-11-03-mssql-mac/phpstorm.png&#34; /&gt;
-&lt;/figure&gt;
-
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/ref.pdo-dblib.php&#34;&gt;PDO_DBLIB&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;FreeTDS &lt;a href=&#34;http://www.freetds.org/&#34;&gt;公式&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Mac 10.11&lt;/li&gt;
-&lt;li&gt;PHP 5.6.27 + PDO_DBLIB&lt;/li&gt;
-&lt;li&gt;FreeTDS 1.00.15 (TDS 7.3)&lt;/li&gt;
-&lt;li&gt;DBサーバ SQLServer Express 2016(Win)&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
