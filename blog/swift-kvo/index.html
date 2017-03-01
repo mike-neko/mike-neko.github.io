@@ -46,7 +46,7 @@
 
       
         <li class="sidebar-nav-item">
-            <a href="/categories/ios">ios&nbsp;(19)</a>
+            <a href="/categories/ios">ios&nbsp;(20)</a>
         </li>
       
         <li class="sidebar-nav-item">
@@ -54,7 +54,7 @@
         </li>
       
         <li class="sidebar-nav-item">
-            <a href="/categories/old">old&nbsp;(15)</a>
+            <a href="/categories/old">old&nbsp;(14)</a>
         </li>
       
         <li class="sidebar-nav-item">
@@ -102,9 +102,9 @@
         
           &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift2">swift2&nbsp;(14)</a>&nbsp;
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
         
-          &nbsp;<a href="/tags/swift3">swift3&nbsp;(14)</a>&nbsp;
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(15)</a>&nbsp;
         
           &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
         
@@ -139,11 +139,11 @@
     <h1>KVOを利用する(Swift)</h1>
     <span class="post-date">Jul 25, 2016 
     
-    &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
     </span>
     
 
@@ -233,15 +233,15 @@ class ViewController: UIViewController {
 
 <h4 id="登録方法">登録方法</h4>
 
-<pre><code>addObserver(self, forKeyPath: KeyContext.value1, options: .New, context: &amp;KeyContext.value1)
+<pre><code>addObserver(self, forKeyPath: KeyContext.value1, options: .new, context: &amp;KeyContext.value1)
 </code></pre>
 
 <p><code>Objective-C</code>との相違点は、</p>
 
 <ul>
 <li><code>KeyPath</code>に<code>self</code>がいらない</li>
-<li><code>options</code>を複数指定する時は、<code>|</code>ではなく配列（例：<code>[.New, .Old]</code>）で渡す</li>
-<li><code>context</code>へのポインタは<code>&amp;</code>だけで良い</li>
+<li><code>options</code>を複数指定する時は、<code>|</code>ではなく配列（例：<code>[.new, .old]</code>）で渡す</li>
+<li><code>context</code>へのポインタは<code>&amp;</code>だけで良い（暗黙的変換が入る）</li>
 </ul>
 
 <p>といったあたり。</p>
@@ -266,7 +266,7 @@ class ViewController: UIViewController {
 <h4 id="値の取得">値の取得</h4>
 
 <pre><code>// Change Dictionary Keys: 
-// NSKeyValueChangeNewKeyとかNSKeyValueChangeOldKeyとか
+// NSKeyValueChangeKey.newKeyとかNSKeyValueChangeKey.oldKeyとか
 let value = change?[&quot;Change Dictionary Keys&quot;] as? &quot;データ型&quot;
 </code></pre>
 
@@ -274,16 +274,20 @@ let value = change?[&quot;Change Dictionary Keys&quot;] as? &quot;データ型&q
 <code>NSNull</code>や型が違う場合などは、最終的に<code>nil</code>が入るのでサンプルのように
 <code>guard</code>ではじくのがスマート。</p>
 
+<h4 id="swift2からの変更点">Swift2からの変更点</h4>
+
+<p><code>addObserver</code>の<code>context</code>のポインタが<code>UnsafeMutableRawPointer</code>に変わっている</p>
+
 <h1 id="参考リンク">参考リンク</h1>
 
 <ul>
-<li>公式：<a href="https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/AdoptingCocoaDesignPatterns.html#//apple_ref/doc/uid/TP40014216-CH7-ID12">Using Swift with Cocoa and Objective-C (Swift 2.2)</a></li>
+<li>公式：<a href="https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/AdoptingCocoaDesignPatterns.html#//apple_ref/doc/uid/TP40014216-CH7-ID12">Using Swift with Cocoa and Objective-C (Swift 3.0.1)</a></li>
 </ul>
 
 <h1 id="開発環境">開発環境</h1>
 
 <ul>
-<li>Xcode 7.3.1</li>
+<li>Xcode 8.2.1</li>
 </ul>
 
   </div>
