@@ -1871,7 +1871,7 @@ NotificationCenter.default.addObserver(self,
       <guid>https://mike-neko.github.io/blog/swift-kvo/</guid>
       <description>
 
-&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;で&lt;code&gt;KVO&lt;/code&gt;を利用する方法について。特に&lt;code&gt;context&lt;/code&gt;を一意の識別子として使いたい場合の方法。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;で&lt;code&gt;KVO&lt;/code&gt;を利用する方法について。特に&lt;code&gt;context&lt;/code&gt;を一意の識別子として使いたい場合の方法&lt;/p&gt;
 
 &lt;h2 id=&#34;サンプルコード&#34;&gt;サンプルコード&lt;/h2&gt;
 
@@ -1881,24 +1881,24 @@ NotificationCenter.default.addObserver(self,
 
 &lt;h3 id=&#34;nsobject-を継承する&#34;&gt;&lt;code&gt;NSObject&lt;/code&gt;を継承する&lt;/h3&gt;
 
-&lt;p&gt;監視対象も監視するクラスも両方とも&lt;code&gt;NSObject&lt;/code&gt;のサブクラスであることが必要。&lt;/p&gt;
+&lt;p&gt;監視対象も監視するクラスも両方とも&lt;code&gt;NSObject&lt;/code&gt;のサブクラスであることが必要&lt;/p&gt;
 
 &lt;p&gt;監視対象（サンプルでは&lt;code&gt;Target&lt;/code&gt;）で継承しなかった場合、&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;&#39;NSUnknownKeyException&#39;, reason: &#39;[&amp;lt;〜.ViewController 0x〜&amp;gt; addObserver:&amp;lt;〜.ViewController 0x〜&amp;gt; forKeyPath:@&amp;quot;target.valueA&amp;quot; options:3 context:0x〜] was sent to an object that is not KVC-compliant for the &amp;quot;target&amp;quot; property.&#39;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;といった実行時エラーが発生する。&lt;/p&gt;
+&lt;p&gt;といった実行時エラーが発生する&lt;/p&gt;
 
-&lt;p&gt;監視する側だとそもそも&lt;code&gt;addObserver&lt;/code&gt;などが利用できない。&lt;/p&gt;
+&lt;p&gt;監視する側だとそもそも&lt;code&gt;addObserver&lt;/code&gt;などが利用できない&lt;/p&gt;
 
 &lt;h3 id=&#34;プロパティには-dynamic-をつける&#34;&gt;プロパティには&lt;code&gt;dynamic&lt;/code&gt;をつける&lt;/h3&gt;
 
-&lt;p&gt;監視対象のプロパティ（&lt;code&gt;addObserver&lt;/code&gt;で追加するプロパティ）は必ず&lt;code&gt;dynamic&lt;/code&gt;をつけること。&lt;/p&gt;
+&lt;p&gt;監視対象のプロパティ（&lt;code&gt;addObserver&lt;/code&gt;で追加するプロパティ）は必ず&lt;code&gt;dynamic&lt;/code&gt;をつけること&lt;/p&gt;
 
 &lt;p&gt;もし、これをつけ忘れると、エラーにはならないが、通知も来ない状態
 （＝変更されても&lt;code&gt;observeValueForKeyPath&lt;/code&gt;が呼ばれない）
-という判りにくいバグになってしまう。&lt;/p&gt;
+という判りにくいバグになってしまう&lt;/p&gt;
 
 &lt;h3 id=&#34;アクセスコントロールに注意&#34;&gt;アクセスコントロールに注意&lt;/h3&gt;
 
@@ -1907,9 +1907,9 @@ NotificationCenter.default.addObserver(self,
 &lt;pre&gt;&lt;code&gt;&#39;NSUnknownKeyException&#39;, reason: &#39;[&amp;lt;〜.ViewController 0x〜&amp;gt; addObserver:&amp;lt;〜.ViewController 0x〜&amp;gt; forKeyPath:@&amp;quot;target.valueA&amp;quot; options:3 context:0x〜] was sent to an object that is not KVC-compliant for the &amp;quot;target&amp;quot; property.&#39;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;といった実行時エラーが発生する。&lt;/p&gt;
+&lt;p&gt;といった実行時エラーが発生する&lt;/p&gt;
 
-&lt;p&gt;サンプルだと、&lt;code&gt;value1&lt;/code&gt;と&lt;code&gt;value2&lt;/code&gt;は&lt;code&gt;private&lt;/code&gt;でも問題無いが、&lt;code&gt;target&lt;/code&gt;は&lt;code&gt;private&lt;/code&gt;ではエラーになる。&lt;/p&gt;
+&lt;p&gt;サンプルだと、&lt;code&gt;value1&lt;/code&gt;と&lt;code&gt;value2&lt;/code&gt;は&lt;code&gt;private&lt;/code&gt;でも問題無いが、&lt;code&gt;target&lt;/code&gt;は&lt;code&gt;private&lt;/code&gt;ではエラーになる&lt;/p&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;&lt;code&gt;String&lt;/code&gt;や&lt;code&gt;Int&lt;/code&gt;ではエラーにならないのは確認したが、具体的な条件は未調査・・・&lt;/p&gt;
@@ -1918,7 +1918,7 @@ NotificationCenter.default.addObserver(self,
 &lt;h3 id=&#34;識別子としての-context-の指定&#34;&gt;識別子としての&lt;code&gt;context&lt;/code&gt;の指定&lt;/h3&gt;
 
 &lt;p&gt;通常の指定方法は参考リンクの通り（&lt;code&gt;private var myContext = 0&lt;/code&gt;）。
-ただ、今回のサンプルでは、キー値の指定とまとめて以下のようにしている。&lt;/p&gt;
+ただ、今回のサンプルでは、キー値の指定とまとめて以下のようにしている&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;private struct KeyContext {
     static var value1 = &amp;quot;value1&amp;quot;
@@ -1926,7 +1926,7 @@ NotificationCenter.default.addObserver(self,
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;というのも、&lt;code&gt;context&lt;/code&gt;には一意なアドレスを渡すべきなので、&lt;code&gt;static&lt;/code&gt;によりアドレスを確保している。
+&lt;p&gt;というのも、&lt;code&gt;context&lt;/code&gt;には一意なアドレスを渡すべきなので、&lt;code&gt;static&lt;/code&gt;によりアドレスを確保している
 （通常の指定方法ではグローバル変数にして一意なアドレスを確保）&lt;/p&gt;
 
 &lt;p&gt;なお、&lt;code&gt;private&lt;/code&gt;なのは単に他からアクセスさせないようにしたい（する必要がない）からで、
@@ -1939,7 +1939,7 @@ NotificationCenter.default.addObserver(self,
 class ViewController: UIViewController {
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;と言った書き方でも同じ。&lt;/p&gt;
+&lt;p&gt;と言った書き方でも同じ&lt;/p&gt;
 
 &lt;h3 id=&#34;通知の登録-解除&#34;&gt;通知の登録 / 解除&lt;/h3&gt;
 
@@ -1948,12 +1948,12 @@ class ViewController: UIViewController {
 &lt;h5 id=&#34;登録時&#34;&gt;登録時&lt;/h5&gt;
 
 &lt;p&gt;サンプルでは&lt;code&gt;UIViewController&lt;/code&gt;なので、&lt;code&gt;viewWillAppear&lt;/code&gt;で登録しているが、
-通常は&lt;code&gt;init&lt;/code&gt;での登録が良さげ。&lt;/p&gt;
+通常は&lt;code&gt;init&lt;/code&gt;での登録が良さげ&lt;/p&gt;
 
 &lt;h5 id=&#34;解除時&#34;&gt;解除時&lt;/h5&gt;
 
 &lt;p&gt;サンプルでは登録が&lt;code&gt;viewWillAppear&lt;/code&gt;なので、対となる&lt;code&gt;viewWillDisappear&lt;/code&gt;で解除しているが、
-通常は&lt;code&gt;deinit&lt;/code&gt;での登録が良い。&lt;/p&gt;
+通常は&lt;code&gt;deinit&lt;/code&gt;での登録が良い&lt;/p&gt;
 
 &lt;h4 id=&#34;登録方法&#34;&gt;登録方法&lt;/h4&gt;
 
@@ -1968,7 +1968,7 @@ class ViewController: UIViewController {
 &lt;li&gt;&lt;code&gt;context&lt;/code&gt;へのポインタは&lt;code&gt;&amp;amp;&lt;/code&gt;だけで良い（暗黙的変換が入る）&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;といったあたり。&lt;/p&gt;
+&lt;p&gt;といったあたり&lt;/p&gt;
 
 &lt;h3 id=&#34;通知の受信&#34;&gt;通知の受信&lt;/h3&gt;
 
@@ -1977,7 +1977,7 @@ class ViewController: UIViewController {
 &lt;pre&gt;&lt;code&gt;super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;を呼ぶこと。これがないと、もし親クラスで何か監視をしていた場合に処理が正しく行われないので。
+&lt;p&gt;を呼ぶこと。これがないと、もし親クラスで何か監視をしていた場合に処理が正しく行われないので
 （当然、自身の監視対象だった場合は呼ばない）&lt;/p&gt;
 
 &lt;p&gt;なお、&lt;code&gt;case&lt;/code&gt;に監視対象のプロパティを書き忘れると、&lt;/p&gt;
@@ -1985,7 +1985,7 @@ class ViewController: UIViewController {
 &lt;pre&gt;&lt;code&gt;An -observeValueForKeyPath:ofObject:change:context: message was received but not handled.
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;の実行時エラーとなる。&lt;/p&gt;
+&lt;p&gt;の実行時エラーとなる&lt;/p&gt;
 
 &lt;h4 id=&#34;値の取得&#34;&gt;値の取得&lt;/h4&gt;
 
@@ -1995,8 +1995,7 @@ let value = change?[&amp;quot;Change Dictionary Keys&amp;quot;] as? &amp;quot;�
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;と書けば希望のデータ型へ変換して取得できる。
-&lt;code&gt;NSNull&lt;/code&gt;や型が違う場合などは、最終的に&lt;code&gt;nil&lt;/code&gt;が入るのでサンプルのように
-&lt;code&gt;guard&lt;/code&gt;ではじくのがスマート。&lt;/p&gt;
+&lt;code&gt;NSNull&lt;/code&gt;や型が違う場合などは、最終的に&lt;code&gt;nil&lt;/code&gt;が入るのでサンプルのように&lt;code&gt;guard&lt;/code&gt;ではじくのがスマート&lt;/p&gt;
 
 &lt;h4 id=&#34;swift2からの変更点&#34;&gt;Swift2からの変更点&lt;/h4&gt;
 
