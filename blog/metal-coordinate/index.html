@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Guzzleで非同期の並列リクエストを行う &middot; M.Ike</title>
+  <title>Metalの座標周りのメモ &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -136,97 +136,134 @@
 
 <div class="content container">
   <div class="post">
-    <h1>Guzzleで非同期の並列リクエストを行う</h1>
-    <span class="post-date">Oct 29, 2016 
+    <h1>Metalの座標周りのメモ</h1>
+    <span class="post-date">Mar 2, 2017 
     
-    &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/php">php</a>
+    <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a>
     </span>
     
 
-<p><code>PHP</code>のHTTPクライアント(<a href="http://docs.guzzlephp.org/en/latest/">Guzzle</a>)で非同期の並列リクエストを行う方法</p>
+<p>わりと間違いやすいので、Metalの座標周りのまとめ</p>
 
-<p><code>Guzzle</code>は内部では<code>curl</code>を使っており、便利な<code>curl</code>を面倒な設定をせずに使えるというありがたいもの
-（なお<code>curl</code>がなくても動くがその場合は非同期が使えないなど機能が制限されるらしい）</p>
+<p>実はAppleの公式のサンプルも間違っていたりする・・・・</p>
 
-<h2 id="事前準備">事前準備</h2>
+<h2 id="座標系">座標系</h2>
 
-<p>動作環境は以下のとおり</p>
+<p>Metalは <em>左手系</em> である</p>
 
-<ul>
-<li>PHP 5.5.0以上</li>
-<li>curl 7.19.4以上
-(要openSSL/zlib)</li>
-</ul>
+<p><strong>元々のiOS / macはOpenGLの為、そのまま既存サンプルを移し替えようとすると、座標系でハマるので注意！</strong>
+OpenGLからの移植は行列の中身（列ベクトル or 行ベクトル）が違う場合もあるので注意！</p>
 
-<h3 id="インストール">インストール</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>座標系</th>
+</tr>
+</thead>
 
-<ul>
-<li><p><code>composer</code>で<code>guzzlehttp/guzzle</code>を入れる<br />
-(<code>guzzle/guzzle</code>は古いバージョンなので注意)</p></li>
+<tbody>
+<tr>
+<td>Metal</td>
+<td>左手系</td>
+</tr>
 
-<li><p><code>composer</code>を使っているので、使う時は</p>
+<tr>
+<td>OpenGL / WebGL</td>
+<td>右手系</td>
+</tr>
 
-<pre><code>require 'vendor/autoload.php';
-</code></pre>
+<tr>
+<td>DirectX</td>
+<td>左手系</td>
+</tr>
+</tbody>
+</table>
 
-<p>を忘れないこと</p></li>
-</ul>
+<p>なお、左手系と右手系の違いはZ軸の向きだけである</p>
 
-<h3 id="php-iniの設定">php.iniの設定</h3>
+<table>
+<thead>
+<tr>
+<th align="center">Metal, DirectX</th>
+<th align="center">OpenGL, WebGL</th>
+</tr>
+</thead>
 
-<pre><code>allow_url_fopen = ON
-</code></pre>
+<tbody>
+<tr>
+<td align="center"><figure>
+	<img src="/media/2017-03-02-metal-coordinate/left.png" />
+</figure>
+</td>
+<td align="center"><figure>
+	<img src="/media/2017-03-02-metal-coordinate/left.png" />
+</figure>
+</td>
+</tr>
 
-<p>を設定しておく</p>
+<tr>
+<td align="center">z軸の奥が+</td>
+<td align="center">z軸の手前が+</td>
+</tr>
+</tbody>
+</table>
 
-<h2 id="使い方">使い方</h2>
+<h2 id="uv座標">UV座標</h2>
 
-<p>複数のURLに並列に非同期にリクエストをかける方法は以下のとおり</p>
+<p>Metalは <em>左上</em> が原点(0, 0)、右下が(1, 1)となる</p>
 
-<script type="text/javascript" src="https://gist.github.com/07e16ffece9ecfbffa4959f875897418.js"></script>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>UV座標</th>
+</tr>
+</thead>
 
-<p>まずは、<code>$requests</code>に実際のリクエストを生成する処理をクロージャとして登録する。<br />
-今回であれば、URLのリストから単純にURLを取り出し、<code>$client-&gt;getAsync($url)</code>としてリクエストを生成している<br />
-（URLのエンドポイントだけが違うような場合は<code>base_uri</code>を指定した方がスマート）</p>
+<tbody>
+<tr>
+<td>Metal</td>
+<td>左上</td>
+</tr>
 
-<p>ポイントは<code>yield</code>でジェネレータを使っていること。<br />
-通常は<code>foreach</code>をした時点でそのループの回数分中の処理が実行されてメモリなどのリソースを消費するが、
-ジェネレータを使うと実際に必要になる（今回であれば<code>Pool</code>で順次実行される時）まで実行されずリソースを消費しないメリットがある</p>
+<tr>
+<td>OpenGL / WebGL</td>
+<td>右上</td>
+</tr>
 
-<p>リクエストの生成処理ができれば、<code>Pool</code>オブジェクトに渡して<code>Promise</code>を生成する。
-その際、<code>concurrency</code>で同時リクエスト数を、<code>fulfilled</code>で成功時の処理、<code>rejected</code>で失敗時の処理が行われる。
-非同期の場合、リクエストは生成順に実行されるが、当然、処理結果は順不同で返ってくる。</p>
+<tr>
+<td>DirectX</td>
+<td>左上</td>
+</tr>
+</tbody>
+</table>
 
-<p>ちなみに<code>Promise</code>の<code>wait()</code>の部分で全ての並列処理が終わるまで待機される。
-これを忘れると完了しないまま処理が終わってしまう</p>
+<table>
+<thead>
+<tr>
+<th align="center">Metal, DirectX</th>
+<th align="center">OpenGL, WebGL</th>
+</tr>
+</thead>
 
-<p>つまり、例えばあるページにアクセスした時にバックグラウンドの非同期でダウンロードを行うといったことはできない。
-そういったことをしたい場合は、<code>Laravel</code>の<a href="https://readouble.com/laravel/5.1/ja/queues.html">キュー</a>なんかがおすすめ</p>
-
-<h2 id="小ネタ">小ネタ</h2>
-
-<pre><code>$client = new Client(['debug' =&gt; true]);
-</code></pre>
-
-<p>としておくと細かな通信状況が出力されるので便利</p>
-
-<h1 id="参考リンク">参考リンク</h1>
-
-<ul>
-<li>公式：<a href="http://docs.guzzlephp.org/en/latest/">Guzzle</a></li>
-<li>ジェネレータ:<a href="http://php.net/manual/ja/language.generators.overview.php">PHP公式</a></li>
-</ul>
-
-<h1 id="開発環境">開発環境</h1>
-
-<ul>
-<li>PHP 5.6</li>
-<li>Guzzle 6.2.2</li>
-</ul>
+<tbody>
+<tr>
+<td align="center"><figure>
+	<img src="/media/2017-03-02-metal-coordinate/lefttop.png" />
+</figure>
+</td>
+<td align="center"><figure>
+	<img src="/media/2017-03-02-metal-coordinate/rightbottom.png" />
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
 
   </div>
   

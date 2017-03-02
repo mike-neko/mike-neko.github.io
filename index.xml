@@ -6,8 +6,136 @@
     <description>Recent content on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Fri, 24 Feb 2017 23:44:10 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 02 Mar 2017 23:36:28 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Metalの座標周りのメモ</title>
+      <link>https://mike-neko.github.io/blog/metal-coordinate/</link>
+      <pubDate>Thu, 02 Mar 2017 23:36:28 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal-coordinate/</guid>
+      <description>
+
+&lt;p&gt;わりと間違いやすいので、Metalの座標周りのまとめ&lt;/p&gt;
+
+&lt;p&gt;実はAppleの公式のサンプルも間違っていたりする・・・・&lt;/p&gt;
+
+&lt;h2 id=&#34;座標系&#34;&gt;座標系&lt;/h2&gt;
+
+&lt;p&gt;Metalは &lt;em&gt;左手系&lt;/em&gt; である&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;元々のiOS / macはOpenGLの為、そのまま既存サンプルを移し替えようとすると、座標系でハマるので注意！&lt;/strong&gt;
+OpenGLからの移植は行列の中身（列ベクトル or 行ベクトル）が違う場合もあるので注意！&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;座標系&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Metal&lt;/td&gt;
+&lt;td&gt;左手系&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;OpenGL / WebGL&lt;/td&gt;
+&lt;td&gt;右手系&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;DirectX&lt;/td&gt;
+&lt;td&gt;左手系&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;なお、左手系と右手系の違いはZ軸の向きだけである&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;Metal, DirectX&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;OpenGL, WebGL&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/left.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/left.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;z軸の奥が+&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;z軸の手前が+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;uv座標&#34;&gt;UV座標&lt;/h2&gt;
+
+&lt;p&gt;Metalは &lt;em&gt;左上&lt;/em&gt; が原点(0, 0)、右下が(1, 1)となる&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;UV座標&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Metal&lt;/td&gt;
+&lt;td&gt;左上&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;OpenGL / WebGL&lt;/td&gt;
+&lt;td&gt;右上&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;DirectX&lt;/td&gt;
+&lt;td&gt;左上&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;Metal, DirectX&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;OpenGL, WebGL&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/lefttop.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/rightbottom.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+    </item>
     
     <item>
       <title>Swift3のポインタの実践編</title>
@@ -2126,185 +2254,6 @@ $pdo = new PDO(&#39;odbc:&#39; . $driver, $user, $pass);
 &lt;li&gt;PHP 5.6.27 + PDO_ODBC&lt;/li&gt;
 &lt;li&gt;ODBC Driver 13.0 for SQL Server&lt;/li&gt;
 &lt;li&gt;DBサーバ SQLServer Express 2016(Win)&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>MacからOracleへ接続</title>
-      <link>https://mike-neko.github.io/blog/oracle-mac/</link>
-      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/oracle-mac/</guid>
-      <description>
-
-&lt;p&gt;MacのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
-
-&lt;p&gt;CentOSの場合は&lt;a href=&#34;../oracle-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
-
-&lt;h3 id=&#34;oracleのドライバのインストール&#34;&gt;Oracleのドライバのインストール&lt;/h3&gt;
-
-&lt;p&gt;今回は&lt;code&gt;Version 12.1.0.2 (64-bit)&lt;/code&gt;は選択。手順などはこのバージョンが前提&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index.html&#34;&gt;Oracle Instant Client&lt;/a&gt;から&lt;code&gt;basic&lt;/code&gt;と&lt;code&gt;SDK&lt;/code&gt;をダウンロード&lt;br /&gt;
-&lt;em&gt;公式の&lt;a href=&#34;http://php.net/manual/ja/oci8.requirements.php&#34;&gt;要件&lt;/a&gt;にあるように&lt;code&gt;OracleDB&lt;/code&gt;と&lt;code&gt;PHP&lt;/code&gt;のバージョンに合ったものを選択&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;1を全て同じフォルダへ解凍する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd （ダウンロード先）
-unzip instantclient-basic-macos.x64-12.1.0.2.0.zip
-unzip instantclient-sdk-macos.x64-12.1.0.2.0.zip
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;(Ver.12であれば&lt;code&gt;instantclient_12_1&lt;/code&gt;というフォルダ内に全ファイルが解凍された状態になればOK)&lt;br /&gt;
-&lt;strong&gt;フォルダ名がバージョンになっているので解凍したフォルダ名をそのまま使うこと！&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;2をフォルダごと適当な場所に移動&lt;br /&gt;
-（今回は&lt;code&gt;/Library/Oracle/&lt;/code&gt;へ移動）&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;ライブラリのシンボリックリンクを作成&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd /Library/Oracle/instantclient_12_1/
-ln -s libclntsh.dylib.12.1 libclntsh.dylib
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;パスを通す&lt;br /&gt;
-&lt;code&gt;.bash_profile&lt;/code&gt;に以下を追記&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;export DYLD_LIBRARY_PATH=/Library/Oracle/instantclient_12_1
-export PATH=$PATH:$DYLD_LIBRARY_PATH
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;追記したら保存し、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;source ~/.bash_profile
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;で強制反映させる&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;oci8をインストール&#34;&gt;OCI8をインストール&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;以下はすでにPHPをインストール済かつ&lt;code&gt;PECL&lt;/code&gt;が使えない場合なので、
-通常はPHPインストールと同時にしてしまうか&lt;code&gt;PECL&lt;/code&gt;で追加が恐らく楽&lt;/em&gt;&lt;br /&gt;
-（手持ちの環境では&lt;code&gt;PECL&lt;/code&gt;がなぜか使えなかったので以下の手順）&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;OCI8（Ver.2.0.12）を&lt;code&gt;PECL&lt;/code&gt;の&lt;a href=&#34;https://pecl.php.net/package/oci8&#34;&gt;該当ページ&lt;/a&gt;からダウンロード&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;解凍する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd （ダウンロード先）
-tar -zxf oci8-2.0.12.tgz
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;makeする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd oci8-2.0.12
-phpize
-./configure -with-oci8=shared,instantclient,/Library/Oracle/instantclient_12_1
-make install
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;modules&lt;/code&gt;の中に&lt;code&gt;oci8.so&lt;/code&gt;ができていればOK&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;ライブラリを移動&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sudo mv modules/oci8.so /Library/Oracle 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;（とりあえず今回はここで）&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;PHPの設定
-&lt;code&gt;php.ini&lt;/code&gt;に以下の2つの項目を設定&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;extension_dir = &amp;quot;/Library/Oracle&amp;quot; # oci8.soを置いた場所
-extension=oci8.so
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;（ファイルの場所が判らない時は&lt;code&gt;php -i | grep php.ini&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;php --ri oci8
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;を実行して、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;（略）
-OCI8 Support =&amp;gt; enabled
-（略）
-OCI8 Version =&amp;gt; 2.0.12
-（略）
-Oracle Run-time Client Library Version =&amp;gt; 12.1.0.2.0
-Oracle Compile-time Instant Client Version =&amp;gt; 12.1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
-
-&lt;p&gt;フレームワークなどを使わずにそのまま接続する場合は、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$user = &#39;test&#39;;             // ユーザ名
-$pass = &#39;1234&#39;;             // パスワード
-$host = &#39;192.168.0.10&#39;;     // ホスト
-$port = &#39;1521&#39;;             // ポート番号
-$db = &#39;sample&#39;;             // データベース名（サービス名）
-
-$conn = oci_connect(
-  $user,
-  $pass,
-  &#39;(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)&#39;
-  . &#39;(HOST=&#39; . $host . &#39;)(PORT=&#39; . $port . &#39;)))&#39; 
-  . &#39;(CONNECT_DATA=(SERVICE_NAME=&#39; . $db . &#39;)))&#39;]
-);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;といった感じで接続できる&lt;/p&gt;
-
-&lt;h2 id=&#34;phpstormの設定&#34;&gt;PHPStormの設定&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;PHPStorm&lt;/code&gt;から接続したい場合は、&lt;code&gt;Oracle Instant Client&lt;/code&gt;はVer.12以上が必要&lt;/p&gt;
-
-&lt;p&gt;設定は以下の感じ&lt;/p&gt;
-
-&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2016-11-03-oracle-mac/phpstorm.png&#34; /&gt;
-&lt;/figure&gt;
-
-
-&lt;h1 id=&#34;トラブルシューティング&#34;&gt;トラブルシューティング&lt;/h1&gt;
-
-&lt;p&gt;&lt;code&gt;php --ri oci8&lt;/code&gt;で表示されるのに&lt;code&gt;Apache&lt;/code&gt;上でうまく動かない場合&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Apache&lt;/code&gt;上で&lt;code&gt;phpinfo()&lt;/code&gt;を表示させて&lt;code&gt;oci8&lt;/code&gt;が同じ様に表示されるかを確認&lt;/p&gt;
-
-&lt;p&gt;表示されていないければ&lt;code&gt;Apache Environment&lt;/code&gt;を確認して5で設定した環境変数が入っているか確認&lt;/p&gt;
-
-&lt;p&gt;詳細は未検証だが、主にmacのデフォルトの&lt;code&gt;Apache&lt;/code&gt;を使っている場合に起こる場合があるので、
-その場合は、&lt;a href=&#34;https://gist.github.com/srayhunter/5208619&#34;&gt;ここ&lt;/a&gt;を参照して設定してみる&lt;br /&gt;
-（デフォルトの&lt;code&gt;Apache&lt;/code&gt;のユーザとシェルのユーザが違うので&lt;code&gt;bash_profile&lt;/code&gt;などでは&lt;code&gt;Apache&lt;/code&gt;の環境変数を変更できないっぽい）&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/book.oci8.php&#34;&gt;Oracle OCI8&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html&#34;&gt;Orcale Instant Client&lt;/a&gt;
-(下の方にインストール方法)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Mac 10.11&lt;/li&gt;
-&lt;li&gt;PHP 5.6.27 + OCI8 2.0.12&lt;/li&gt;
-&lt;li&gt;Oracle Instant Client 12.1.0.2.0&lt;/li&gt;
-&lt;li&gt;DBサーバ OracleDB(Win)&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
