@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>MacからSQLServerへ接続 &middot; M.Ike</title>
+  <title>Model I/Oで立体図形のメッシュを生成 &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -136,135 +136,130 @@
 
 <div class="content container">
   <div class="post">
-    <h1>MacからSQLServerへ接続</h1>
-    <span class="post-date">Nov 3, 2016 
+    <h1>Model I/Oで立体図形のメッシュを生成</h1>
+    <span class="post-date">Mar 5, 2017 
     
-    &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/php">php</a><a class="label" href="https://mike-neko.github.io/tags/db">db</a>
+    <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
     </span>
     
 
-<p>MacのPHP5.6からSQLServer(MSSQL)へ接続する方法</p>
+<h2 id="概要">概要</h2>
 
-<p>CentOSの場合は<a href="../mssql-cent/">こちら</a></p>
+<p>Metalで描画のテストなどでさくっとモデルを表示したい時に、Model I/Oを使って3Dのモデルを生成する方法</p>
 
-<h2 id="子ネタ">子ネタ</h2>
+<p>法線やUV座標も作ってくれるので地味に便利である</p>
 
-<p><code>SQLServer</code>へPHPから接続するには以下の方法がある</p>
+<h2 id="生成されるモデル">生成されるモデル</h2>
 
-<ul>
-<li><a href="http://php.net/manual/ja/ref.pdo-sqlsrv.php">PDO_SQLSR</a><br />
-
-<ul>
-<li><strong>Windows版のPHPでしか使えない</strong></li>
-</ul></li>
-<li><a href="http://php.net/manual/ja/ref.pdo-dblib.php">PDO_DBLIB</a><br />
+<p>生成できる図形の種類は、</p>
 
 <ul>
-<li><code>FreeTDS</code>ライブラリを利用する</li>
-<li><strong>Windows版はPHP5.3以降使えない</strong></li>
-</ul></li>
-<li><a href="http://php.net/manual/ja/ref.pdo-odbc.php">PDO_ODBC</a><br />
-
-<ul>
-<li>Microsoftのドライバが必要(Win or Linuxのみ) =&gt; <strong>Macは使えない</strong></li>
-</ul></li>
+<li>ボックス</li>
+<li>球体</li>
+<li>シリンダ</li>
+<li>円錐</li>
+<li>平面</li>
+<li>正20面体</li>
 </ul>
 
-<p>という訳で、Macからの場合は<code>PDO_DBLIB</code>+<code>FreeTDS</code>一択、
-Linuxの場合は<code>PDO_ODBC</code>+公式ドライバ（おすすめ？） or <code>PDO_DBLIB</code>+<code>FreeTDS</code>となる</p>
+<p>生成時には大きさや分割数も指定できる</p>
 
-<h2 id="手順">手順</h2>
+<p>各頂点データの中身は、シェーダで書くと以下の感じ</p>
 
-<h3 id="freetdsのインストール">FreeTDSのインストール</h3>
+<pre><code>struct Vertex {
+    float3 position    [[ attribute(0) ]];
+    float3 normal      [[ attribute(1) ]];
+    float2 texcoord    [[ attribute(2) ]];
+};
+</code></pre>
+
+<h2 id="生成の方法">生成の方法</h2>
+
+<p>流れとしては、</p>
 
 <ol>
-<li><p><code>Homebrew</code>で<code>FreeTDS</code>をインストール</p>
-
-<pre><code>brew install freetds
-</code></pre></li>
-
-<li><p><code>FreeTDS</code>の接続確認</p>
-
-<pre><code>tsql -H (SQLServerのアドレス) -p (ポート) -U (ユーザ名) -P (パスワード)
-</code></pre>
-
-<p>として</p>
-
-<pre><code>locale is &quot;ja_JP.UTF-8&quot;
-locale charset is &quot;UTF-8&quot;
-using default charset &quot;UTF-8&quot;
-1&gt; 
-</code></pre>
-
-<p>のようになれば<code>exit</code>で終了<br />
-<code>1&gt;</code>の部分の数字が変わっていく場合は接続がうまくいっていない</p></li>
+<li><code>MDLMesh</code>のクラスメソッドで指定した図形のメッシュを生成</li>
+<li>Metalで扱えるように<code>MTKMesh</code>へ変換</li>
+<li>頂点データに合わせて<code>MTLRenderPipelineState</code>を生成</li>
+<li>メッシュを描画</li>
 </ol>
 
-<p><em>試した開発環境ではかなりの頻度でタイムアウトのエラーが出ていたので何度か試してみること</em></p>
+<p>という感じになる</p>
 
-<h3 id="pdo-dblibのインストール">PDO_DBLIBのインストール</h3>
+<h3 id="メッシュを生成">メッシュを生成</h3>
 
-<ol>
-<li><p><code>Homebrew</code>で<code>PDO_DBLIB</code>をインストール</p>
+<p>例えば、ボックスを生成したい場合は以下のとおり</p>
 
-<pre><code>brew install homebrew/php/php56-pdo-dblib
-</code></pre></li>
-
-<li><p>設定の確認</p>
-
-<pre><code>php --ri pdo_dblib
+<pre><code>let device = MTLCreateSystemDefaultDevice()!
+let allocator = MTKMeshBufferAllocator(device: device)
+let mdlMesh = MDLMesh.newBox(withDimensions: vector_float3(1),
+                             segments: vector_uint3(2),
+                             geometryType: .triangles,
+                             inwardNormals: false,
+                             allocator: allocator)
 </code></pre>
 
-<p>を実行して、</p>
+<p><code>MDLMesh.newBox</code>がボックスのメッシュを生成するクラスメソッドで、
+引数の<code>dimensions</code>でサイズ、<code>segments</code>で分割数を指定している。
+図形の種類によって引数のパラメータは異なる（円筒なら半径も指定など）</p>
 
-<pre><code>PDO Driver for FreeTDS/Sybase DB-lib =&gt; enabled
-Flavour =&gt; freetds
+<p><code>inwardNormals</code>は法線の向きの指定。
+通常は<code>false</code>で良いが、スカイボックスや部屋の中のように立体の内側に視点がある場合は<code>true</code>にする</p>
+
+<h3 id="メッシュを変換">メッシュを変換</h3>
+
+<p><code>MDLMesh</code>を<code>MTKMesh</code>（Metalで描画する時に必要な情報全部がまとまったクラス）へ変換する</p>
+
+<pre><code>let mesh = try! MTKMesh(mesh: mdlMesh, device: device)
 </code></pre>
 
-<p>と出ていればOK</p></li>
-</ol>
+<h3 id="mtlrenderpipelinestateを生成">MTLRenderPipelineStateを生成</h3>
 
-<h2 id="phpからの接続">PHPからの接続</h2>
+<p><code>MTLRenderPipelineState</code>を生成する際にメッシュの頂点情報を与えて生成する</p>
 
-<p>PDOのDSNの指定は以下の通り</p>
-
-<pre><code>$user = 'test';             // ユーザ名
-$pass = '1234';             // パスワード
-$host = '192.168.0.10';     // ホスト
-$port = '1433';             // ポート番号
-$db = 'sample';             // データベース名
-
-$pdo = new PDO('dblib:host=' . $host . ':' . $port . ';dbname=' $db, 
-               $user, $pass); 
+<pre><code>let vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(mesh.vertexDescriptor)
+let renderDescriptor = MTLRenderPipelineDescriptor()
+renderDescriptor.vertexDescriptor = vertexDescriptor
+// ここで通常どおりシェーダなどの設定をする
+let renderState = try! device.makeRenderPipelineState(descriptor: renderDescriptor)
 </code></pre>
 
-<h2 id="phpstormの設定">PHPStormの設定</h2>
+<p>ただし、生成されるメッシュの頂点形式は固定のようなので手動で設定するのもありかもしれない</p>
 
-<p><code>PHPStorm</code>から接続したい場合の設定は以下の感じ</p>
+<h3 id="メッシュを描画">メッシュを描画</h3>
 
-<figure>
-	<img src="/media/2016-11-03-mssql-mac/phpstorm.png" />
-</figure>
+<pre><code>renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer,
+                              offset: 0, at: 0)
+renderEncoder.drawIndexedPrimitives(
+    type: mesh.submeshes[0].primitiveType,
+    indexCount: mesh.submeshes[0].indexCount,
+    indexType: mesh.submeshes[0].indexType,
+    indexBuffer: mesh.submeshes[0].indexBuffer.buffer,
+    indexBufferOffset: mesh.submeshes[0].indexBuffer.offset)
+</code></pre>
 
+<p>メッシュのデータはインデックスバッファ形式で格納されているので、<code>drawIndexedPrimitives</code>を使う。
+また、<code>VertexBuffer</code>は一つのみ、サブメッシュも一つのみ生成されるようなので固定にしている</p>
 
-<h1 id="参考リンク">参考リンク</h1>
+<h2 id="ソース">ソース</h2>
 
-<ul>
-<li>PHP公式 <a href="http://php.net/manual/ja/ref.pdo-dblib.php">PDO_DBLIB</a></li>
-<li>FreeTDS <a href="http://www.freetds.org/">公式</a></li>
-</ul>
+<p>必要最低限（ライト固定、テクスチャなし）のコードは以下の感じ<br />
+mac用だがiOSへもViewController周り以外はそのまま使える</p>
+
+<script type="text/javascript" src="https://gist.github.com/6ed7ba3fe83bcf0418a6f5e682e6138a.js"></script>
+
+<p><code>Matrix</code>周りは<a href="https://github.com/mike-neko/MetalTessellation/blob/master/MetalTessellation/Matrix.swift">こちら</a>を参照</p>
 
 <h1 id="開発環境">開発環境</h1>
 
 <ul>
-<li>Mac 10.11</li>
-<li>PHP 5.6.27 + PDO_DBLIB</li>
-<li>FreeTDS 1.00.15 (TDS 7.3)</li>
-<li>DBサーバ SQLServer Express 2016(Win)</li>
+<li>Xcode 8.2</li>
+<li>iOS 10</li>
+<li>macOS 10.12</li>
 </ul>
 
   </div>

@@ -6,8 +6,133 @@
     <description>Recent content in Metal on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Thu, 02 Mar 2017 23:36:28 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 05 Mar 2017 22:36:43 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/tags/metal/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Model I/Oで立体図形のメッシュを生成</title>
+      <link>https://mike-neko.github.io/blog/model-i/o%E3%81%A7%E7%AB%8B%E4%BD%93%E5%9B%B3%E5%BD%A2%E3%81%AE%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%E3%82%92%E7%94%9F%E6%88%90/</link>
+      <pubDate>Sun, 05 Mar 2017 22:36:43 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/model-i/o%E3%81%A7%E7%AB%8B%E4%BD%93%E5%9B%B3%E5%BD%A2%E3%81%AE%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%E3%82%92%E7%94%9F%E6%88%90/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;Metalで描画のテストなどでさくっとモデルを表示したい時に、Model I/Oを使って3Dのモデルを生成する方法&lt;/p&gt;
+
+&lt;p&gt;法線やUV座標も作ってくれるので地味に便利である&lt;/p&gt;
+
+&lt;h2 id=&#34;生成されるモデル&#34;&gt;生成されるモデル&lt;/h2&gt;
+
+&lt;p&gt;生成できる図形の種類は、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ボックス&lt;/li&gt;
+&lt;li&gt;球体&lt;/li&gt;
+&lt;li&gt;シリンダ&lt;/li&gt;
+&lt;li&gt;円錐&lt;/li&gt;
+&lt;li&gt;平面&lt;/li&gt;
+&lt;li&gt;正20面体&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;生成時には大きさや分割数も指定できる&lt;/p&gt;
+
+&lt;p&gt;各頂点データの中身は、シェーダで書くと以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct Vertex {
+    float3 position    [[ attribute(0) ]];
+    float3 normal      [[ attribute(1) ]];
+    float2 texcoord    [[ attribute(2) ]];
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;生成の方法&#34;&gt;生成の方法&lt;/h2&gt;
+
+&lt;p&gt;流れとしては、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;MDLMesh&lt;/code&gt;のクラスメソッドで指定した図形のメッシュを生成&lt;/li&gt;
+&lt;li&gt;Metalで扱えるように&lt;code&gt;MTKMesh&lt;/code&gt;へ変換&lt;/li&gt;
+&lt;li&gt;頂点データに合わせて&lt;code&gt;MTLRenderPipelineState&lt;/code&gt;を生成&lt;/li&gt;
+&lt;li&gt;メッシュを描画&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;という感じになる&lt;/p&gt;
+
+&lt;h3 id=&#34;メッシュを生成&#34;&gt;メッシュを生成&lt;/h3&gt;
+
+&lt;p&gt;例えば、ボックスを生成したい場合は以下のとおり&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let device = MTLCreateSystemDefaultDevice()!
+let allocator = MTKMeshBufferAllocator(device: device)
+let mdlMesh = MDLMesh.newBox(withDimensions: vector_float3(1),
+                             segments: vector_uint3(2),
+                             geometryType: .triangles,
+                             inwardNormals: false,
+                             allocator: allocator)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;MDLMesh.newBox&lt;/code&gt;がボックスのメッシュを生成するクラスメソッドで、
+引数の&lt;code&gt;dimensions&lt;/code&gt;でサイズ、&lt;code&gt;segments&lt;/code&gt;で分割数を指定している。
+図形の種類によって引数のパラメータは異なる（円筒なら半径も指定など）&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;inwardNormals&lt;/code&gt;は法線の向きの指定。
+通常は&lt;code&gt;false&lt;/code&gt;で良いが、スカイボックスや部屋の中のように立体の内側に視点がある場合は&lt;code&gt;true&lt;/code&gt;にする&lt;/p&gt;
+
+&lt;h3 id=&#34;メッシュを変換&#34;&gt;メッシュを変換&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;MDLMesh&lt;/code&gt;を&lt;code&gt;MTKMesh&lt;/code&gt;（Metalで描画する時に必要な情報全部がまとまったクラス）へ変換する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let mesh = try! MTKMesh(mesh: mdlMesh, device: device)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;mtlrenderpipelinestateを生成&#34;&gt;MTLRenderPipelineStateを生成&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;MTLRenderPipelineState&lt;/code&gt;を生成する際にメッシュの頂点情報を与えて生成する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(mesh.vertexDescriptor)
+let renderDescriptor = MTLRenderPipelineDescriptor()
+renderDescriptor.vertexDescriptor = vertexDescriptor
+// ここで通常どおりシェーダなどの設定をする
+let renderState = try! device.makeRenderPipelineState(descriptor: renderDescriptor)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ただし、生成されるメッシュの頂点形式は固定のようなので手動で設定するのもありかもしれない&lt;/p&gt;
+
+&lt;h3 id=&#34;メッシュを描画&#34;&gt;メッシュを描画&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer,
+                              offset: 0, at: 0)
+renderEncoder.drawIndexedPrimitives(
+    type: mesh.submeshes[0].primitiveType,
+    indexCount: mesh.submeshes[0].indexCount,
+    indexType: mesh.submeshes[0].indexType,
+    indexBuffer: mesh.submeshes[0].indexBuffer.buffer,
+    indexBufferOffset: mesh.submeshes[0].indexBuffer.offset)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;メッシュのデータはインデックスバッファ形式で格納されているので、&lt;code&gt;drawIndexedPrimitives&lt;/code&gt;を使う。
+また、&lt;code&gt;VertexBuffer&lt;/code&gt;は一つのみ、サブメッシュも一つのみ生成されるようなので固定にしている&lt;/p&gt;
+
+&lt;h2 id=&#34;ソース&#34;&gt;ソース&lt;/h2&gt;
+
+&lt;p&gt;必要最低限（ライト固定、テクスチャなし）のコードは以下の感じ&lt;br /&gt;
+mac用だがiOSへもViewController周り以外はそのまま使える&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/6ed7ba3fe83bcf0418a6f5e682e6138a.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;&lt;code&gt;Matrix&lt;/code&gt;周りは&lt;a href=&#34;https://github.com/mike-neko/MetalTessellation/blob/master/MetalTessellation/Matrix.swift&#34;&gt;こちら&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.2&lt;/li&gt;
+&lt;li&gt;iOS 10&lt;/li&gt;
+&lt;li&gt;macOS 10.12&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Metalの座標周りのメモ</title>

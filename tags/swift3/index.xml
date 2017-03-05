@@ -6,8 +6,133 @@
     <description>Recent content in Swift3 on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Fri, 24 Feb 2017 23:44:10 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 05 Mar 2017 22:36:43 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/tags/swift3/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Model I/Oで立体図形のメッシュを生成</title>
+      <link>https://mike-neko.github.io/blog/model-i/o%E3%81%A7%E7%AB%8B%E4%BD%93%E5%9B%B3%E5%BD%A2%E3%81%AE%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%E3%82%92%E7%94%9F%E6%88%90/</link>
+      <pubDate>Sun, 05 Mar 2017 22:36:43 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/model-i/o%E3%81%A7%E7%AB%8B%E4%BD%93%E5%9B%B3%E5%BD%A2%E3%81%AE%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%E3%82%92%E7%94%9F%E6%88%90/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;Metalで描画のテストなどでさくっとモデルを表示したい時に、Model I/Oを使って3Dのモデルを生成する方法&lt;/p&gt;
+
+&lt;p&gt;法線やUV座標も作ってくれるので地味に便利である&lt;/p&gt;
+
+&lt;h2 id=&#34;生成されるモデル&#34;&gt;生成されるモデル&lt;/h2&gt;
+
+&lt;p&gt;生成できる図形の種類は、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ボックス&lt;/li&gt;
+&lt;li&gt;球体&lt;/li&gt;
+&lt;li&gt;シリンダ&lt;/li&gt;
+&lt;li&gt;円錐&lt;/li&gt;
+&lt;li&gt;平面&lt;/li&gt;
+&lt;li&gt;正20面体&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;生成時には大きさや分割数も指定できる&lt;/p&gt;
+
+&lt;p&gt;各頂点データの中身は、シェーダで書くと以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct Vertex {
+    float3 position    [[ attribute(0) ]];
+    float3 normal      [[ attribute(1) ]];
+    float2 texcoord    [[ attribute(2) ]];
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;生成の方法&#34;&gt;生成の方法&lt;/h2&gt;
+
+&lt;p&gt;流れとしては、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;MDLMesh&lt;/code&gt;のクラスメソッドで指定した図形のメッシュを生成&lt;/li&gt;
+&lt;li&gt;Metalで扱えるように&lt;code&gt;MTKMesh&lt;/code&gt;へ変換&lt;/li&gt;
+&lt;li&gt;頂点データに合わせて&lt;code&gt;MTLRenderPipelineState&lt;/code&gt;を生成&lt;/li&gt;
+&lt;li&gt;メッシュを描画&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;という感じになる&lt;/p&gt;
+
+&lt;h3 id=&#34;メッシュを生成&#34;&gt;メッシュを生成&lt;/h3&gt;
+
+&lt;p&gt;例えば、ボックスを生成したい場合は以下のとおり&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let device = MTLCreateSystemDefaultDevice()!
+let allocator = MTKMeshBufferAllocator(device: device)
+let mdlMesh = MDLMesh.newBox(withDimensions: vector_float3(1),
+                             segments: vector_uint3(2),
+                             geometryType: .triangles,
+                             inwardNormals: false,
+                             allocator: allocator)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;MDLMesh.newBox&lt;/code&gt;がボックスのメッシュを生成するクラスメソッドで、
+引数の&lt;code&gt;dimensions&lt;/code&gt;でサイズ、&lt;code&gt;segments&lt;/code&gt;で分割数を指定している。
+図形の種類によって引数のパラメータは異なる（円筒なら半径も指定など）&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;inwardNormals&lt;/code&gt;は法線の向きの指定。
+通常は&lt;code&gt;false&lt;/code&gt;で良いが、スカイボックスや部屋の中のように立体の内側に視点がある場合は&lt;code&gt;true&lt;/code&gt;にする&lt;/p&gt;
+
+&lt;h3 id=&#34;メッシュを変換&#34;&gt;メッシュを変換&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;MDLMesh&lt;/code&gt;を&lt;code&gt;MTKMesh&lt;/code&gt;（Metalで描画する時に必要な情報全部がまとまったクラス）へ変換する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let mesh = try! MTKMesh(mesh: mdlMesh, device: device)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;mtlrenderpipelinestateを生成&#34;&gt;MTLRenderPipelineStateを生成&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;MTLRenderPipelineState&lt;/code&gt;を生成する際にメッシュの頂点情報を与えて生成する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(mesh.vertexDescriptor)
+let renderDescriptor = MTLRenderPipelineDescriptor()
+renderDescriptor.vertexDescriptor = vertexDescriptor
+// ここで通常どおりシェーダなどの設定をする
+let renderState = try! device.makeRenderPipelineState(descriptor: renderDescriptor)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ただし、生成されるメッシュの頂点形式は固定のようなので手動で設定するのもありかもしれない&lt;/p&gt;
+
+&lt;h3 id=&#34;メッシュを描画&#34;&gt;メッシュを描画&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer,
+                              offset: 0, at: 0)
+renderEncoder.drawIndexedPrimitives(
+    type: mesh.submeshes[0].primitiveType,
+    indexCount: mesh.submeshes[0].indexCount,
+    indexType: mesh.submeshes[0].indexType,
+    indexBuffer: mesh.submeshes[0].indexBuffer.buffer,
+    indexBufferOffset: mesh.submeshes[0].indexBuffer.offset)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;メッシュのデータはインデックスバッファ形式で格納されているので、&lt;code&gt;drawIndexedPrimitives&lt;/code&gt;を使う。
+また、&lt;code&gt;VertexBuffer&lt;/code&gt;は一つのみ、サブメッシュも一つのみ生成されるようなので固定にしている&lt;/p&gt;
+
+&lt;h2 id=&#34;ソース&#34;&gt;ソース&lt;/h2&gt;
+
+&lt;p&gt;必要最低限（ライト固定、テクスチャなし）のコードは以下の感じ&lt;br /&gt;
+mac用だがiOSへもViewController周り以外はそのまま使える&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/6ed7ba3fe83bcf0418a6f5e682e6138a.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;&lt;code&gt;Matrix&lt;/code&gt;周りは&lt;a href=&#34;https://github.com/mike-neko/MetalTessellation/blob/master/MetalTessellation/Matrix.swift&#34;&gt;こちら&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.2&lt;/li&gt;
+&lt;li&gt;iOS 10&lt;/li&gt;
+&lt;li&gt;macOS 10.12&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Swift3のポインタの実践編</title>
@@ -2101,135 +2226,6 @@ let value = change?[&amp;quot;Change Dictionary Keys&amp;quot;] as? &amp;quot;�
 &lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/NetworkInfo/releases/tag/swift2&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>SwiftでNSExceptionを処理する</title>
-      <link>https://mike-neko.github.io/blog/objc-exception/</link>
-      <pubDate>Sat, 20 Feb 2016 08:10:44 +0900</pubDate>
-      
-      <guid>https://mike-neko.github.io/blog/objc-exception/</guid>
-      <description>
-
-&lt;p&gt;ObjectiveCで書かれた&lt;code&gt;NSException&lt;/code&gt;を発生させるソースをSwiftから利用したい時の処理方法。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;NSException&lt;/code&gt;は、ObjectiveCの&lt;code&gt;@try ~ @catch ~ @finally&lt;/code&gt;でしか例外処理を行えない。例外処理を書いていない時は、実行時エラーとして処理される。つまり、Swiftから&lt;code&gt;NSException&lt;/code&gt;を発生させるコードを呼び出して例外が起きると、問答無用でアプリが落ちてしまう・・・&lt;/p&gt;
-
-&lt;p&gt;対応策としては、&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;元のコードもSwiftで書き換えてしまう&lt;/li&gt;
-&lt;li&gt;そもそも例外は起きるはずがないので&lt;del&gt;落ちていい&lt;/del&gt;無視する&lt;/li&gt;
-&lt;li&gt;該当のメソッドを呼び出す部分をブリッジするラッパを作る&lt;/li&gt;
-&lt;li&gt;なんとかしてSwiftで&lt;code&gt;NSException&lt;/code&gt;の例外を処理する&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;といった感じになると思うが、サードパーティのライブラリとかだと1や2の方法が取れない場合がある。
-3も該当のメソッドが多ければ作業量が多くなるし、ソースの見通しも悪くなる。&lt;/p&gt;
-
-&lt;p&gt;なので、今回は4の方法で例外を処理する方法についてメモしておく。&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;p&gt;基本的な考えた方は3と同じで、ObjectiveCでしか処理できない部分だけラップしてしまえ〜となる。
-まずは以下の様なブリッジ用のObjectiveCのクラスを作る。（&lt;code&gt;Bridging-Header&lt;/code&gt;への追加も忘れずに）&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/5add082e4f51059161ce.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;中は見ての通り、例外処理のそれぞれの中身をクロージャ（ブロック）でブリッジ用のクラスに渡している。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;nonnull&lt;/code&gt;や&lt;code&gt;nullable&lt;/code&gt;をつけているのは、Swift側から呼び出す時に&lt;code&gt;Optional&lt;/code&gt;になるかどうかを制御する為。&lt;code&gt;finally&lt;/code&gt;は不要なことも多々あるので&lt;code&gt;nil&lt;/code&gt;を渡せる様に&lt;code&gt;nullable&lt;/code&gt;にしている。&lt;/p&gt;
-
-&lt;p&gt;（意図して処理がないことを明示させる為に空ブロックではなく&lt;code&gt;nil&lt;/code&gt;を渡せる様にしている）&lt;/p&gt;
-
-&lt;h3 id=&#34;使い方&#34;&gt;使い方&lt;/h3&gt;
-
-&lt;p&gt;Swiftから呼び出す時は以下の感じ。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ObjC_Exception.objC_try({ _ in
-  // NSExceptionが起きるかもしれない処理
-},
-
-objC_catch: { (NSException) in
-  // 例外発生時の処理
-},
-
-objC_finally: { _ in
-  // 後処理とか...
-})
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;finally&lt;/code&gt;が不要であれば、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ObjC_Exception.objC_try({ _ in
-  // NSExceptionが起きるかもしれない処理
-},
-
-objC_catch: { (NSException) in
-  // 例外発生時の処理
-},
-
-objC_finally: nil)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;もし複数の&lt;code&gt;catch&lt;/code&gt;が使いたい場合は、これを元に拡張すればOK。&lt;/p&gt;
-
-&lt;h3 id=&#34;nonnullやnullableのアノテーションについて&#34;&gt;nonnullやnullableのアノテーションについて&lt;/h3&gt;
-
-&lt;p&gt;ObjectiveC側でアノテーションを指定すると、Swiftとの連携時のメソッドの型にも反映される。&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th align=&#34;center&#34;&gt;ObjC&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;Swift&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;変換前(ObjC)&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;変換後(Swift)&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td align=&#34;center&#34;&gt;未指定&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;(型)!&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge*&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge!&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td align=&#34;center&#34;&gt;nonull&lt;br&gt;_Nonnull&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;(型)&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge* _Nonnull&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td align=&#34;center&#34;&gt;nullable&lt;br&gt;_Nullable&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;(型)?&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge* _Nullable&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;Hoge?&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;例えば、今回のメソッドをSwiftから呼び出す時は&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ObjC_Exception.objC_try(objC_try: () -&amp;gt; Void, objC_catch: (NSException) -&amp;gt; Void, objC_finally: (() -&amp;gt; Void)?)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;という形式になっていて、&lt;code&gt;objC_finally&lt;/code&gt;を&lt;code&gt;nullable&lt;/code&gt;にしたので、ちゃんと&lt;code&gt;?&lt;/code&gt;のついた&lt;code&gt;Optional&lt;/code&gt;になっているし、それ以外は&lt;code&gt;nonnull&lt;/code&gt;なので型がそのまま使われている。&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 7.2&lt;/li&gt;
-&lt;li&gt;iOS 9.2&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/ObjC_Exception&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
