@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Centos on M.Ikeの小ネタ集</title>
+    <link>https://mike-neko.github.io/tags/centos/</link>
+    <description>Recent content in Centos on M.Ikeの小ネタ集</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>jp</language>
+    <lastBuildDate>Sun, 27 Nov 2016 22:50:47 +0900</lastBuildDate>
+    <atom:link href="https://mike-neko.github.io/tags/centos/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>VPN上のWindows機へ接続</title>
+      <link>https://mike-neko.github.io/blog/vpn-win/</link>
+      <pubDate>Sun, 27 Nov 2016 22:50:47 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/vpn-win/</guid>
+      <description>
+
+&lt;p&gt;&lt;code&gt;SSH&lt;/code&gt;が入っていないVPN上のWindowsへアクセスする方法&lt;/p&gt;
+
+&lt;p&gt;この場合、踏み台となる&lt;code&gt;SSH&lt;/code&gt;が入った別のマシンが必要となる&lt;/p&gt;
+
+&lt;p&gt;今回の検証環境は以下の通り&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ローカル：Mac OS 10.11(※)&lt;/li&gt;
+&lt;li&gt;VPN
+
+&lt;ul&gt;
+&lt;li&gt;CentOS 6.8(踏み台)&lt;/li&gt;
+&lt;li&gt;Windows(SQLServer)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;※ macOS 10.12(sierra)は&lt;code&gt;PPTP&lt;/code&gt;でのVPN接続がOSではサポートされていないので注意！&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;接続のイメージは以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    Mac
+     |
+(VPN / SSH)
+     |
+   CentOS(192.168.10.1 / 踏み台) - Windows(192.168.10.2 / SQLServer)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;remotedesktopでログイン&#34;&gt;RemoteDesktopでログイン&lt;/h2&gt;
+
+&lt;p&gt;Windowsなので遠隔で操作するには&lt;code&gt;RemoteDesktop&lt;/code&gt;を利用&lt;/p&gt;
+
+&lt;h3 id=&#34;sshの接続方法&#34;&gt;SSHの接続方法&lt;/h3&gt;
+
+&lt;p&gt;以下の形式でSSH接続する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh -C -L 3389:(WindowsのIP):3389 (踏み台のIP)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例えば、上述の環境でCentOSの&lt;code&gt;user&lt;/code&gt;でログインする場合だと、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh -C -L 3389:192.168.10.2:3389 user@192.168.10.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で接続する&lt;/p&gt;
+
+&lt;h3 id=&#34;remotedesktopの設定&#34;&gt;RemoteDesktopの設定&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PC name:&lt;code&gt;localhost&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;User name: Windowsのユーザ名&lt;/li&gt;
+&lt;li&gt;Password: Windowsのパスワード&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ポイントはホストが&lt;code&gt;localhost&lt;/code&gt;になること&lt;/p&gt;
+
+&lt;h2 id=&#34;sql-serverへ接続&#34;&gt;SQL Serverへ接続&lt;/h2&gt;
+
+&lt;h3 id=&#34;sshの接続方法-1&#34;&gt;SSHの接続方法&lt;/h3&gt;
+
+&lt;p&gt;以下の形式でSSH接続する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh -C -L (DBのポート):(WindowsのIP):(DBのポート) (踏み台のIP)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例えば、上述の環境でCentOSの&lt;code&gt;user&lt;/code&gt;、SQLServerのポートが&lt;code&gt;1433&lt;/code&gt;でログインする場合だと、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh -C -L 1433:192.168.10.2:1433 user@192.168.10.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で接続する&lt;/p&gt;
+
+&lt;h3 id=&#34;db接続設定&#34;&gt;DB接続設定&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ホスト:&lt;code&gt;localhost&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;ポート:1433&lt;/li&gt;
+&lt;li&gt;DB名: そのまま&lt;/li&gt;
+&lt;li&gt;DBユーザ: そのまま&lt;/li&gt;
+&lt;li&gt;DBパスワード: そのまま&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>VagrantでCentOS6.8を使う</title>
+      <link>https://mike-neko.github.io/blog/vagrant-cent/</link>
+      <pubDate>Tue, 08 Nov 2016 21:32:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/vagrant-cent/</guid>
+      <description>
+
+&lt;p&gt;野良BOXはちょっと怖いので公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Vagrantfile&lt;/code&gt;を作成&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir -p （適当なフォルダ）
+cd （上で作ったフォルダ）
+vagrant init bento/centos-6.8
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Vagrantfile&lt;/code&gt;を編集(サーバとして使いたいので以下のように編集)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# config.vm.network &amp;quot;forwarded_port&amp;quot;, guest: 80, host: 8080
+# ↓コメントを外す＋ポートは空いているものを指定
+config.vm.network &amp;quot;forwarded_port&amp;quot;, guest: 8010, host: 8010
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;# config.vm.network &amp;quot;private_network&amp;quot;, ip: &amp;quot;192.168.33.10&amp;quot;
+# ↓コメントを外す＋IPは空いているものを指定
+config.vm.network &amp;quot;private_network&amp;quot;, ip: &amp;quot;192.168.33.10&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;# Centos6.8限定で以下も追記(※1 詳細は後述)
+config.vm.provider &amp;quot;virtualbox&amp;quot; do |vb|
+vb.customize [&amp;quot;modifyvm&amp;quot;, :id, &amp;quot;--cableconnected1&amp;quot;, &amp;quot;on&amp;quot;]
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;起動する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant up
+vagrant ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;トラブルシューティング&#34;&gt;トラブルシューティング&lt;/h2&gt;
+
+&lt;h3 id=&#34;vagrant-up-で-private-key-で先に進まずエラーになる&#34;&gt;vagrant up で private key で先に進まずエラーになる&lt;/h3&gt;
+
+&lt;p&gt;エラーは以下の感じでCentOS6.8で発生(6.7は問題無し)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Timed out while waiting for the machine to boot. This means that
+Vagrant was unable to communicate with the guest machine within
+the configured (&amp;quot;config.vm.boot_timeout&amp;quot; value) time period.
+
+If you look above, you should be able to see the error(s) that
+Vagrant had when attempting to connect to the machine. These errors
+are usually good hints as to what may be wrong.
+
+If you&#39;re using a custom box, make sure that networking is properly
+working and you&#39;re able to connect to the machine. It is a common
+problem that networking isn&#39;t setup properly in these boxes.
+Verify that authentication configurations are also setup properly,
+as well.
+
+If the box appears to be booting properly, you may want to increase
+the timeout (&amp;quot;config.vm.boot_timeout&amp;quot;) value.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;対応策&#34;&gt;対応策&lt;/h4&gt;
+
+&lt;p&gt;ググると色々出てくるが、CentOS6.8で発生する場合は、前述の※1を&lt;code&gt;Vagrantfile&lt;/code&gt;に追記しておけば大丈夫。&lt;br /&gt;
+（というか他の方法は効果なしだった・・・）&lt;/p&gt;
+
+&lt;h3 id=&#34;ファイルの共有ができない&#34;&gt;ファイルの共有ができない&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;vagrant up&lt;/code&gt;で以下のエラーが出ている&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Vagrant was unable to mount VirtualBox shared folders. This is usually
+because the filesystem &amp;quot;vboxsf&amp;quot; is not available. This filesystem is
+made available via the VirtualBox Guest Additions and kernel module.
+Please verify that these guest additions are properly installed in the
+guest. This is not a bug in Vagrant and is usually caused by a faulty
+Vagrant box. For context, the command attempted was:
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;対応策-1&#34;&gt;対応策&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;まずはエラーを一旦無視してログインし、カーネルをアップデート&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant ssh
+su                     # pass:&amp;quot;vagrant&amp;quot;
+yum -y update kernel
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;アップデートが完了すれば&lt;code&gt;exit&lt;/code&gt;を2回でログアウトする&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Guest Additions&lt;/code&gt;をインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant plugin install vagrant-vbguest
+vagrant vbguest
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;リロードをかけてエラーが出なければOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vagrant reload
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;環境&#34;&gt;環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mac 10.11&lt;/li&gt;
+&lt;li&gt;VirtualBox 5.0.28&lt;/li&gt;
+&lt;li&gt;Vagrant 1.8.6
+
+&lt;ul&gt;
+&lt;li&gt;CentOS6.7&lt;/li&gt;
+&lt;li&gt;CentOS6.8&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>CentOSからOracleへ接続</title>
+      <link>https://mike-neko.github.io/blog/oracle-cent/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/oracle-cent/</guid>
+      <description>
+
+&lt;p&gt;CentOSのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
+
+&lt;p&gt;Macの場合は&lt;a href=&#34;../oracle-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;oracleのドライバのインストール&#34;&gt;Oracleのドライバのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;サーバのアーキテクチャを確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;uname -a
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index.html&#34;&gt;Oracle Instant Client&lt;/a&gt;から
+1で確認した環境の&lt;code&gt;basic&lt;/code&gt;と&lt;code&gt;SDK&lt;/code&gt;をダウンロードしサーバへ保存&lt;br /&gt;
+(今回は&lt;code&gt;x86_64&lt;/code&gt;だったので&lt;code&gt;Version 12.1.0.2 (x86_64)&lt;/code&gt;の&lt;code&gt;rpm&lt;/code&gt;を選択。以降このバージョンが前提)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd (保存した場所)
+su
+rpm -ivh oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
+rpm -ivh oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;パスを通す&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vi /etc/profile
+# 以下の行を追加
+export LD_LIBRARY_PATH=/usr/lib/oracle/12.1/client64/lib:$LD_LIBRARY_PATH
+export PATH=/usr/lib/oracle/12.1/client64/bin:$PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;追記したら保存して終了し&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;source /etc/profile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で強制反映させる&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;peclのインストール&#34;&gt;peclのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;以下でインストール
+&lt;code&gt;
+yum -y install --enablerepo=remi --enablerepo=remi-php56 php-pear
+&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;oci8のインストール&#34;&gt;oci8のインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;pecl&lt;/code&gt;からインストールするので&lt;code&gt;DTrace&lt;/code&gt;サポートを有効にする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;yum -y install systemtap-sdt-devel
+export PHP_DTRACE=yes
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ちなみにこれをしないと&lt;code&gt;error: oci8_dtrace_gen.h: No such file or director&lt;/code&gt;というエラーになる。
+詳細は&lt;a href=&#34;http://php.net/manual/ja/oci8.dtrace.php&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;oci8&lt;/code&gt;をバージョン（Ver.2.0.12）を指定してインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pecl install oci8-2.0.12
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;oci8の最新版だとPHP7以降の為、2.0系を指定する&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;インストール中にプロンプトが出れば、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;instantclient,/usr/lib/oracle/12.1/client64/lib
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と入力&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;PHPの設定
+&lt;code&gt;php.ini&lt;/code&gt;に以下を設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;extension=oci8.so
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（場所が判らない時は&lt;code&gt;php -i | grep php.ini&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php --ri oci8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;（略）
+OCI8 Support =&amp;gt; enabled
+（略）
+OCI8 Version =&amp;gt; 2.0.12
+（略）
+Oracle Run-time Client Library Version =&amp;gt; 12.1.0.2.0
+Oracle Compile-time Instant Client Version =&amp;gt; 12.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;Macの場合の&lt;a href=&#34;../oracle-mac/&#34;&gt;PHPからの接続&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/book.oci8.php&#34;&gt;Oracle OCI8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Pecl公式 &lt;a href=&#34;https://pecl.php.net/package/oci8&#34;&gt;oci8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html&#34;&gt;Orcale Instant Client&lt;/a&gt;
+(下の方にインストール方法)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CentOS6.8&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + OCI8 2.0.12&lt;/li&gt;
+&lt;li&gt;Oracle Instant Client 12.1.0.2.0&lt;/li&gt;
+&lt;li&gt;DBサーバ OracleDB(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>CentOSからSQLServerへ接続</title>
+      <link>https://mike-neko.github.io/blog/mssql-cent/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/mssql-cent/</guid>
+      <description>
+
+&lt;p&gt;CentOSのPHP5.6から&lt;code&gt;PDO_ODBC&lt;/code&gt;でSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
+
+&lt;p&gt;Macの場合は&lt;a href=&#34;../mssql-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;なおCentOSからであれば&lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;も可能だが、公式ドライバがあるこちらを試してみた&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;sqlserverのドライバのインストール&#34;&gt;SQLServerのドライバのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;su
+yum -y update
+yum -y install yum-utils
+yum-config-manager --add-repo https://apt-mo.trafficmanager.net/yumrepos/mssql-rhel6-release/
+yum-config-manager --enable mssql-rhel6-release
+wget &amp;quot;http://aka.ms/msodbcrhelpublickey/dpgswdist.v1.asc&amp;quot;
+rpm --import dpgswdist.v1.asc
+yum -y remove unixODBC
+yum -y install msodbcsql # 途中にライセンスの承諾確認あり
+yum -y install unixODBC-utf16-devel
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ODBCドライバの確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vi /etc/odbcinst.ini
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として、以下のような文言があればOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[ODBC Driver 13 for SQL Server]
+Description=Microsoft ODBC Driver 13 for SQL Server
+Driver=/opt/microsoft/msodbcsql/lib64/libmsodbcsql-13.0.so.1.0
+UsageCount=1
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;odbcドライバの設定&#34;&gt;ODBCドライバの設定&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo vi /etc/odbcinst.ini
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として、次のような設定を追記する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[(ドライバ名として判り易い名称)]
+Driver = （odbcinst.iniの[]で囲まれたドライバ名）
+Description = (適当な説明)
+Trace = Yes
+Server = (サーバのIP)
+Port = (サーバのポート)
+Database = (データベース名)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上記の例の場合だと、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[SQLServer]
+Driver = ODBC Driver 13 for SQL Server
+Description = For Develop
+Trace = Yes
+Server = 192.168.0.10
+Port = 1433
+Database = sample
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;といった感じになる&lt;/p&gt;
+
+&lt;h3 id=&#34;pdo-odbcのインストール&#34;&gt;PDO_ODBCのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;以下でインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;yum -y install --enablerepo=remi --enablerepo=remi-php56 php-pdo php-odbc
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php -i | grep odbc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;code&gt;PDO drivers&lt;/code&gt;に&lt;code&gt;odbc&lt;/code&gt;が表示されていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;PDOのDSNの指定は以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$driver = &#39;SQLServer&#39;;      // odbc.iniで設定したドライバ名
+$user = &#39;test&#39;;             // ユーザ名
+$pass = &#39;1234&#39;;             // パスワード
+
+$pdo = new PDO(&#39;odbc:&#39; . $driver, $user, $pass); 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/ref.pdo-odbc.php&#34;&gt;PDO_ODBC&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Microsoft公式 &lt;a href=&#34;https://blogs.technet.microsoft.com/dataplatforminsider/2016/10/25/odbc-driver-13-0-for-sql-server-linux-is-now-released/&#34;&gt;ODBC Driver 13.0 for SQL Server&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CentOS6.8&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + PDO_ODBC&lt;/li&gt;
+&lt;li&gt;ODBC Driver 13.0 for SQL Server&lt;/li&gt;
+&lt;li&gt;DBサーバ SQLServer Express 2016(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>nginxをhttp2に対応させる &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(22)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(10)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>nginxをhttp2に対応させる</h1>
+    <span class="post-date">Jun 3, 2016 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">iOS</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/docker">docker</a><a class="label" href="https://mike-neko.github.io/tags/php">php</a><a class="label" href="https://mike-neko.github.io/tags/db">db</a><a class="label" href="https://mike-neko.github.io/tags/nginx">nginx</a><a class="label" href="https://mike-neko.github.io/tags/ssl">ssl</a><a class="label" href="https://mike-neko.github.io/tags/http2">http2</a>
+    </span>
+    
+
+<p>以前に構築したDockerでの開発環境で使ったnginxを<code>http2</code>に対応させた時のメモ。</p>
+
+<blockquote>
+<p>過去の記事（<a href="../docker/">Dockerでの開発環境</a>）</p>
+</blockquote>
+
+<h3 id="環境">環境</h3>
+
+<p>ベースは前回構築したnginx+Dockerで通信はオレオレ証明書によるSSLを前提。</p>
+
+<p>主な変更点は以下の通り</p>
+
+<ul>
+<li>OpenSSL 1.0.2</li>
+<li>nginx 1.10.0</li>
+</ul>
+
+<p>いずれもhttp2対応させる為にバージョンアップが必要。</p>
+
+<p>なお、iOSは<strong>iOS9</strong>からhttp2へ対応している。</p>
+
+<h2 id="手順">手順</h2>
+
+<h3 id="事前準備">事前準備</h3>
+
+<p>http2での通信かどうかの確認用に以下のChromeのプラグインを入れておく。</p>
+
+<p><a href="https://chrome.google.com/webstore/detail/http2-and-spdy-indicator/mpbpobfflnpcgagjijhmgnchggcjblin/related?hl=ja">HTTP/2 and SPDY indicator</a><br />
+（Firefox用もあるみたいなのでお好きな方で）</p>
+
+<p>http2での通信だと稲妻が青色になるので確認が楽。</p>
+
+<h3 id="macでの作業">Macでの作業</h3>
+
+<ol>
+<li><p>OpenSSLを最新にあげる<br />
+OpenSSLの更新方法：<a href="http://qiita.com/Chrowa3/items/b04e772be959cdda9ac3">Mac OS X の openssl を最新の状態にする</a><br />
+ポイントは<code>upgrade</code>にすること（普段使う<code>update</code>ではない）</p></li>
+
+<li><p>nginxをアンイストールする</p>
+
+<pre><code>brew uninstall nginx
+</code></pre></li>
+
+<li><p>nginxをhttp2モジュール付きでインストールする</p>
+
+<pre><code>brew install nginx --with-http2
+</code></pre></li>
+
+<li><p>nginxのconfを編集<br />
+<code>HTTPS server</code>の設定が<code>listen  443 ssl;</code>となっているはずなので、<code>http2</code>を追加する。</p>
+
+<pre><code>server {
+listen  443 ssl http2;
+...
+}
+</code></pre>
+
+<p>追加したらnginxを再起動する</p></li>
+
+<li><p>ChromeからMacへアクセスしてみて青い稲妻になっていれば<code>nginx</code>の設定は成功</p></li>
+</ol>
+
+<h3 id="ios端末での通信">iOS端末での通信</h3>
+
+<p>iOS9以降の<code>NSURLSession</code>での通信であれば、特に設定など不要で自動で<code>http2</code>になる。</p>
+
+<p>なお、規格上は<code>http</code>のみでも対応しているがiOSでどうかは未検証。</p>
+
+<h3 id="ログ設定">ログ設定</h3>
+
+<p>iOS端末からの通信も<code>http2</code>になっているかの確認は、<code>nginx</code>のログで判別する。</p>
+
+<p><code>http2</code>の場合は、<code>log_format</code>の<code>$http2</code>に<code>h2</code>と入ってくる。<br />
+詳細は以下のページを参考に<br />
+<a href="http://d.hatena.ne.jp/ASnoKaze/20150818/1439896998">nginxでアクセスログにhttp2の通信か出力する</a></p>
+
+<h2 id="過去情報">過去情報</h2>
+
+<p>標準の<code>nginx</code>に<code>http2</code>モジュールがないと思っていたら、
+実はちゃんとあったので訂正。</p>
+
+<p>もったいないので、<code>nginx-full</code>の情報を残しておく。</p>
+
+<h3 id="nginx-full">nginx-full</h3>
+
+<p>通常の<code>Homebrew</code>の<code>nginx</code>ではオプションのモジュールが少ないので、
+標準では足りないモジュールをインストールしたい時は<code>nginx-full</code>をインストールする。</p>
+
+<p>例） nginxをhttp2モジュール付きでインストールする</p>
+
+<pre><code>brew tap homebrew/nginx
+brew install nginx-full --with-http2
+</code></pre>
+
+<p>モジュールの一覧は以下で確認すること。
+（<a href="https://nginx.org/en/docs/http/ngx_http_v2_module.html">公式</a>のモジュールの情報?とは違うようなのでこれで確認）</p>
+
+<pre><code>brew info nginx-full
+</code></pre>
+
+<h1 id="参考リンク">参考リンク</h1>
+
+<ul>
+<li><a href="http://kannokanno.hatenablog.com/entry/2014/02/10/134920">Mac - homebrewでnginxを入れるときはnginx-fullを入れよう</a></li>
+</ul>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>OS X 10.11.5</li>
+<li>Xcode 7.3.1</li>
+<li>iOS 9.3.2</li>
+<li>iPhone 6+</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

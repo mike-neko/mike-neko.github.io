@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Swift3のポインタの基礎知識 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(22)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(10)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Swift3のポインタの基礎知識</h1>
+    <span class="post-date">Feb 22, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    
+
+<p>基本的にSwiftからポインタをそのまま扱う機会はほとんどないが、CのAPIやMetal等でポインタを扱う場合用のメモ</p>
+
+<p>なお、画像などのバイナリデータを単に扱いたいだけの場合は<code>Data</code>が<code>UInt8</code>の配列と同等に扱えるようになったのでそっちを使った方が良い</p>
+
+<p>実際の使い方は<a href="../swift-pointerc">実践編</a>も参照</p>
+
+<h2 id="概要">概要</h2>
+
+<p>ポインタはメモリ上のデータにアクセスする時に使うものである。
+Swiftの場合、紐付けられている<strong>型</strong>によって、以下の種類がある</p>
+
+<ul>
+<li>UnsafePointer / UnsafeMutablePointer<br />
+特定の型にバインドされている。タイプセーフである</li>
+<li>UnsafeRawPointer / UnsafeMutableRawPointer<br />
+特定の型にバインドされていない。型保証がない</li>
+<li>UnsafeBufferPointer / UnsafeMutableBufferPointer<br />
+Unsafe(Mutable)Pointerの配列版</li>
+<li>UnsafeRawBufferPointer / UnsafeMutableRawBufferPointer<br />
+Unsafe(Mutable)RawPointerの配列版</li>
+</ul>
+
+<p><code>〜BufferPointer</code>は、メモリ上に要素（データ）が連続しているバッファの場合に利用出来るポインタで、実体はメモリへのビューである。
+リリースモードでは境界チェックがされずにアクセスされる（デバッグモードではチェックされる）</p>
+
+<h3 id="注意事項">注意事項</h3>
+
+<p>ポインタを使う場合、自動メモリ管理やアライメントの保証はされない。よってライフサイクルを自分で管理しメモリリークや未定義扱いとなる動作を自分で避けなければならない</p>
+
+<p><code>〜RawPointer</code>の場合は、タイプセーフではない
+（Rawがついていないものはコンパイラによる型チェックが行われるが、異なるデータ型を強制的に割り当てたような場合は当然未定義の動作となる）</p>
+
+<h3 id="ポインタの状態">ポインタの状態</h3>
+
+<p>ポインタはポインタの指すメモリの状態によって以下のような状態となる</p>
+
+<ul>
+<li>未バインド（未初期化）<br />
+
+<ul>
+<li>メモリとバインドされていない状態</li>
+<li>例：ポインタの宣言直後のような場合</li>
+</ul></li>
+<li>バインド済・未初期化<br />
+
+<ul>
+<li>メモリとバインドされているが、メモリ上のデータは未初期化</li>
+<li>例：メモリ確保済だが未初期化のメモリへのポインタ</li>
+</ul></li>
+<li>バインド済・初期化済
+
+<ul>
+<li>例：値の設定されているメモリへのポインタ</li>
+</ul></li>
+</ul>
+
+<h3 id="trivial-type"><code>trivial type</code></h3>
+
+<p>型の中に参照を含まないデータ型。単純なバイトのコピーだけで複製できる型のこと</p>
+
+<h2 id="unsafepointer-unsafemutablepointer">UnsafePointer / UnsafeMutablePointer</h2>
+
+<h3 id="読み取り">読み取り</h3>
+
+<ul>
+<li>バインド済・未初期化：初期化が必要</li>
+
+<li><p>バインド済・初期化済：次のどちらかで読み取る</p>
+
+<pre><code>let ptr: UnsafePointer&lt;Int&gt; = ...   // 中身は10  
+let i = ptr.pointee                 // Intの10  
+let j = ptr[0]                      // Intの10  
+</code></pre></li>
+</ul>
+
+<h3 id="書き込み">書き込み</h3>
+
+<ul>
+<li>未バインド（未初期化）：<code>allocate(capacity:)</code>でメモリを確保してバインドできる（メモリは未初期化のまま）</li>
+<li>バインド済・未初期化：<code>initialize(to:count:)</code>,<code>initialize(from:)</code>,<code>moveInitializeMemory(from:count)</code>を使って初期化</li>
+
+<li><p>バインド済・初期化済：次のどちらかで設定できる</p>
+
+<pre><code>var ptr: UnsafeMutablePointer&lt;Int&gt; = ...
+ptr.pointee = 10
+ptr[0] = 10
+</code></pre></li>
+</ul>
+
+<h2 id="unsaferawpointer-unsafemutablerawpointer">UnsafeRawPointer / UnsafeMutableRawPointer</h2>
+
+<p>読み書きの際にはアライメントに注意すること</p>
+
+<h3 id="読み取り-1">読み取り</h3>
+
+<ul>
+<li>未バインド（未初期化）：<code>bindMemory(to:count:)</code>で型にバインドする（rawではないポインタが返される）</li>
+<li>バインド済・未初期化：バインドした型の値で初期化が必要<br />
+（=rawでは初期化はできない）</li>
+<li>バインド済・初期化済：<code>load(fromByteOffset:as:)</code>で型を指定して読み取り
+（アライメントに注意）</li>
+</ul>
+
+<h3 id="書き込み-1">書き込み</h3>
+
+<ul>
+<li>未バインド（未初期化）：<code>initializeMemory(as:from:)</code>,<code>moveInitializeMemory(as:from:count)</code>を使って初期化できる</li>
+<li>バインド済：<code>storeBytes(of:toByteOffset:as:)</code>で書き込み可能。ただし<code>trivial type</code>のみ</li>
+</ul>
+
+<h2 id="ポインタ演算">ポインタ演算</h2>
+
+<p><code>+</code>と<code>-</code>と<code>[]</code>(subscript)が利用可能。
+それぞれ指定した数だけオフセット（※）されてアクセスされる</p>
+
+<p>※UnsafePointer / UnsafeMutablePointerの場合は、その型のバイト数分だけ。UnsafeRawPointer / UnsafeMutableRawPointerの場合は、バイト単位でオフセットされる</p>
+
+<pre><code>// intPointerがIntの[0, 1, 2, 3, 4]のメモリを指している場合
+intPointer + 2      // 2
+intPointer[2]       // 2
+</code></pre>
+
+<h2 id="型変換">型変換</h2>
+
+<h3 id="互換性のある別の型に一時的にバインド">互換性のある別の型に一時的にバインド</h3>
+
+<p><code>withMemoryRebound(to:capacity:)</code>を使う</p>
+
+<pre><code>// 例：Int8 =&gt; UInt8
+uint8Pointer.withMemoryRebound(to: Int8.self, capacity: 8) {
+    // $0
+}
+</code></pre>
+
+<h3 id="別の型に永続的にバインド">別の型に永続的にバインド</h3>
+
+<ol>
+<li><p><code>RawPointer</code>にしてから指定の型へバインドしなおす</p>
+
+<pre><code>// 例：UInt8 =&gt; UInt64
+let uint64Pointer = UnsafeRawPointer(uint8Pointer)
+                        .bindMemory(to: UInt64.self, capacity: 1)
+</code></pre>
+
+<p>なお、再バインドされるのでこの場合、元のuint8Pointerは<strong>未定義</strong>になる</p></li>
+
+<li><p>trivial types同士の場合<br />
+<code>RawPointer</code>にしてから<code>load</code>を使う</p>
+
+<pre><code>let rawPointer = UnsafeRawPointer(uint64Pointer)
+fullInteger = rawPointer.load(as: UInt64.self)   // OK
+firstByte = rawPointer.load(as: UInt8.self)      // OK
+</code></pre>
+
+<p>Mutableの場合は<code>storeBytes(of:toByteOffset:as:)</code>で設定もできる</p></li>
+</ol>
+
+<h3 id="暗黙の変換とブリッジ">暗黙の変換とブリッジ</h3>
+
+<p>関数の引数に渡す時限定で暗黙的なキャストとブリッジをしてくれる</p>
+
+<p>例えば、</p>
+
+<pre><code>func printInt(atAddress p: UnsafePointer&lt;Int&gt;)
+</code></pre>
+
+<p>というメソッドがある場合、</p>
+
+<pre><code>var value: Int = 23
+printInt(atAddress: &amp;value)         // &amp;をつける
+
+let numbers = [5, 10, 15, 20]       // 配列はlet
+printInt(atAddress: numbers)        // 配列は&amp;不要
+</code></pre>
+
+<p>とすれば、自動で<code>UnsafePointer</code>へ変換して処理される</p>
+
+<p>もし、<code>printInt</code>の引数が<code>UnsafeMutablePointer</code>の場合であれば、</p>
+
+<pre><code>var value: Int = 23
+printInt(atAddress: &amp;value)         // &amp;をつける
+
+var numbers = [5, 10, 15, 20]       // mutableなのでvar
+printInt(atAddress: &amp;numbers)       // inoutなので&amp;
+</code></pre>
+
+<p>とする</p>
+
+<p><strong><em>注意事項</em></strong></p>
+
+<p>この暗黙の変換によるポインタの有効範囲は該当の関数のスコープ内のみ。
+よって関数からポインタを返してそれを利用するのは禁止（動作は<strong>未定義</strong>である）</p>
+
+<p>特に以下のように初期化に使うのは禁止</p>
+
+<pre><code>var number = 5
+let numberPointer = UnsafePointer&lt;Int&gt;(&amp;number)
+// numberPointerの動作は未定義
+</code></pre>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

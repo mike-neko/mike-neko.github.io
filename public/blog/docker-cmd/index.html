@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Dockerのコマンド備忘録 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(22)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(10)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Dockerのコマンド備忘録</h1>
+    <span class="post-date">Apr 2, 2016 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/docker">docker</a>
+    </span>
+    
+
+<h2 id="dockerでよく使うコマンド">Dockerでよく使うコマンド</h2>
+
+<h3 id="イメージ操作">イメージ操作</h3>
+
+<h4 id="イメージのリスト表示">イメージのリスト表示</h4>
+
+<pre><code>docker images
+</code></pre>
+
+<h4 id="指定したイメージの削除">指定したイメージの削除</h4>
+
+<pre><code>docker rmi [イメージの名前かID]
+</code></pre>
+
+<p>イメージの指定は<code>IMAGE ID</code>の先頭数文字での特定が便利</p>
+
+<h4 id="イメージの全削除">イメージの全削除</h4>
+
+<pre><code>docker rmi $(docker images -a -q)
+</code></pre>
+
+<h3 id="コンテナ操作">コンテナ操作</h3>
+
+<h4 id="コンテナのリスト表示">コンテナのリスト表示</h4>
+
+<pre><code>docker ps
+</code></pre>
+
+<h4 id="全部停止">全部停止</h4>
+
+<pre><code>docker stop $(docker ps -a -q)
+</code></pre>
+
+<h4 id="全部削除">全部削除</h4>
+
+<pre><code>docker rm $(docker ps -a -q) 
+</code></pre>
+
+<h3 id="dockercompose">DockerCompose</h3>
+
+<h4 id="起動">起動</h4>
+
+<pre><code>cd [docker-copose.ymlを置いてる場所]
+docker-compose up -d
+</code></pre>
+
+<p>これだけで<code>build</code>と<code>pull</code>と<code>run</code>を一気にしてくれる</p>
+
+<h4 id="停止">停止</h4>
+
+<pre><code>docker-compose stop
+</code></pre>
+
+<h3 id="nginx">nginx</h3>
+
+<p><em>80ポートを使う場合はsudoが必要</em></p>
+
+<h4 id="起動-1">起動</h4>
+
+<pre><code>nginx
+</code></pre>
+
+<h4 id="停止-1">停止</h4>
+
+<pre><code>nginx -s stop
+</code></pre>
+
+<h4 id="再起動">再起動</h4>
+
+<pre><code>nginx -s reload
+</code></pre>
+
+<h2 id="php">PHP</h2>
+
+<h3 id="オプション">オプション</h3>
+
+<h4 id="docker-php-ext-installで指定できるもの">docker-php-ext-installで指定できるもの</h4>
+
+<pre><code>bcmath bz2 calendar ctype curl dba dom enchant exif fileinfo filter ftp gd gettext gmp hash iconv imap interbase intl json ldap mbstring mcrypt mssql mysql mysqli oci8 odbc opcache pcntl pdo pdo_dblib pdo_firebird pdo_mysql pdo_oci pdo_odbc pdo_pgsql pdo_sqlite pgsql phar posix pspell readline recode reflection session shmop simplexml snmp soap sockets spl standard sybase_ct sysvmsg sysvsem sysvshm tidy tokenizer wddx xml xmlreader xmlrpc xmlwriter xsl zip
+</code></pre>
+
+<p>(デフォルトのPHPイメージは最低限の状態なのでDockerfileで指定して追加する)</p>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

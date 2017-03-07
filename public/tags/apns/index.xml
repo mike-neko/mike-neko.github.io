@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Apns on M.Ikeの小ネタ集</title>
+    <link>https://mike-neko.github.io/tags/apns/</link>
+    <description>Recent content in Apns on M.Ikeの小ネタ集</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>jp</language>
+    <lastBuildDate>Sat, 29 Oct 2016 22:40:57 +0900</lastBuildDate>
+    <atom:link href="https://mike-neko.github.io/tags/apns/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Guzzle(PHP)でAPNsの同時配信を行う</title>
+      <link>https://mike-neko.github.io/blog/guzzle-apns/</link>
+      <pubDate>Sat, 29 Oct 2016 22:40:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/guzzle-apns/</guid>
+      <description>
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;でiOSのAPNs(Push通知)をお手軽に同時配信する方法&lt;/p&gt;
+
+&lt;p&gt;APNs自体については&lt;a href=&#34;../http2apns/&#34;&gt;APNs Provider API(http2)を利用する(Node.js)&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;自体は&lt;a href=&#34;../guzzle/&#34;&gt;以前の記事&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h3 id=&#34;curlの更新&#34;&gt;curlの更新&lt;/h3&gt;
+
+&lt;p&gt;APNsを使うには&lt;code&gt;http2&lt;/code&gt;が必要かつ非同期で実行したいので、&lt;code&gt;curl&lt;/code&gt;をインストールし直す&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;homebrew&lt;/code&gt;を使っている場合は以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install curl --with-nghttp2 --with-openssl
+brew link curl --force
+brew reinstall php56 --with-homebrew-curl
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なお、自分で試した時は上記だけでは&lt;code&gt;http2&lt;/code&gt;が有効にならなかったので、
+アンイストールした方が確実かもしれない&lt;/p&gt;
+
+&lt;p&gt;更新後に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -V
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として&lt;code&gt;http2&lt;/code&gt;が出ていればOK&lt;/p&gt;
+
+&lt;h2 id=&#34;guzzleの使い方&#34;&gt;Guzzleの使い方&lt;/h2&gt;
+
+&lt;h3 id=&#34;http2で通信する&#34;&gt;http2で通信する&lt;/h3&gt;
+
+&lt;p&gt;オプションで指定するだけでOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;version&#39; =&amp;gt; 2.0]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;post送信&#34;&gt;POST送信&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;body&lt;/code&gt;はリクエスト時のオプションとして以下の感じで指定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client();
+$response = $client-&amp;gt;request(&#39;POST&#39;, $url, [&#39;body&#39; =&amp;gt; $body]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;body&lt;/code&gt;の中身を&lt;code&gt;JSON&lt;/code&gt;にしたい時は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[&#39;body&#39; =&amp;gt; json_encode($json])]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という形にして渡す&lt;/p&gt;
+
+&lt;h3 id=&#34;クライアント証明書をつける&#34;&gt;クライアント証明書をつける&lt;/h3&gt;
+
+&lt;p&gt;これもオプションで指定するだけでOK&lt;/p&gt;
+
+&lt;p&gt;例えば同じ階層内に&lt;code&gt;apns_dev.pem&lt;/code&gt;という証明書（パスフレーズ&lt;code&gt;0000&lt;/code&gt;）に置いた場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$client = new Client([&#39;cert&#39; =&amp;gt; [&#39;apns_dev.pem&#39;, &#39;0000&#39;]]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あえていうなら、&lt;code&gt;pem&lt;/code&gt;形式の証明書を作るのがちょっと面倒&lt;/p&gt;
+
+&lt;h2 id=&#34;apnsの同時配信&#34;&gt;APNsの同時配信&lt;/h2&gt;
+
+&lt;p&gt;APNsは通知内容をJSONで指定することと、前回の並列リクエストを併せると、以下のコードで同時配信が実現できる&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/dcc15bedbc4d42e4e8b1c31119f3c63a.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;（※配信環境はSandBox向け）&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP 5.6&lt;/li&gt;
+&lt;li&gt;Guzzle 6.2.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>APNs Provider API(http2)を利用する(iOS)</title>
+      <link>https://mike-neko.github.io/blog/http2apns-ios/</link>
+      <pubDate>Thu, 25 Aug 2016 23:00:38 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/http2apns-ios/</guid>
+      <description>
+
+&lt;p&gt;iOSのAPNsをAPI経由で使う方法。
+しかもiOS端末からPush通知を送信する方法。&lt;/p&gt;
+
+&lt;p&gt;前回の&lt;a href=&#34;../http2apns/&#34;&gt;Node.jsからAPNsを使う方法&lt;/a&gt;の派生ネタ。
+&lt;code&gt;APNs Provider API&lt;/code&gt;はhttp2とクライアント証明書に対応さえしていればPushを送れるので、
+それならiOS端末からでも良けるよね？って試してみた。&lt;/p&gt;
+
+&lt;h2 id=&#34;環境構築&#34;&gt;環境構築&lt;/h2&gt;
+
+&lt;p&gt;iOSならiOS9から&lt;code&gt;http2&lt;/code&gt;に対応しているので、証明書の準備のみ必要。&lt;/p&gt;
+
+&lt;p&gt;証明書の準備方法は、以前の&lt;a href=&#34;../perfect-push/&#34;&gt;Perfect APNs編&lt;/a&gt;の手順で&lt;code&gt;apns.p12&lt;/code&gt;を書き出せばOK。
+&lt;code&gt;.pem&lt;/code&gt;の作成やCAルート証明書は不要。&lt;/p&gt;
+
+&lt;h2 id=&#34;実装&#34;&gt;実装&lt;/h2&gt;
+
+&lt;p&gt;ポイントは&lt;code&gt;https&lt;/code&gt;のクライアント認証を実装すること。
+それができれば後はPOST形式でAPIを呼び出すだけなので簡単（APIについては&lt;a href=&#34;../http2apns/&#34;&gt;前回記事&lt;/a&gt;参照）&lt;/p&gt;
+
+&lt;h3 id=&#34;クライアント認証&#34;&gt;クライアント認証&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;NSURLSession&lt;/code&gt;でクライアント認証を実装するには、&lt;code&gt;NSURLSessionDelegate&lt;/code&gt;の
+&lt;code&gt;URLSession(_:didReceiveChallenge:completionHandler:)&lt;/code&gt;を実装する。&lt;/p&gt;
+
+&lt;p&gt;サーバからクライアント認証が要求されると、このデリゲートメソッドが呼ばれるので、
+クライアント証明書を読み込んで&lt;code&gt;NSURLCredential&lt;/code&gt;にして渡してあげればOK。&lt;/p&gt;
+
+&lt;p&gt;注意点は、他の認証（通常のSSL/TLS認証とかBasic認証）時も全て呼び出されるので、その実装を忘れないこと！&lt;/p&gt;
+
+&lt;p&gt;以上を踏まえると、実装はこんな感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -&amp;gt; Void) {
+    switch challenge.protectionSpace.authenticationMethod {
+    // 通常のhttpsのSSL/TLS認証
+    case NSURLAuthenticationMethodServerTrust:
+      // デフォルトの動作をさせる
+      completionHandler(.PerformDefaultHandling, nil)
+    // httpsのクライアント認証
+    case NSURLAuthenticationMethodClientCertificate:
+      // clientCredential(あらかじめクライアント証明書から生成した認証情報)を
+      // 利用して認証をかける
+      completionHandler(.UseCredential, clientCredential)
+    // その他の認証
+    default:
+      completionHandler(.PerformDefaultHandling, nil)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;クライアント証明書の読み込み&#34;&gt;クライアント証明書の読み込み&lt;/h3&gt;
+
+&lt;p&gt;クライアントの証明書は&lt;code&gt;p12&lt;/code&gt;形式を利用する。
+証明書からは&lt;code&gt;SecPKCS12Import&lt;/code&gt;を使って認証情報を取り出し、&lt;code&gt;NSURLCredential&lt;/code&gt;を生成する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// アプリにバンドルされているクライアント証明書(apns.p12)
+guard let url = NSBundle.mainBundle().
+  URLForResource(&amp;quot;apns&amp;quot;, withExtension: &amp;quot;p12&amp;quot;) else { return }
+guard let p12data = NSData(contentsOfURL: p12URL) else { return }
+
+let passphrase = &amp;quot;0000&amp;quot;     // 証明書のパスフレーズ
+let options = [kSecImportExportPassphrase as String : passphrase]
+
+var items: CFArray?
+guard SecPKCS12Import(p12data, options, &amp;amp;items) == errSecSuccess
+  else { return }
+guard let cfarr = items else { return }
+guard let certEntry = (cfarr as Array).first as? [String: AnyObject]
+  else { return }
+
+let identity = certEntry[&amp;quot;identity&amp;quot;] as! SecIdentity
+let certificates = certEntry[&amp;quot;chain&amp;quot;] as? [AnyObject]
+let clientCredential = NSURLCredential(identity: identity,
+                                       certificates: certificates,
+                                       persistence: .ForSession)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;今回はサンプルなのでクライアント証明書はアプリにバンドルしているが、通常はキーチェーンにいれておくべき。&lt;/p&gt;
+
+&lt;p&gt;なお、クライアント証明書の中身はPush送信用の一つだけが入っている前提。&lt;/p&gt;
+
+&lt;p&gt;小ネタなのが、&lt;code&gt;certEntry[&amp;quot;identity&amp;quot;] as! SecIdentity&lt;/code&gt;という部分。
+&lt;code&gt;AnyObject&lt;/code&gt;から&lt;code&gt;SecIdentity&lt;/code&gt;への変換は常に成功するので&lt;code&gt;as?&lt;/code&gt;にはできないみたい。
+詳細は&lt;a href=&#34;https://forums.developer.apple.com/thread/11171&#34;&gt;公式フォーラム&lt;/a&gt;を参照。&lt;/p&gt;
+
+&lt;h3 id=&#34;apnsの送信&#34;&gt;APNsの送信&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;// デバイストークン
+let deviceToken = &amp;quot;00fc13adff785122b4ad28809a3420982341241421348097878e577c991de8f0&amp;quot;
+// 通知内容
+let payload = &amp;quot;{\&amp;quot;aps\&amp;quot;:{\&amp;quot;alert\&amp;quot;:\&amp;quot;Hello!\&amp;quot;}}&amp;quot;
+
+// 開発環境向けURL
+guard let url = NSURL(string: &amp;quot;https://api.development.push.apple.com/3/device/&amp;quot;)
+  else { return }
+let request = NSMutableURLRequest(URL: url.URLByAppendingPathComponent(deviceToken))
+request.HTTPMethod = &amp;quot;POST&amp;quot;
+request.HTTPBody = payload.dataUsingEncoding(NSUTF8StringEncoding)
+
+let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
+session.dataTaskWithRequest(request).resume()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;送信時のポイントは、デリゲートを指定しておくことと、&lt;code&gt;completionHandler&lt;/code&gt;形式のメソッドを使わないこと。
+使ってしまうとデリゲートが呼び出されなくなり、クライアント認証が通らなくなる。&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;今回は本当にネタ。多分使い道はないと思う。。。&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.12 Beta&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
+
+&lt;p&gt;&lt;strong&gt;クライアント証明書を上書きして使う必要があるので注意！&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/APNs_iOS&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>APNs Provider API(http2)を利用する(Node.js)</title>
+      <link>https://mike-neko.github.io/blog/http2apns/</link>
+      <pubDate>Thu, 11 Aug 2016 17:16:16 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/http2apns/</guid>
+      <description>
+
+&lt;p&gt;iOSのAPNsをAPI経由で使う方法。サーバサイドは&lt;code&gt;Node.js&lt;/code&gt;を利用&lt;/p&gt;
+
+&lt;h3 id=&#34;apns-provider-api&#34;&gt;APNs Provider API&lt;/h3&gt;
+
+&lt;p&gt;利用するために必要なのは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;http2のPOST送信&lt;/li&gt;
+&lt;li&gt;クライアント認証用の証明書&lt;/li&gt;
+&lt;li&gt;CAルート証明書（必要な場合のみ）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;となる&lt;/p&gt;
+
+&lt;p&gt;なお、&lt;code&gt;http2&lt;/code&gt;対応が必要なのは送信のみなので、サーバ自体はhttp2対応にしなくてもOK&lt;/p&gt;
+
+&lt;p&gt;従来のソケット通信経由でAPNsを送信するのと比較すると、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;実装が簡単&lt;/li&gt;
+&lt;li&gt;1つのデバイストークン毎に結果が取得できる&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;というのが大きなメリット&lt;/p&gt;
+
+&lt;p&gt;特に以前は、環境の異なるトークンを送信すると、いきなりソケットの接続自体が切断される・・・
+みたいな挙動があって確実に全件送信させるのは結構大変だったけど、API方式ではそういったのはない&lt;/p&gt;
+
+&lt;p&gt;パフォーマンス的にどうなのかは不明&lt;/p&gt;
+
+&lt;h3 id=&#34;送信形式&#34;&gt;送信形式&lt;/h3&gt;
+
+&lt;p&gt;環境毎のAppleのサーバへPOSTリクエストを送ることでPush通知が送信される&lt;br /&gt;
+指定する内容自体は従来のものと同じなので、詳細な内容は公式を参照のこと&lt;/p&gt;
+
+&lt;h4 id=&#34;アドレス&#34;&gt;アドレス&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;開発 : &lt;code&gt;https://api.development.push.apple.com/3/device/&amp;lt;デバイストークン&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;商用 : &lt;code&gt;https://api.push.apple.com/3/device/&amp;lt;デバイストークン&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;ヘッダ&#34;&gt;ヘッダ&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;apns-topic&lt;/code&gt; : 送信対象のアプリのバンドルID&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apns-id&lt;/code&gt; : 通知ID。指定しなければAPNs側で自動生成&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apns-expiration&lt;/code&gt; : 通知が無効になり破棄できるようになる有効期限&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apns-priority&lt;/code&gt; : 優先度&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;ボディ&#34;&gt;ボディ&lt;/h4&gt;
+
+&lt;p&gt;JSON形式の通知ペイロード&lt;/p&gt;
+
+&lt;h4 id=&#34;レスポンス&#34;&gt;レスポンス&lt;/h4&gt;
+
+&lt;p&gt;送信の受付に成功した場合はステータスコードが&lt;code&gt;200&lt;/code&gt;で返ってくる&lt;/p&gt;
+
+&lt;p&gt;失敗した場合は、それ以外のステータスコードと、コードに応じてより詳細なエラー内容がボディで返ってくる&lt;/p&gt;
+
+&lt;h2 id=&#34;環境構築&#34;&gt;環境構築&lt;/h2&gt;
+
+&lt;p&gt;もしかすると、&lt;code&gt;OpenSSL&lt;/code&gt;は最新に上げておいた方がいいかも知れない&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Node.js&lt;/code&gt;は現時点(6.3.1)では&lt;code&gt;http2&lt;/code&gt;には対応していないので、
+&lt;a href=&#34;https://www.npmjs.com/package/http2&#34;&gt;http2&lt;/a&gt;というモジュールをインストールしておく&lt;/p&gt;
+
+&lt;h3 id=&#34;証明書&#34;&gt;証明書&lt;/h3&gt;
+
+&lt;p&gt;証明書の準備方法は、以前の&lt;a href=&#34;../perfect-push/&#34;&gt;Perfect APNs編&lt;/a&gt;と同じ。
+ただし、今回はMacに直接インストールした&lt;code&gt;Node.js&lt;/code&gt;を使うので、CAルート証明書は不要&lt;/p&gt;
+
+&lt;h2 id=&#34;実装&#34;&gt;実装&lt;/h2&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/2f2f9f9130ef1d46872894b115a4b0c3.js&#34;&gt;&lt;/script&gt;
+
+&lt;h3 id=&#34;クライアント証明書の指定&#34;&gt;クライアント証明書の指定&lt;/h3&gt;
+
+&lt;p&gt;22,23行目にあるように、クライアント証明書と鍵を読み込んで指定する
+（もちろん各ファイルを同じフォルダ内に置いておくのを忘れないように）&lt;/p&gt;
+
+&lt;p&gt;もし、証明書の秘密鍵のパスフレーズを設定している時は、25行目のように設定が必要&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;（8/24 追記）&lt;/em&gt;&lt;/strong&gt;
+&lt;del&gt;証明書の中が送信対象アプリ単独のもの（他の証明書や鍵を含んでいない）であれば、
+&lt;code&gt;apns-topic&lt;/code&gt;は指定しなくても送信可能&lt;br /&gt;
+通常の手順で生成した場合は単独のはずなので、指定は不要。&lt;/del&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;（11/20 追記）&lt;/em&gt;&lt;/strong&gt;
+開発環境では上記の通りだが、本番環境では指定がないとエラーが発生する為、必須の様子&lt;/p&gt;
+
+&lt;h3 id=&#34;通知内容の設定&#34;&gt;通知内容の設定&lt;/h3&gt;
+
+&lt;p&gt;送信形式の項目で述べたように、ヘッダにバンドルIDを設定(10−12,21行目)する&lt;/p&gt;
+
+&lt;p&gt;デバイストークンは、URLの一部として設定する(20行目)&lt;/p&gt;
+
+&lt;p&gt;通知ペイロードは、44行目にあるようにボディとして書き出す&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html&#34;&gt;APNs Provider API&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;公式：&lt;a href=&#34;https://developer.apple.com/jp/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/APNsProviderAPI.html#//apple_ref/doc/uid/TP40008194-CH101-SW1&#34;&gt;日本語ドキュメント&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.12 Beta&lt;/li&gt;
+&lt;li&gt;Node.js 6.3.1&lt;/li&gt;
+&lt;li&gt;OpenSSL 1.0.2&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Perfect APNs編</title>
+      <link>https://mike-neko.github.io/blog/perfect-push/</link>
+      <pubDate>Mon, 11 Apr 2016 19:45:28 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/perfect-push/</guid>
+      <description>
+
+&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその3&lt;/p&gt;
+
+&lt;p&gt;今回はiOSのプッシュ通知を送信する方法について&lt;/p&gt;
+
+&lt;p&gt;Perfectは最新のAPNsの通信形式に対応していて、細かなエラーレスポンスを取れるのがメリット。
+なので、開発用としては大変使いやすい&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;p&gt;Push通知はサーバ側で微妙に必要とされる証明書が変わったりするのがややこしいところ。
+PerfectでPush通知を送るのに必要なものは以下の通り&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;サーバ
+
+&lt;ul&gt;
+&lt;li&gt;APNs用証明書と秘密鍵&lt;/li&gt;
+&lt;li&gt;CAルート証明書&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;クライアント
+
+&lt;ul&gt;
+&lt;li&gt;プロビジョニングプロファイル&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;登録-プロビジョニングプロファイルと証明書の作成&#34;&gt;登録〜プロビジョニングプロファイルと証明書の作成&lt;/h3&gt;
+
+&lt;p&gt;証明書の取得には&lt;code&gt;AppID&lt;/code&gt;の登録やら結構手順があって大変だが、まずは以下のリンク先の通りに作業をすればOK&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Qiita:&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;なお、最後の手順の&lt;code&gt;APNs用証明書(.p12)&lt;/code&gt;を書き出す時のファイル名は&lt;code&gt;apns.p12&lt;/code&gt;とする&lt;/p&gt;
+
+&lt;h3 id=&#34;サーバ用の証明書の準備&#34;&gt;サーバ用の証明書の準備&lt;/h3&gt;
+
+&lt;h4 id=&#34;apns用証明書-pem&#34;&gt;APNs用証明書(.pem)&lt;/h4&gt;
+
+&lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_cert.pem&lt;/code&gt;を作成する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd [apns.p12を書き出した場所]
+openssl pkcs12 -clcerts -nokeys -out apns_dev_cert.pem -in apns.p12
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;秘密鍵-pem&#34;&gt;秘密鍵(.pem)&lt;/h4&gt;
+
+&lt;p&gt;ターミナルで以下を実行して&lt;code&gt;apns_dev_key.pem&lt;/code&gt;を作成する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd [apns.p12を書き出した場所]
+openssl pkcs12 -nocerts -out apns_dev_key.pem -in apns.p12
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;Enter PEM pass phrase:&lt;/code&gt;と秘密鍵のパスフレーズを聞かれるので、適当なものを入れる。
+後でサーバに設定するので忘れないように・・・&lt;/p&gt;
+
+&lt;h4 id=&#34;caルート証明書&#34;&gt;CAルート証明書&lt;/h4&gt;
+
+&lt;p&gt;APNsとサーバで接続する為に&lt;code&gt;Entrust&lt;/code&gt;の証明書が必要なので、以下からダウンロードする&lt;/p&gt;
+
+&lt;p&gt;Entrust.net Certificate Authority (2048)：
+&lt;a href=&#34;https://www.entrust.com/root-certificates/entrust_2048_ca.cer&#34;&gt;entrust_2048_ca.cer&lt;/a&gt;&lt;br /&gt;
+（&lt;a href=&#34;https://www.entrust.com/get-support/ssl-certificate-support/root-certificate-downloads/&#34;&gt;Entrustの証明書DLページ&lt;/a&gt; - Entrust.net Certificate Authority (2048) - Download）&lt;/p&gt;
+
+&lt;h3 id=&#34;iosアプリの作成&#34;&gt;iOSアプリの作成&lt;/h3&gt;
+
+&lt;p&gt;とりあえず、必要最低限でPush通知を受信できる状態にする。
+デバイストークンの更新等には未対応なので注意&lt;/p&gt;
+
+&lt;h4 id=&#34;プロジェクトの設定&#34;&gt;プロジェクトの設定&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ダウンロードしたプロビジョニングプロファイルをダブルクリックしてインストール&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Bundle Identifier&lt;/code&gt;を&lt;code&gt;AppID&lt;/code&gt;取得時のものと一緒にする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Provisioning Profile&lt;/code&gt;をインストールしたプロビジョニングプロファイルにする&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;アプリの実装&#34;&gt;アプリの実装&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;AppDelegate&lt;/code&gt;に以下の実装をする&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;didFinishLaunchingWithOptions&lt;/code&gt;でPush通知の登録&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;didRegisterForRemoteNotificationsWithDeviceToken&lt;/code&gt;でデバイストークンを受信&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;コードにすると以下の通り
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/8000f2d8dc5b37773323065e867e2e4d.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;これを実機上で実行すると、端末のデバイストークンがログ出力される&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;デバッグ実行を停止させると、Push通知が届かない場合があるので、デバッグ実行したままにするか
+再度実機上からアクティブにしてバックグラウンドに落としておく。&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;また、マルチタスクから終了させても届かない場合があるので、注意&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;サーバへ証明書の設置&#34;&gt;サーバへ証明書の設置&lt;/h3&gt;
+
+&lt;p&gt;基礎編の&lt;a href=&#34;../perfect-2/&#34;&gt;ビルドでファイルを配置する&lt;/a&gt;の方法で証明書を配置する&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;対象のファイル
+
+&lt;ul&gt;
+&lt;li&gt;apns_dev_cert.pem&lt;/li&gt;
+&lt;li&gt;apns_dev_key.pem&lt;/li&gt;
+&lt;li&gt;entrust_2048_ca.cer&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Copy Files&lt;/code&gt;の設定
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Destination&lt;/code&gt;:Products Directory&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Subpath&lt;/code&gt;:空白&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;（&lt;code&gt;webroot&lt;/code&gt;へのドキュメントの配置とは別に&lt;code&gt;Copy Files&lt;/code&gt;を設定する）&lt;/p&gt;
+
+&lt;h3 id=&#34;サーバの実装&#34;&gt;サーバの実装&lt;/h3&gt;
+
+&lt;p&gt;サーバ側での実装は主に2つ。
+ひとつは証明書を&lt;code&gt;NotificationPusher&lt;/code&gt;に初期設定するのと、
+もう一つは実際にPush通知を送る実装&lt;/p&gt;
+
+&lt;p&gt;初期設定は一度だけ行えばOKなので、（実環境では送信毎にチェックした方が良いけど）
+今回は&lt;code&gt;PerfectServerModuleInit&lt;/code&gt;で行う&lt;/p&gt;
+
+&lt;p&gt;Push通知の送信は、&lt;code&gt;IOSNotificationItem&lt;/code&gt;の配列
+（ここのenumの使い方は参考になる）で送信内容を作成し、
+&lt;code&gt;NotificationPusher().pushIOS&lt;/code&gt;で送信を行う&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/821b3dced86e0eb741563e23c43fed0f.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;この実装でサーバにアクセスする度に、Push通知が端末へ送られる。
+送信時の結果は、ブラウザに表示される（エラーであればエラー内容）&lt;/p&gt;
+
+&lt;h2 id=&#34;感想&#34;&gt;感想&lt;/h2&gt;
+
+&lt;p&gt;今回の一番大変だったのはEntrustの証明書の置き場が変わっていたこと。。。
+逆に言えばそれ以外はとても簡単にPush通知を送れる環境を作れた感じ&lt;/p&gt;
+
+&lt;p&gt;巷にはたくさんAPNsに対応したフレームワークやサービスがあるけど、
+開発用としては、このPerfectが一番手軽で確実だと思う。
+なにせ環境構築は不要で、Xcodeでプロジェクトを作って
+少し実装すれば良いだけという素晴らしさ！&lt;/p&gt;
+
+&lt;p&gt;もちろん、商用はAWSとかがオススメだけど。。。&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://qiita.com/natsumo/items/d5cc1d0be427ca3af1cb&#34;&gt;プッシュ通知に必要な証明書の作り方2016&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Perfect 導入編&lt;a href=&#34;../perfect-1/&#34;&gt;その1&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Perfect 基礎編&lt;a href=&#34;../perfect-2/&#34;&gt;その2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.4&lt;/li&gt;
+&lt;li&gt;Xcode 7.3&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

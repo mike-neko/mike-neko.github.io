@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>UIScrollViewのAutoLayoutをStoryboardのみで設定 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(22)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(10)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>UIScrollViewのAutoLayoutをStoryboardのみで設定</h1>
+    <span class="post-date">Oct 23, 2016 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    
+
+<p>Storyboard上だけでUIScrollViewのAutoLayoutを完結させる方法。
+中のUIを動的に追加や削除しないのであればコードを書く必要もないし、
+<code>UILabel</code>のようにコンテンツに応じて動的に高さが変わるようなものにも対応可能</p>
+
+<p>ポイントは<code>ContainerView</code>を利用してScrollViewを別のViewControllerに持っていくこと</p>
+
+<h2 id="手順">手順</h2>
+
+<p>サンプルとしてViewControllerの全画面に縦スクロールするScrollViewを配置する例を考える</p>
+
+<h4 id="1-viewcontrollerのscrollviewを置きたい場所に-containerview-を置き制約を設定する">1. ViewControllerのScrollViewを置きたい場所に<code>ContainerView</code>を置き制約を設定する</h4>
+
+<p>（サンプル）全画面にしたいのでViewに対して<code>0</code>で設定
+<figure>
+	<img src="/media/2016-10-23-scrollview/step1.png" />
+</figure>
+
+<em><code>Layout Guide</code>に対して制約を設定するとステータスバーなどに合わせて位置が変わる</em></p>
+
+<h4 id="2-1で追加した子viewcontrollerをアウトライン上で選択し-viewcontrollerのサイズを-freeform-へ変更する">2. 1で追加した子ViewControllerをアウトライン上で選択し、ViewControllerのサイズを<code>Freeform</code>へ変更する</h4>
+
+<p>変更すると<code>Height</code>の部分が変更できるようになるので、
+<figure>
+	<img src="/media/2016-10-23-scrollview/step2.png" />
+</figure>
+
+ScrollViewの<code>ContentSize</code>の高さがあらかじめ決まっているのであれば同じに、
+そうでないなら余裕を持った数字に変えておく</p>
+
+<p><em>サイズを変更しなくても組めるが変更した方がスクロールせずに作業が行えるので楽</em></p>
+
+<h4 id="3-1で追加した子viewcontrollerのviewにscrollviewを追加し任意の制約を設定する">3. 1で追加した子ViewControllerのViewにScrollViewを追加し任意の制約を設定する</h4>
+
+<p>（サンプル）全画面にしたいのでViewに対して今回も<code>0</code>で設定
+<figure>
+	<img src="/media/2016-10-23-scrollview/step1.png" />
+</figure>
+
+<em>もしスクロールしないヘッダとつけたりしたいなら、この子ViewControllerのViewに対して追加しておくと便利</em></p>
+
+<h4 id="4-3で追加したscrollviewにviewを追加し制約を設定する">4. 3で追加したScrollViewにViewを追加し制約を設定する</h4>
+
+<p>（サンプル）縦スクロールにしたいので制約は以下の通り
+<figure>
+	<img src="/media/2016-10-23-scrollview/step4.png" />
+</figure>
+</p>
+
+<ul>
+<li>縦と横はそれぞれ親(Scrollview)に対して<code>0</code></li>
+<li>横幅は親(Scrollview)と同じ</li>
+</ul>
+
+<p><em>ここで追加したViewがいわば<code>ContentView</code>となる</em></p>
+
+<h4 id="5-4のviewに各パーツを配置していく">5. 4のviewに各パーツを配置していく</h4>
+
+<p>この工程は普段通りのAutoLayoutの設定でOK。
+<code>UILabel</code>の高さをコンテンツに応じて変えたいなら高さを設定せずにマージンだけを設定する</p>
+
+<p><em>Scrollviewの中身の高さが固定でないなら<code>height</code>は設定しないこと</em></p>
+
+<h3 id="参考-viewの階層">参考：Viewの階層</h3>
+
+<p>子ViewControllerのアウトライン
+<figure>
+	<img src="/media/2016-10-23-scrollview/view.png" />
+</figure>
+</p>
+
+<h2 id="感想">感想</h2>
+
+<p><code>AutoLayout</code>って使い方のコツを見つけるまでが大変だけど、このサンプルみたいにやり方を見つけてしまうと楽すぎ〜〜</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>OS X 10.12.0</li>
+<li>Xcode 8.0 / Swift3</li>
+<li>iOS 10.0.2</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>QRコードの読み取りサンプル(Swift) その1 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(22)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(10)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>QRコードの読み取りサンプル(Swift) その1</h1>
+    <span class="post-date">Jun 15, 2016 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
+    </span>
+    
+
+<p>iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル。</p>
+
+<p>なお、QRコードに限らず、他のバーコードや顔認識にも対応。対応形式は<a href="https://developer.apple.com/library/prerelease/ios/documentation/AVFoundation/Reference/AVMetadataMachineReadableCodeObject_Class/index.html#//apple_ref/doc/constant_group/Machine_Readable_Object_Types">公式</a>を参照。地味にiOS8から対応形式が増えている。</p>
+
+<p>あと、2次元なら同時認識できたりするが、その辺りの詳細は参考リンクの公式FAQが詳しい。</p>
+
+<p>コード認識自体はもっと詳しい説明がいろんなとこにあるので、ここは他で説明していなそうなところだけ。</p>
+
+<h2 id="小ネタ">小ネタ</h2>
+
+<h3 id="シリアルキューの利用">シリアルキューの利用</h3>
+
+<p>カメラの起動や画像認識は処理が重いので、それぞれ専用のシリアルキューを作成して利用している。</p>
+
+<p>カメラの設定周りはフリーズ状態になるのを防ぐためだが、最近の端末は起動が早いらしく、キューを使わなくても特に問題無い感じ。</p>
+
+<h3 id="avmetadatamachinereadablecodeobject">AVMetadataMachineReadableCodeObject</h3>
+
+<p>認識されたコードは<code>AVMetadataMachineReadableCodeObject</code>のオブジェクトの配列で渡される。</p>
+
+<ul>
+<li><code>type</code>：認識されたコードのフォーマットが逆DNS形式で返ってくる<br />
+(QRの場合は<code>org.iso.QRCode</code>)</li>
+<li><code>stringValue</code>：コードに含まれるデータ</li>
+</ul>
+
+<h3 id="プレビュー画面上に認識したコードの枠を表示する">プレビュー画面上に認識したコードの枠を表示する</h3>
+
+<p><code>AVMetadataMachineReadableCodeObject</code>の中の<code>corners</code>にコードの座標位置が含まれているが、これはプレビューのViewの座標系とは異なるので、そのままでは使えない。</p>
+
+<p><code>AVCaptureVideoPreviewLayer</code>の<code>transformedMetadataObjectForMetadataObject</code>で変換後の座標が入った<code>AVMetadataObject</code>が取得できるので、その中の<code>bounds</code>を使って枠線を描画している。</p>
+
+<p>（以前は手動でちゃんとプレビュー画面上の座標に変換していたが、今回、この簡単に変換できるメソッドを発見！<code>AVCaptureVideoPreviewLayer</code>の方もちゃんと調べていれば・・・）</p>
+
+<h2 id="感想">感想</h2>
+
+<p>昔iOS7で使えるようになった時に試したものを、Swiftで書き直し＋αしたコード。やはりSwiftはわかりやすく、かつエラー処理もしっかり書いても、Objective-Cよりコードが少ないので良い。</p>
+
+<p>以前は結構カメラの起動もコードの読み取りも時間がかかっていたのだが、今回はかなりスピードアップした感じがした。iPhoneのカメラの進化もすごいということか。ただ、バッテリーには優しくないので常に使うのは厳しそう・・・</p>
+
+<p><del>あと、カメラをわざわざ起動しなくても画像を直接認識してくれるようになって欲しい。</del>
+(6/17追記：方法が判ったので<a href="../qr-reader/">その2</a>を作成した)</p>
+
+<h1 id="参考リンク">参考リンク</h1>
+
+<ul>
+<li>公式：<a href="https://developer.apple.com/library/prerelease/ios/technotes/tn2325/_index.html">AV Foundation iOS Machine Readable Code Detection FAQ</a></li>
+</ul>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Xcode 7.3</li>
+<li>iOS 9.2</li>
+<li>iPhone 6+</li>
+</ul>
+
+<h1 id="ソース">ソース</h1>
+
+<p><a href="https://github.com/mike-neko/CodeReader/">こちら</a></p>
+
+<p>カメラ不要なバージョンは<a href="../qr-reader/">こちら</a></p>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

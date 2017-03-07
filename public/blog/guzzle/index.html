@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Guzzleで非同期の並列リクエストを行う &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(22)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(10)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Guzzleで非同期の並列リクエストを行う</h1>
+    <span class="post-date">Oct 29, 2016 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/php">php</a>
+    </span>
+    
+
+<p><code>PHP</code>のHTTPクライアント(<a href="http://docs.guzzlephp.org/en/latest/">Guzzle</a>)で非同期の並列リクエストを行う方法</p>
+
+<p><code>Guzzle</code>は内部では<code>curl</code>を使っており、便利な<code>curl</code>を面倒な設定をせずに使えるというありがたいもの
+（なお<code>curl</code>がなくても動くがその場合は非同期が使えないなど機能が制限されるらしい）</p>
+
+<h2 id="事前準備">事前準備</h2>
+
+<p>動作環境は以下のとおり</p>
+
+<ul>
+<li>PHP 5.5.0以上</li>
+<li>curl 7.19.4以上
+(要openSSL/zlib)</li>
+</ul>
+
+<h3 id="インストール">インストール</h3>
+
+<ul>
+<li><p><code>composer</code>で<code>guzzlehttp/guzzle</code>を入れる<br />
+(<code>guzzle/guzzle</code>は古いバージョンなので注意)</p></li>
+
+<li><p><code>composer</code>を使っているので、使う時は</p>
+
+<pre><code>require 'vendor/autoload.php';
+</code></pre>
+
+<p>を忘れないこと</p></li>
+</ul>
+
+<h3 id="php-iniの設定">php.iniの設定</h3>
+
+<pre><code>allow_url_fopen = ON
+</code></pre>
+
+<p>を設定しておく</p>
+
+<h2 id="使い方">使い方</h2>
+
+<p>複数のURLに並列に非同期にリクエストをかける方法は以下のとおり</p>
+
+<script type="text/javascript" src="https://gist.github.com/07e16ffece9ecfbffa4959f875897418.js"></script>
+
+<p>まずは、<code>$requests</code>に実際のリクエストを生成する処理をクロージャとして登録する。<br />
+今回であれば、URLのリストから単純にURLを取り出し、<code>$client-&gt;getAsync($url)</code>としてリクエストを生成している<br />
+（URLのエンドポイントだけが違うような場合は<code>base_uri</code>を指定した方がスマート）</p>
+
+<p>ポイントは<code>yield</code>でジェネレータを使っていること。<br />
+通常は<code>foreach</code>をした時点でそのループの回数分中の処理が実行されてメモリなどのリソースを消費するが、
+ジェネレータを使うと実際に必要になる（今回であれば<code>Pool</code>で順次実行される時）まで実行されずリソースを消費しないメリットがある</p>
+
+<p>リクエストの生成処理ができれば、<code>Pool</code>オブジェクトに渡して<code>Promise</code>を生成する。
+その際、<code>concurrency</code>で同時リクエスト数を、<code>fulfilled</code>で成功時の処理、<code>rejected</code>で失敗時の処理が行われる。
+非同期の場合、リクエストは生成順に実行されるが、当然、処理結果は順不同で返ってくる。</p>
+
+<p>ちなみに<code>Promise</code>の<code>wait()</code>の部分で全ての並列処理が終わるまで待機される。
+これを忘れると完了しないまま処理が終わってしまう</p>
+
+<p>つまり、例えばあるページにアクセスした時にバックグラウンドの非同期でダウンロードを行うといったことはできない。
+そういったことをしたい場合は、<code>Laravel</code>の<a href="https://readouble.com/laravel/5.1/ja/queues.html">キュー</a>なんかがおすすめ</p>
+
+<h2 id="小ネタ">小ネタ</h2>
+
+<pre><code>$client = new Client(['debug' =&gt; true]);
+</code></pre>
+
+<p>としておくと細かな通信状況が出力されるので便利</p>
+
+<h1 id="参考リンク">参考リンク</h1>
+
+<ul>
+<li>公式：<a href="http://docs.guzzlephp.org/en/latest/">Guzzle</a></li>
+<li>ジェネレータ:<a href="http://php.net/manual/ja/language.generators.overview.php">PHP公式</a></li>
+</ul>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>PHP 5.6</li>
+<li>Guzzle 6.2.2</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

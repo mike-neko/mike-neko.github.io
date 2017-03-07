@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>NotificationCenterの使い方 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(22)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(10)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>NotificationCenterの使い方</h1>
+    <span class="post-date">Oct 23, 2016 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    
+
+<p>旧<code>NSNotification</code>がSwift3でちょっと変更が入ったので使い方と＋αのエクステンションのまとめ</p>
+
+<h2 id="使い方">使い方</h2>
+
+<h3 id="通知の送信">通知の送信</h3>
+
+<p>&ldquo;Change&rdquo;という名前の通知を送信するときは以下の2パターン</p>
+
+<pre><code>NotificationCenter.default.post(
+    Notification(name: Notification.Name(&quot;Change&quot;)))
+
+NotificationCenter.default.post(name: Notification.Name(&quot;Change&quot;),
+                                object: nil)
+</code></pre>
+
+<h3 id="通知の受信">通知の受信</h3>
+
+<p>上述の通知を受信したい場合は、</p>
+
+<h4 id="受信先の登録">受信先の登録</h4>
+
+<pre><code>NotificationCenter.default.addObserver(self,
+    selector: #selector(recieveHoge),
+    name: Notification.Name(&quot;Change&quot;),
+    object: nil)
+</code></pre>
+
+<p>なお、登録した場合は解除も忘れずにすること！</p>
+
+<p><em>参考: UIKeyboardWillShowNotificationとかは</em></p>
+
+<pre><code>NotificationCenter.default.addObserver(self,
+    selector: #selector(keyboardWillShow),
+    name: .UIKeyboardWillShow,
+    object: nil)
+</code></pre>
+
+<p>という感じに名前が定義されているので省略形で良い</p>
+
+<h4 id="受信するメソッド">受信するメソッド</h4>
+
+<pre><code>func recieveHoge(notification: NSNotification) {
+    // ここで処理
+}
+</code></pre>
+
+<p>アクセス制限は<code>internal</code>以上が必要（<code>private</code>/<code>fileprivate</code>は不可）</p>
+
+<p><code>post</code>時に送った<code>object</code>を利用したい場合は、</p>
+
+<pre><code>guard let hoge = notification.object as? Hoge else { return }
+</code></pre>
+
+<p>というように変換して使う</p>
+
+<p>また、特に指定をしないとメイン以外のスレッドで呼び出されることがあるので、
+UI絡みの部分は<code>DispatchQueue.main.async</code>を使った方が良い</p>
+
+<h4 id="受信の解除">受信の解除</h4>
+
+<p>特定の通知のみ解除する場合は、</p>
+
+<pre><code>NotificationCenter.default.removeObserver(self,
+                                          name: Notification.Name(&quot;Change&quot;),
+                                          object: nil)
+</code></pre>
+
+<p>自身が登録している受信を全て解除する場合は、</p>
+
+<pre><code>NotificationCenter.default.removeObserver(self)
+</code></pre>
+
+<h2 id="エクステンション">エクステンション</h2>
+
+<p>今回のSwift3から<code>Notification.Name</code>の部分で、以前と比べて手間がかかるようになってしまった
+（元からOSで用意されているものは逆に楽）</p>
+
+<p>それとは別に、名前がアプリの他とかぶらないようになるべく一元管理をしたいので、以下のようなエクステンションと<code>enum</code>を利用する</p>
+
+<script type="text/javascript" src="https://gist.github.com/5c92a36705ebcc3c49022a534d4df157.js"></script>
+
+<p><em>※<code>enum</code>はガイドライン的には小文字が良いが文字定数を強調したいので大文字になっている</em></p>
+
+<p>特にエクステンションといっても特別なことはしていなくて単に専用の<code>enum</code>を使えるようにしただけ。<br />
+でも、これを実際に使うと、</p>
+
+<pre><code>// 通知の送信
+NotificationCenter.default.post(key: .ChangeStatus)
+
+// 通知の受信先の登録
+NotificationCenter.default.addObserver(self,
+    selector: #selector(recieveHoge),
+    key: .ChangeStatus)
+</code></pre>
+
+<p>って感じですっきりする</p>
+
+<p>本来は、<code>Notification.Name</code>をエクステンションして使うのが想定されているようだが、
+<code>enum</code>により一意になることが保証されるのと、リテラルが出てこないので、個人的にはこっちがお気に入り</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>OS X 10.12.0</li>
+<li>Xcode 8.0 / Swift3</li>
+<li>iOS 10.0.2</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

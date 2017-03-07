@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>SceneKitでMetalのシェーダを利用する(SCNProgram) &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(22)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(10)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>SceneKitでMetalのシェーダを利用する(SCNProgram)</h1>
+    <span class="post-date">Jul 10, 2016 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
+    </span>
+    
+
+<p><code>Metal</code>を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
+なので、その面倒な部分を<code>SceneKit</code>に任せたいという時の話。</p>
+
+<p>今回は描画周りに<code>Metal</code>のシェーダを使うパターン。</p>
+
+<p>主に<code>SceneKit</code>でカスタムシェーダを使いたい場合は、</p>
+
+<ul>
+<li><code>SCNProgram</code></li>
+<li><code>SCNShadable</code></li>
+<li><code>SCNTechnique</code></li>
+</ul>
+
+<p>といった辺りがあるみたい。</p>
+
+<p><code>SCNTechnique</code>はマルチパスのレンダリングに使うのがメインっぽい。
+<del>（これも試したけどシェーダへカスタム変数を渡す辺りでつまずいて放置）</del></p>
+
+<p><code>SCNShadable</code>は<code>Metal</code>での使えそうなサンプルがなかったので断念。</p>
+
+<p>という訳で、WWDCのセッションの資料にあった<code>SCNProgram</code>を使って実装。</p>
+
+<h2 id="下準備">下準備</h2>
+
+<p>プロジェクトはXcodeのデフォルトのテンプレートの<code>Game</code>を流用している。
+作成時の<code>Game Technology</code>では<code>SceneKit</code>を選択する。</p>
+
+<h3 id="scenekitの設定">SceneKitの設定</h3>
+
+<ul>
+<li><p><code>Main.storeyboard</code>を開き、<code>Game View Controller</code>の<code>SceneKit View</code>の
+<code>Rendering API</code>を<code>Metal</code>にする</p></li>
+
+<li><p><code>GameViewController</code>の<code>viewDidLoad</code>の中のライト周りのコードを削除<br />
+（今回のシェーダはライトを使わないもので不必要なので消す）</p></li>
+</ul>
+
+<h3 id="scnprogramの作成">SCNProgramの作成</h3>
+
+<p>以下のようにして<code>SCNProgram</code>を生成してシェーダの関数名を設定する</p>
+
+<pre><code>let program = SCNProgram()
+program.vertexFunctionName = &quot;textureVertex&quot;
+program.fragmentFunctionName = &quot;textureFragment&quot;
+</code></pre>
+
+<p>生成した<code>SCNProgram</code>を適用させたいマテリアルに設定する</p>
+
+<pre><code>let material = ship.childNodes.first?.geometry?.firstMaterial!
+material.program = program
+</code></pre>
+
+<h3 id="シェーダの準備">シェーダの準備</h3>
+
+<p>通常どおり<code>Metal</code>のファイルを追加した後に、</p>
+
+<pre><code>#include &lt;SceneKit/scn_metal&gt;
+</code></pre>
+
+<p>とする。
+これは後述の<code>SceneKit</code>とデータのやりとりに必要。</p>
+
+<h2 id="データの渡し方">データの渡し方</h2>
+
+<p><code>SceneKit</code>から描画に必要なデータ（座標や変換行列、テクスチャなど）を
+シェーダへ渡す方法</p>
+
+<h3 id="vertexshader側">VertexShader側</h3>
+
+<h4 id="頂点属性-位置とか法線とかuv座標とか">頂点属性（位置とか法線とかuv座標とか）</h4>
+
+<p>まずは、</p>
+
+<pre><code>struct VertexInput {
+    float3 position [[ attribute(SCNVertexSemanticPosition) ]];
+    float2 texcoord [[ attribute(SCNVertexSemanticTexcoord0) ]];
+};
+</code></pre>
+
+<p>という感じで、頂点属性の中で必要なものを構造体で定義する。
+すると、変数名の後ろの<code>Attribute Qualifier</code>(&rdquo;[[]]&ldquo;で囲まれた部分)で指定したものが
+<code>[[stage_in]]</code>にバインドされて自動で渡されてくる。</p>
+
+<blockquote>
+<p>指定できるものはドキュメントの<code>Table 1 
+SceneKit Vertex Attribute Qualifiers for Metal Shaders</code>を参照</p>
+</blockquote>
+
+<h4 id="フレーム定数-ビューの変換行列など">フレーム定数（ビューの変換行列など）</h4>
+
+<p>あらかじめ<code>SCNSceneBuffer</code>という構造体が用意されており、これらはその中に入っている。
+このデータは<code>[[buffer(0)]]</code>にバインドされて渡されてくる。</p>
+
+<blockquote>
+<p>構造体の定義はドキュメントの<code>Frame-Constant Data</code>の項目を参照</p>
+</blockquote>
+
+<h4 id="ノード毎のデータ-モデルの変換行列など">ノード毎のデータ（モデルの変換行列など）</h4>
+
+<p>これは、あらかじめ用意された構造体がなく、代わりに必要なものをピックアップして
+以下のように自分で構造体を定義する。</p>
+
+<pre><code>struct NodeBuffer {
+    float4x4 modelViewProjectionTransform;
+};
+</code></pre>
+
+<p>すると、そのデータが<code>[[buffer(1)]]</code>にバインドされてシェーダに渡される。</p>
+
+<blockquote>
+<p>ピックアップできるものはドキュメントの<code>Listing 1 
+Available Fields for Per-Node Shader Data</code>を参照</p>
+</blockquote>
+
+<h4 id="カスタム変数">カスタム変数</h4>
+
+<p>上記以外の変数は構造体として定義が必要。定義自体は通常通りに行う。
+ただし、バインドされるバッファは2以降になる。</p>
+
+<h4 id="実装">実装</h4>
+
+<p>まとめると、<code>VertexShader</code>の宣言部分は以下の通り</p>
+
+<pre><code>vertex output myVertex(input in [[ stage_in ]],
+                       constant SCNSceneBuffer&amp; scn_frame [[ buffer(0) ]],
+                       constant NodeBuffer&amp; scn_node [[ buffer(1) ]],
+                       constant CustomBuffer&amp; custom [[ buffer(2) ]]) {
+</code></pre>
+
+<p>ここでの重要なポイントは<strong>引数名</strong>。
+- <code>scn_frame</code>と<code>scn_node</code>は固定<br />
+（違う名前にすると正しくバインドされない）
+- カスタム変数の引数名<code>custom</code>は<code>SceneKit</code>からデータを渡す時に使う</p>
+
+<p>中での処理は必要な計算をして、それを<code>FragmentShader</code>に渡すという、
+通常の<code>Metal</code>のシェーダと同じ実装を行う。</p>
+
+<h3 id="fragmentshader側">FragmentShader側</h3>
+
+<h4 id="テクスチャ">テクスチャ</h4>
+
+<p>テクスチャを利用したい場合は、特に事前の定義などは不要で通常通り宣言する</p>
+
+<pre><code>fragment half4 textureFragment(VertexOut in [[ stage_in ]],
+                               texture2d&lt;float&gt; texture [[ texture(0) ]]) {
+</code></pre>
+
+<p>ただしここでも重要なポイントは<strong>引数名</strong>（詳細は後述）。</p>
+
+<h3 id="scenekit側">SceneKit側</h3>
+
+<p>カスタム変数とテクスチャ以外は自動でバインドされる<br />
+（＝SceneKit側の処理は特にない）</p>
+
+<h4 id="カスタム変数-1">カスタム変数</h4>
+
+<p>シェーダ側と同じ構造体のデータを準備する辺りは通常通り。</p>
+
+<p>そのデータをシェーダ側にバインドするのは以下のように<code>setValue</code>を利用する</p>
+
+<pre><code>var custom = CustomBuffer(color: float4(0, 0, 0, 1))
+material.setValue(NSData(bytes: &amp;custom, length:sizeof(CustomBuffer)),
+                  forKey: &quot;custom&quot;)
+</code></pre>
+
+<p><code>setValue</code>は<code>SCNProgram</code>をセットしたのと同じ対象（今回は<code>material</code>）に行う。<br />
+また、<code>value</code>は<code>NSData</code>としてバイナリで渡し、<code>key</code>はシェーダでの宣言と同じ名前にする。</p>
+
+<h4 id="テクスチャ-1">テクスチャ</h4>
+
+<p>今回のモデルではマテリアルの<code>diffuse</code>にテクスチャが設定されているので、まずそれを取得する。
+その後、<code>SCNMaterialProperty</code>の形式にしてから変数と同様に<code>setValue</code>する</p>
+
+<pre><code>guard let contents = material.diffuse.contents else { return }
+material.setValue(SCNMaterialProperty(contents: contents),
+                  forKey: &quot;texture&quot;)
+</code></pre>
+
+<p>ポイントは、<code>SCNMaterialProperty</code>を生成しなおしてからセットすること。<br />
+直接<code>diffuse</code>の中のデータを<code>setValue</code>すると正しくデータが渡されない。</p>
+
+<h4 id="命名の注意点">命名の注意点</h4>
+
+<p>シェーダの引数名と<code>SceneKit</code>側で<code>setValue</code>の<code>key</code>は一致させる必要がある。</p>
+
+<p>さらに大事な点として、<code>setValue</code>は<code>KVO</code>を利用しているので、
+命名時にはオブジェクトのプロパティとかぶる様な名前をつけてはいけない。<br />
+（例えば<code>color</code>などは実行時にエラーログが出て連携ができない）</p>
+
+<h2 id="感想">感想</h2>
+
+<p>今回はサンプルもなくとても苦戦した。。。特にシェーダとSceneKit間のデータのやりとり辺りは、
+ドキュメントにも細かく書いてなくて苦労した。<br />
+妙に親切に頂点属性などをバインドしてくれると思ったら、
+引数名固定だったり、テクスチャの再生成が必要だったりと落とし穴もいっぱい・・・</p>
+
+<p>あと、引数名がスネークケースなのもいただけない。
+他がキャメルケースなのでここは統一して欲しかった。</p>
+
+<p>ただ、Metalのバインドの辺りの仕組みはどうなっているのか興味深いので、
+もっといろいろ触ってみたい。</p>
+
+<h1 id="参考リンク">参考リンク</h1>
+
+<ul>
+<li>Apple公式ドキュメント(<a href="https://developer.apple.com/reference/scenekit/scnprogram">SCNProgram</a>)</li>
+</ul>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>OS X 10.11.5</li>
+<li>Xcode 7.3.1</li>
+<li>iOS 9.3.2</li>
+<li>iPhone 6+</li>
+</ul>
+
+<h1 id="ソース">ソース</h1>
+
+<p><a href="https://github.com/mike-neko/MetalShaderSceneKit">こちら</a></p>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Model I/Oで立体図形のメッシュを生成 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(22)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(10)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Model I/Oで立体図形のメッシュを生成</h1>
+    <span class="post-date">Mar 5, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    
+
+<h2 id="概要">概要</h2>
+
+<p>Metalで描画のテストなどでさくっとモデルを表示したい時に、Model I/Oを使って3Dのモデルを生成する方法</p>
+
+<p>法線やUV座標も作ってくれるので地味に便利である</p>
+
+<h2 id="生成されるモデル">生成されるモデル</h2>
+
+<p>生成できる図形の種類は、</p>
+
+<ul>
+<li>ボックス</li>
+<li>球体</li>
+<li>シリンダ</li>
+<li>円錐</li>
+<li>平面</li>
+<li>正20面体</li>
+</ul>
+
+<p>生成時には大きさや分割数も指定できる</p>
+
+<p>各頂点データの中身は、シェーダで書くと以下の感じ</p>
+
+<pre><code>struct Vertex {
+    float3 position    [[ attribute(0) ]];
+    float3 normal      [[ attribute(1) ]];
+    float2 texcoord    [[ attribute(2) ]];
+};
+</code></pre>
+
+<h2 id="生成の方法">生成の方法</h2>
+
+<p>流れとしては、</p>
+
+<ol>
+<li><code>MDLMesh</code>のクラスメソッドで指定した図形のメッシュを生成</li>
+<li>Metalで扱えるように<code>MTKMesh</code>へ変換</li>
+<li>頂点データに合わせて<code>MTLRenderPipelineState</code>を生成</li>
+<li>メッシュを描画</li>
+</ol>
+
+<p>という感じになる</p>
+
+<h3 id="メッシュを生成">メッシュを生成</h3>
+
+<p>例えば、ボックスを生成したい場合は以下のとおり</p>
+
+<pre><code>let device = MTLCreateSystemDefaultDevice()!
+let allocator = MTKMeshBufferAllocator(device: device)
+let mdlMesh = MDLMesh.newBox(withDimensions: vector_float3(1),
+                             segments: vector_uint3(2),
+                             geometryType: .triangles,
+                             inwardNormals: false,
+                             allocator: allocator)
+</code></pre>
+
+<p><code>MDLMesh.newBox</code>がボックスのメッシュを生成するクラスメソッドで、
+引数の<code>dimensions</code>でサイズ、<code>segments</code>で分割数を指定している。
+図形の種類によって引数のパラメータは異なる（円筒なら半径も指定など）</p>
+
+<p><code>inwardNormals</code>は法線の向きの指定。
+通常は<code>false</code>で良いが、スカイボックスや部屋の中のように立体の内側に視点がある場合は<code>true</code>にする</p>
+
+<h3 id="メッシュを変換">メッシュを変換</h3>
+
+<p><code>MDLMesh</code>を<code>MTKMesh</code>（Metalで描画する時に必要な情報全部がまとまったクラス）へ変換する</p>
+
+<pre><code>let mesh = try! MTKMesh(mesh: mdlMesh, device: device)
+</code></pre>
+
+<h3 id="mtlrenderpipelinestateを生成">MTLRenderPipelineStateを生成</h3>
+
+<p><code>MTLRenderPipelineState</code>を生成する際にメッシュの頂点情報を与えて生成する</p>
+
+<pre><code>let vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(mesh.vertexDescriptor)
+let renderDescriptor = MTLRenderPipelineDescriptor()
+renderDescriptor.vertexDescriptor = vertexDescriptor
+// ここで通常どおりシェーダなどの設定をする
+let renderState = try! device.makeRenderPipelineState(descriptor: renderDescriptor)
+</code></pre>
+
+<p>ただし、生成されるメッシュの頂点形式は固定のようなので手動で設定するのもありかもしれない</p>
+
+<h3 id="メッシュを描画">メッシュを描画</h3>
+
+<pre><code>renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer,
+                              offset: 0, at: 0)
+renderEncoder.drawIndexedPrimitives(
+    type: mesh.submeshes[0].primitiveType,
+    indexCount: mesh.submeshes[0].indexCount,
+    indexType: mesh.submeshes[0].indexType,
+    indexBuffer: mesh.submeshes[0].indexBuffer.buffer,
+    indexBufferOffset: mesh.submeshes[0].indexBuffer.offset)
+</code></pre>
+
+<p>メッシュのデータはインデックスバッファ形式で格納されているので、<code>drawIndexedPrimitives</code>を使う。
+また、<code>VertexBuffer</code>は一つのみ、サブメッシュも一つのみ生成されるようなので固定にしている</p>
+
+<h2 id="ソース">ソース</h2>
+
+<p>必要最低限（ライト固定、テクスチャなし）のコードは以下の感じ<br />
+mac用だがiOSへもViewController周り以外はそのまま使える</p>
+
+<script type="text/javascript" src="https://gist.github.com/6ed7ba3fe83bcf0418a6f5e682e6138a.js"></script>
+
+<p><code>Matrix</code>周りは<a href="https://github.com/mike-neko/MetalTessellation/blob/master/MetalTessellation/Matrix.swift">こちら</a>を参照</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Xcode 8.2</li>
+<li>iOS 10</li>
+<li>macOS 10.12</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>KVOを利用する(Swift) &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(22)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(10)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(16)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>KVOを利用する(Swift)</h1>
+    <span class="post-date">Jul 25, 2016 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    
+
+<p><code>Swift</code>で<code>KVO</code>を利用する方法について。特に<code>context</code>を一意の識別子として使いたい場合の方法</p>
+
+<h2 id="サンプルコード">サンプルコード</h2>
+
+<script type="text/javascript" src="https://gist.github.com/5f00c1927b3cede0376c575147956112.js"></script>
+
+<h2 id="ポイント">ポイント</h2>
+
+<h3 id="nsobject-を継承する"><code>NSObject</code>を継承する</h3>
+
+<p>監視対象も監視するクラスも両方とも<code>NSObject</code>のサブクラスであることが必要</p>
+
+<p>監視対象（サンプルでは<code>Target</code>）で継承しなかった場合、</p>
+
+<pre><code>'NSUnknownKeyException', reason: '[&lt;〜.ViewController 0x〜&gt; addObserver:&lt;〜.ViewController 0x〜&gt; forKeyPath:@&quot;target.valueA&quot; options:3 context:0x〜] was sent to an object that is not KVC-compliant for the &quot;target&quot; property.'
+</code></pre>
+
+<p>といった実行時エラーが発生する</p>
+
+<p>監視する側だとそもそも<code>addObserver</code>などが利用できない</p>
+
+<h3 id="プロパティには-dynamic-をつける">プロパティには<code>dynamic</code>をつける</h3>
+
+<p>監視対象のプロパティ（<code>addObserver</code>で追加するプロパティ）は必ず<code>dynamic</code>をつけること</p>
+
+<p>もし、これをつけ忘れると、エラーにはならないが、通知も来ない状態
+（＝変更されても<code>observeValueForKeyPath</code>が呼ばれない）
+という判りにくいバグになってしまう</p>
+
+<h3 id="アクセスコントロールに注意">アクセスコントロールに注意</h3>
+
+<p>プロパティが別クラスのオブジェクト?の場合、<code>private</code>にすると</p>
+
+<pre><code>'NSUnknownKeyException', reason: '[&lt;〜.ViewController 0x〜&gt; addObserver:&lt;〜.ViewController 0x〜&gt; forKeyPath:@&quot;target.valueA&quot; options:3 context:0x〜] was sent to an object that is not KVC-compliant for the &quot;target&quot; property.'
+</code></pre>
+
+<p>といった実行時エラーが発生する</p>
+
+<p>サンプルだと、<code>value1</code>と<code>value2</code>は<code>private</code>でも問題無いが、<code>target</code>は<code>private</code>ではエラーになる</p>
+
+<blockquote>
+<p><code>String</code>や<code>Int</code>ではエラーにならないのは確認したが、具体的な条件は未調査・・・</p>
+</blockquote>
+
+<h3 id="識別子としての-context-の指定">識別子としての<code>context</code>の指定</h3>
+
+<p>通常の指定方法は参考リンクの通り（<code>private var myContext = 0</code>）。
+ただ、今回のサンプルでは、キー値の指定とまとめて以下のようにしている</p>
+
+<pre><code>private struct KeyContext {
+    static var value1 = &quot;value1&quot;
+    ...
+}
+</code></pre>
+
+<p>というのも、<code>context</code>には一意なアドレスを渡すべきなので、<code>static</code>によりアドレスを確保している
+（通常の指定方法ではグローバル変数にして一意なアドレスを確保）</p>
+
+<p>なお、<code>private</code>なのは単に他からアクセスさせないようにしたい（する必要がない）からで、
+<code>struct</code>の中で宣言しているのは、名前空間のようにしたかったからである。
+よって、</p>
+
+<pre><code>private var value1 = &quot;value1&quot;
+...
+
+class ViewController: UIViewController {
+</code></pre>
+
+<p>と言った書き方でも同じ</p>
+
+<h3 id="通知の登録-解除">通知の登録 / 解除</h3>
+
+<h4 id="呼び出しタイミング">呼び出しタイミング</h4>
+
+<h5 id="登録時">登録時</h5>
+
+<p>サンプルでは<code>UIViewController</code>なので、<code>viewWillAppear</code>で登録しているが、
+通常は<code>init</code>での登録が良さげ</p>
+
+<h5 id="解除時">解除時</h5>
+
+<p>サンプルでは登録が<code>viewWillAppear</code>なので、対となる<code>viewWillDisappear</code>で解除しているが、
+通常は<code>deinit</code>での登録が良い</p>
+
+<h4 id="登録方法">登録方法</h4>
+
+<pre><code>addObserver(self, forKeyPath: KeyContext.value1, options: .new, context: &amp;KeyContext.value1)
+</code></pre>
+
+<p><code>Objective-C</code>との相違点は、</p>
+
+<ul>
+<li><code>KeyPath</code>に<code>self</code>がいらない</li>
+<li><code>options</code>を複数指定する時は、<code>|</code>ではなく配列（例：<code>[.new, .old]</code>）で渡す</li>
+<li><code>context</code>へのポインタは<code>&amp;</code>だけで良い（暗黙的変換が入る）</li>
+</ul>
+
+<p>といったあたり</p>
+
+<h3 id="通知の受信">通知の受信</h3>
+
+<p>今回は、<code>context</code>を識別子として利用しているので、<code>switch</code>でまとめて比較しているが、<code>defalut</code>の時にちゃんと</p>
+
+<pre><code>super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+</code></pre>
+
+<p>を呼ぶこと。これがないと、もし親クラスで何か監視をしていた場合に処理が正しく行われないので
+（当然、自身の監視対象だった場合は呼ばない）</p>
+
+<p>なお、<code>case</code>に監視対象のプロパティを書き忘れると、</p>
+
+<pre><code>An -observeValueForKeyPath:ofObject:change:context: message was received but not handled.
+</code></pre>
+
+<p>の実行時エラーとなる</p>
+
+<h4 id="値の取得">値の取得</h4>
+
+<pre><code>// Change Dictionary Keys: 
+// NSKeyValueChangeKey.newKeyとかNSKeyValueChangeKey.oldKeyとか
+let value = change?[&quot;Change Dictionary Keys&quot;] as? &quot;データ型&quot;
+</code></pre>
+
+<p>と書けば希望のデータ型へ変換して取得できる。
+<code>NSNull</code>や型が違う場合などは、最終的に<code>nil</code>が入るのでサンプルのように<code>guard</code>ではじくのがスマート</p>
+
+<h4 id="swift2からの変更点">Swift2からの変更点</h4>
+
+<p><code>addObserver</code>の<code>context</code>のポインタが<code>UnsafeMutableRawPointer</code>に変わっている</p>
+
+<h1 id="参考リンク">参考リンク</h1>
+
+<ul>
+<li>公式：<a href="https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/AdoptingCocoaDesignPatterns.html#//apple_ref/doc/uid/TP40014216-CH7-ID12">Using Swift with Cocoa and Objective-C (Swift 3.0.1)</a></li>
+</ul>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Xcode 8.2.1</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

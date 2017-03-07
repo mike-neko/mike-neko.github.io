@@ -1,0 +1,1858 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mac on M.Ikeの小ネタ集</title>
+    <link>https://mike-neko.github.io/categories/mac/</link>
+    <description>Recent content in Mac on M.Ikeの小ネタ集</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>jp</language>
+    <lastBuildDate>Sun, 05 Mar 2017 22:36:43 +0900</lastBuildDate>
+    <atom:link href="https://mike-neko.github.io/categories/mac/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Model I/Oで立体図形のメッシュを生成</title>
+      <link>https://mike-neko.github.io/blog/modelio-mesh/</link>
+      <pubDate>Sun, 05 Mar 2017 22:36:43 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/modelio-mesh/</guid>
+      <description>
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;Metalで描画のテストなどでさくっとモデルを表示したい時に、Model I/Oを使って3Dのモデルを生成する方法&lt;/p&gt;
+
+&lt;p&gt;法線やUV座標も作ってくれるので地味に便利である&lt;/p&gt;
+
+&lt;h2 id=&#34;生成されるモデル&#34;&gt;生成されるモデル&lt;/h2&gt;
+
+&lt;p&gt;生成できる図形の種類は、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ボックス&lt;/li&gt;
+&lt;li&gt;球体&lt;/li&gt;
+&lt;li&gt;シリンダ&lt;/li&gt;
+&lt;li&gt;円錐&lt;/li&gt;
+&lt;li&gt;平面&lt;/li&gt;
+&lt;li&gt;正20面体&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;生成時には大きさや分割数も指定できる&lt;/p&gt;
+
+&lt;p&gt;各頂点データの中身は、シェーダで書くと以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct Vertex {
+    float3 position    [[ attribute(0) ]];
+    float3 normal      [[ attribute(1) ]];
+    float2 texcoord    [[ attribute(2) ]];
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;生成の方法&#34;&gt;生成の方法&lt;/h2&gt;
+
+&lt;p&gt;流れとしては、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;MDLMesh&lt;/code&gt;のクラスメソッドで指定した図形のメッシュを生成&lt;/li&gt;
+&lt;li&gt;Metalで扱えるように&lt;code&gt;MTKMesh&lt;/code&gt;へ変換&lt;/li&gt;
+&lt;li&gt;頂点データに合わせて&lt;code&gt;MTLRenderPipelineState&lt;/code&gt;を生成&lt;/li&gt;
+&lt;li&gt;メッシュを描画&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;という感じになる&lt;/p&gt;
+
+&lt;h3 id=&#34;メッシュを生成&#34;&gt;メッシュを生成&lt;/h3&gt;
+
+&lt;p&gt;例えば、ボックスを生成したい場合は以下のとおり&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let device = MTLCreateSystemDefaultDevice()!
+let allocator = MTKMeshBufferAllocator(device: device)
+let mdlMesh = MDLMesh.newBox(withDimensions: vector_float3(1),
+                             segments: vector_uint3(2),
+                             geometryType: .triangles,
+                             inwardNormals: false,
+                             allocator: allocator)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;MDLMesh.newBox&lt;/code&gt;がボックスのメッシュを生成するクラスメソッドで、
+引数の&lt;code&gt;dimensions&lt;/code&gt;でサイズ、&lt;code&gt;segments&lt;/code&gt;で分割数を指定している。
+図形の種類によって引数のパラメータは異なる（円筒なら半径も指定など）&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;inwardNormals&lt;/code&gt;は法線の向きの指定。
+通常は&lt;code&gt;false&lt;/code&gt;で良いが、スカイボックスや部屋の中のように立体の内側に視点がある場合は&lt;code&gt;true&lt;/code&gt;にする&lt;/p&gt;
+
+&lt;h3 id=&#34;メッシュを変換&#34;&gt;メッシュを変換&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;MDLMesh&lt;/code&gt;を&lt;code&gt;MTKMesh&lt;/code&gt;（Metalで描画する時に必要な情報全部がまとまったクラス）へ変換する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let mesh = try! MTKMesh(mesh: mdlMesh, device: device)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;mtlrenderpipelinestateを生成&#34;&gt;MTLRenderPipelineStateを生成&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;MTLRenderPipelineState&lt;/code&gt;を生成する際にメッシュの頂点情報を与えて生成する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(mesh.vertexDescriptor)
+let renderDescriptor = MTLRenderPipelineDescriptor()
+renderDescriptor.vertexDescriptor = vertexDescriptor
+// ここで通常どおりシェーダなどの設定をする
+let renderState = try! device.makeRenderPipelineState(descriptor: renderDescriptor)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ただし、生成されるメッシュの頂点形式は固定のようなので手動で設定するのもありかもしれない&lt;/p&gt;
+
+&lt;h3 id=&#34;メッシュを描画&#34;&gt;メッシュを描画&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer,
+                              offset: 0, at: 0)
+renderEncoder.drawIndexedPrimitives(
+    type: mesh.submeshes[0].primitiveType,
+    indexCount: mesh.submeshes[0].indexCount,
+    indexType: mesh.submeshes[0].indexType,
+    indexBuffer: mesh.submeshes[0].indexBuffer.buffer,
+    indexBufferOffset: mesh.submeshes[0].indexBuffer.offset)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;メッシュのデータはインデックスバッファ形式で格納されているので、&lt;code&gt;drawIndexedPrimitives&lt;/code&gt;を使う。
+また、&lt;code&gt;VertexBuffer&lt;/code&gt;は一つのみ、サブメッシュも一つのみ生成されるようなので固定にしている&lt;/p&gt;
+
+&lt;h2 id=&#34;ソース&#34;&gt;ソース&lt;/h2&gt;
+
+&lt;p&gt;必要最低限（ライト固定、テクスチャなし）のコードは以下の感じ&lt;br /&gt;
+mac用だがiOSへもViewController周り以外はそのまま使える&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/6ed7ba3fe83bcf0418a6f5e682e6138a.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;&lt;code&gt;Matrix&lt;/code&gt;周りは&lt;a href=&#34;https://github.com/mike-neko/MetalTessellation/blob/master/MetalTessellation/Matrix.swift&#34;&gt;こちら&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.2&lt;/li&gt;
+&lt;li&gt;iOS 10&lt;/li&gt;
+&lt;li&gt;macOS 10.12&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Metalの座標周りのメモ</title>
+      <link>https://mike-neko.github.io/blog/metal-coordinate/</link>
+      <pubDate>Thu, 02 Mar 2017 23:36:28 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal-coordinate/</guid>
+      <description>
+
+&lt;p&gt;わりと間違いやすいので、Metalの座標周りのまとめ&lt;/p&gt;
+
+&lt;p&gt;実はAppleの公式のサンプルも間違っていたりする・・・・&lt;/p&gt;
+
+&lt;h2 id=&#34;座標系&#34;&gt;座標系&lt;/h2&gt;
+
+&lt;p&gt;Metalは &lt;em&gt;左手系&lt;/em&gt; である&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;元々のiOS / macはOpenGLの為、そのまま既存サンプルを移し替えようとすると、座標系でハマるので注意！&lt;/strong&gt;
+OpenGLからの移植は行列の中身（列ベクトル or 行ベクトル）が違う場合もあるので注意！&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;座標系&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Metal&lt;/td&gt;
+&lt;td&gt;左手系&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;OpenGL / WebGL&lt;/td&gt;
+&lt;td&gt;右手系&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;DirectX&lt;/td&gt;
+&lt;td&gt;左手系&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;なお、左手系と右手系の違いはZ軸の向きだけである&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;Metal, DirectX&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;OpenGL, WebGL&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/left.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/right.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;z軸の奥が+&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;z軸の手前が+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;uv座標&#34;&gt;UV座標&lt;/h2&gt;
+
+&lt;p&gt;Metalは &lt;em&gt;左上&lt;/em&gt; が原点(0, 0)、右下が(1, 1)となる&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;UV座標&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Metal&lt;/td&gt;
+&lt;td&gt;左上&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;OpenGL / WebGL&lt;/td&gt;
+&lt;td&gt;右上&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;DirectX&lt;/td&gt;
+&lt;td&gt;左上&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;Metal, DirectX&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;OpenGL, WebGL&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/lefttop.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/rightbottom.png&#34; /&gt;
+&lt;/figure&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Swift3のポインタの実践編</title>
+      <link>https://mike-neko.github.io/blog/swift-pointerc/</link>
+      <pubDate>Fri, 24 Feb 2017 23:44:10 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/swift-pointerc/</guid>
+      <description>
+
+&lt;p&gt;主にSwiftのポインタとCのポインタとの対比やポインタの変換方法についてのまとめ&lt;/p&gt;
+
+&lt;p&gt;Swiftでのポインタの基礎については&lt;a href=&#34;../swift-pointer&#34;&gt;基礎編&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h2 id=&#34;cのポインタとの対比&#34;&gt;Cのポインタとの対比&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;という型のポインタを表す場合&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;Swift&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;C&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafePointer&amp;lt;Hoge&amp;gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;const Hoge*&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeMutablePointer&amp;lt;Hoge&amp;gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Hoge*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code&gt;void*&lt;/code&gt;(汎用ポインタ)には専用の型が用意されている&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;Swift&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;C&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeRawPointer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;const void*&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;UnsafeMutableRawPointer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;void*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;なお、ポインタ経由で値を変更したい場合は&lt;code&gt;Mutable&lt;/code&gt;がついている方を、参照のみであればついていない方を使う&lt;/p&gt;
+
+&lt;h2 id=&#34;ポインタへの変換方法&#34;&gt;ポインタへの変換方法&lt;/h2&gt;
+
+&lt;h3 id=&#34;早見表&#34;&gt;早見表&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;right&#34;&gt;変換元&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Hoge&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;UnsafePointer&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;UnsafeRawPointer&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;Hoge&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;1.withUnsafePointer&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;1 -&amp;gt; 3&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;UnsafePointer&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;2.pointee or []&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;3.UnsafeRawPointer()&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;UnsafeRawPointer&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;4 -&amp;gt; 2&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;4.assumingMemoryBound&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code&gt;Mutable&lt;/code&gt;の場合も変換方法は同じであるが、それぞれ&lt;code&gt;Mutable&lt;/code&gt;に対応したものを使う&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;から&lt;code&gt;UnsafeRawPointer&lt;/code&gt;のように直接変換できる方法がない場合は、
+&lt;code&gt;UnsafePointer&lt;/code&gt;に変換してから目的の型へ2段階で変換する&lt;/p&gt;
+
+&lt;p&gt;異なる型同士での変換については&lt;a href=&#34;../swift-pointer&#34;&gt;基礎編&lt;/a&gt;を参照のこと&lt;/p&gt;
+
+&lt;h3 id=&#34;コード例&#34;&gt;コード例&lt;/h3&gt;
+
+&lt;p&gt;前提として、&lt;code&gt;Hoge&lt;/code&gt;は以下の型とする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct Hoge {
+    var x: Float, y: Float, z: Float
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（今回は構造体だが、実体がプリミティブでもクラスでも方法は同じ）&lt;/p&gt;
+
+&lt;h4 id=&#34;1-2-hoge-unsafe-mutable-pointer-hoge&#34;&gt;1.2. Hoge =&amp;gt; Unsafe(Mutable)Pointer =&amp;gt; Hoge&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;をポインタへ変換、変換したポインタ経由で元の&lt;code&gt;Hoge&lt;/code&gt;にアクセスする場合&lt;/p&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Hoge pos;
+pos.x = pox.y = pos.z = 1;
+
+Hoge* p = &amp;amp;pos;
+p-&amp;gt;x = 100;             // pos.x = 100 となる
+(*p).y = 200;           // pos.y = 200 となる
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var pos = Hoge(x: 1, y: 1, z: 1)
+withUnsafeMutablePointer(to: &amp;amp;pos) { 
+    let p: UnsafeMutablePointer&amp;lt;Hoge&amp;gt; = $0
+    p.pointee.x = 100   // pos.x = 100 となる
+    p.pointee.y = 200   // pos.y = 200 となる
+}
+// または以下でも同じ
+withUnsafeMutablePointer(to: &amp;amp;pos) { p in
+    // p が UnsafeMutablePointer&amp;lt;Hoge&amp;gt; となる
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;withUnsafe(Mutable)Pointer&lt;/code&gt;のクロージャは値を返せるからといって&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let p = withUnsafeMutablePointer(to: &amp;amp;pos) { $0 }   // 絶対ダメ
+p.pointee.x = 100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というようにポインタを返す書き方は禁止。
+渡されるポインタが有効なのはクロージャ内だけなので、上記書き方の動作は未定義である&lt;/p&gt;
+
+&lt;p&gt;よって、クロージャ内で処理を完結させるか、Swiftの変数に代入（値コピー）してそれを返すこと&lt;/p&gt;
+
+&lt;h4 id=&#34;3-unsafe-mutable-pointer-unsafe-mutable-rawpointer&#34;&gt;3. Unsafe(Mutable)Pointer =&amp;gt; Unsafe(Mutable)RawPointer&lt;/h4&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pHoge が Hoge* の場合
+void* pRaw = (void*)pHoge;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pHoge が UnsafePointer&amp;lt;Hoge&amp;gt; の場合
+let pRaw = UnsafeRawPointer(pHoge)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;4-unsafe-mutable-rawpointer-unsafe-mutable-pointer&#34;&gt;4. Unsafe(Mutable)RawPointer =&amp;gt; Unsafe(Mutable)Pointer&lt;/h4&gt;
+
+&lt;p&gt;Cの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pRaw が void* の場合
+Hoge* pHoge = (Hoge*)pRaw;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Swiftの書き方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// pRaw が UnsafeRawPointer の場合
+let pHoge = pRaw.assumingMemoryBound(to: Hoge.self)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;ただし、pRawが既にバインド済であることが前提&lt;/em&gt;&lt;br /&gt;
+ 未バインドの場合は、&lt;code&gt;bindMemory&lt;/code&gt;を使う&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://developer.apple.com/library/content/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html#//apple_ref/doc/uid/TP40014216-CH8-ID23&#34;&gt;Interacting with C APIs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://swift.org/migration-guide/se-0107-migrate.html&#34;&gt;UnsafeRawPointer Migration&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Swift3のポインタの基礎知識</title>
+      <link>https://mike-neko.github.io/blog/swift-pointer/</link>
+      <pubDate>Wed, 22 Feb 2017 23:55:36 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/swift-pointer/</guid>
+      <description>
+
+&lt;p&gt;基本的にSwiftからポインタをそのまま扱う機会はほとんどないが、CのAPIやMetal等でポインタを扱う場合用のメモ&lt;/p&gt;
+
+&lt;p&gt;なお、画像などのバイナリデータを単に扱いたいだけの場合は&lt;code&gt;Data&lt;/code&gt;が&lt;code&gt;UInt8&lt;/code&gt;の配列と同等に扱えるようになったのでそっちを使った方が良い&lt;/p&gt;
+
+&lt;p&gt;実際の使い方は&lt;a href=&#34;../swift-pointerc&#34;&gt;実践編&lt;/a&gt;も参照&lt;/p&gt;
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;ポインタはメモリ上のデータにアクセスする時に使うものである。
+Swiftの場合、紐付けられている&lt;strong&gt;型&lt;/strong&gt;によって、以下の種類がある&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;UnsafePointer / UnsafeMutablePointer&lt;br /&gt;
+特定の型にバインドされている。タイプセーフである&lt;/li&gt;
+&lt;li&gt;UnsafeRawPointer / UnsafeMutableRawPointer&lt;br /&gt;
+特定の型にバインドされていない。型保証がない&lt;/li&gt;
+&lt;li&gt;UnsafeBufferPointer / UnsafeMutableBufferPointer&lt;br /&gt;
+Unsafe(Mutable)Pointerの配列版&lt;/li&gt;
+&lt;li&gt;UnsafeRawBufferPointer / UnsafeMutableRawBufferPointer&lt;br /&gt;
+Unsafe(Mutable)RawPointerの配列版&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;〜BufferPointer&lt;/code&gt;は、メモリ上に要素（データ）が連続しているバッファの場合に利用出来るポインタで、実体はメモリへのビューである。
+リリースモードでは境界チェックがされずにアクセスされる（デバッグモードではチェックされる）&lt;/p&gt;
+
+&lt;h3 id=&#34;注意事項&#34;&gt;注意事項&lt;/h3&gt;
+
+&lt;p&gt;ポインタを使う場合、自動メモリ管理やアライメントの保証はされない。よってライフサイクルを自分で管理しメモリリークや未定義扱いとなる動作を自分で避けなければならない&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;〜RawPointer&lt;/code&gt;の場合は、タイプセーフではない
+（Rawがついていないものはコンパイラによる型チェックが行われるが、異なるデータ型を強制的に割り当てたような場合は当然未定義の動作となる）&lt;/p&gt;
+
+&lt;h3 id=&#34;ポインタの状態&#34;&gt;ポインタの状態&lt;/h3&gt;
+
+&lt;p&gt;ポインタはポインタの指すメモリの状態によって以下のような状態となる&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;未バインド（未初期化）&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;メモリとバインドされていない状態&lt;/li&gt;
+&lt;li&gt;例：ポインタの宣言直後のような場合&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;バインド済・未初期化&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;メモリとバインドされているが、メモリ上のデータは未初期化&lt;/li&gt;
+&lt;li&gt;例：メモリ確保済だが未初期化のメモリへのポインタ&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;バインド済・初期化済
+
+&lt;ul&gt;
+&lt;li&gt;例：値の設定されているメモリへのポインタ&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;trivial-type&#34;&gt;&lt;code&gt;trivial type&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;型の中に参照を含まないデータ型。単純なバイトのコピーだけで複製できる型のこと&lt;/p&gt;
+
+&lt;h2 id=&#34;unsafepointer-unsafemutablepointer&#34;&gt;UnsafePointer / UnsafeMutablePointer&lt;/h2&gt;
+
+&lt;h3 id=&#34;読み取り&#34;&gt;読み取り&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;バインド済・未初期化：初期化が必要&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;バインド済・初期化済：次のどちらかで読み取る&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let ptr: UnsafePointer&amp;lt;Int&amp;gt; = ...   // 中身は10  
+let i = ptr.pointee                 // Intの10  
+let j = ptr[0]                      // Intの10  
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;書き込み&#34;&gt;書き込み&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;未バインド（未初期化）：&lt;code&gt;allocate(capacity:)&lt;/code&gt;でメモリを確保してバインドできる（メモリは未初期化のまま）&lt;/li&gt;
+&lt;li&gt;バインド済・未初期化：&lt;code&gt;initialize(to:count:)&lt;/code&gt;,&lt;code&gt;initialize(from:)&lt;/code&gt;,&lt;code&gt;moveInitializeMemory(from:count)&lt;/code&gt;を使って初期化&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;バインド済・初期化済：次のどちらかで設定できる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var ptr: UnsafeMutablePointer&amp;lt;Int&amp;gt; = ...
+ptr.pointee = 10
+ptr[0] = 10
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;unsaferawpointer-unsafemutablerawpointer&#34;&gt;UnsafeRawPointer / UnsafeMutableRawPointer&lt;/h2&gt;
+
+&lt;p&gt;読み書きの際にはアライメントに注意すること&lt;/p&gt;
+
+&lt;h3 id=&#34;読み取り-1&#34;&gt;読み取り&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;未バインド（未初期化）：&lt;code&gt;bindMemory(to:count:)&lt;/code&gt;で型にバインドする（rawではないポインタが返される）&lt;/li&gt;
+&lt;li&gt;バインド済・未初期化：バインドした型の値で初期化が必要&lt;br /&gt;
+（=rawでは初期化はできない）&lt;/li&gt;
+&lt;li&gt;バインド済・初期化済：&lt;code&gt;load(fromByteOffset:as:)&lt;/code&gt;で型を指定して読み取り
+（アライメントに注意）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;書き込み-1&#34;&gt;書き込み&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;未バインド（未初期化）：&lt;code&gt;initializeMemory(as:from:)&lt;/code&gt;,&lt;code&gt;moveInitializeMemory(as:from:count)&lt;/code&gt;を使って初期化できる&lt;/li&gt;
+&lt;li&gt;バインド済：&lt;code&gt;storeBytes(of:toByteOffset:as:)&lt;/code&gt;で書き込み可能。ただし&lt;code&gt;trivial type&lt;/code&gt;のみ&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;ポインタ演算&#34;&gt;ポインタ演算&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;+&lt;/code&gt;と&lt;code&gt;-&lt;/code&gt;と&lt;code&gt;[]&lt;/code&gt;(subscript)が利用可能。
+それぞれ指定した数だけオフセット（※）されてアクセスされる&lt;/p&gt;
+
+&lt;p&gt;※UnsafePointer / UnsafeMutablePointerの場合は、その型のバイト数分だけ。UnsafeRawPointer / UnsafeMutableRawPointerの場合は、バイト単位でオフセットされる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// intPointerがIntの[0, 1, 2, 3, 4]のメモリを指している場合
+intPointer + 2      // 2
+intPointer[2]       // 2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;型変換&#34;&gt;型変換&lt;/h2&gt;
+
+&lt;h3 id=&#34;互換性のある別の型に一時的にバインド&#34;&gt;互換性のある別の型に一時的にバインド&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;withMemoryRebound(to:capacity:)&lt;/code&gt;を使う&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 例：Int8 =&amp;gt; UInt8
+uint8Pointer.withMemoryRebound(to: Int8.self, capacity: 8) {
+    // $0
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;別の型に永続的にバインド&#34;&gt;別の型に永続的にバインド&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;RawPointer&lt;/code&gt;にしてから指定の型へバインドしなおす&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 例：UInt8 =&amp;gt; UInt64
+let uint64Pointer = UnsafeRawPointer(uint8Pointer)
+                        .bindMemory(to: UInt64.self, capacity: 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なお、再バインドされるのでこの場合、元のuint8Pointerは&lt;strong&gt;未定義&lt;/strong&gt;になる&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;trivial types同士の場合&lt;br /&gt;
+&lt;code&gt;RawPointer&lt;/code&gt;にしてから&lt;code&gt;load&lt;/code&gt;を使う&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let rawPointer = UnsafeRawPointer(uint64Pointer)
+fullInteger = rawPointer.load(as: UInt64.self)   // OK
+firstByte = rawPointer.load(as: UInt8.self)      // OK
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Mutableの場合は&lt;code&gt;storeBytes(of:toByteOffset:as:)&lt;/code&gt;で設定もできる&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;暗黙の変換とブリッジ&#34;&gt;暗黙の変換とブリッジ&lt;/h3&gt;
+
+&lt;p&gt;関数の引数に渡す時限定で暗黙的なキャストとブリッジをしてくれる&lt;/p&gt;
+
+&lt;p&gt;例えば、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func printInt(atAddress p: UnsafePointer&amp;lt;Int&amp;gt;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というメソッドがある場合、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var value: Int = 23
+printInt(atAddress: &amp;amp;value)         // &amp;amp;をつける
+
+let numbers = [5, 10, 15, 20]       // 配列はlet
+printInt(atAddress: numbers)        // 配列は&amp;amp;不要
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とすれば、自動で&lt;code&gt;UnsafePointer&lt;/code&gt;へ変換して処理される&lt;/p&gt;
+
+&lt;p&gt;もし、&lt;code&gt;printInt&lt;/code&gt;の引数が&lt;code&gt;UnsafeMutablePointer&lt;/code&gt;の場合であれば、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var value: Int = 23
+printInt(atAddress: &amp;amp;value)         // &amp;amp;をつける
+
+var numbers = [5, 10, 15, 20]       // mutableなのでvar
+printInt(atAddress: &amp;amp;numbers)       // inoutなので&amp;amp;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とする&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;注意事項&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;この暗黙の変換によるポインタの有効範囲は該当の関数のスコープ内のみ。
+よって関数からポインタを返してそれを利用するのは禁止（動作は&lt;strong&gt;未定義&lt;/strong&gt;である）&lt;/p&gt;
+
+&lt;p&gt;特に以下のように初期化に使うのは禁止&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var number = 5
+let numberPointer = UnsafePointer&amp;lt;Int&amp;gt;(&amp;amp;number)
+// numberPointerの動作は未定義
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GitHubの自作ライブラリを公開する（ライブラリ編）</title>
+      <link>https://mike-neko.github.io/blog/library2/</link>
+      <pubDate>Wed, 14 Dec 2016 19:52:13 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/library2/</guid>
+      <description>
+
+&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
+その2ではマルチプラットフォーム対応とライブラリ管理ツールの導入についての内容&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;なお、作成するフレームワーク名、プロジェクト名は&lt;code&gt;Kanagata&lt;/code&gt;とした場合の手順なので、
+他の作業時は適宜読み替えること&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;その1は&lt;a href=&#34;../library1&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;マルチプラットフォーム対応&#34;&gt;マルチプラットフォーム対応&lt;/h2&gt;
+
+&lt;p&gt;元々は&lt;code&gt;iOS&lt;/code&gt;で作成していたが、特にOS依存するコードもないので、&lt;code&gt;macOS&lt;/code&gt;と&lt;code&gt;watchOS&lt;/code&gt;と&lt;code&gt;tvOS&lt;/code&gt;にも対応させる。
+また、ソースとテストは全て共通のものを用いることとする&lt;/p&gt;
+
+&lt;h3 id=&#34;既存ターゲット名変更&#34;&gt;既存ターゲット名変更&lt;/h3&gt;
+
+&lt;p&gt;まず&lt;code&gt;iOS&lt;/code&gt;用のターゲットと判る様にターゲット名を&lt;code&gt;Kanagata&lt;/code&gt;から&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更する&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;プロジェクト設定から&lt;code&gt;TARGETS&lt;/code&gt;の中の&lt;code&gt;Kanagata&lt;/code&gt;をクリックして名前を&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;の&lt;code&gt;Product Name&lt;/code&gt;を&lt;code&gt;$(TARGET_NAME)&lt;/code&gt;から&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;li&gt;スキーム名も&lt;code&gt;Manage Schemes...&lt;/code&gt;から&lt;code&gt;Kanagata&lt;/code&gt;をクリックして名前を&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;テスト用のターゲット&lt;code&gt;KanagataTests&lt;/code&gt;も同じ様にターゲット名を&lt;code&gt;KanagataTests-iOS&lt;/code&gt;へ、
+&lt;code&gt;Product Name&lt;/code&gt;を`&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ変更する&lt;/p&gt;
+
+&lt;h3 id=&#34;他os用のターゲットを追加&#34;&gt;他OS用のターゲットを追加&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;プロジェクト設定の&lt;code&gt;TARGETS&lt;/code&gt;の下部にある＋からターゲットを追加
+
+&lt;ul&gt;
+&lt;li&gt;追加画面の上部でOSを選択してから&lt;code&gt;Framework&lt;/code&gt;を選択&lt;br /&gt;
+（各OSで微妙に名前が違うので道具箱とココアのアイコンで見分けること）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Product Name&lt;/code&gt;は&lt;code&gt;Kanagata-(OS名)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Include Unit Tests&lt;/code&gt;にチェック(&lt;code&gt;watchOS&lt;/code&gt;以外)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;プロジェクトに&lt;code&gt;Kanagata-(OS名)&lt;/code&gt;と&lt;code&gt;KanagataTests-(OS名)&lt;/code&gt;が追加されるのでフォルダごと削除&lt;/li&gt;
+&lt;li&gt;追加したターゲットのバンドルIDから&lt;code&gt;-(OS名)&lt;/code&gt;を削除&lt;br /&gt;
+（必要に応じて&lt;code&gt;Signing&lt;/code&gt;と&lt;code&gt;Deployment Target&lt;/code&gt;も修正）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;を変更
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Info.plist File&lt;/code&gt;のパスから&lt;code&gt;-(OS名)&lt;/code&gt;を削除（共通のplistを指す様に）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Product Name&lt;/code&gt;を&lt;code&gt;$(TARGET_NAME)&lt;/code&gt;から&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;テスト用のターゲットも同じ様にバンドルID、&lt;code&gt;Signing&lt;/code&gt;、&lt;code&gt;Build Settings&lt;/code&gt;の各項目を修正する&lt;/p&gt;
+
+&lt;p&gt;ここで一旦ビルドとテストを実行して問題なければ次へ&lt;/p&gt;
+
+&lt;h3 id=&#34;travisciへの追加&#34;&gt;travisCIへの追加&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;追加されたOSの各スキームの&lt;code&gt;Shared&lt;/code&gt;をチェック&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;.travis.yml&lt;/code&gt;を修正&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;iOS&lt;/code&gt;用のスキーム名を&lt;code&gt;Kanagata&lt;/code&gt;から&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
+&lt;li&gt;追加された&lt;code&gt;macOS&lt;/code&gt;と&lt;code&gt;tvOS&lt;/code&gt;の分のテストを追加（以下の設定）
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;- xcodebuild test -scheme Kanagata-macOS -destination &#39;platform=OS X&#39;
+- xcodebuild test -scheme Kanagata-tvOS -destination &#39;platform=tvOS Simulator,name=Apple TV 1080p&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;pushしてエラーがなければ次へ&lt;/p&gt;
+
+&lt;h2 id=&#34;ライブラリ管理ツールへの対応&#34;&gt;ライブラリ管理ツールへの対応&lt;/h2&gt;
+
+&lt;p&gt;個人的にはシンプルな&lt;code&gt;Carthage&lt;/code&gt;がお気に入り。
+&lt;code&gt;CocoaPods&lt;/code&gt;はプロジェクトの設定がいじられてしまうのが気になるのであまり使っていないが、
+周りでは使っている人も多いので対応する&lt;/p&gt;
+
+&lt;p&gt;なお、あらかじめ&lt;code&gt;Carthage&lt;/code&gt;も&lt;code&gt;CocoaPods&lt;/code&gt;もインストール済とする&lt;/p&gt;
+
+&lt;h3 id=&#34;carthage&#34;&gt;Carthage&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;Carthage&lt;/code&gt;は&lt;code&gt;CocoaPods&lt;/code&gt;と違って登録などの作業は不要で、
+GitHubにリリースすれば良い&lt;/p&gt;
+
+&lt;p&gt;まずは、プロジェクトのカレントディレクトリで以下を実行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;carthage build --no-skip-current
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;エラーなく完了し、&lt;code&gt;Carthage/Build&lt;/code&gt;内に各フレームワークが生成されていればOK&lt;/p&gt;
+
+&lt;p&gt;ビルドに問題なければ&lt;code&gt;GitHub&lt;/code&gt;上のリリースタブからタグをつける&lt;br /&gt;
+(この時はバージョンとして&lt;code&gt;0.1.0&lt;/code&gt;の様に数字のみをつけるのが良い。
+vを入れたりすると&lt;code&gt;CocoaPods&lt;/code&gt;でうまくいかないことがあるので)&lt;/p&gt;
+
+&lt;h4 id=&#34;参考-インストール&#34;&gt;（参考）インストール&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Cartfile&lt;/code&gt;に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;github &amp;quot;mike-neko/Kanagata&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という感じ（&lt;code&gt;アカウント名/リポジトリ名&lt;/code&gt;）で追記するだけで利用できる&lt;/p&gt;
+
+&lt;h3 id=&#34;cocoapods&#34;&gt;CocoaPods&lt;/h3&gt;
+
+&lt;p&gt;今回はデモプロジェクトは同梱しないので直接&lt;code&gt;podspec&lt;/code&gt;を作って対応させる&lt;/p&gt;
+
+&lt;h4 id=&#34;podspecの作成&#34;&gt;podspecの作成&lt;/h4&gt;
+
+&lt;p&gt;プロジェクトのカレントディレクトリで以下を実行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod spec create Kanagata
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ひな形の&lt;code&gt;Kanagata.podspec&lt;/code&gt;ができるので内容をプロジェクトに合わせて修正していく。
+今回は以下の感じ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Pod::Spec.new do |s|
+  s.name         = &amp;quot;Kanagata&amp;quot;   // ライブラリ名
+  s.version      = &amp;quot;0.1.0&amp;quot;      // バージョン
+  s.summary      = &amp;quot;短い説明&amp;quot;
+  s.homepage     = &amp;quot;https://github.com/mike-neko/Kanagata&amp;quot;  // GitHub上にしておいた
+  s.license      = &amp;quot;MIT&amp;quot;        // ライセンス
+  s.author       = { &amp;quot;mike-neko&amp;quot; =&amp;gt; &amp;quot;mike.app.info@gmail.com&amp;quot; } // GitHub上の名前とメール
+  s.social_media_url   = &amp;quot;https://twitter.com/m__ike_&amp;quot;          // ツイッターのアドレス
+  s.ios.deployment_target = &amp;quot;8.0&amp;quot;           // OS毎のDeployment Targetと合わせる
+  s.osx.deployment_target = &amp;quot;10.10&amp;quot;
+  s.watchos.deployment_target = &amp;quot;2.0&amp;quot;
+  s.tvos.deployment_target = &amp;quot;9.0&amp;quot;
+  // GitHubのアドレスとタグの紐付けの設定。tagの方はデフォルトのままが良い
+  s.source       = { :git =&amp;gt; &amp;quot;https://github.com/mike-neko/Kanagata.git&amp;quot;, :tag =&amp;gt; &amp;quot;#{s.version}&amp;quot; }
+  s.source_files  = &amp;quot;Kanagata/*.swift&amp;quot;      // プロジェクト内でのソースの位置
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;基本はそのまま埋めていけば良い。ポイントがあるとすると&lt;code&gt;version&lt;/code&gt;の部分は、
+数字のみのバージョン(&lt;code&gt;v1.0.0&lt;/code&gt;とかはNG)にして、GitHub上のタグと一致させておくこと。
+あとは、忘れずに&lt;code&gt;source_files&lt;/code&gt;を自分のプロジェクトでのソースの位置に合わせること&lt;/p&gt;
+
+&lt;p&gt;一通り作成ができたら、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod spec lint Kanagata.podspec
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;としてみてエラーにならなければOK。pushしておく&lt;/p&gt;
+
+&lt;h4 id=&#34;cocoapodsへ登録&#34;&gt;CocoaPodsへ登録&lt;/h4&gt;
+
+&lt;p&gt;（初回のみ）ユーザを登録する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod trunk register (メールアドレス) &#39;(ユーザ名)&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行後に入力したメールアドレスへメールが来るので確認をする。&lt;br /&gt;
+確認後は&lt;code&gt;pod trunk me&lt;/code&gt;で登録内容が確認出来る&lt;/p&gt;
+
+&lt;p&gt;ユーザ登録ができれば、&lt;code&gt;podspec&lt;/code&gt;を&lt;code&gt;CocoaPods&lt;/code&gt;へ登録&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod trunk push
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、&lt;code&gt;podspec&lt;/code&gt;にTwitterを登録していると、無事完了した時にツイートが飛んでくる&lt;/p&gt;
+
+&lt;h4 id=&#34;ciに設定&#34;&gt;CIに設定&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;.travis.yml&lt;/code&gt;に&lt;code&gt;podspec&lt;/code&gt;の検証を追加&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;script:
+  - pod lib lint --allow-warnings
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（今回追加した分のみ記載）&lt;/p&gt;
+
+&lt;h4 id=&#34;参考-インストール-1&#34;&gt;（参考）インストール&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Podfile&lt;/code&gt;に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pod &#39;Kanagata&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を追加すれば利用可能&lt;/p&gt;
+
+&lt;p&gt;また、生成されたドキュメントは、&lt;code&gt;http://cocoadocs.org/docsets/Kanagata/&lt;/code&gt;で見ることが出来る&lt;/p&gt;
+
+&lt;h2 id=&#34;その他&#34;&gt;その他&lt;/h2&gt;
+
+&lt;p&gt;後はバッジを貼ったり、ライセンスを貼ったりすれば、かなりそれっぽい感じになる。
+ライブラリとして公開するとなると敷居が高い気がするが、GitHubを使っていればあまり手間をかけることなく公開できる&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/Carthage/Carthage&#34;&gt;Carthage&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cocoapods.org/&#34;&gt;CocoaPods&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GitHubの自作ライブラリを公開する（CI導入編）</title>
+      <link>https://mike-neko.github.io/blog/library1/</link>
+      <pubDate>Wed, 14 Dec 2016 19:51:59 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/library1/</guid>
+      <description>
+
+&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
+その1ではCIの導入周りについての内容&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;なお、作成するフレームワーク名、プロジェクト名は&lt;code&gt;Kanagata&lt;/code&gt;とした場合の手順なので、
+他の作業時は適宜読み替えること&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;その2は&lt;a href=&#34;../library2&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;構成&#34;&gt;構成&lt;/h2&gt;
+
+&lt;p&gt;せっかくなので単なるライブラリの公開だけでなく、以下の感じでそれっぽく公開&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CIの導入(&lt;code&gt;TravisCI&lt;/code&gt;)
+
+&lt;ul&gt;
+&lt;li&gt;ユニットテスト(&lt;code&gt;XCTest&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;カバレッジ表示(&lt;code&gt;Codecov&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;静的コード解析(&lt;code&gt;SwiftLint&lt;/code&gt;)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;del&gt;ドキュメント生成(&lt;code&gt;juzzy&lt;/code&gt;)&lt;/del&gt;&lt;/li&gt;
+&lt;li&gt;マルチプラットフォーム対応(iOS以外も)&lt;/li&gt;
+&lt;li&gt;ライブラリ管理ツール
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Carthage&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;CocoaPods&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;ciの導入&#34;&gt;CIの導入&lt;/h2&gt;
+
+&lt;h3 id=&#34;プロジェクトの作成&#34;&gt;プロジェクトの作成&lt;/h3&gt;
+
+&lt;p&gt;今回は既存のプロジェクトの中で使っていたものをフレームワークとして切り出す為、まずは新規プロジェクトを作成&lt;/p&gt;
+
+&lt;p&gt;作成時には、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Cocoa Touch Framework&lt;/code&gt;を選択&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Include Unit Tests&lt;/code&gt;にチェック&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;をつけて作成する。
+既存のソースとテストの各ファイルを移植したら、&lt;code&gt;.h&lt;/code&gt;のファイルを削除
+（Swiftのみなのでヘッダは不要）&lt;/p&gt;
+
+&lt;p&gt;ちなみに、ここで一旦ビルドとテストを実行すると&lt;code&gt;module file&#39;s minimum deployment target is ios10.1&lt;/code&gt;のエラー。。。
+その時の&lt;code&gt;Deployment Target&lt;/code&gt;はiOS9で問題ないはず。が、iOS10へ変更したりクリーンをしたりしても変わらず。
+最後にダメ元でiOS9のシミュレータをDLしてみると、無事完了。
+他の環境で試すと再現しなかったりで、結局原因はよく判らなかった・・・・&lt;/p&gt;
+
+&lt;p&gt;さて、無事？テストも通ったのでGitHubへpushしておく&lt;/p&gt;
+
+&lt;h3 id=&#34;travisci&#34;&gt;TravisCI&lt;/h3&gt;
+
+&lt;p&gt;CIツールに&lt;a href=&#34;https://travis-ci.org&#34;&gt;TravisCI&lt;/a&gt;を選択したのは、GitHubと連携できてiOSのビルドができて*タダ*なので&lt;/p&gt;
+
+&lt;h4 id=&#34;登録&#34;&gt;登録&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;トップページから&lt;code&gt;Sign in with GitHub&lt;/code&gt;のボタンを押して、GitHubとの連携を許可&lt;/li&gt;
+&lt;li&gt;しばらくすると、GitHubのリポジトリの一覧が表示される&lt;br /&gt;
+(表示されない時は再ログインしてみればOK)&lt;/li&gt;
+&lt;li&gt;今回のプロジェクトを選んで有効化&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;プロジェクトの修正&#34;&gt;プロジェクトの修正&lt;/h4&gt;
+
+&lt;p&gt;登録が終わればXcodeの&lt;code&gt;Scheme&lt;/code&gt;の設定を変更する&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Shared&lt;/code&gt;にチェック&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Test&lt;/code&gt;の中の&lt;code&gt;Gather coverage data&lt;/code&gt;にチェック&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;この時のスキーム名はCIの設定で使うので覚えておくこと！&lt;/p&gt;
+
+&lt;h4 id=&#34;設定&#34;&gt;設定&lt;/h4&gt;
+
+&lt;p&gt;リポジトリの直下に&lt;code&gt;.travis.yml&lt;/code&gt;を追加し、CIで行う作業を設定する&lt;/p&gt;
+
+&lt;p&gt;この書き方がよく判らなかったので、いろいろなライブラリのリポジトリを見て
+試した結果たどり着いた書き方（テストを実行するだけの最低限）がこちら&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;language: objective-c  # Swiftだけどobjective-cを指定
+osx_image: xcode8.1    # 使っているXcodeのバージョン
+script:
+  # テストを実行(schemeにスキーム名を指定する)
+  - xcodebuild test -scheme Kanagata -sdk iphonesimulator -destination &#39;platform=iOS Simulator,name=iPhone 5&#39;
+notifications:
+  email: false         # メール通知はOFF
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;変更が終わればスキームと&lt;code&gt;.travis.yml&lt;/code&gt;の変更分をpushする。&lt;br /&gt;
+その後はpushする毎に自動でCIが走るようになる
+（だいたい、pushしてから15分程度で開始されることが多い感じ）&lt;/p&gt;
+
+&lt;h3 id=&#34;カバレッジ表示&#34;&gt;カバレッジ表示&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;TravisCI&lt;/code&gt;と&lt;code&gt;Swift&lt;/code&gt;に対応していてバッジが表示できて*タダ*のものということで、
+&lt;a href=&#34;https://codecov.io/&#34;&gt;Codecov&lt;/a&gt;を選択&lt;br /&gt;
+開発時はXcode内でカバレッジを見るのでどういう詳細表示がされるのかは重視していない&lt;/p&gt;
+
+&lt;h4 id=&#34;登録と設定&#34;&gt;登録と設定&lt;/h4&gt;
+
+&lt;p&gt;こちらも&lt;code&gt;TravisCI&lt;/code&gt;と同じくGitHubとの連携だけで登録完了&lt;/p&gt;
+
+&lt;p&gt;便利なのが、リポジトリを選択すると&lt;code&gt;TravisCI&lt;/code&gt;に設定するコードを表示してくれること。&lt;br /&gt;
+表示されたコードを&lt;code&gt;.travis.yml&lt;/code&gt;に追加すればOK&lt;/p&gt;
+
+&lt;h4 id=&#34;ignoreの設定&#34;&gt;ignoreの設定&lt;/h4&gt;
+
+&lt;p&gt;デフォルトの状態ではリポジトリ内全部が対象となるので、テスト用のコードもカウントされてしまい、
+正しくないカバレッジが表示されてしまう。それを防ぐため、テスト用のコードは対象外とする様に設定する&lt;/p&gt;
+
+&lt;p&gt;リポジトリ直下に&lt;code&gt;codecov.yml&lt;/code&gt;を追加し、以下を追記する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ignore:
+  - &amp;quot;KanagataTests&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで&lt;code&gt;KanagataTests&lt;/code&gt;以下のフォルダは対象外となる&lt;/p&gt;
+
+&lt;h3 id=&#34;swiftlint&#34;&gt;SwiftLint&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/realm/SwiftLint&#34;&gt;SwiftLint&lt;/a&gt;には&lt;code&gt;Auto-correct&lt;/code&gt;というコードフォーマッタの機能があり、
+これを使いたいので導入した&lt;/p&gt;
+
+&lt;h4 id=&#34;インストール&#34;&gt;インストール&lt;/h4&gt;
+
+&lt;p&gt;なぜか&lt;code&gt;Sierra&lt;/code&gt;では&lt;code&gt;Homebrew&lt;/code&gt;でインストールできなかったので、パッケージからインストール&lt;/p&gt;
+
+&lt;h4 id=&#34;xcodeに設定&#34;&gt;Xcodeに設定&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Auto-correct&lt;/code&gt;はビルド時に毎回走らせたいので、Xcode上でのビルド設定に追加する&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;フレームワーク用のターゲットの&lt;code&gt;Bulid Phases&lt;/code&gt;を開く&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;New Run Script Phase&lt;/code&gt;で以下のスクリプトを追加&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if which swiftlint &amp;gt;/dev/null; then
+swiftlint autocorrect
+swiftlint
+else
+echo &amp;quot;warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint&amp;quot;
+fi
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;追加した&lt;code&gt;Run Script&lt;/code&gt;を&lt;code&gt;Compile Sources&lt;/code&gt;より上に移動&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;これでビルドを試してみて、たくさんエラーとワーニングが出ればOK&lt;/p&gt;
+
+&lt;h4 id=&#34;ルールのカスタマイズ&#34;&gt;ルールのカスタマイズ&lt;/h4&gt;
+
+&lt;p&gt;デフォルトの状態ではかなり厳しい設定で、エラーやワーニングが出まくるので調整する&lt;/p&gt;
+
+&lt;p&gt;リポジトリ直下に&lt;code&gt;.swiftlint.yml&lt;/code&gt;を追加し、無視するルールや変更する基準値を書いていく&lt;/p&gt;
+
+&lt;p&gt;調整内容は各プロジェクトにもよるが、今回は以下の感じに調整した&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;included:
+  - Kanagata
+variable_name:
+  min_length: 0
+line_length:
+  - 120
+  - 150
+type_body_length:
+  - 350
+  - 400
+function_body_length:
+  - 50
+  - 100
+cyclomatic_complexity: 25
+disabled_rules:
+  - nesting
+  - file_length
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;具体的には1ファイルに詰め込んだ都合上、行数制限をゆるめに設定。
+また、JSONの構造上、再起処理や型ごとの処理で複雑性が増しているのでそこもゆるめにした&lt;/p&gt;
+
+&lt;h4 id=&#34;ciに設定&#34;&gt;CIに設定&lt;/h4&gt;
+
+&lt;p&gt;CIの時にはチェックだけされる様に設定を&lt;code&gt;.travis.yml&lt;/code&gt;に追加&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;before_install:
+  - brew update
+  - brew install swiftlint
+script:
+  - swiftlint   # xcodebuild testより前にしておく
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（今回追加した分のみ記載）&lt;/p&gt;
+
+&lt;p&gt;CI環境には&lt;code&gt;SwiftLint&lt;/code&gt;が入っていないので実行前にインストールが必要。
+なお、&lt;code&gt;Homebrew&lt;/code&gt;ではなく、パッケージからインストールさせるとCIにかかる時間が減るらしい&lt;/p&gt;
+
+&lt;h3 id=&#34;バッジを貼る&#34;&gt;バッジを貼る&lt;/h3&gt;
+
+&lt;h4 id=&#34;travisci-1&#34;&gt;TravisCI&lt;/h4&gt;
+
+&lt;p&gt;リポジトリのビルド結果の画面の中に表示されているバッジをクリックすると、
+貼り付ける用のURLが出てくるので、*マークダウン*形式をコピーして&lt;code&gt;README&lt;/code&gt;に貼り付け&lt;/p&gt;
+
+&lt;h4 id=&#34;codecov&#34;&gt;Codecov&lt;/h4&gt;
+
+&lt;p&gt;リポジトリの画面の中の&lt;code&gt;Settings&lt;/code&gt; - &lt;code&gt;Badge&lt;/code&gt;で貼り付ける用のURLが出てくるので、
+こちらも*マークダウン*形式をコピーして&lt;code&gt;README&lt;/code&gt;に貼り付け&lt;/p&gt;
+
+&lt;h2 id=&#34;ドキュメント生成&#34;&gt;ドキュメント生成&lt;/h2&gt;
+
+&lt;p&gt;基本&lt;code&gt;public&lt;/code&gt;になるものにはドキュメントコメントをつけていて、&lt;code&gt;juzzy&lt;/code&gt;でドキュメント生成をしていたが、
+&lt;code&gt;CocoaPods&lt;/code&gt;に公開すれば&lt;code&gt;CocoaDocs&lt;/code&gt;が出来上がるので不要に。。。&lt;/p&gt;
+
+&lt;h2 id=&#34;一旦-まとめ&#34;&gt;一旦、まとめ&lt;/h2&gt;
+
+&lt;p&gt;ここまでの手順で、pushすると&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;SwiftLint&lt;/code&gt;で静的解析&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;XCTest&lt;/code&gt;でユニットテスト&lt;/li&gt;
+&lt;li&gt;ユニットテストのカバレッジを送信&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;といったところまで自動で実行される状態となる&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://travis-ci.org&#34;&gt;TravisCI&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://codecov.io/&#34;&gt;Codecov&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/realm/SwiftLint&#34;&gt;SwiftLint&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MacからOracleへ接続</title>
+      <link>https://mike-neko.github.io/blog/oracle-mac/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/oracle-mac/</guid>
+      <description>
+
+&lt;p&gt;MacのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;/p&gt;
+
+&lt;p&gt;CentOSの場合は&lt;a href=&#34;../oracle-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;oracleのドライバのインストール&#34;&gt;Oracleのドライバのインストール&lt;/h3&gt;
+
+&lt;p&gt;今回は&lt;code&gt;Version 12.1.0.2 (64-bit)&lt;/code&gt;は選択。手順などはこのバージョンが前提&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index.html&#34;&gt;Oracle Instant Client&lt;/a&gt;から&lt;code&gt;basic&lt;/code&gt;と&lt;code&gt;SDK&lt;/code&gt;をダウンロード&lt;br /&gt;
+&lt;em&gt;公式の&lt;a href=&#34;http://php.net/manual/ja/oci8.requirements.php&#34;&gt;要件&lt;/a&gt;にあるように&lt;code&gt;OracleDB&lt;/code&gt;と&lt;code&gt;PHP&lt;/code&gt;のバージョンに合ったものを選択&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;1を全て同じフォルダへ解凍する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd （ダウンロード先）
+unzip instantclient-basic-macos.x64-12.1.0.2.0.zip
+unzip instantclient-sdk-macos.x64-12.1.0.2.0.zip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;(Ver.12であれば&lt;code&gt;instantclient_12_1&lt;/code&gt;というフォルダ内に全ファイルが解凍された状態になればOK)&lt;br /&gt;
+&lt;strong&gt;フォルダ名がバージョンになっているので解凍したフォルダ名をそのまま使うこと！&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;2をフォルダごと適当な場所に移動&lt;br /&gt;
+（今回は&lt;code&gt;/Library/Oracle/&lt;/code&gt;へ移動）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ライブラリのシンボリックリンクを作成&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /Library/Oracle/instantclient_12_1/
+ln -s libclntsh.dylib.12.1 libclntsh.dylib
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;パスを通す&lt;br /&gt;
+&lt;code&gt;.bash_profile&lt;/code&gt;に以下を追記&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export DYLD_LIBRARY_PATH=/Library/Oracle/instantclient_12_1
+export PATH=$PATH:$DYLD_LIBRARY_PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;追記したら保存し、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;source ~/.bash_profile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で強制反映させる&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;oci8をインストール&#34;&gt;OCI8をインストール&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;以下はすでにPHPをインストール済かつ&lt;code&gt;PECL&lt;/code&gt;が使えない場合なので、
+通常はPHPインストールと同時にしてしまうか&lt;code&gt;PECL&lt;/code&gt;で追加が恐らく楽&lt;/em&gt;&lt;br /&gt;
+（手持ちの環境では&lt;code&gt;PECL&lt;/code&gt;がなぜか使えなかったので以下の手順）&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;OCI8（Ver.2.0.12）を&lt;code&gt;PECL&lt;/code&gt;の&lt;a href=&#34;https://pecl.php.net/package/oci8&#34;&gt;該当ページ&lt;/a&gt;からダウンロード&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;解凍する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd （ダウンロード先）
+tar -zxf oci8-2.0.12.tgz
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;makeする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd oci8-2.0.12
+phpize
+./configure -with-oci8=shared,instantclient,/Library/Oracle/instantclient_12_1
+make install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;modules&lt;/code&gt;の中に&lt;code&gt;oci8.so&lt;/code&gt;ができていればOK&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ライブラリを移動&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo mv modules/oci8.so /Library/Oracle 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（とりあえず今回はここで）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;PHPの設定
+&lt;code&gt;php.ini&lt;/code&gt;に以下の2つの項目を設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;extension_dir = &amp;quot;/Library/Oracle&amp;quot; # oci8.soを置いた場所
+extension=oci8.so
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（ファイルの場所が判らない時は&lt;code&gt;php -i | grep php.ini&lt;/code&gt;）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php --ri oci8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;（略）
+OCI8 Support =&amp;gt; enabled
+（略）
+OCI8 Version =&amp;gt; 2.0.12
+（略）
+Oracle Run-time Client Library Version =&amp;gt; 12.1.0.2.0
+Oracle Compile-time Instant Client Version =&amp;gt; 12.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;フレームワークなどを使わずにそのまま接続する場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$user = &#39;test&#39;;             // ユーザ名
+$pass = &#39;1234&#39;;             // パスワード
+$host = &#39;192.168.0.10&#39;;     // ホスト
+$port = &#39;1521&#39;;             // ポート番号
+$db = &#39;sample&#39;;             // データベース名（サービス名）
+
+$conn = oci_connect(
+  $user,
+  $pass,
+  &#39;(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)&#39;
+  . &#39;(HOST=&#39; . $host . &#39;)(PORT=&#39; . $port . &#39;)))&#39; 
+  . &#39;(CONNECT_DATA=(SERVICE_NAME=&#39; . $db . &#39;)))&#39;]
+);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;といった感じで接続できる&lt;/p&gt;
+
+&lt;h2 id=&#34;phpstormの設定&#34;&gt;PHPStormの設定&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;PHPStorm&lt;/code&gt;から接続したい場合は、&lt;code&gt;Oracle Instant Client&lt;/code&gt;はVer.12以上が必要&lt;/p&gt;
+
+&lt;p&gt;設定は以下の感じ&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-11-03-oracle-mac/phpstorm.png&#34; /&gt;
+&lt;/figure&gt;
+
+
+&lt;h1 id=&#34;トラブルシューティング&#34;&gt;トラブルシューティング&lt;/h1&gt;
+
+&lt;p&gt;&lt;code&gt;php --ri oci8&lt;/code&gt;で表示されるのに&lt;code&gt;Apache&lt;/code&gt;上でうまく動かない場合&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Apache&lt;/code&gt;上で&lt;code&gt;phpinfo()&lt;/code&gt;を表示させて&lt;code&gt;oci8&lt;/code&gt;が同じ様に表示されるかを確認&lt;/p&gt;
+
+&lt;p&gt;表示されていないければ&lt;code&gt;Apache Environment&lt;/code&gt;を確認して5で設定した環境変数が入っているか確認&lt;/p&gt;
+
+&lt;p&gt;詳細は未検証だが、主にmacのデフォルトの&lt;code&gt;Apache&lt;/code&gt;を使っている場合に起こる場合があるので、
+その場合は、&lt;a href=&#34;https://gist.github.com/srayhunter/5208619&#34;&gt;ここ&lt;/a&gt;を参照して設定してみる&lt;br /&gt;
+（デフォルトの&lt;code&gt;Apache&lt;/code&gt;のユーザとシェルのユーザが違うので&lt;code&gt;bash_profile&lt;/code&gt;などでは&lt;code&gt;Apache&lt;/code&gt;の環境変数を変更できないっぽい）&lt;/p&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/book.oci8.php&#34;&gt;Oracle OCI8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html&#34;&gt;Orcale Instant Client&lt;/a&gt;
+(下の方にインストール方法)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mac 10.11&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + OCI8 2.0.12&lt;/li&gt;
+&lt;li&gt;Oracle Instant Client 12.1.0.2.0&lt;/li&gt;
+&lt;li&gt;DBサーバ OracleDB(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MacからSQLServerへ接続</title>
+      <link>https://mike-neko.github.io/blog/mssql-mac/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/mssql-mac/</guid>
+      <description>
+
+&lt;p&gt;MacのPHP5.6からSQLServer(MSSQL)へ接続する方法&lt;/p&gt;
+
+&lt;p&gt;CentOSの場合は&lt;a href=&#34;../mssql-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;子ネタ&#34;&gt;子ネタ&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;SQLServer&lt;/code&gt;へPHPから接続するには以下の方法がある&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-sqlsrv.php&#34;&gt;PDO_SQLSR&lt;/a&gt;&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Windows版のPHPでしか使えない&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-dblib.php&#34;&gt;PDO_DBLIB&lt;/a&gt;&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;FreeTDS&lt;/code&gt;ライブラリを利用する&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Windows版はPHP5.3以降使えない&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://php.net/manual/ja/ref.pdo-odbc.php&#34;&gt;PDO_ODBC&lt;/a&gt;&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Microsoftのドライバが必要(Win or Linuxのみ) =&amp;gt; &lt;strong&gt;Macは使えない&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という訳で、Macからの場合は&lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;一択、
+Linuxの場合は&lt;code&gt;PDO_ODBC&lt;/code&gt;+公式ドライバ（おすすめ？） or &lt;code&gt;PDO_DBLIB&lt;/code&gt;+&lt;code&gt;FreeTDS&lt;/code&gt;となる&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;freetdsのインストール&#34;&gt;FreeTDSのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;で&lt;code&gt;FreeTDS&lt;/code&gt;をインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install freetds
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;FreeTDS&lt;/code&gt;の接続確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;tsql -H (SQLServerのアドレス) -p (ポート) -U (ユーザ名) -P (パスワード)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;locale is &amp;quot;ja_JP.UTF-8&amp;quot;
+locale charset is &amp;quot;UTF-8&amp;quot;
+using default charset &amp;quot;UTF-8&amp;quot;
+1&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;のようになれば&lt;code&gt;exit&lt;/code&gt;で終了&lt;br /&gt;
+&lt;code&gt;1&amp;gt;&lt;/code&gt;の部分の数字が変わっていく場合は接続がうまくいっていない&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;em&gt;試した開発環境ではかなりの頻度でタイムアウトのエラーが出ていたので何度か試してみること&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;pdo-dblibのインストール&#34;&gt;PDO_DBLIBのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;で&lt;code&gt;PDO_DBLIB&lt;/code&gt;をインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install homebrew/php/php56-pdo-dblib
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;設定の確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php --ri pdo_dblib
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行して、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PDO Driver for FreeTDS/Sybase DB-lib =&amp;gt; enabled
+Flavour =&amp;gt; freetds
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と出ていればOK&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;phpからの接続&#34;&gt;PHPからの接続&lt;/h2&gt;
+
+&lt;p&gt;PDOのDSNの指定は以下の通り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$user = &#39;test&#39;;             // ユーザ名
+$pass = &#39;1234&#39;;             // パスワード
+$host = &#39;192.168.0.10&#39;;     // ホスト
+$port = &#39;1433&#39;;             // ポート番号
+$db = &#39;sample&#39;;             // データベース名
+
+$pdo = new PDO(&#39;dblib:host=&#39; . $host . &#39;:&#39; . $port . &#39;;dbname=&#39; $db, 
+               $user, $pass); 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;phpstormの設定&#34;&gt;PHPStormの設定&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;PHPStorm&lt;/code&gt;から接続したい場合の設定は以下の感じ&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&#34;https://mike-neko.github.io/media/2016-11-03-mssql-mac/phpstorm.png&#34; /&gt;
+&lt;/figure&gt;
+
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHP公式 &lt;a href=&#34;http://php.net/manual/ja/ref.pdo-dblib.php&#34;&gt;PDO_DBLIB&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;FreeTDS &lt;a href=&#34;http://www.freetds.org/&#34;&gt;公式&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mac 10.11&lt;/li&gt;
+&lt;li&gt;PHP 5.6.27 + PDO_DBLIB&lt;/li&gt;
+&lt;li&gt;FreeTDS 1.00.15 (TDS 7.3)&lt;/li&gt;
+&lt;li&gt;DBサーバ SQLServer Express 2016(Win)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>nginxをhttp2に対応させる</title>
+      <link>https://mike-neko.github.io/blog/nginx-http2/</link>
+      <pubDate>Fri, 03 Jun 2016 21:29:36 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
+      <description>
+
+&lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;過去の記事（&lt;a href=&#34;../docker/&#34;&gt;Dockerでの開発環境&lt;/a&gt;）&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
+
+&lt;p&gt;ベースは前回構築したnginx+Dockerで通信はオレオレ証明書によるSSLを前提。&lt;/p&gt;
+
+&lt;p&gt;主な変更点は以下の通り&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OpenSSL 1.0.2&lt;/li&gt;
+&lt;li&gt;nginx 1.10.0&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;いずれもhttp2対応させる為にバージョンアップが必要。&lt;/p&gt;
+
+&lt;p&gt;なお、iOSは&lt;strong&gt;iOS9&lt;/strong&gt;からhttp2へ対応している。&lt;/p&gt;
+
+&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+
+&lt;h3 id=&#34;事前準備&#34;&gt;事前準備&lt;/h3&gt;
+
+&lt;p&gt;http2での通信かどうかの確認用に以下のChromeのプラグインを入れておく。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://chrome.google.com/webstore/detail/http2-and-spdy-indicator/mpbpobfflnpcgagjijhmgnchggcjblin/related?hl=ja&#34;&gt;HTTP/2 and SPDY indicator&lt;/a&gt;&lt;br /&gt;
+（Firefox用もあるみたいなのでお好きな方で）&lt;/p&gt;
+
+&lt;p&gt;http2での通信だと稲妻が青色になるので確認が楽。&lt;/p&gt;
+
+&lt;h3 id=&#34;macでの作業&#34;&gt;Macでの作業&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;OpenSSLを最新にあげる&lt;br /&gt;
+OpenSSLの更新方法：&lt;a href=&#34;http://qiita.com/Chrowa3/items/b04e772be959cdda9ac3&#34;&gt;Mac OS X の openssl を最新の状態にする&lt;/a&gt;&lt;br /&gt;
+ポイントは&lt;code&gt;upgrade&lt;/code&gt;にすること（普段使う&lt;code&gt;update&lt;/code&gt;ではない）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;nginxをアンイストールする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew uninstall nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;nginxをhttp2モジュール付きでインストールする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install nginx --with-http2
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;nginxのconfを編集&lt;br /&gt;
+&lt;code&gt;HTTPS server&lt;/code&gt;の設定が&lt;code&gt;listen  443 ssl;&lt;/code&gt;となっているはずなので、&lt;code&gt;http2&lt;/code&gt;を追加する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;server {
+listen  443 ssl http2;
+...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;追加したらnginxを再起動する&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ChromeからMacへアクセスしてみて青い稲妻になっていれば&lt;code&gt;nginx&lt;/code&gt;の設定は成功&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;ios端末での通信&#34;&gt;iOS端末での通信&lt;/h3&gt;
+
+&lt;p&gt;iOS9以降の&lt;code&gt;NSURLSession&lt;/code&gt;での通信であれば、特に設定など不要で自動で&lt;code&gt;http2&lt;/code&gt;になる。&lt;/p&gt;
+
+&lt;p&gt;なお、規格上は&lt;code&gt;http&lt;/code&gt;のみでも対応しているがiOSでどうかは未検証。&lt;/p&gt;
+
+&lt;h3 id=&#34;ログ設定&#34;&gt;ログ設定&lt;/h3&gt;
+
+&lt;p&gt;iOS端末からの通信も&lt;code&gt;http2&lt;/code&gt;になっているかの確認は、&lt;code&gt;nginx&lt;/code&gt;のログで判別する。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;http2&lt;/code&gt;の場合は、&lt;code&gt;log_format&lt;/code&gt;の&lt;code&gt;$http2&lt;/code&gt;に&lt;code&gt;h2&lt;/code&gt;と入ってくる。&lt;br /&gt;
+詳細は以下のページを参考に&lt;br /&gt;
+&lt;a href=&#34;http://d.hatena.ne.jp/ASnoKaze/20150818/1439896998&#34;&gt;nginxでアクセスログにhttp2の通信か出力する&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;過去情報&#34;&gt;過去情報&lt;/h2&gt;
+
+&lt;p&gt;標準の&lt;code&gt;nginx&lt;/code&gt;に&lt;code&gt;http2&lt;/code&gt;モジュールがないと思っていたら、
+実はちゃんとあったので訂正。&lt;/p&gt;
+
+&lt;p&gt;もったいないので、&lt;code&gt;nginx-full&lt;/code&gt;の情報を残しておく。&lt;/p&gt;
+
+&lt;h3 id=&#34;nginx-full&#34;&gt;nginx-full&lt;/h3&gt;
+
+&lt;p&gt;通常の&lt;code&gt;Homebrew&lt;/code&gt;の&lt;code&gt;nginx&lt;/code&gt;ではオプションのモジュールが少ないので、
+標準では足りないモジュールをインストールしたい時は&lt;code&gt;nginx-full&lt;/code&gt;をインストールする。&lt;/p&gt;
+
+&lt;p&gt;例） nginxをhttp2モジュール付きでインストールする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew tap homebrew/nginx
+brew install nginx-full --with-http2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;モジュールの一覧は以下で確認すること。
+（&lt;a href=&#34;https://nginx.org/en/docs/http/ngx_http_v2_module.html&#34;&gt;公式&lt;/a&gt;のモジュールの情報?とは違うようなのでこれで確認）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew info nginx-full
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://kannokanno.hatenablog.com/entry/2014/02/10/134920&#34;&gt;Mac - homebrewでnginxを入れるときはnginx-fullを入れよう&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OS X 10.11.5&lt;/li&gt;
+&lt;li&gt;Xcode 7.3.1&lt;/li&gt;
+&lt;li&gt;iOS 9.3.2&lt;/li&gt;
+&lt;li&gt;iPhone 6+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Docker構築メモ</title>
+      <link>https://mike-neko.github.io/blog/docker/</link>
+      <pubDate>Mon, 04 Apr 2016 00:35:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/docker/</guid>
+      <description>
+
+&lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;なお、ローカルの開発用ということでセキュリティは考慮していないので注意&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;要件&#34;&gt;要件&lt;/h3&gt;
+
+&lt;p&gt;主にAPIでサーバとやりとりするアプリの開発用なので以下の感じ&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PHPとDBが使えること&lt;/li&gt;
+&lt;li&gt;同一LAN内の別の端末からアクセスできること&lt;/li&gt;
+&lt;li&gt;SSLが使えること（iOS用）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;環境&#34;&gt;環境&lt;/h3&gt;
+
+&lt;h4 id=&#34;構成イメージ&#34;&gt;構成イメージ&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;Mac   (192.168.0.2) == ルータ(192.168.0.1) == iPhone(192.168.0.3)  
+｜  
+VM    (192.168.99.1)  
+｜  
+Docker(192.168.99.100)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;()内はIPアドレス&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;ゴールは、iPhone上から&lt;code&gt;https://192.168.0.2&lt;/code&gt;へアクセスするとページが表示(APIの通信)できればOK。&lt;/p&gt;
+
+&lt;h4 id=&#34;mac上-ホストos&#34;&gt;Mac上(ホストOS)&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;MacOS 10.11.3(El Capitan)&lt;/li&gt;
+&lt;li&gt;VirtualBox 5.0.14&lt;/li&gt;
+&lt;li&gt;DockerToolBox 1.10.2&lt;/li&gt;
+&lt;li&gt;nginx 1.8.1&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;docker上-ゲストos&#34;&gt;Docker上(ゲストOS)&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Apache&lt;/li&gt;
+&lt;li&gt;PHP 5系の最新&lt;br /&gt;
+(Xdebug)&lt;/li&gt;
+&lt;li&gt;MariaDB&lt;br /&gt;
+(phpmyadmin)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;手順&#34;&gt;手順&lt;/h1&gt;
+
+&lt;h3 id=&#34;dockerのインストール&#34;&gt;Dockerのインストール&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.docker.com/products/docker-toolbox&#34;&gt;公式&lt;/a&gt;から&lt;code&gt;DockerToolBox&lt;/code&gt;をダウンロードしてインストールを実行&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;途中で&lt;code&gt;Docker Quickstart Terminal&lt;/code&gt;のアイコンがでてきたら起動させる&lt;br /&gt;
+（忘れたらアプリケーションにもあるのでそちらから）&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;すると勝手にVM作成やらネットワーク設定をしてくれる親切設計なのでクジラが出てくるまで待つ&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;dockercomposeの設定&#34;&gt;DockerComposeの設定&lt;/h3&gt;
+
+&lt;p&gt;Dockerはコンテナをパーツのように組み合わせて環境を作っていく。&lt;/p&gt;
+
+&lt;p&gt;そのコンテナを作成する際の基本的な流れは&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;使いたいもののイメージを見つける&lt;br /&gt;
+(無ければ&lt;code&gt;Dockerfile&lt;/code&gt;を自力で書く)&lt;/li&gt;
+&lt;li&gt;タグを指定してイメージをダウンロード&lt;/li&gt;
+&lt;li&gt;コンテナの作成&lt;br /&gt;
+(もし足りない設定などあれば&lt;code&gt;Dockerfile&lt;/code&gt;でカスマイズ)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;となる。&lt;/p&gt;
+
+&lt;p&gt;イメージの検索からコンテナの取得は公式GUIの&lt;code&gt;Kitematic (Beta)&lt;/code&gt;を使うと一気にしてくれるので便利。&lt;/p&gt;
+
+&lt;p&gt;ただ、この方法だと引数の指定が多かったり複数のコンテナを利用する場合は大変なので、
+&lt;code&gt;DockerCompose&lt;/code&gt;を用いて管理する。&lt;/p&gt;
+
+&lt;h4 id=&#34;事前準備&#34;&gt;事前準備&lt;/h4&gt;
+
+&lt;p&gt;まずは適当な場所に、コンテナ毎の&lt;code&gt;Dockerfile&lt;/code&gt;や設定ファイルなどを
+まとめておくディレクトリを作ってカレントディレクトリとする。
+今回のディレクトリ構成は、以下のようにする。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;docker
+ ├─ docker-compose.yml
+ ├─ mariadb              # MariaDB用のフォルダ
+ |   └─ my.cnf
+ ├─ php                  # PHP用のフォルダ
+ |   ├─ Dockerfile
+ |   └─ php.ini
+ └─ www                  # Apacheのドキュメントルート
+     └─ index.html       # 動作確認用のHTML
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;apache-php&#34;&gt;Apache+PHP&lt;/h4&gt;
+
+&lt;p&gt;ApacheはPHPに同梱されているものを使うのが便利なので、&lt;code&gt;apache&lt;/code&gt;がついているタグのものを使う。
+今回は&lt;a href=&#34;https://hub.docker.com/_/php/&#34;&gt;公式&lt;/a&gt;で5系の一番新しいバージョンの&lt;code&gt;5.6.18-apache&lt;/code&gt;を選択。&lt;/p&gt;
+
+&lt;p&gt;で、&lt;code&gt;php.ini&lt;/code&gt;の設定と追加で入れたい拡張モジュール（特に&lt;code&gt;Xdebug&lt;/code&gt;）を&lt;code&gt;Dockerfile&lt;/code&gt;でカスタムしておく。&lt;/p&gt;
+
+&lt;p&gt;DockerComposeの設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php:
+  build: ./php/　　　　　　　　# php/Dockerfileからビルド
+  ports:
+    - &amp;quot;80:80&amp;quot;　　　　　　　　　# 80ポートを公開
+  volumes:
+    - ./www:/var/www/html   # ドキュメントルートを指定
+  links:
+    - mariadb:mysql         # DBとの接続を指定
+  container_name: php
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これでMac上からは、&lt;code&gt;http://192.168.99.100/index.html&lt;/code&gt;へアクセスすると、
+&lt;code&gt;www/index.html&lt;/code&gt;が表示される。&lt;/p&gt;
+
+&lt;h4 id=&#34;mariadb-phpmyadmin&#34;&gt;MariaDB+phpMyAdmin&lt;/h4&gt;
+
+&lt;p&gt;特に変更点もないのでイメージは公式の最新をそのままを使う。&lt;/p&gt;
+
+&lt;p&gt;DockerComposeの設定&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mariadb:
+  image: mariadb:latest           # 常に最新版を使う
+  environment:
+    MYSQL_ROOT_PASSWORD: pass     # ルートのパスワード
+    MYSQL_DATABASE: docker        # DB名
+    MYSQL_USER: docker            # ユーザ名
+    MYSQL_PASSWORD: docker        # パスワード
+  volumes:                        # my.cnfの設定
+    - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
+  container_name: mariadb
+
+phpmyadmin:
+  image: phpmyadmin/phpmyadmin:latest
+  container_name: myadmin
+  ports:
+    - &amp;quot;8080:80&amp;quot;                   # 8080ポートを公開して80へフォワード
+  links:
+    - mariadb:db
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これでMac上からは、&lt;code&gt;http://192.168.99.100:8080&lt;/code&gt;へアクセスすると、
+&lt;code&gt;phpMyAdmin&lt;/code&gt;のログイン画面が表示され、&lt;code&gt;docker/docker&lt;/code&gt;でログインが可能。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;注意点としてこの状態ではDBの永続化はできていないので、コンテナを削除するとDBの内容も消える&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;ios端末からのアクセス&#34;&gt;iOS端末からのアクセス&lt;/h3&gt;
+
+&lt;p&gt;ここまでの状態だとMacからしかアクセスできないので、Mac上で&lt;code&gt;nginx&lt;/code&gt;をリバースプロキシとして動かし、
+他のiOS端末からアクセスできるようにする。&lt;/p&gt;
+
+&lt;p&gt;また、iOS9のATSへ対応する為にSSLでアクセスできるようにする。ただしローカル環境なのでオレオレ証明書を利用する。&lt;/p&gt;
+
+&lt;h4 id=&#34;nginxのインストール&#34;&gt;nginxのインストール&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Homebrew&lt;/code&gt;でインストールする。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew update
+brew install nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;インストールできたら、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;nginx -t
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で設定ファイルの場所を確認し、適当なエディタで開いてリバースプロキシの設定をする。
+コメントにしてあるのがデフォルトの設定。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http {
+  server {
+    #listen       8080;
+    listen       80;
+    location / {
+      # root   html;
+      # index  index.html index.htm;
+      proxy_pass http://127.0.0.1:8080;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;sslの証明書について&#34;&gt;SSLの証明書について&lt;/h4&gt;
+
+&lt;p&gt;今回はnginx部分だけSSLに対応させる。（dockerはHTTPのまま）&lt;/p&gt;
+
+&lt;p&gt;オレオレ証明書作成のiOS向けの設定のポイントは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;SHA256で証明書を作成する&lt;br /&gt;
+(デフォルトだとSHA1になる)&lt;/li&gt;
+&lt;li&gt;Safari以外からアクセスする場合は、証明書作成時のCommonNameをIPアドレスにする&lt;br /&gt;
+(つまりIP固定が必要)&lt;/li&gt;
+&lt;li&gt;端末へ証明書のインストールが必要&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;もし、上の条件が満たせない場合は、ATSの設定を変えるとか個別に認証処理を書くなどして回避する必要がある。
+（回避できないのもあるけど）&lt;/p&gt;
+
+&lt;h4 id=&#34;sslの証明書の作成&#34;&gt;SSLの証明書の作成&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;openssl genrsa -out server.key 2048
+openssl req -new -key server.key &amp;gt; server.csr
+openssl x509 -days 3650 -sha256 -req -signkey server.key &amp;lt; server.csr &amp;gt; server.crt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;（オレオレ証明書の各項目は&lt;code&gt;CommonName&lt;/code&gt;以外は空白でも動作する）&lt;/p&gt;
+
+&lt;p&gt;生成された&lt;code&gt;server.key&lt;/code&gt;と&lt;code&gt;server.crt&lt;/code&gt;をnginxの設定ファイルと同じディレクトリに置く。&lt;/p&gt;
+
+&lt;p&gt;iOS端末へは&lt;code&gt;server.crt&lt;/code&gt;をインストールする。
+&lt;del&gt;（メール添付か適当なWEB上に置いてインストール）&lt;/del&gt;&lt;br /&gt;
+※環境によってうまくいかないことがあったので、より確実な構成プロファイル経由にすること
+（手順は&lt;a href=&#34;../ios-cert/&#34;&gt;ATS有効の状態でオレオレ証明書を使って通信する(iOS9)&lt;/a&gt;を参照）&lt;/p&gt;
+
+&lt;p&gt;nginxの設定ファイルに以下を追加する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;server {
+  listen       443 ssl;
+  server_name  localhost;
+
+  ssl_certificate      server.crt;
+  ssl_certificate_key  server.key;
+
+  location / {
+    proxy_pass http://127.0.0.1:8080;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;vmの設定&#34;&gt;VMの設定&lt;/h4&gt;
+
+&lt;p&gt;DockerはVirtualBox上で動いているので、VMのポートフォワードを設定が必要となる。
+設定は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;VBoxManage controlvm &amp;quot;default&amp;quot; natpf1 &amp;quot;nginx,tcp,127.0.0.1,8080,,80&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とする。VirtualBoxを起動して、&lt;code&gt;default-設定-ネットワーク-アダプター1-ポートフォワーディング&lt;/code&gt;からでもOK。&lt;/p&gt;
+
+&lt;h2 id=&#34;起動&#34;&gt;起動&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Dockerを起動させる&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;docker-compose.yml&lt;/code&gt;を置いた場所をカレントディレクトリにする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;docker-compose up -d&lt;/code&gt;でコンテナを起動&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sudo nginx&lt;/code&gt;でnginxを起動&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;これでiPhone上からは、&lt;code&gt;https://192.168.0.2/index.html&lt;/code&gt;へアクセスすると、
+&lt;code&gt;www/index.html&lt;/code&gt;が表示される。
+（ただし、オレオレ証明書なので認証の警告などは出る）&lt;/p&gt;
+
+&lt;h1 id=&#34;追記&#34;&gt;追記&lt;/h1&gt;
+
+&lt;p&gt;Docker起動時に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ERROR: Couldn&#39;t connect to Docker daemon - you might need to run `docker-machine start default`.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;というエラーが出る場合は、VMの設定の&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;VBoxManage controlvm &amp;quot;default&amp;quot; natpf1 &amp;quot;nginx,tcp,127.0.0.1,8080,,80&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;をしてから起動し直すと大丈夫っぽい。なお、原因は不明・・・&lt;/p&gt;
+
+&lt;h1 id=&#34;感想&#34;&gt;感想&lt;/h1&gt;
+
+&lt;p&gt;開発環境をプラグインみたいな感じで構築していけるのと構築内容がテキストで残るのはあとあと楽。&lt;/p&gt;
+
+&lt;p&gt;ただ、サーバ環境とまるまる同じものを構築するならVagrantの方が良いのかも・・・
+でも、Dockerはいろいろな環境を次々に試すのには便利なので、使い分けが大事そう。&lt;/p&gt;
+
+&lt;h1 id=&#34;ファイル一式&#34;&gt;ファイル一式&lt;/h1&gt;
+
+&lt;p&gt;実際の各イメージのDockerfileや設定ファイルをまとめたものは
+&lt;a href=&#34;https://github.com/mike-neko/Docker/tree/master/SSLWebServer&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
