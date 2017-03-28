@@ -6,8 +6,196 @@
     <description>Recent content in Metal on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sun, 05 Mar 2017 22:36:43 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 29 Mar 2017 00:58:37 +0900</lastBuildDate>
     <atom:link href="https://mike-neko.github.io/tags/metal/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Model I/Oでモデルをロード</title>
+      <link>https://mike-neko.github.io/blog/modelio-load/</link>
+      <pubDate>Wed, 29 Mar 2017 00:58:37 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/modelio-load/</guid>
+      <description>
+
+&lt;p&gt;MetalでModel I/O経由でモデルをファイルからロードする方法&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://developer.apple.com/library/content/samplecode/MetalKitEssentials/Introduction/Intro.html&#34;&gt;公式サンプル&lt;/a&gt;よりもシンプルな方法&lt;/p&gt;
+
+&lt;p&gt;まだ確認できていない不明点もいろいろあるが、ある程度のモデルのロードはできたので、ひとまずまとめておく&lt;/p&gt;
+
+&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;読み込める形式は、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;.obj&lt;/li&gt;
+&lt;li&gt;.ply&lt;/li&gt;
+&lt;li&gt;.stl&lt;/li&gt;
+&lt;li&gt;.abc&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;の4つらしい。
+&lt;code&gt;obj&lt;/code&gt;と&lt;code&gt;ply&lt;/code&gt;はロード確認済&lt;/p&gt;
+
+&lt;p&gt;読み込み確認済のモデルは、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://graphics.cs.williams.edu/data/meshes.xml&#34;&gt;Infinite, 3D Head Scan&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://graphics.cs.williams.edu/data/meshes.xml&#34;&gt;Teapot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://graphics.stanford.edu/data/3Dscanrep/&#34;&gt;Stanford Bunny&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;realship（公式のサンプル付属モデル）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;といった感じ。Bunnyは&lt;code&gt;.ply&lt;/code&gt;でそれ以外は&lt;code&gt;.obj&lt;/code&gt;で確認&lt;/p&gt;
+
+&lt;h2 id=&#34;ロードの流れ&#34;&gt;ロードの流れ&lt;/h2&gt;
+
+&lt;p&gt;流れとしては、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;頂点フォーマットの情報(&lt;code&gt;MDLVertexDescriptor&lt;/code&gt;)を作成&lt;/li&gt;
+&lt;li&gt;1の頂点フォーマットを指定してモデルのファイルをロード&lt;/li&gt;
+&lt;li&gt;ロードしたデータから&lt;code&gt;MTKMesh&lt;/code&gt;を生成&lt;/li&gt;
+&lt;li&gt;頂点データに合わせて&lt;code&gt;MTLRenderPipelineState&lt;/code&gt;を生成&lt;/li&gt;
+&lt;li&gt;メッシュを描画&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;という感じになる&lt;/p&gt;
+
+&lt;p&gt;4以降は&lt;a href=&#34;../modelio-mesh&#34;&gt;前回&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;h3 id=&#34;頂点フォーマットの作成&#34;&gt;頂点フォーマットの作成&lt;/h3&gt;
+
+&lt;p&gt;ロードする頂点フォーマットは前回と同じく、シェーダだと以下のような形式とする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;struct Vertex {
+    float3 position    [[ attribute(0) ]];
+    float3 normal      [[ attribute(1) ]];
+    float2 texcoord    [[ attribute(2) ]];
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;この各頂点属性を以下のようにして設定する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let mtlVertex = MTLVertexDescriptor()
+mtlVertex.attributes[0].format = .float3
+mtlVertex.attributes[0].offset = 0
+mtlVertex.attributes[0].bufferIndex = 0
+mtlVertex.attributes[1].format = .float3
+mtlVertex.attributes[1].offset = 12
+mtlVertex.attributes[1].bufferIndex = 0
+mtlVertex.attributes[2].format = .float2
+mtlVertex.attributes[2].offset = 24
+mtlVertex.attributes[2].bufferIndex = 0
+mtlVertex.layouts[0].stride = 32
+mtlVertex.layouts[0].stepRate = 1
+
+let modelDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertex)
+(modelDescriptor.attributes[0] as! MDLVertexAttribute).name = MDLVertexAttributePosition
+(modelDescriptor.attributes[1] as! MDLVertexAttribute).name = MDLVertexAttributeNormal
+(modelDescriptor.attributes[2] as! MDLVertexAttribute).name = MDLVertexAttributeTextureCoordinate
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ここでの大事なポイントは、&lt;strong&gt;各頂点属性に&lt;code&gt;name&lt;/code&gt;の指定が必要&lt;/strong&gt;であること。
+実は、macだと&lt;code&gt;10.11&lt;/code&gt;ではこの指定が無くても問題ないが、&lt;code&gt;10.12&lt;/code&gt;だとこの指定がないとデータがロードされないという事象が発生して、かなりハマってしまった・・・&lt;/p&gt;
+
+&lt;p&gt;ちなみに、&lt;code&gt;MDLVertexDescriptor&lt;/code&gt;を直接生成した場合はうまくいかなかったので、一旦、&lt;code&gt;MTLVertexDescriptor&lt;/code&gt;で作成してから変換している（理由はナゾ）&lt;/p&gt;
+
+&lt;h3 id=&#34;モデルファイルをロード&#34;&gt;モデルファイルをロード&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;let device = MTLCreateSystemDefaultDevice()!
+let allocator = MTKMeshBufferAllocator(device: device)
+let url = ... // ファイルのURL
+let asset = MDLAsset(url: url,
+                     vertexDescriptor: modelDescriptor,
+                     bufferAllocator: allocator)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、&lt;code&gt;MDLVertexDescriptor&lt;/code&gt;で指定した頂点属性が、実際のモデルデータの中に存在しない場合、
+その項目は0埋めされる
+（今回だとTeapotは法線データを持っていないので、&lt;code&gt;normal&lt;/code&gt;には全て0が入っている）&lt;/p&gt;
+
+&lt;h3 id=&#34;メッシュを生成&#34;&gt;メッシュを生成&lt;/h3&gt;
+
+&lt;p&gt;先ほどロードしたデータからMetal用の&lt;code&gt;MTKMesh&lt;/code&gt;を生成する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let mesh = try! MTKMesh.newMeshes(from: asset, device: device, sourceMeshes: nil).first!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なお、モデルはファイルに1つだけという決め打ちにしているので、&lt;code&gt;first&lt;/code&gt;で取得している。
+複数のメッシュが生成されるパターンがどういうのか（そもそもそんな形式があるのか）は不明&lt;/p&gt;
+
+&lt;p&gt;ただし、&lt;code&gt;MTKMesh&lt;/code&gt;の&lt;code&gt;submesh&lt;/code&gt;に複数のメッシュが入るケースはあるので、詳細は後述するが描画が前回と少し変わっている&lt;/p&gt;
+
+&lt;h3 id=&#34;描画&#34;&gt;描画&lt;/h3&gt;
+
+&lt;p&gt;前回との違いは以下の部分。&lt;code&gt;submesh&lt;/code&gt;が複数入る場合があるので、決め打ちではなくそれぞれ描画をしている&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mesh.submeshes.forEach {
+    renderEncoder.drawIndexedPrimitives(type: $0.primitiveType,
+                                        indexCount: $0.indexCount,
+                                        indexType: $0.indexType,
+                                        indexBuffer: $0.indexBuffer.buffer,
+                                        indexBufferOffset: $0.indexBuffer.offset)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
+
+&lt;p&gt;以下のようにメッシュ生成時に&lt;code&gt;NSArray&lt;/code&gt;を渡すと、&lt;code&gt;MDLMesh&lt;/code&gt;の配列を取得できる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var mdlArray: NSArray?
+let mesh = try! MTKMesh.newMeshes(from: asset, device: device, sourceMeshes: &amp;amp;mdlArray).first!
+let mdl = mdlArray![0] as! MDLMesh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なお、&lt;code&gt;MDLMesh&lt;/code&gt;も1つだけという決め打ちにしている&lt;/p&gt;
+
+&lt;p&gt;描画だけなら特に不要なのだが、&lt;code&gt;MDLMesh&lt;/code&gt;を使うと以下のようなことができる&lt;/p&gt;
+
+&lt;h3 id=&#34;モデルに法線を追加する&#34;&gt;モデルに法線を追加する&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;mdl.addNormals(withAttributeNamed: MDLVertexAttributeNormal, creaseThreshold: 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とすると、自動計算された&lt;code&gt;normal&lt;/code&gt;がモデルに追加される（すでにある場合は上書き）&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;creaseThreshold&lt;/code&gt;がスムージングを設定する項目で&lt;code&gt;1&lt;/code&gt;だとなし、&lt;code&gt;0&lt;/code&gt;に近づくほどスムーズになる&lt;/p&gt;
+
+&lt;p&gt;元のモデルの頂点属性に&lt;code&gt;normal&lt;/code&gt;がない場合などに便利&lt;/p&gt;
+
+&lt;h3 id=&#34;バウンディングボックスの取得&#34;&gt;バウンディングボックスの取得&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;boundingBox&lt;/code&gt;のプロパティでモデルのローカル座標の範囲やスケールが取得できる&lt;/p&gt;
+
+&lt;p&gt;時々、モデルのスケールが大幅に違っていたり、原点(0, 0)からずれていて表示されない！ってことがあるが、そういった時にこれをチェックすれば問題の切り分けができて便利&lt;/p&gt;
+
+&lt;p&gt;基本的にはモデルをツール側で調整して再出力すれば良いのだが、デモ等でさっくりと表示させたい時用に、ちゃんとだいたい中心にくるような変換行列を用意して調整をかけている&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;let diff = mdl.boundingBox.maxBounds - mdl.boundingBox.minBounds
+let scale = 1.0 / max(diff.x, max(diff.y, diff.z))
+let center = (mdl.boundingBox.maxBounds + mdl.boundingBox.minBounds) / vector_float3(2)
+modelMatrix = matrix_multiply(Matrix.scale(x: scale, y: scale, z: scale),
+                              Matrix.translation(x: -center.x, y: -center.y, z: -center.z))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これも結構、ハマったポイント。あるモデルだけ全然表示されなくて、頂点フォーマット見ると大きな数字が入っていて、何か属性指定を間違えた！？と勘違いしていたら、単にモデルの中心が原点とは全然別の場所にあっただけというオチ（冷静に考えればそんなにハマるようなことではないのだけれど、、、）&lt;/p&gt;
+
+&lt;h2 id=&#34;ソース&#34;&gt;ソース&lt;/h2&gt;
+
+&lt;p&gt;今回はViewController部分だけ。シェーダなどは&lt;a href=&#34;../modelio-mesh&#34;&gt;前回&lt;/a&gt;を参照&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/4f1d6609195d5fc5f1d043f486cec6f2.js&#34;&gt;&lt;/script&gt;
+
+&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Xcode 8.2&lt;/li&gt;
+&lt;li&gt;iOS 10&lt;/li&gt;
+&lt;li&gt;macOS 10.12 / macOS 10.11&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Model I/Oで立体図形のメッシュを生成</title>

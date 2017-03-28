@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Model I/Oでモデルをロード &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(23)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(11)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(9)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(17)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Model I/Oでモデルをロード</h1>
+    <span class="post-date">Mar 29, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    
+
+<p>MetalでModel I/O経由でモデルをファイルからロードする方法</p>
+
+<p><a href="https://developer.apple.com/library/content/samplecode/MetalKitEssentials/Introduction/Intro.html">公式サンプル</a>よりもシンプルな方法</p>
+
+<p>まだ確認できていない不明点もいろいろあるが、ある程度のモデルのロードはできたので、ひとまずまとめておく</p>
+
+<h2 id="概要">概要</h2>
+
+<p>読み込める形式は、</p>
+
+<ul>
+<li>.obj</li>
+<li>.ply</li>
+<li>.stl</li>
+<li>.abc</li>
+</ul>
+
+<p>の4つらしい。
+<code>obj</code>と<code>ply</code>はロード確認済</p>
+
+<p>読み込み確認済のモデルは、</p>
+
+<ul>
+<li><a href="http://graphics.cs.williams.edu/data/meshes.xml">Infinite, 3D Head Scan</a></li>
+<li><a href="http://graphics.cs.williams.edu/data/meshes.xml">Teapot</a></li>
+<li><a href="http://graphics.stanford.edu/data/3Dscanrep/">Stanford Bunny</a></li>
+<li>realship（公式のサンプル付属モデル）</li>
+</ul>
+
+<p>といった感じ。Bunnyは<code>.ply</code>でそれ以外は<code>.obj</code>で確認</p>
+
+<h2 id="ロードの流れ">ロードの流れ</h2>
+
+<p>流れとしては、</p>
+
+<ol>
+<li>頂点フォーマットの情報(<code>MDLVertexDescriptor</code>)を作成</li>
+<li>1の頂点フォーマットを指定してモデルのファイルをロード</li>
+<li>ロードしたデータから<code>MTKMesh</code>を生成</li>
+<li>頂点データに合わせて<code>MTLRenderPipelineState</code>を生成</li>
+<li>メッシュを描画</li>
+</ol>
+
+<p>という感じになる</p>
+
+<p>4以降は<a href="../modelio-mesh">前回</a>を参照</p>
+
+<h3 id="頂点フォーマットの作成">頂点フォーマットの作成</h3>
+
+<p>ロードする頂点フォーマットは前回と同じく、シェーダだと以下のような形式とする</p>
+
+<pre><code>struct Vertex {
+    float3 position    [[ attribute(0) ]];
+    float3 normal      [[ attribute(1) ]];
+    float2 texcoord    [[ attribute(2) ]];
+};
+</code></pre>
+
+<p>この各頂点属性を以下のようにして設定する</p>
+
+<pre><code>let mtlVertex = MTLVertexDescriptor()
+mtlVertex.attributes[0].format = .float3
+mtlVertex.attributes[0].offset = 0
+mtlVertex.attributes[0].bufferIndex = 0
+mtlVertex.attributes[1].format = .float3
+mtlVertex.attributes[1].offset = 12
+mtlVertex.attributes[1].bufferIndex = 0
+mtlVertex.attributes[2].format = .float2
+mtlVertex.attributes[2].offset = 24
+mtlVertex.attributes[2].bufferIndex = 0
+mtlVertex.layouts[0].stride = 32
+mtlVertex.layouts[0].stepRate = 1
+
+let modelDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertex)
+(modelDescriptor.attributes[0] as! MDLVertexAttribute).name = MDLVertexAttributePosition
+(modelDescriptor.attributes[1] as! MDLVertexAttribute).name = MDLVertexAttributeNormal
+(modelDescriptor.attributes[2] as! MDLVertexAttribute).name = MDLVertexAttributeTextureCoordinate
+</code></pre>
+
+<p>ここでの大事なポイントは、<strong>各頂点属性に<code>name</code>の指定が必要</strong>であること。
+実は、macだと<code>10.11</code>ではこの指定が無くても問題ないが、<code>10.12</code>だとこの指定がないとデータがロードされないという事象が発生して、かなりハマってしまった・・・</p>
+
+<p>ちなみに、<code>MDLVertexDescriptor</code>を直接生成した場合はうまくいかなかったので、一旦、<code>MTLVertexDescriptor</code>で作成してから変換している（理由はナゾ）</p>
+
+<h3 id="モデルファイルをロード">モデルファイルをロード</h3>
+
+<pre><code>let device = MTLCreateSystemDefaultDevice()!
+let allocator = MTKMeshBufferAllocator(device: device)
+let url = ... // ファイルのURL
+let asset = MDLAsset(url: url,
+                     vertexDescriptor: modelDescriptor,
+                     bufferAllocator: allocator)
+</code></pre>
+
+<p>ちなみに、<code>MDLVertexDescriptor</code>で指定した頂点属性が、実際のモデルデータの中に存在しない場合、
+その項目は0埋めされる
+（今回だとTeapotは法線データを持っていないので、<code>normal</code>には全て0が入っている）</p>
+
+<h3 id="メッシュを生成">メッシュを生成</h3>
+
+<p>先ほどロードしたデータからMetal用の<code>MTKMesh</code>を生成する</p>
+
+<pre><code>let mesh = try! MTKMesh.newMeshes(from: asset, device: device, sourceMeshes: nil).first!
+</code></pre>
+
+<p>なお、モデルはファイルに1つだけという決め打ちにしているので、<code>first</code>で取得している。
+複数のメッシュが生成されるパターンがどういうのか（そもそもそんな形式があるのか）は不明</p>
+
+<p>ただし、<code>MTKMesh</code>の<code>submesh</code>に複数のメッシュが入るケースはあるので、詳細は後述するが描画が前回と少し変わっている</p>
+
+<h3 id="描画">描画</h3>
+
+<p>前回との違いは以下の部分。<code>submesh</code>が複数入る場合があるので、決め打ちではなくそれぞれ描画をしている</p>
+
+<pre><code>mesh.submeshes.forEach {
+    renderEncoder.drawIndexedPrimitives(type: $0.primitiveType,
+                                        indexCount: $0.indexCount,
+                                        indexType: $0.indexType,
+                                        indexBuffer: $0.indexBuffer.buffer,
+                                        indexBufferOffset: $0.indexBuffer.offset)
+}
+</code></pre>
+
+<h2 id="小ネタ">小ネタ</h2>
+
+<p>以下のようにメッシュ生成時に<code>NSArray</code>を渡すと、<code>MDLMesh</code>の配列を取得できる</p>
+
+<pre><code>var mdlArray: NSArray?
+let mesh = try! MTKMesh.newMeshes(from: asset, device: device, sourceMeshes: &amp;mdlArray).first!
+let mdl = mdlArray![0] as! MDLMesh
+</code></pre>
+
+<p>なお、<code>MDLMesh</code>も1つだけという決め打ちにしている</p>
+
+<p>描画だけなら特に不要なのだが、<code>MDLMesh</code>を使うと以下のようなことができる</p>
+
+<h3 id="モデルに法線を追加する">モデルに法線を追加する</h3>
+
+<pre><code>mdl.addNormals(withAttributeNamed: MDLVertexAttributeNormal, creaseThreshold: 1)
+</code></pre>
+
+<p>とすると、自動計算された<code>normal</code>がモデルに追加される（すでにある場合は上書き）</p>
+
+<p><code>creaseThreshold</code>がスムージングを設定する項目で<code>1</code>だとなし、<code>0</code>に近づくほどスムーズになる</p>
+
+<p>元のモデルの頂点属性に<code>normal</code>がない場合などに便利</p>
+
+<h3 id="バウンディングボックスの取得">バウンディングボックスの取得</h3>
+
+<p><code>boundingBox</code>のプロパティでモデルのローカル座標の範囲やスケールが取得できる</p>
+
+<p>時々、モデルのスケールが大幅に違っていたり、原点(0, 0)からずれていて表示されない！ってことがあるが、そういった時にこれをチェックすれば問題の切り分けができて便利</p>
+
+<p>基本的にはモデルをツール側で調整して再出力すれば良いのだが、デモ等でさっくりと表示させたい時用に、ちゃんとだいたい中心にくるような変換行列を用意して調整をかけている</p>
+
+<pre><code>let diff = mdl.boundingBox.maxBounds - mdl.boundingBox.minBounds
+let scale = 1.0 / max(diff.x, max(diff.y, diff.z))
+let center = (mdl.boundingBox.maxBounds + mdl.boundingBox.minBounds) / vector_float3(2)
+modelMatrix = matrix_multiply(Matrix.scale(x: scale, y: scale, z: scale),
+                              Matrix.translation(x: -center.x, y: -center.y, z: -center.z))
+</code></pre>
+
+<p>これも結構、ハマったポイント。あるモデルだけ全然表示されなくて、頂点フォーマット見ると大きな数字が入っていて、何か属性指定を間違えた！？と勘違いしていたら、単にモデルの中心が原点とは全然別の場所にあっただけというオチ（冷静に考えればそんなにハマるようなことではないのだけれど、、、）</p>
+
+<h2 id="ソース">ソース</h2>
+
+<p>今回はViewController部分だけ。シェーダなどは<a href="../modelio-mesh">前回</a>を参照</p>
+
+<script type="text/javascript" src="https://gist.github.com/4f1d6609195d5fc5f1d043f486cec6f2.js"></script>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Xcode 8.2</li>
+<li>iOS 10</li>
+<li>macOS 10.12 / macOS 10.11</li>
+</ul>
+
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+
