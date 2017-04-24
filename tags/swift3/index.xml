@@ -6,10 +6,22 @@
     <description>Recent content in Swift3 on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 29 Mar 2017 00:58:37 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 24 Apr 2017 23:44:11 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/tags/swift3/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>UIImageをグレースケールに変換する</title>
+      <link>https://mike-neko.github.io/blog/grayimage/</link>
+      <pubDate>Mon, 24 Apr 2017 23:44:11 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/grayimage/</guid>
+      <description>&lt;p&gt;RGBの&lt;code&gt;UIImage&lt;/code&gt;をグレースケールの&lt;code&gt;UIImage&lt;/code&gt;に変換する方法&lt;/p&gt;
+
+&lt;p&gt;あと&lt;code&gt;CGContext&lt;/code&gt;周りも変わっていたのでそれも兼ねてメモ
+&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Model I/Oでモデルをロード</title>
