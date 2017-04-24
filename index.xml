@@ -7,7 +7,9 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
     <lastBuildDate>Wed, 29 Mar 2017 00:58:37 +0900</lastBuildDate>
-    <atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+	<atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Model I/Oでモデルをロード</title>
@@ -15,186 +17,11 @@
       <pubDate>Wed, 29 Mar 2017 00:58:37 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/modelio-load/</guid>
-      <description>
-
-&lt;p&gt;MetalでModel I/O経由でモデルをファイルからロードする方法&lt;/p&gt;
+      <description>&lt;p&gt;MetalでModel I/O経由でモデルをファイルからロードする方法&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://developer.apple.com/library/content/samplecode/MetalKitEssentials/Introduction/Intro.html&#34;&gt;公式サンプル&lt;/a&gt;よりもシンプルな方法&lt;/p&gt;
 
-&lt;p&gt;まだ確認できていない不明点もいろいろあるが、ある程度のモデルのロードはできたので、ひとまずまとめておく&lt;/p&gt;
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;読み込める形式は、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;.obj&lt;/li&gt;
-&lt;li&gt;.ply&lt;/li&gt;
-&lt;li&gt;.stl&lt;/li&gt;
-&lt;li&gt;.abc&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;の4つらしい。
-&lt;code&gt;obj&lt;/code&gt;と&lt;code&gt;ply&lt;/code&gt;はロード確認済&lt;/p&gt;
-
-&lt;p&gt;読み込み確認済のモデルは、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://graphics.cs.williams.edu/data/meshes.xml&#34;&gt;Infinite, 3D Head Scan&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://graphics.cs.williams.edu/data/meshes.xml&#34;&gt;Teapot&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://graphics.stanford.edu/data/3Dscanrep/&#34;&gt;Stanford Bunny&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;realship（公式のサンプル付属モデル）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;といった感じ。Bunnyは&lt;code&gt;.ply&lt;/code&gt;でそれ以外は&lt;code&gt;.obj&lt;/code&gt;で確認&lt;/p&gt;
-
-&lt;h2 id=&#34;ロードの流れ&#34;&gt;ロードの流れ&lt;/h2&gt;
-
-&lt;p&gt;流れとしては、&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;頂点フォーマットの情報(&lt;code&gt;MDLVertexDescriptor&lt;/code&gt;)を作成&lt;/li&gt;
-&lt;li&gt;1の頂点フォーマットを指定してモデルのファイルをロード&lt;/li&gt;
-&lt;li&gt;ロードしたデータから&lt;code&gt;MTKMesh&lt;/code&gt;を生成&lt;/li&gt;
-&lt;li&gt;頂点データに合わせて&lt;code&gt;MTLRenderPipelineState&lt;/code&gt;を生成&lt;/li&gt;
-&lt;li&gt;メッシュを描画&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;という感じになる&lt;/p&gt;
-
-&lt;p&gt;4以降は&lt;a href=&#34;../modelio-mesh&#34;&gt;前回&lt;/a&gt;を参照&lt;/p&gt;
-
-&lt;h3 id=&#34;頂点フォーマットの作成&#34;&gt;頂点フォーマットの作成&lt;/h3&gt;
-
-&lt;p&gt;ロードする頂点フォーマットは前回と同じく、シェーダだと以下のような形式とする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;struct Vertex {
-    float3 position    [[ attribute(0) ]];
-    float3 normal      [[ attribute(1) ]];
-    float2 texcoord    [[ attribute(2) ]];
-};
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;この各頂点属性を以下のようにして設定する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let mtlVertex = MTLVertexDescriptor()
-mtlVertex.attributes[0].format = .float3
-mtlVertex.attributes[0].offset = 0
-mtlVertex.attributes[0].bufferIndex = 0
-mtlVertex.attributes[1].format = .float3
-mtlVertex.attributes[1].offset = 12
-mtlVertex.attributes[1].bufferIndex = 0
-mtlVertex.attributes[2].format = .float2
-mtlVertex.attributes[2].offset = 24
-mtlVertex.attributes[2].bufferIndex = 0
-mtlVertex.layouts[0].stride = 32
-mtlVertex.layouts[0].stepRate = 1
-
-let modelDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertex)
-(modelDescriptor.attributes[0] as! MDLVertexAttribute).name = MDLVertexAttributePosition
-(modelDescriptor.attributes[1] as! MDLVertexAttribute).name = MDLVertexAttributeNormal
-(modelDescriptor.attributes[2] as! MDLVertexAttribute).name = MDLVertexAttributeTextureCoordinate
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ここでの大事なポイントは、&lt;strong&gt;各頂点属性に&lt;code&gt;name&lt;/code&gt;の指定が必要&lt;/strong&gt;であること。
-実は、macだと&lt;code&gt;10.11&lt;/code&gt;ではこの指定が無くても問題ないが、&lt;code&gt;10.12&lt;/code&gt;だとこの指定がないとデータがロードされないという事象が発生して、かなりハマってしまった・・・&lt;/p&gt;
-
-&lt;p&gt;ちなみに、&lt;code&gt;MDLVertexDescriptor&lt;/code&gt;を直接生成した場合はうまくいかなかったので、一旦、&lt;code&gt;MTLVertexDescriptor&lt;/code&gt;で作成してから変換している（理由はナゾ）&lt;/p&gt;
-
-&lt;h3 id=&#34;モデルファイルをロード&#34;&gt;モデルファイルをロード&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;let device = MTLCreateSystemDefaultDevice()!
-let allocator = MTKMeshBufferAllocator(device: device)
-let url = ... // ファイルのURL
-let asset = MDLAsset(url: url,
-                     vertexDescriptor: modelDescriptor,
-                     bufferAllocator: allocator)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ちなみに、&lt;code&gt;MDLVertexDescriptor&lt;/code&gt;で指定した頂点属性が、実際のモデルデータの中に存在しない場合、
-その項目は0埋めされる
-（今回だとTeapotは法線データを持っていないので、&lt;code&gt;normal&lt;/code&gt;には全て0が入っている）&lt;/p&gt;
-
-&lt;h3 id=&#34;メッシュを生成&#34;&gt;メッシュを生成&lt;/h3&gt;
-
-&lt;p&gt;先ほどロードしたデータからMetal用の&lt;code&gt;MTKMesh&lt;/code&gt;を生成する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let mesh = try! MTKMesh.newMeshes(from: asset, device: device, sourceMeshes: nil).first!
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;なお、モデルはファイルに1つだけという決め打ちにしているので、&lt;code&gt;first&lt;/code&gt;で取得している。
-複数のメッシュが生成されるパターンがどういうのか（そもそもそんな形式があるのか）は不明&lt;/p&gt;
-
-&lt;p&gt;ただし、&lt;code&gt;MTKMesh&lt;/code&gt;の&lt;code&gt;submesh&lt;/code&gt;に複数のメッシュが入るケースはあるので、詳細は後述するが描画が前回と少し変わっている&lt;/p&gt;
-
-&lt;h3 id=&#34;描画&#34;&gt;描画&lt;/h3&gt;
-
-&lt;p&gt;前回との違いは以下の部分。&lt;code&gt;submesh&lt;/code&gt;が複数入る場合があるので、決め打ちではなくそれぞれ描画をしている&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;mesh.submeshes.forEach {
-    renderEncoder.drawIndexedPrimitives(type: $0.primitiveType,
-                                        indexCount: $0.indexCount,
-                                        indexType: $0.indexType,
-                                        indexBuffer: $0.indexBuffer.buffer,
-                                        indexBufferOffset: $0.indexBuffer.offset)
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;p&gt;以下のようにメッシュ生成時に&lt;code&gt;NSArray&lt;/code&gt;を渡すと、&lt;code&gt;MDLMesh&lt;/code&gt;の配列を取得できる&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;var mdlArray: NSArray?
-let mesh = try! MTKMesh.newMeshes(from: asset, device: device, sourceMeshes: &amp;amp;mdlArray).first!
-let mdl = mdlArray![0] as! MDLMesh
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;なお、&lt;code&gt;MDLMesh&lt;/code&gt;も1つだけという決め打ちにしている&lt;/p&gt;
-
-&lt;p&gt;描画だけなら特に不要なのだが、&lt;code&gt;MDLMesh&lt;/code&gt;を使うと以下のようなことができる&lt;/p&gt;
-
-&lt;h3 id=&#34;モデルに法線を追加する&#34;&gt;モデルに法線を追加する&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;mdl.addNormals(withAttributeNamed: MDLVertexAttributeNormal, creaseThreshold: 1)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;とすると、自動計算された&lt;code&gt;normal&lt;/code&gt;がモデルに追加される（すでにある場合は上書き）&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;creaseThreshold&lt;/code&gt;がスムージングを設定する項目で&lt;code&gt;1&lt;/code&gt;だとなし、&lt;code&gt;0&lt;/code&gt;に近づくほどスムーズになる&lt;/p&gt;
-
-&lt;p&gt;元のモデルの頂点属性に&lt;code&gt;normal&lt;/code&gt;がない場合などに便利&lt;/p&gt;
-
-&lt;h3 id=&#34;バウンディングボックスの取得&#34;&gt;バウンディングボックスの取得&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;boundingBox&lt;/code&gt;のプロパティでモデルのローカル座標の範囲やスケールが取得できる&lt;/p&gt;
-
-&lt;p&gt;時々、モデルのスケールが大幅に違っていたり、原点(0, 0)からずれていて表示されない！ってことがあるが、そういった時にこれをチェックすれば問題の切り分けができて便利&lt;/p&gt;
-
-&lt;p&gt;基本的にはモデルをツール側で調整して再出力すれば良いのだが、デモ等でさっくりと表示させたい時用に、ちゃんとだいたい中心にくるような変換行列を用意して調整をかけている&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let diff = mdl.boundingBox.maxBounds - mdl.boundingBox.minBounds
-let scale = 1.0 / max(diff.x, max(diff.y, diff.z))
-let center = (mdl.boundingBox.maxBounds + mdl.boundingBox.minBounds) / vector_float3(2)
-modelMatrix = matrix_multiply(Matrix.scale(x: scale, y: scale, z: scale),
-                              Matrix.translation(x: -center.x, y: -center.y, z: -center.z))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これも結構、ハマったポイント。あるモデルだけ全然表示されなくて、頂点フォーマット見ると大きな数字が入っていて、何か属性指定を間違えた！？と勘違いしていたら、単にモデルの中心が原点とは全然別の場所にあっただけというオチ（冷静に考えればそんなにハマるようなことではないのだけれど、、、）&lt;/p&gt;
-
-&lt;h2 id=&#34;ソース&#34;&gt;ソース&lt;/h2&gt;
-
-&lt;p&gt;今回はViewController部分だけ。シェーダなどは&lt;a href=&#34;../modelio-mesh&#34;&gt;前回&lt;/a&gt;を参照&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/4f1d6609195d5fc5f1d043f486cec6f2.js&#34;&gt;&lt;/script&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 8.2&lt;/li&gt;
-&lt;li&gt;iOS 10&lt;/li&gt;
-&lt;li&gt;macOS 10.12 / macOS 10.11&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -203,123 +30,13 @@ modelMatrix = matrix_multiply(Matrix.scale(x: scale, y: scale, z: scale),
       <pubDate>Sun, 05 Mar 2017 22:36:43 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/modelio-mesh/</guid>
-      <description>
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
 
 &lt;p&gt;Metalで描画のテストなどでさくっとモデルを表示したい時に、Model I/Oを使って3Dのモデルを生成する方法&lt;/p&gt;
 
 &lt;p&gt;法線やUV座標も作ってくれるので地味に便利である&lt;/p&gt;
 
-&lt;h2 id=&#34;生成されるモデル&#34;&gt;生成されるモデル&lt;/h2&gt;
-
-&lt;p&gt;生成できる図形の種類は、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;ボックス&lt;/li&gt;
-&lt;li&gt;球体&lt;/li&gt;
-&lt;li&gt;シリンダ&lt;/li&gt;
-&lt;li&gt;円錐&lt;/li&gt;
-&lt;li&gt;平面&lt;/li&gt;
-&lt;li&gt;正20面体&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;生成時には大きさや分割数も指定できる&lt;/p&gt;
-
-&lt;p&gt;各頂点データの中身は、シェーダで書くと以下の感じ&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;struct Vertex {
-    float3 position    [[ attribute(0) ]];
-    float3 normal      [[ attribute(1) ]];
-    float2 texcoord    [[ attribute(2) ]];
-};
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;生成の方法&#34;&gt;生成の方法&lt;/h2&gt;
-
-&lt;p&gt;流れとしては、&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;MDLMesh&lt;/code&gt;のクラスメソッドで指定した図形のメッシュを生成&lt;/li&gt;
-&lt;li&gt;Metalで扱えるように&lt;code&gt;MTKMesh&lt;/code&gt;へ変換&lt;/li&gt;
-&lt;li&gt;頂点データに合わせて&lt;code&gt;MTLRenderPipelineState&lt;/code&gt;を生成&lt;/li&gt;
-&lt;li&gt;メッシュを描画&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;という感じになる&lt;/p&gt;
-
-&lt;h3 id=&#34;メッシュを生成&#34;&gt;メッシュを生成&lt;/h3&gt;
-
-&lt;p&gt;例えば、ボックスを生成したい場合は以下のとおり&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let device = MTLCreateSystemDefaultDevice()!
-let allocator = MTKMeshBufferAllocator(device: device)
-let mdlMesh = MDLMesh.newBox(withDimensions: vector_float3(1),
-                             segments: vector_uint3(2),
-                             geometryType: .triangles,
-                             inwardNormals: false,
-                             allocator: allocator)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;MDLMesh.newBox&lt;/code&gt;がボックスのメッシュを生成するクラスメソッドで、
-引数の&lt;code&gt;dimensions&lt;/code&gt;でサイズ、&lt;code&gt;segments&lt;/code&gt;で分割数を指定している。
-図形の種類によって引数のパラメータは異なる（円筒なら半径も指定など）&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;inwardNormals&lt;/code&gt;は法線の向きの指定。
-通常は&lt;code&gt;false&lt;/code&gt;で良いが、スカイボックスや部屋の中のように立体の内側に視点がある場合は&lt;code&gt;true&lt;/code&gt;にする&lt;/p&gt;
-
-&lt;h3 id=&#34;メッシュを変換&#34;&gt;メッシュを変換&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;MDLMesh&lt;/code&gt;を&lt;code&gt;MTKMesh&lt;/code&gt;（Metalで描画する時に必要な情報全部がまとまったクラス）へ変換する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let mesh = try! MTKMesh(mesh: mdlMesh, device: device)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;mtlrenderpipelinestateを生成&#34;&gt;MTLRenderPipelineStateを生成&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;MTLRenderPipelineState&lt;/code&gt;を生成する際にメッシュの頂点情報を与えて生成する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(mesh.vertexDescriptor)
-let renderDescriptor = MTLRenderPipelineDescriptor()
-renderDescriptor.vertexDescriptor = vertexDescriptor
-// ここで通常どおりシェーダなどの設定をする
-let renderState = try! device.makeRenderPipelineState(descriptor: renderDescriptor)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ただし、生成されるメッシュの頂点形式は固定のようなので手動で設定するのもありかもしれない&lt;/p&gt;
-
-&lt;h3 id=&#34;メッシュを描画&#34;&gt;メッシュを描画&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer,
-                              offset: 0, at: 0)
-renderEncoder.drawIndexedPrimitives(
-    type: mesh.submeshes[0].primitiveType,
-    indexCount: mesh.submeshes[0].indexCount,
-    indexType: mesh.submeshes[0].indexType,
-    indexBuffer: mesh.submeshes[0].indexBuffer.buffer,
-    indexBufferOffset: mesh.submeshes[0].indexBuffer.offset)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;メッシュのデータはインデックスバッファ形式で格納されているので、&lt;code&gt;drawIndexedPrimitives&lt;/code&gt;を使う。
-また、&lt;code&gt;VertexBuffer&lt;/code&gt;は一つのみ、サブメッシュも一つのみ生成されるようなので固定にしている&lt;/p&gt;
-
-&lt;h2 id=&#34;ソース&#34;&gt;ソース&lt;/h2&gt;
-
-&lt;p&gt;必要最低限（ライト固定、テクスチャなし）のコードは以下の感じ&lt;br /&gt;
-mac用だがiOSへもViewController周り以外はそのまま使える&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/6ed7ba3fe83bcf0418a6f5e682e6138a.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;&lt;code&gt;Matrix&lt;/code&gt;周りは&lt;a href=&#34;https://github.com/mike-neko/MetalTessellation/blob/master/MetalTessellation/Matrix.swift&#34;&gt;こちら&lt;/a&gt;を参照&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 8.2&lt;/li&gt;
-&lt;li&gt;iOS 10&lt;/li&gt;
-&lt;li&gt;macOS 10.12&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -328,126 +45,7 @@ mac用だがiOSへもViewController周り以外はそのまま使える&lt;/p&gt
       <pubDate>Thu, 02 Mar 2017 23:36:28 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/metal-coordinate/</guid>
-      <description>
-
-&lt;p&gt;わりと間違いやすいので、Metalの座標周りのまとめ&lt;/p&gt;
-
-&lt;p&gt;実はAppleの公式のサンプルも間違っていたりする・・・・&lt;/p&gt;
-
-&lt;h2 id=&#34;座標系&#34;&gt;座標系&lt;/h2&gt;
-
-&lt;p&gt;Metalは &lt;em&gt;左手系&lt;/em&gt; である&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;元々のiOS / macはOpenGLの為、そのまま既存サンプルを移し替えようとすると、座標系でハマるので注意！&lt;/strong&gt;
-OpenGLからの移植は行列の中身（列ベクトル or 行ベクトル）が違う場合もあるので注意！&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;座標系&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Metal&lt;/td&gt;
-&lt;td&gt;左手系&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;OpenGL / WebGL&lt;/td&gt;
-&lt;td&gt;右手系&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;DirectX&lt;/td&gt;
-&lt;td&gt;左手系&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;なお、左手系と右手系の違いはZ軸の向きだけである&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th align=&#34;center&#34;&gt;Metal, DirectX&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;OpenGL, WebGL&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/left.png&#34; /&gt;
-&lt;/figure&gt;
-&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/right.png&#34; /&gt;
-&lt;/figure&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td align=&#34;center&#34;&gt;z軸の奥が+&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;z軸の手前が+&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;uv座標&#34;&gt;UV座標&lt;/h2&gt;
-
-&lt;p&gt;Metalは &lt;em&gt;左上&lt;/em&gt; が原点(0, 0)、右下が(1, 1)となる&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;UV座標&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Metal&lt;/td&gt;
-&lt;td&gt;左上&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;OpenGL / WebGL&lt;/td&gt;
-&lt;td&gt;右上&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;DirectX&lt;/td&gt;
-&lt;td&gt;左上&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th align=&#34;center&#34;&gt;Metal, DirectX&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;OpenGL, WebGL&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/lefttop.png&#34; /&gt;
-&lt;/figure&gt;
-&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;&lt;figure&gt;
-	&lt;img src=&#34;https://mike-neko.github.io/media/2017-03-02-metal-coordinate/rightbottom.png&#34; /&gt;
-&lt;/figure&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-</description>
+      <description>&lt;p&gt;わりと間違いやすいので、Metalの座標周りのまとめ&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -456,195 +54,8 @@ OpenGLからの移植は行列の中身（列ベクトル or 行ベクトル）�
       <pubDate>Fri, 24 Feb 2017 23:44:10 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/swift-pointerc/</guid>
-      <description>
-
-&lt;p&gt;主にSwiftのポインタとCのポインタとの対比やポインタの変換方法についてのまとめ&lt;/p&gt;
-
-&lt;p&gt;Swiftでのポインタの基礎については&lt;a href=&#34;../swift-pointer&#34;&gt;基礎編&lt;/a&gt;を参照&lt;/p&gt;
-
-&lt;h2 id=&#34;cのポインタとの対比&#34;&gt;Cのポインタとの対比&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;という型のポインタを表す場合&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th align=&#34;left&#34;&gt;Swift&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;C&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td align=&#34;left&#34;&gt;UnsafePointer&amp;lt;Hoge&amp;gt;&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;const Hoge*&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td align=&#34;left&#34;&gt;UnsafeMutablePointer&amp;lt;Hoge&amp;gt;&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;Hoge*&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;code&gt;void*&lt;/code&gt;(汎用ポインタ)には専用の型が用意されている&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th align=&#34;left&#34;&gt;Swift&lt;/th&gt;
-&lt;th align=&#34;left&#34;&gt;C&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td align=&#34;left&#34;&gt;UnsafeRawPointer&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;const void*&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td align=&#34;left&#34;&gt;UnsafeMutableRawPointer&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;void*&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;なお、ポインタ経由で値を変更したい場合は&lt;code&gt;Mutable&lt;/code&gt;がついている方を、参照のみであればついていない方を使う&lt;/p&gt;
-
-&lt;h2 id=&#34;ポインタへの変換方法&#34;&gt;ポインタへの変換方法&lt;/h2&gt;
-
-&lt;h3 id=&#34;早見表&#34;&gt;早見表&lt;/h3&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th align=&#34;right&#34;&gt;変換元&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;Hoge&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;UnsafePointer&lt;/th&gt;
-&lt;th align=&#34;center&#34;&gt;UnsafeRawPointer&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;Hoge&lt;/strong&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;1.withUnsafePointer&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;1 -&amp;gt; 3&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;UnsafePointer&lt;/strong&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;2.pointee or []&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;3.UnsafeRawPointer()&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td align=&#34;right&#34;&gt;&lt;strong&gt;UnsafeRawPointer&lt;/strong&gt;&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;4 -&amp;gt; 2&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;4.assumingMemoryBound&lt;/td&gt;
-&lt;td align=&#34;center&#34;&gt;-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;code&gt;Mutable&lt;/code&gt;の場合も変換方法は同じであるが、それぞれ&lt;code&gt;Mutable&lt;/code&gt;に対応したものを使う&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;から&lt;code&gt;UnsafeRawPointer&lt;/code&gt;のように直接変換できる方法がない場合は、
-&lt;code&gt;UnsafePointer&lt;/code&gt;に変換してから目的の型へ2段階で変換する&lt;/p&gt;
-
-&lt;p&gt;異なる型同士での変換については&lt;a href=&#34;../swift-pointer&#34;&gt;基礎編&lt;/a&gt;を参照のこと&lt;/p&gt;
-
-&lt;h3 id=&#34;コード例&#34;&gt;コード例&lt;/h3&gt;
-
-&lt;p&gt;前提として、&lt;code&gt;Hoge&lt;/code&gt;は以下の型とする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;struct Hoge {
-    var x: Float, y: Float, z: Float
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;（今回は構造体だが、実体がプリミティブでもクラスでも方法は同じ）&lt;/p&gt;
-
-&lt;h4 id=&#34;1-2-hoge-unsafe-mutable-pointer-hoge&#34;&gt;1.2. Hoge =&amp;gt; Unsafe(Mutable)Pointer =&amp;gt; Hoge&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Hoge&lt;/code&gt;をポインタへ変換、変換したポインタ経由で元の&lt;code&gt;Hoge&lt;/code&gt;にアクセスする場合&lt;/p&gt;
-
-&lt;p&gt;Cの書き方&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Hoge pos;
-pos.x = pox.y = pos.z = 1;
-
-Hoge* p = &amp;amp;pos;
-p-&amp;gt;x = 100;             // pos.x = 100 となる
-(*p).y = 200;           // pos.y = 200 となる
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Swiftの書き方&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;var pos = Hoge(x: 1, y: 1, z: 1)
-withUnsafeMutablePointer(to: &amp;amp;pos) { 
-    let p: UnsafeMutablePointer&amp;lt;Hoge&amp;gt; = $0
-    p.pointee.x = 100   // pos.x = 100 となる
-    p.pointee.y = 200   // pos.y = 200 となる
-}
-// または以下でも同じ
-withUnsafeMutablePointer(to: &amp;amp;pos) { p in
-    // p が UnsafeMutablePointer&amp;lt;Hoge&amp;gt; となる
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;withUnsafe(Mutable)Pointer&lt;/code&gt;のクロージャは値を返せるからといって&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let p = withUnsafeMutablePointer(to: &amp;amp;pos) { $0 }   // 絶対ダメ
-p.pointee.x = 100
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;というようにポインタを返す書き方は禁止。
-渡されるポインタが有効なのはクロージャ内だけなので、上記書き方の動作は未定義である&lt;/p&gt;
-
-&lt;p&gt;よって、クロージャ内で処理を完結させるか、Swiftの変数に代入（値コピー）してそれを返すこと&lt;/p&gt;
-
-&lt;h4 id=&#34;3-unsafe-mutable-pointer-unsafe-mutable-rawpointer&#34;&gt;3. Unsafe(Mutable)Pointer =&amp;gt; Unsafe(Mutable)RawPointer&lt;/h4&gt;
-
-&lt;p&gt;Cの書き方&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// pHoge が Hoge* の場合
-void* pRaw = (void*)pHoge;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Swiftの書き方&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// pHoge が UnsafePointer&amp;lt;Hoge&amp;gt; の場合
-let pRaw = UnsafeRawPointer(pHoge)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;4-unsafe-mutable-rawpointer-unsafe-mutable-pointer&#34;&gt;4. Unsafe(Mutable)RawPointer =&amp;gt; Unsafe(Mutable)Pointer&lt;/h4&gt;
-
-&lt;p&gt;Cの書き方&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// pRaw が void* の場合
-Hoge* pHoge = (Hoge*)pRaw;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Swiftの書き方&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// pRaw が UnsafeRawPointer の場合
-let pHoge = pRaw.assumingMemoryBound(to: Hoge.self)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;em&gt;ただし、pRawが既にバインド済であることが前提&lt;/em&gt;&lt;br /&gt;
- 未バインドの場合は、&lt;code&gt;bindMemory&lt;/code&gt;を使う&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://developer.apple.com/library/content/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html#//apple_ref/doc/uid/TP40014216-CH8-ID23&#34;&gt;Interacting with C APIs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://swift.org/migration-guide/se-0107-migrate.html&#34;&gt;UnsafeRawPointer Migration&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+      <description>&lt;p&gt;主にSwiftのポインタとCのポインタとの対比やポインタの変換方法についてのまとめ
+&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -653,208 +64,11 @@ let pHoge = pRaw.assumingMemoryBound(to: Hoge.self)
       <pubDate>Wed, 22 Feb 2017 23:55:36 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/swift-pointer/</guid>
-      <description>
-
-&lt;p&gt;基本的にSwiftからポインタをそのまま扱う機会はほとんどないが、CのAPIやMetal等でポインタを扱う場合用のメモ&lt;/p&gt;
+      <description>&lt;p&gt;基本的にSwiftからポインタをそのまま扱う機会はほとんどないが、CのAPIやMetal等でポインタを扱う場合用のメモ&lt;/p&gt;
 
 &lt;p&gt;なお、画像などのバイナリデータを単に扱いたいだけの場合は&lt;code&gt;Data&lt;/code&gt;が&lt;code&gt;UInt8&lt;/code&gt;の配列と同等に扱えるようになったのでそっちを使った方が良い&lt;/p&gt;
 
-&lt;p&gt;実際の使い方は&lt;a href=&#34;../swift-pointerc&#34;&gt;実践編&lt;/a&gt;も参照&lt;/p&gt;
-
-&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;ポインタはメモリ上のデータにアクセスする時に使うものである。
-Swiftの場合、紐付けられている&lt;strong&gt;型&lt;/strong&gt;によって、以下の種類がある&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;UnsafePointer / UnsafeMutablePointer&lt;br /&gt;
-特定の型にバインドされている。タイプセーフである&lt;/li&gt;
-&lt;li&gt;UnsafeRawPointer / UnsafeMutableRawPointer&lt;br /&gt;
-特定の型にバインドされていない。型保証がない&lt;/li&gt;
-&lt;li&gt;UnsafeBufferPointer / UnsafeMutableBufferPointer&lt;br /&gt;
-Unsafe(Mutable)Pointerの配列版&lt;/li&gt;
-&lt;li&gt;UnsafeRawBufferPointer / UnsafeMutableRawBufferPointer&lt;br /&gt;
-Unsafe(Mutable)RawPointerの配列版&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;code&gt;〜BufferPointer&lt;/code&gt;は、メモリ上に要素（データ）が連続しているバッファの場合に利用出来るポインタで、実体はメモリへのビューである。
-リリースモードでは境界チェックがされずにアクセスされる（デバッグモードではチェックされる）&lt;/p&gt;
-
-&lt;h3 id=&#34;注意事項&#34;&gt;注意事項&lt;/h3&gt;
-
-&lt;p&gt;ポインタを使う場合、自動メモリ管理やアライメントの保証はされない。よってライフサイクルを自分で管理しメモリリークや未定義扱いとなる動作を自分で避けなければならない&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;〜RawPointer&lt;/code&gt;の場合は、タイプセーフではない
-（Rawがついていないものはコンパイラによる型チェックが行われるが、異なるデータ型を強制的に割り当てたような場合は当然未定義の動作となる）&lt;/p&gt;
-
-&lt;h3 id=&#34;ポインタの状態&#34;&gt;ポインタの状態&lt;/h3&gt;
-
-&lt;p&gt;ポインタはポインタの指すメモリの状態によって以下のような状態となる&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;未バインド（未初期化）&lt;br /&gt;
-
-&lt;ul&gt;
-&lt;li&gt;メモリとバインドされていない状態&lt;/li&gt;
-&lt;li&gt;例：ポインタの宣言直後のような場合&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;バインド済・未初期化&lt;br /&gt;
-
-&lt;ul&gt;
-&lt;li&gt;メモリとバインドされているが、メモリ上のデータは未初期化&lt;/li&gt;
-&lt;li&gt;例：メモリ確保済だが未初期化のメモリへのポインタ&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;バインド済・初期化済
-
-&lt;ul&gt;
-&lt;li&gt;例：値の設定されているメモリへのポインタ&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;trivial-type&#34;&gt;&lt;code&gt;trivial type&lt;/code&gt;&lt;/h3&gt;
-
-&lt;p&gt;型の中に参照を含まないデータ型。単純なバイトのコピーだけで複製できる型のこと&lt;/p&gt;
-
-&lt;h2 id=&#34;unsafepointer-unsafemutablepointer&#34;&gt;UnsafePointer / UnsafeMutablePointer&lt;/h2&gt;
-
-&lt;h3 id=&#34;読み取り&#34;&gt;読み取り&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;バインド済・未初期化：初期化が必要&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;バインド済・初期化済：次のどちらかで読み取る&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let ptr: UnsafePointer&amp;lt;Int&amp;gt; = ...   // 中身は10  
-let i = ptr.pointee                 // Intの10  
-let j = ptr[0]                      // Intの10  
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;書き込み&#34;&gt;書き込み&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;未バインド（未初期化）：&lt;code&gt;allocate(capacity:)&lt;/code&gt;でメモリを確保してバインドできる（メモリは未初期化のまま）&lt;/li&gt;
-&lt;li&gt;バインド済・未初期化：&lt;code&gt;initialize(to:count:)&lt;/code&gt;,&lt;code&gt;initialize(from:)&lt;/code&gt;,&lt;code&gt;moveInitializeMemory(from:count)&lt;/code&gt;を使って初期化&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;バインド済・初期化済：次のどちらかで設定できる&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;var ptr: UnsafeMutablePointer&amp;lt;Int&amp;gt; = ...
-ptr.pointee = 10
-ptr[0] = 10
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;unsaferawpointer-unsafemutablerawpointer&#34;&gt;UnsafeRawPointer / UnsafeMutableRawPointer&lt;/h2&gt;
-
-&lt;p&gt;読み書きの際にはアライメントに注意すること&lt;/p&gt;
-
-&lt;h3 id=&#34;読み取り-1&#34;&gt;読み取り&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;未バインド（未初期化）：&lt;code&gt;bindMemory(to:count:)&lt;/code&gt;で型にバインドする（rawではないポインタが返される）&lt;/li&gt;
-&lt;li&gt;バインド済・未初期化：バインドした型の値で初期化が必要&lt;br /&gt;
-（=rawでは初期化はできない）&lt;/li&gt;
-&lt;li&gt;バインド済・初期化済：&lt;code&gt;load(fromByteOffset:as:)&lt;/code&gt;で型を指定して読み取り
-（アライメントに注意）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;書き込み-1&#34;&gt;書き込み&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;未バインド（未初期化）：&lt;code&gt;initializeMemory(as:from:)&lt;/code&gt;,&lt;code&gt;moveInitializeMemory(as:from:count)&lt;/code&gt;を使って初期化できる&lt;/li&gt;
-&lt;li&gt;バインド済：&lt;code&gt;storeBytes(of:toByteOffset:as:)&lt;/code&gt;で書き込み可能。ただし&lt;code&gt;trivial type&lt;/code&gt;のみ&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;ポインタ演算&#34;&gt;ポインタ演算&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;+&lt;/code&gt;と&lt;code&gt;-&lt;/code&gt;と&lt;code&gt;[]&lt;/code&gt;(subscript)が利用可能。
-それぞれ指定した数だけオフセット（※）されてアクセスされる&lt;/p&gt;
-
-&lt;p&gt;※UnsafePointer / UnsafeMutablePointerの場合は、その型のバイト数分だけ。UnsafeRawPointer / UnsafeMutableRawPointerの場合は、バイト単位でオフセットされる&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// intPointerがIntの[0, 1, 2, 3, 4]のメモリを指している場合
-intPointer + 2      // 2
-intPointer[2]       // 2
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;型変換&#34;&gt;型変換&lt;/h2&gt;
-
-&lt;h3 id=&#34;互換性のある別の型に一時的にバインド&#34;&gt;互換性のある別の型に一時的にバインド&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;withMemoryRebound(to:capacity:)&lt;/code&gt;を使う&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// 例：Int8 =&amp;gt; UInt8
-uint8Pointer.withMemoryRebound(to: Int8.self, capacity: 8) {
-    // $0
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;別の型に永続的にバインド&#34;&gt;別の型に永続的にバインド&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;RawPointer&lt;/code&gt;にしてから指定の型へバインドしなおす&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// 例：UInt8 =&amp;gt; UInt64
-let uint64Pointer = UnsafeRawPointer(uint8Pointer)
-                        .bindMemory(to: UInt64.self, capacity: 1)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;なお、再バインドされるのでこの場合、元のuint8Pointerは&lt;strong&gt;未定義&lt;/strong&gt;になる&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;trivial types同士の場合&lt;br /&gt;
-&lt;code&gt;RawPointer&lt;/code&gt;にしてから&lt;code&gt;load&lt;/code&gt;を使う&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let rawPointer = UnsafeRawPointer(uint64Pointer)
-fullInteger = rawPointer.load(as: UInt64.self)   // OK
-firstByte = rawPointer.load(as: UInt8.self)      // OK
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Mutableの場合は&lt;code&gt;storeBytes(of:toByteOffset:as:)&lt;/code&gt;で設定もできる&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;暗黙の変換とブリッジ&#34;&gt;暗黙の変換とブリッジ&lt;/h3&gt;
-
-&lt;p&gt;関数の引数に渡す時限定で暗黙的なキャストとブリッジをしてくれる&lt;/p&gt;
-
-&lt;p&gt;例えば、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func printInt(atAddress p: UnsafePointer&amp;lt;Int&amp;gt;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;というメソッドがある場合、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;var value: Int = 23
-printInt(atAddress: &amp;amp;value)         // &amp;amp;をつける
-
-let numbers = [5, 10, 15, 20]       // 配列はlet
-printInt(atAddress: numbers)        // 配列は&amp;amp;不要
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;とすれば、自動で&lt;code&gt;UnsafePointer&lt;/code&gt;へ変換して処理される&lt;/p&gt;
-
-&lt;p&gt;もし、&lt;code&gt;printInt&lt;/code&gt;の引数が&lt;code&gt;UnsafeMutablePointer&lt;/code&gt;の場合であれば、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;var value: Int = 23
-printInt(atAddress: &amp;amp;value)         // &amp;amp;をつける
-
-var numbers = [5, 10, 15, 20]       // mutableなのでvar
-printInt(atAddress: &amp;amp;numbers)       // inoutなので&amp;amp;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;とする&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;注意事項&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;この暗黙の変換によるポインタの有効範囲は該当の関数のスコープ内のみ。
-よって関数からポインタを返してそれを利用するのは禁止（動作は&lt;strong&gt;未定義&lt;/strong&gt;である）&lt;/p&gt;
-
-&lt;p&gt;特に以下のように初期化に使うのは禁止&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;var number = 5
-let numberPointer = UnsafePointer&amp;lt;Int&amp;gt;(&amp;amp;number)
-// numberPointerの動作は未定義
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -863,206 +77,10 @@ let numberPointer = UnsafePointer&amp;lt;Int&amp;gt;(&amp;amp;number)
       <pubDate>Wed, 14 Dec 2016 19:52:13 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/library2/</guid>
-      <description>
-
-&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
+      <description>&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
 その2ではマルチプラットフォーム対応とライブラリ管理ツールの導入についての内容&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;なお、作成するフレームワーク名、プロジェクト名は&lt;code&gt;Kanagata&lt;/code&gt;とした場合の手順なので、
-他の作業時は適宜読み替えること&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;その1は&lt;a href=&#34;../library1&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;マルチプラットフォーム対応&#34;&gt;マルチプラットフォーム対応&lt;/h2&gt;
-
-&lt;p&gt;元々は&lt;code&gt;iOS&lt;/code&gt;で作成していたが、特にOS依存するコードもないので、&lt;code&gt;macOS&lt;/code&gt;と&lt;code&gt;watchOS&lt;/code&gt;と&lt;code&gt;tvOS&lt;/code&gt;にも対応させる。
-また、ソースとテストは全て共通のものを用いることとする&lt;/p&gt;
-
-&lt;h3 id=&#34;既存ターゲット名変更&#34;&gt;既存ターゲット名変更&lt;/h3&gt;
-
-&lt;p&gt;まず&lt;code&gt;iOS&lt;/code&gt;用のターゲットと判る様にターゲット名を&lt;code&gt;Kanagata&lt;/code&gt;から&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更する&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;プロジェクト設定から&lt;code&gt;TARGETS&lt;/code&gt;の中の&lt;code&gt;Kanagata&lt;/code&gt;をクリックして名前を&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;の&lt;code&gt;Product Name&lt;/code&gt;を&lt;code&gt;$(TARGET_NAME)&lt;/code&gt;から&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ変更&lt;/li&gt;
-&lt;li&gt;スキーム名も&lt;code&gt;Manage Schemes...&lt;/code&gt;から&lt;code&gt;Kanagata&lt;/code&gt;をクリックして名前を&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;テスト用のターゲット&lt;code&gt;KanagataTests&lt;/code&gt;も同じ様にターゲット名を&lt;code&gt;KanagataTests-iOS&lt;/code&gt;へ、
-&lt;code&gt;Product Name&lt;/code&gt;を`&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ変更する&lt;/p&gt;
-
-&lt;h3 id=&#34;他os用のターゲットを追加&#34;&gt;他OS用のターゲットを追加&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;プロジェクト設定の&lt;code&gt;TARGETS&lt;/code&gt;の下部にある＋からターゲットを追加
-
-&lt;ul&gt;
-&lt;li&gt;追加画面の上部でOSを選択してから&lt;code&gt;Framework&lt;/code&gt;を選択&lt;br /&gt;
-（各OSで微妙に名前が違うので道具箱とココアのアイコンで見分けること）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Product Name&lt;/code&gt;は&lt;code&gt;Kanagata-(OS名)&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Include Unit Tests&lt;/code&gt;にチェック(&lt;code&gt;watchOS&lt;/code&gt;以外)&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;プロジェクトに&lt;code&gt;Kanagata-(OS名)&lt;/code&gt;と&lt;code&gt;KanagataTests-(OS名)&lt;/code&gt;が追加されるのでフォルダごと削除&lt;/li&gt;
-&lt;li&gt;追加したターゲットのバンドルIDから&lt;code&gt;-(OS名)&lt;/code&gt;を削除&lt;br /&gt;
-（必要に応じて&lt;code&gt;Signing&lt;/code&gt;と&lt;code&gt;Deployment Target&lt;/code&gt;も修正）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;を変更
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Info.plist File&lt;/code&gt;のパスから&lt;code&gt;-(OS名)&lt;/code&gt;を削除（共通のplistを指す様に）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Product Name&lt;/code&gt;を&lt;code&gt;$(TARGET_NAME)&lt;/code&gt;から&lt;code&gt;$(PROJECT_NAME)&lt;/code&gt;へ&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;テスト用のターゲットも同じ様にバンドルID、&lt;code&gt;Signing&lt;/code&gt;、&lt;code&gt;Build Settings&lt;/code&gt;の各項目を修正する&lt;/p&gt;
-
-&lt;p&gt;ここで一旦ビルドとテストを実行して問題なければ次へ&lt;/p&gt;
-
-&lt;h3 id=&#34;travisciへの追加&#34;&gt;travisCIへの追加&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;追加されたOSの各スキームの&lt;code&gt;Shared&lt;/code&gt;をチェック&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;code&gt;.travis.yml&lt;/code&gt;を修正&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;iOS&lt;/code&gt;用のスキーム名を&lt;code&gt;Kanagata&lt;/code&gt;から&lt;code&gt;Kanagata-iOS&lt;/code&gt;へ変更&lt;/li&gt;
-&lt;li&gt;追加された&lt;code&gt;macOS&lt;/code&gt;と&lt;code&gt;tvOS&lt;/code&gt;の分のテストを追加（以下の設定）
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;pre&gt;&lt;code&gt;- xcodebuild test -scheme Kanagata-macOS -destination &#39;platform=OS X&#39;
-- xcodebuild test -scheme Kanagata-tvOS -destination &#39;platform=tvOS Simulator,name=Apple TV 1080p&#39;
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;pushしてエラーがなければ次へ&lt;/p&gt;
-
-&lt;h2 id=&#34;ライブラリ管理ツールへの対応&#34;&gt;ライブラリ管理ツールへの対応&lt;/h2&gt;
-
-&lt;p&gt;個人的にはシンプルな&lt;code&gt;Carthage&lt;/code&gt;がお気に入り。
-&lt;code&gt;CocoaPods&lt;/code&gt;はプロジェクトの設定がいじられてしまうのが気になるのであまり使っていないが、
-周りでは使っている人も多いので対応する&lt;/p&gt;
-
-&lt;p&gt;なお、あらかじめ&lt;code&gt;Carthage&lt;/code&gt;も&lt;code&gt;CocoaPods&lt;/code&gt;もインストール済とする&lt;/p&gt;
-
-&lt;h3 id=&#34;carthage&#34;&gt;Carthage&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;Carthage&lt;/code&gt;は&lt;code&gt;CocoaPods&lt;/code&gt;と違って登録などの作業は不要で、
-GitHubにリリースすれば良い&lt;/p&gt;
-
-&lt;p&gt;まずは、プロジェクトのカレントディレクトリで以下を実行&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;carthage build --no-skip-current
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;エラーなく完了し、&lt;code&gt;Carthage/Build&lt;/code&gt;内に各フレームワークが生成されていればOK&lt;/p&gt;
-
-&lt;p&gt;ビルドに問題なければ&lt;code&gt;GitHub&lt;/code&gt;上のリリースタブからタグをつける&lt;br /&gt;
-(この時はバージョンとして&lt;code&gt;0.1.0&lt;/code&gt;の様に数字のみをつけるのが良い。
-vを入れたりすると&lt;code&gt;CocoaPods&lt;/code&gt;でうまくいかないことがあるので)&lt;/p&gt;
-
-&lt;h4 id=&#34;参考-インストール&#34;&gt;（参考）インストール&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Cartfile&lt;/code&gt;に&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;github &amp;quot;mike-neko/Kanagata&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;という感じ（&lt;code&gt;アカウント名/リポジトリ名&lt;/code&gt;）で追記するだけで利用できる&lt;/p&gt;
-
-&lt;h3 id=&#34;cocoapods&#34;&gt;CocoaPods&lt;/h3&gt;
-
-&lt;p&gt;今回はデモプロジェクトは同梱しないので直接&lt;code&gt;podspec&lt;/code&gt;を作って対応させる&lt;/p&gt;
-
-&lt;h4 id=&#34;podspecの作成&#34;&gt;podspecの作成&lt;/h4&gt;
-
-&lt;p&gt;プロジェクトのカレントディレクトリで以下を実行&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pod spec create Kanagata
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ひな形の&lt;code&gt;Kanagata.podspec&lt;/code&gt;ができるので内容をプロジェクトに合わせて修正していく。
-今回は以下の感じ&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Pod::Spec.new do |s|
-  s.name         = &amp;quot;Kanagata&amp;quot;   // ライブラリ名
-  s.version      = &amp;quot;0.1.0&amp;quot;      // バージョン
-  s.summary      = &amp;quot;短い説明&amp;quot;
-  s.homepage     = &amp;quot;https://github.com/mike-neko/Kanagata&amp;quot;  // GitHub上にしておいた
-  s.license      = &amp;quot;MIT&amp;quot;        // ライセンス
-  s.author       = { &amp;quot;mike-neko&amp;quot; =&amp;gt; &amp;quot;mike.app.info@gmail.com&amp;quot; } // GitHub上の名前とメール
-  s.social_media_url   = &amp;quot;https://twitter.com/m__ike_&amp;quot;          // ツイッターのアドレス
-  s.ios.deployment_target = &amp;quot;8.0&amp;quot;           // OS毎のDeployment Targetと合わせる
-  s.osx.deployment_target = &amp;quot;10.10&amp;quot;
-  s.watchos.deployment_target = &amp;quot;2.0&amp;quot;
-  s.tvos.deployment_target = &amp;quot;9.0&amp;quot;
-  // GitHubのアドレスとタグの紐付けの設定。tagの方はデフォルトのままが良い
-  s.source       = { :git =&amp;gt; &amp;quot;https://github.com/mike-neko/Kanagata.git&amp;quot;, :tag =&amp;gt; &amp;quot;#{s.version}&amp;quot; }
-  s.source_files  = &amp;quot;Kanagata/*.swift&amp;quot;      // プロジェクト内でのソースの位置
-end
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;基本はそのまま埋めていけば良い。ポイントがあるとすると&lt;code&gt;version&lt;/code&gt;の部分は、
-数字のみのバージョン(&lt;code&gt;v1.0.0&lt;/code&gt;とかはNG)にして、GitHub上のタグと一致させておくこと。
-あとは、忘れずに&lt;code&gt;source_files&lt;/code&gt;を自分のプロジェクトでのソースの位置に合わせること&lt;/p&gt;
-
-&lt;p&gt;一通り作成ができたら、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pod spec lint Kanagata.podspec
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;としてみてエラーにならなければOK。pushしておく&lt;/p&gt;
-
-&lt;h4 id=&#34;cocoapodsへ登録&#34;&gt;CocoaPodsへ登録&lt;/h4&gt;
-
-&lt;p&gt;（初回のみ）ユーザを登録する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pod trunk register (メールアドレス) &#39;(ユーザ名)&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;実行後に入力したメールアドレスへメールが来るので確認をする。&lt;br /&gt;
-確認後は&lt;code&gt;pod trunk me&lt;/code&gt;で登録内容が確認出来る&lt;/p&gt;
-
-&lt;p&gt;ユーザ登録ができれば、&lt;code&gt;podspec&lt;/code&gt;を&lt;code&gt;CocoaPods&lt;/code&gt;へ登録&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pod trunk push
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ちなみに、&lt;code&gt;podspec&lt;/code&gt;にTwitterを登録していると、無事完了した時にツイートが飛んでくる&lt;/p&gt;
-
-&lt;h4 id=&#34;ciに設定&#34;&gt;CIに設定&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;.travis.yml&lt;/code&gt;に&lt;code&gt;podspec&lt;/code&gt;の検証を追加&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;script:
-  - pod lib lint --allow-warnings
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;（今回追加した分のみ記載）&lt;/p&gt;
-
-&lt;h4 id=&#34;参考-インストール-1&#34;&gt;（参考）インストール&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Podfile&lt;/code&gt;に&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pod &#39;Kanagata&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;を追加すれば利用可能&lt;/p&gt;
-
-&lt;p&gt;また、生成されたドキュメントは、&lt;code&gt;http://cocoadocs.org/docsets/Kanagata/&lt;/code&gt;で見ることが出来る&lt;/p&gt;
-
-&lt;h2 id=&#34;その他&#34;&gt;その他&lt;/h2&gt;
-
-&lt;p&gt;後はバッジを貼ったり、ライセンスを貼ったりすれば、かなりそれっぽい感じになる。
-ライブラリとして公開するとなると敷居が高い気がするが、GitHubを使っていればあまり手間をかけることなく公開できる&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/Carthage/Carthage&#34;&gt;Carthage&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://cocoapods.org/&#34;&gt;CocoaPods&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1071,246 +89,10 @@ end
       <pubDate>Wed, 14 Dec 2016 19:51:59 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/library1/</guid>
-      <description>
-
-&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
+      <description>&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;の自作ライブラリ(&lt;a href=&#34;https://github.com/mike-neko/Kanagata&#34;&gt;Kanagata&lt;/a&gt;)をGitHubに公開するにあたってのメモ。
 その1ではCIの導入周りについての内容&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;なお、作成するフレームワーク名、プロジェクト名は&lt;code&gt;Kanagata&lt;/code&gt;とした場合の手順なので、
-他の作業時は適宜読み替えること&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;その2は&lt;a href=&#34;../library2&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;構成&#34;&gt;構成&lt;/h2&gt;
-
-&lt;p&gt;せっかくなので単なるライブラリの公開だけでなく、以下の感じでそれっぽく公開&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;CIの導入(&lt;code&gt;TravisCI&lt;/code&gt;)
-
-&lt;ul&gt;
-&lt;li&gt;ユニットテスト(&lt;code&gt;XCTest&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;カバレッジ表示(&lt;code&gt;Codecov&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;静的コード解析(&lt;code&gt;SwiftLint&lt;/code&gt;)&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;del&gt;ドキュメント生成(&lt;code&gt;juzzy&lt;/code&gt;)&lt;/del&gt;&lt;/li&gt;
-&lt;li&gt;マルチプラットフォーム対応(iOS以外も)&lt;/li&gt;
-&lt;li&gt;ライブラリ管理ツール
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Carthage&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;CocoaPods&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;ciの導入&#34;&gt;CIの導入&lt;/h2&gt;
-
-&lt;h3 id=&#34;プロジェクトの作成&#34;&gt;プロジェクトの作成&lt;/h3&gt;
-
-&lt;p&gt;今回は既存のプロジェクトの中で使っていたものをフレームワークとして切り出す為、まずは新規プロジェクトを作成&lt;/p&gt;
-
-&lt;p&gt;作成時には、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Cocoa Touch Framework&lt;/code&gt;を選択&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Include Unit Tests&lt;/code&gt;にチェック&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;をつけて作成する。
-既存のソースとテストの各ファイルを移植したら、&lt;code&gt;.h&lt;/code&gt;のファイルを削除
-（Swiftのみなのでヘッダは不要）&lt;/p&gt;
-
-&lt;p&gt;ちなみに、ここで一旦ビルドとテストを実行すると&lt;code&gt;module file&#39;s minimum deployment target is ios10.1&lt;/code&gt;のエラー。。。
-その時の&lt;code&gt;Deployment Target&lt;/code&gt;はiOS9で問題ないはず。が、iOS10へ変更したりクリーンをしたりしても変わらず。
-最後にダメ元でiOS9のシミュレータをDLしてみると、無事完了。
-他の環境で試すと再現しなかったりで、結局原因はよく判らなかった・・・・&lt;/p&gt;
-
-&lt;p&gt;さて、無事？テストも通ったのでGitHubへpushしておく&lt;/p&gt;
-
-&lt;h3 id=&#34;travisci&#34;&gt;TravisCI&lt;/h3&gt;
-
-&lt;p&gt;CIツールに&lt;a href=&#34;https://travis-ci.org&#34;&gt;TravisCI&lt;/a&gt;を選択したのは、GitHubと連携できてiOSのビルドができて*タダ*なので&lt;/p&gt;
-
-&lt;h4 id=&#34;登録&#34;&gt;登録&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;トップページから&lt;code&gt;Sign in with GitHub&lt;/code&gt;のボタンを押して、GitHubとの連携を許可&lt;/li&gt;
-&lt;li&gt;しばらくすると、GitHubのリポジトリの一覧が表示される&lt;br /&gt;
-(表示されない時は再ログインしてみればOK)&lt;/li&gt;
-&lt;li&gt;今回のプロジェクトを選んで有効化&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&#34;プロジェクトの修正&#34;&gt;プロジェクトの修正&lt;/h4&gt;
-
-&lt;p&gt;登録が終わればXcodeの&lt;code&gt;Scheme&lt;/code&gt;の設定を変更する&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Shared&lt;/code&gt;にチェック&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Test&lt;/code&gt;の中の&lt;code&gt;Gather coverage data&lt;/code&gt;にチェック&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;この時のスキーム名はCIの設定で使うので覚えておくこと！&lt;/p&gt;
-
-&lt;h4 id=&#34;設定&#34;&gt;設定&lt;/h4&gt;
-
-&lt;p&gt;リポジトリの直下に&lt;code&gt;.travis.yml&lt;/code&gt;を追加し、CIで行う作業を設定する&lt;/p&gt;
-
-&lt;p&gt;この書き方がよく判らなかったので、いろいろなライブラリのリポジトリを見て
-試した結果たどり着いた書き方（テストを実行するだけの最低限）がこちら&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;language: objective-c  # Swiftだけどobjective-cを指定
-osx_image: xcode8.1    # 使っているXcodeのバージョン
-script:
-  # テストを実行(schemeにスキーム名を指定する)
-  - xcodebuild test -scheme Kanagata -sdk iphonesimulator -destination &#39;platform=iOS Simulator,name=iPhone 5&#39;
-notifications:
-  email: false         # メール通知はOFF
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;変更が終わればスキームと&lt;code&gt;.travis.yml&lt;/code&gt;の変更分をpushする。&lt;br /&gt;
-その後はpushする毎に自動でCIが走るようになる
-（だいたい、pushしてから15分程度で開始されることが多い感じ）&lt;/p&gt;
-
-&lt;h3 id=&#34;カバレッジ表示&#34;&gt;カバレッジ表示&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;TravisCI&lt;/code&gt;と&lt;code&gt;Swift&lt;/code&gt;に対応していてバッジが表示できて*タダ*のものということで、
-&lt;a href=&#34;https://codecov.io/&#34;&gt;Codecov&lt;/a&gt;を選択&lt;br /&gt;
-開発時はXcode内でカバレッジを見るのでどういう詳細表示がされるのかは重視していない&lt;/p&gt;
-
-&lt;h4 id=&#34;登録と設定&#34;&gt;登録と設定&lt;/h4&gt;
-
-&lt;p&gt;こちらも&lt;code&gt;TravisCI&lt;/code&gt;と同じくGitHubとの連携だけで登録完了&lt;/p&gt;
-
-&lt;p&gt;便利なのが、リポジトリを選択すると&lt;code&gt;TravisCI&lt;/code&gt;に設定するコードを表示してくれること。&lt;br /&gt;
-表示されたコードを&lt;code&gt;.travis.yml&lt;/code&gt;に追加すればOK&lt;/p&gt;
-
-&lt;h4 id=&#34;ignoreの設定&#34;&gt;ignoreの設定&lt;/h4&gt;
-
-&lt;p&gt;デフォルトの状態ではリポジトリ内全部が対象となるので、テスト用のコードもカウントされてしまい、
-正しくないカバレッジが表示されてしまう。それを防ぐため、テスト用のコードは対象外とする様に設定する&lt;/p&gt;
-
-&lt;p&gt;リポジトリ直下に&lt;code&gt;codecov.yml&lt;/code&gt;を追加し、以下を追記する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ignore:
-  - &amp;quot;KanagataTests&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これで&lt;code&gt;KanagataTests&lt;/code&gt;以下のフォルダは対象外となる&lt;/p&gt;
-
-&lt;h3 id=&#34;swiftlint&#34;&gt;SwiftLint&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/realm/SwiftLint&#34;&gt;SwiftLint&lt;/a&gt;には&lt;code&gt;Auto-correct&lt;/code&gt;というコードフォーマッタの機能があり、
-これを使いたいので導入した&lt;/p&gt;
-
-&lt;h4 id=&#34;インストール&#34;&gt;インストール&lt;/h4&gt;
-
-&lt;p&gt;なぜか&lt;code&gt;Sierra&lt;/code&gt;では&lt;code&gt;Homebrew&lt;/code&gt;でインストールできなかったので、パッケージからインストール&lt;/p&gt;
-
-&lt;h4 id=&#34;xcodeに設定&#34;&gt;Xcodeに設定&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Auto-correct&lt;/code&gt;はビルド時に毎回走らせたいので、Xcode上でのビルド設定に追加する&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;フレームワーク用のターゲットの&lt;code&gt;Bulid Phases&lt;/code&gt;を開く&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;code&gt;New Run Script Phase&lt;/code&gt;で以下のスクリプトを追加&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;if which swiftlint &amp;gt;/dev/null; then
-swiftlint autocorrect
-swiftlint
-else
-echo &amp;quot;warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint&amp;quot;
-fi
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;追加した&lt;code&gt;Run Script&lt;/code&gt;を&lt;code&gt;Compile Sources&lt;/code&gt;より上に移動&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;これでビルドを試してみて、たくさんエラーとワーニングが出ればOK&lt;/p&gt;
-
-&lt;h4 id=&#34;ルールのカスタマイズ&#34;&gt;ルールのカスタマイズ&lt;/h4&gt;
-
-&lt;p&gt;デフォルトの状態ではかなり厳しい設定で、エラーやワーニングが出まくるので調整する&lt;/p&gt;
-
-&lt;p&gt;リポジトリ直下に&lt;code&gt;.swiftlint.yml&lt;/code&gt;を追加し、無視するルールや変更する基準値を書いていく&lt;/p&gt;
-
-&lt;p&gt;調整内容は各プロジェクトにもよるが、今回は以下の感じに調整した&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;included:
-  - Kanagata
-variable_name:
-  min_length: 0
-line_length:
-  - 120
-  - 150
-type_body_length:
-  - 350
-  - 400
-function_body_length:
-  - 50
-  - 100
-cyclomatic_complexity: 25
-disabled_rules:
-  - nesting
-  - file_length
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;具体的には1ファイルに詰め込んだ都合上、行数制限をゆるめに設定。
-また、JSONの構造上、再起処理や型ごとの処理で複雑性が増しているのでそこもゆるめにした&lt;/p&gt;
-
-&lt;h4 id=&#34;ciに設定&#34;&gt;CIに設定&lt;/h4&gt;
-
-&lt;p&gt;CIの時にはチェックだけされる様に設定を&lt;code&gt;.travis.yml&lt;/code&gt;に追加&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;before_install:
-  - brew update
-  - brew install swiftlint
-script:
-  - swiftlint   # xcodebuild testより前にしておく
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;（今回追加した分のみ記載）&lt;/p&gt;
-
-&lt;p&gt;CI環境には&lt;code&gt;SwiftLint&lt;/code&gt;が入っていないので実行前にインストールが必要。
-なお、&lt;code&gt;Homebrew&lt;/code&gt;ではなく、パッケージからインストールさせるとCIにかかる時間が減るらしい&lt;/p&gt;
-
-&lt;h3 id=&#34;バッジを貼る&#34;&gt;バッジを貼る&lt;/h3&gt;
-
-&lt;h4 id=&#34;travisci-1&#34;&gt;TravisCI&lt;/h4&gt;
-
-&lt;p&gt;リポジトリのビルド結果の画面の中に表示されているバッジをクリックすると、
-貼り付ける用のURLが出てくるので、*マークダウン*形式をコピーして&lt;code&gt;README&lt;/code&gt;に貼り付け&lt;/p&gt;
-
-&lt;h4 id=&#34;codecov&#34;&gt;Codecov&lt;/h4&gt;
-
-&lt;p&gt;リポジトリの画面の中の&lt;code&gt;Settings&lt;/code&gt; - &lt;code&gt;Badge&lt;/code&gt;で貼り付ける用のURLが出てくるので、
-こちらも*マークダウン*形式をコピーして&lt;code&gt;README&lt;/code&gt;に貼り付け&lt;/p&gt;
-
-&lt;h2 id=&#34;ドキュメント生成&#34;&gt;ドキュメント生成&lt;/h2&gt;
-
-&lt;p&gt;基本&lt;code&gt;public&lt;/code&gt;になるものにはドキュメントコメントをつけていて、&lt;code&gt;juzzy&lt;/code&gt;でドキュメント生成をしていたが、
-&lt;code&gt;CocoaPods&lt;/code&gt;に公開すれば&lt;code&gt;CocoaDocs&lt;/code&gt;が出来上がるので不要に。。。&lt;/p&gt;
-
-&lt;h2 id=&#34;一旦-まとめ&#34;&gt;一旦、まとめ&lt;/h2&gt;
-
-&lt;p&gt;ここまでの手順で、pushすると&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;SwiftLint&lt;/code&gt;で静的解析&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;XCTest&lt;/code&gt;でユニットテスト&lt;/li&gt;
-&lt;li&gt;ユニットテストのカバレッジを送信&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;といったところまで自動で実行される状態となる&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://travis-ci.org&#34;&gt;TravisCI&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://codecov.io/&#34;&gt;Codecov&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/realm/SwiftLint&#34;&gt;SwiftLint&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1319,107 +101,7 @@ script:
       <pubDate>Tue, 13 Dec 2016 19:33:53 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/pageview/</guid>
-      <description>
-
-&lt;p&gt;&lt;code&gt;UIPageViewController&lt;/code&gt;をエンドレスでページ切り替えする方法とかその他小ネタ&lt;/p&gt;
-
-&lt;p&gt;エンドレスの挙動は、最後のページから次へ進むと最初のページへ、最初のページからさらに戻ると最後のページへ移動する感じ。
-詳細はサンプルを参照のこと&lt;/p&gt;
-
-&lt;h2 id=&#34;作成の流れ&#34;&gt;作成の流れ&lt;/h2&gt;
-
-&lt;p&gt;まず、画面の構造は以下の通り。ページ部分は&lt;code&gt;ChildViewController&lt;/code&gt;にしているが、
-&lt;code&gt;UIPageViewController&lt;/code&gt;を全画面にしている場合も同じ&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ViewController
- └─ Container View
-     └─ UIPageViewController
-         └─ (各ページ)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;ページの生成&#34;&gt;ページの生成&lt;/h3&gt;
-
-&lt;p&gt;今回はページ数が固定（5ページ）を想定しているので、&lt;code&gt;viewDidLoad&lt;/code&gt;でページのリストをあらかじめ生成しておく&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// var pages = [PageViewController]()
-pages = Array(1...5).flatMap {
-    guard let vc = storyboard?.instantiateViewController(withIdentifier: &amp;quot;Page&amp;quot;) as? PageViewController else {
-        return nil
-    }
-    // 各ページの設定
-    return vc
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;リストを生成したら、初期表示するページを設定&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;setViewControllers([pages[0]], direction: .forward, animated: false)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;ページングの処理&#34;&gt;ページングの処理&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;UIPageViewControllerDataSource&lt;/code&gt;の
-&lt;code&gt;viewControllerBefore&lt;/code&gt;と&lt;code&gt;viewControllerAfter&lt;/code&gt;を実装する&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;viewControllerBefore&lt;/code&gt;だとこんな感じで前のページを返す&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;guard let vc = viewController as? PageViewController,
-    var index = pages.index(of: vc)  else { return nil }
-
-index -= 1
-index = (index &amp;lt; pages.startIndex) ? pages.endIndex - 1 : index
-return pages[index]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ポイントは基準となるページ(引数で渡される&lt;code&gt;viewController&lt;/code&gt;)のインデックスをページのリストから検索して見つけること
-(コードでは&lt;code&gt;index = pages.index(of: vc)&lt;/code&gt;)&lt;/p&gt;
-
-&lt;p&gt;例えば、現在表示中のページのインデックスをプロパティに持っておく方法ではうまくいかない。
-なぜならこのデリゲートは現在表示中のページ以外からも呼び出されるので&lt;/p&gt;
-
-&lt;h2 id=&#34;小ネタ&#34;&gt;小ネタ&lt;/h2&gt;
-
-&lt;h3 id=&#34;uipageviewcontrollerのstoryboardへの追加&#34;&gt;UIPageViewControllerのStoryboardへの追加&lt;/h3&gt;
-
-&lt;p&gt;追加する時は、右下のUIパーツが並んでいるところから&lt;code&gt;PageViewController&lt;/code&gt;を選んで追加すること&lt;br /&gt;
-通常の&lt;code&gt;ViewController&lt;/code&gt;で追加してしまうと後から変更しても、&lt;code&gt;UIPageViewController&lt;/code&gt;の設定項目が出てこない。。。&lt;/p&gt;
-
-&lt;h3 id=&#34;ページを表示した時に各uiの位置が一瞬ずれて表示されてしまう場合&#34;&gt;ページを表示した時に各UIの位置が一瞬ずれて表示されてしまう場合&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;AutoLayout&lt;/code&gt;の基準が&lt;code&gt;LayoutGuide&lt;/code&gt;になっているとダメな場合があるので&lt;code&gt;View&lt;/code&gt;を基準に変えてみる&lt;br /&gt;
-（例えば上部は&lt;code&gt;TopLayoutGuide&lt;/code&gt;ではなく、&lt;code&gt;View&lt;/code&gt;からにする。&lt;code&gt;Constrain to margins&lt;/code&gt;はチェックを外す）&lt;/p&gt;
-
-&lt;h3 id=&#34;container-viewの中のviewcontrollerを取得する&#34;&gt;Container Viewの中のViewControllerを取得する&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;Container View&lt;/code&gt;と&lt;code&gt;ChildViewController&lt;/code&gt;を繋ぐ&lt;code&gt;segue&lt;/code&gt;の&lt;code&gt;destination&lt;/code&gt;から取得できる&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;private weak var pager: PagerViewController!
-
-override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    switch segue.destination {
-    case let vc as PagerViewController:
-        pager = vc
-    default: break
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ちなみに、今回は&lt;code&gt;Container View&lt;/code&gt;の&lt;code&gt;PagerViewController&lt;/code&gt;は1つなので上記の判定だが、
-同じクラスのものが複数ある場合は、&lt;code&gt;segue&lt;/code&gt;の&lt;code&gt;identifier&lt;/code&gt;で判定すれば良い
-（もちろん、&lt;code&gt;Storyboard&lt;/code&gt;上で別々のIDを設定しておく）&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 7+&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/EndlessPage&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-</description>
+      <description>&lt;p&gt;&lt;code&gt;UIPageViewController&lt;/code&gt;をエンドレスでページ切り替えする方法とかその他小ネタ&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1428,56 +110,10 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
       <pubDate>Wed, 07 Dec 2016 19:18:57 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/provisioning/</guid>
-      <description>
-
-&lt;p&gt;&lt;code&gt;AdHoc&lt;/code&gt;で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
+      <description>&lt;p&gt;&lt;code&gt;AdHoc&lt;/code&gt;で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
 その有効期限をアプリ内から確認する方法&lt;/p&gt;
 
-&lt;p&gt;確認自体はipaを解凍して見れば良いのだけど、エンタープライズの様にアプリ内で出したい場合は、
-この方法であらかじめ設定画面とかに仕込むと良いかもしれない&lt;/p&gt;
-
-&lt;p&gt;もちろん&lt;code&gt;Settings.bundle&lt;/code&gt;や直接アプリ内にリテラルとして持たすのも方法の一つだが、
-それだと更新の度に余分な作業が発生したり更新忘れとかのミスも発生したりしがちなので、
-この方法に行き着いた感じ&lt;/p&gt;
-
-&lt;p&gt;（プロビジョニングプロファイルはアーカイブ時に確定されるので、
-アプリバージョンのようにビルドスクリプトに仕込んでといった技は使えない。
-Xcode7以前はdryrunでビルド設定を出力させてそこから特定ということもできたが、
-Xcode8からの自動にした場合は使えないっぽい）&lt;/p&gt;
-
-&lt;h2 id=&#34;方法&#34;&gt;方法&lt;/h2&gt;
-
-&lt;p&gt;ipa作成時のプロビジョニングプロファイルについてまとめると、&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;プロビジョニングプロファイルの中身はほぼ&lt;code&gt;plist&lt;/code&gt;(XML)&lt;/li&gt;
-&lt;li&gt;有効期限はプロビジョニングプロファイルの中の&lt;code&gt;ExpirationDate&lt;/code&gt;に&lt;code&gt;Date&lt;/code&gt;(NSDate)で記載&lt;/li&gt;
-&lt;li&gt;プロビジョニングプロファイルはアプリのパッケージの中に
-&lt;code&gt;embedded.mobileprovision&lt;/code&gt;という名前で同梱&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;これを踏まえてコードにすると、以下の感じになる&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/bdbedbb280883dff96b6a5a7062c67bd.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;まずは1行目にあるように、同梱されているプロビジョニングを取得する&lt;br /&gt;
-&lt;strong&gt;デバッグ実行時には正しく取得できないので注意！&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;次に5〜14行目にあるように、&lt;code&gt;plist&lt;/code&gt;として必要な部分のみに加工。
-（不要部分があると変換に失敗するので）&lt;br /&gt;
-抜き出したら&lt;code&gt;PropertyListSerialization&lt;/code&gt;で&lt;code&gt;Dictionary&lt;/code&gt;に変換して有効期限を抜き出す&lt;/p&gt;
-
-&lt;p&gt;あとは、画面に表示させる為に文字列に変換してやって完了
-（例では余裕を持って1日前の日付にしている）&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1486,138 +122,10 @@ Xcode8からの自動にした場合は使えないっぽい）&lt;/p&gt;
       <pubDate>Tue, 06 Dec 2016 22:04:28 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/multipart/</guid>
-      <description>
-
-&lt;p&gt;（&lt;code&gt;Alamofire&lt;/code&gt;とかのライブラリを使った方が幸せになれると思うが）
+      <description>&lt;p&gt;（&lt;code&gt;Alamofire&lt;/code&gt;とかのライブラリを使った方が幸せになれると思うが）
 HTMLのフォームからの送信と同じ様な&lt;code&gt;multipart&lt;/code&gt;によるアップロードをiOSからする方法&lt;/p&gt;
 
-&lt;h2 id=&#34;要件&#34;&gt;要件&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;タイトル（文字列）とファイルを一緒にサーバへアップロード&lt;/li&gt;
-&lt;li&gt;アップロード先は同じホストの&lt;code&gt;upload.php&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;サーバからはjsonで結果が返ってくる&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;htmlの場合&#34;&gt;HTMLの場合&lt;/h2&gt;
-
-&lt;p&gt;上記要件でかつアップロードと同じ画面内で結果を表示させたい場合、
-&lt;code&gt;jQuery&lt;/code&gt;などを全く使わずに素のHTMLで書くと&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/9c53de2d62a4be94dd26131479b52c6f.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;もし、ajaxではなく送信結果は次の画面で表示させる様な場合だと&lt;code&gt;&amp;lt;form&amp;gt;&lt;/code&gt;タグは
-&lt;code&gt;&amp;lt;form name=&amp;quot;upload&amp;quot; enctype=&amp;quot;multipart/form-data&amp;quot; action=&amp;quot;upload.php&amp;quot; method=&amp;quot;post&amp;quot;&amp;gt;&lt;/code&gt;
-とする必要がある&lt;/p&gt;
-
-&lt;h2 id=&#34;iosの場合&#34;&gt;iOSの場合&lt;/h2&gt;
-
-&lt;p&gt;もし単一のファイルのアップロードだけなら、&lt;code&gt;URLSession&lt;/code&gt;の&lt;code&gt;uploadTask(with:〜&lt;/code&gt;でOKだが、
-他のデータやファイルも付加したい場合は自分で&lt;code&gt;multipart&lt;/code&gt;のリクエストを生成する必要がある&lt;/p&gt;
-
-&lt;p&gt;とりあえずHTMLと同じものをベタ書き(+エラー省略)すると、&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/3825cf1ea22cb4f1a1469a33c44097ff.js&#34;&gt;&lt;/script&gt;
-
-&lt;h3 id=&#34;boundary文字列&#34;&gt;boundary文字列&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;multipart&lt;/code&gt;の場合、データの区切りを表すためにデータ内に含まれない様なバウンダリ文字列が必要となる&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let boundary = String(format: &amp;quot;----iOSURLSessionBoundary.%08x%08x&amp;quot;, arc4random(), arc4random())
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;今回は&lt;code&gt;Alamofire&lt;/code&gt;を参考に送信元のプログラムとランダムな数字を組合せた文字列を生成している&lt;/p&gt;
-
-&lt;h3 id=&#34;bodyの生成&#34;&gt;bodyの生成&lt;/h3&gt;
-
-&lt;p&gt;フォームのデータの場合の構造は&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)[CRLF]
-Content-Disposition: form-data; name=&amp;quot;フォームの名前&amp;quot;[CRLF]
-[CRLF]
-(フォームのデータ)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;となる&lt;/p&gt;
-
-&lt;p&gt;ファイルの場合の構造は&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)[CRLF]
-Content-Disposition: form-data; name=&amp;quot;フォームの名前&amp;quot;; filename=&amp;quot;ファイル名&amp;quot;[CRLF]
-Content-Type: &amp;quot;ファイルのタイプ&amp;quot;[CRLF]
-[CRLF]
-(ファイルのデータ)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;となる&lt;/p&gt;
-
-&lt;p&gt;各構造をバイナリ(&lt;code&gt;Data&lt;/code&gt;型)にしたものを必要な分だけ組合せて、最後に&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;--(バウンダリ文字列)--[CRLF]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;をつけたものがbody部分のデータとなる&lt;/p&gt;
-
-&lt;p&gt;今回の例だとフォームデータが一つとファイルデータが一つなので、
-それぞれ一つずつを追加し最後にフッタを付けたものをbodyに入れている&lt;/p&gt;
-
-&lt;h3 id=&#34;headerの生成&#34;&gt;headerの生成&lt;/h3&gt;
-
-&lt;p&gt;フィールドにセットすべきなのは以下の2つ&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&amp;ldquo;Content-Type&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;Content-Length&amp;rdquo;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;code&gt;Content-Type&lt;/code&gt;にはタイプとバウンダリ文字列を以下のように指定する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;multipart/form-data; boundary=（バウンダリ文字列）
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;Content-Length&lt;/code&gt;は普通にbodyのサイズを入れればOK&lt;/p&gt;
-
-&lt;h3 id=&#34;送信&#34;&gt;送信&lt;/h3&gt;
-
-&lt;p&gt;送信は&lt;code&gt;uploadTask&lt;/code&gt;だと&lt;code&gt;multipart&lt;/code&gt;指定ができないので&lt;code&gt;dataTask&lt;/code&gt;で行う。
-それ以外は通常の&lt;code&gt;dataTask&lt;/code&gt;のやり方でOK&lt;/p&gt;
-
-&lt;h2 id=&#34;参考-サーバの処理-php&#34;&gt;参考：サーバの処理(PHP)&lt;/h2&gt;
-
-&lt;p&gt;今回サーバ側で検証用に使ったのは以下のソース&lt;br /&gt;
-（送信されてきたファイルはそのまま専用のディレクトリに格納し結果をJSONで返すだけ）&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// &amp;quot;upload&amp;quot;のディレクトリに書き込み権限が必要
-$dir = __DIR__ . &#39;/upload/&#39;;
-$path = $dir . basename($_FILES[&#39;filename&#39;][&#39;name&#39;]);
-
-$data[&#39;result&#39;] = &#39;アップロード失敗&#39;;
-if (move_uploaded_file($_FILES[&#39;filename&#39;][&#39;tmp_name&#39;], $path)) {
-    chmod($path, 0666);
-    $data[&#39;result&#39;] = date(&amp;quot;H:i:s&amp;quot;) . &#39; &#39; . $_POST[&#39;title&#39;] . &#39; アップロード成功&#39;;
-}
-
-header(&#39;Content-Type: application/json&#39;);
-echo json_encode($data);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;PHP公式：&lt;a href=&#34;http://php.net/manual/ja/features.file-upload.post-method.php&#34;&gt;POST メソッドによるアップロード&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;MDN公式：&lt;a href=&#34;https://developer.mozilla.org/ja/docs/Web/Guide/Using_FormData_Objects&#34;&gt;FormData オブジェクトの利用&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
-&lt;li&gt;PHP 7&lt;/li&gt;
-&lt;li&gt;Chrome&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1626,236 +134,9 @@ echo json_encode($data);
       <pubDate>Wed, 30 Nov 2016 01:38:22 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/webrtc-ios/</guid>
-      <description>
+      <description>&lt;p&gt;iOSで&lt;code&gt;WebRTC&lt;/code&gt;を使ったビデオチャットを作る方法&lt;/p&gt;
 
-&lt;p&gt;iOSで&lt;code&gt;WebRTC&lt;/code&gt;を使ったビデオチャットを作る方法&lt;/p&gt;
-
-&lt;h2 id=&#34;事前準備&#34;&gt;事前準備&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;../webrtc-build&#34;&gt;準備編&lt;/a&gt;を参考にフレームワークを組み込む&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Info.plist&lt;/code&gt;に以下を書き込む（※）
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Privacy - Camera Usage Description&lt;/code&gt;（カメラを使うのに必要）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Privacy - Microphone Usage Description&lt;/code&gt;（マイクを使うのに必要）&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;※iOS10から必須。ないとアプリが強制終了する。
-それぞれの値は使う理由の説明を入れておく&lt;/em&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;シグナリング&#34;&gt;シグナリング&lt;/h2&gt;
-
-&lt;p&gt;WebRTCはP2P通信なので何らかの方法で相手と端末(&lt;code&gt;Peer&lt;/code&gt;)や
-通信経路(&lt;code&gt;ICE Candidate&lt;/code&gt;)の情報をやり取りする必要がある&lt;/p&gt;
-
-&lt;p&gt;つまり、何らかのWebRTCとは別の方法で端末間の通信を確立させておくことが必要となる&lt;/p&gt;
-
-&lt;p&gt;といってもテキストベースの情報をやり取りできれば良いので、
-特にややこしい訳ではない（もちろん接続管理はそれなりに必要だが）ので、
-node.jsのsocket.ioで自前のサーバを立てるのも良いし、
-サービスとして提供されているサーバを介してやりとりしても良い&lt;/p&gt;
-
-&lt;p&gt;今回のサンプルでは完全にローカルなネットワークで、かつ、iOS同士限定なので
-サーバが不要な&lt;code&gt;Multipeer Connectivity Framework&lt;/code&gt;を使っている
-（詳細は&lt;a href=&#34;../multipeer/&#34;&gt;こちら&lt;/a&gt;）&lt;/p&gt;
-
-&lt;h2 id=&#34;実装&#34;&gt;実装&lt;/h2&gt;
-
-&lt;p&gt;ビデオチャットは1対1で動画と音声をやりとりするタイプとする&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;生成したコネクション(&lt;code&gt;RTCPeerConnection&lt;/code&gt;)とローカル / リモートストリーム(&lt;code&gt;RTCMediaStream&lt;/code&gt;)はクラスのプロパティにして、
-必ずstrongで保持されるようにしておくこと&lt;br /&gt;
-これを忘れると正常に接続ができていても画像が出ない原因となるので注意！&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;接続の準備&#34;&gt;接続の準備&lt;/h3&gt;
-
-&lt;p&gt;最初に自分が相手に送る動画と音声のストリームを準備する。
-なお、カメラへのアクセスやカメラのライブ映像の表示はほぼフレームワークがカバーしてくれる&lt;/p&gt;
-
-&lt;h4 id=&#34;ローカルストリームの生成&#34;&gt;ローカルストリームの生成&lt;/h4&gt;
-
-&lt;p&gt;ビデオ（ライブ映像）ストリームを生成して端末のカメラと紐づける&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let factory = RTCPeerConnectionFactory()
-localStream = factory.mediaStream(withStreamId: &amp;quot;MIKE-VIDEOCHAT&amp;quot;)
-let video = factory.avFoundationVideoSource(with: nil)
-let track = factory.videoTrack(with: video, trackId: &amp;quot;MIKE-VIDEOCHAT-V0&amp;quot;)
-localStream.addVideoTrack(track)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;オーディオ（音声）ストリームを生成する
-（こちらは特に指定しなくても端末のマイクと紐付けされるみたい）&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;localStream.addAudioTrack(factory.audioTrack(withTrackId: &amp;quot;MIKE-VIDEOCHAT-A0&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;表示用のビューの生成&#34;&gt;表示用のビューの生成&lt;/h4&gt;
-
-&lt;p&gt;相手に送信している映像を確認できるよう、表示用のView
-(&lt;code&gt;RTCEAGLVideoView&lt;/code&gt;というOpenGLを利用して動画を表示する専用のView)
-と端末のカメラを紐づける&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// localView: ViewController内に置いた表示用ビューのコンテナ
-let local = RTCEAGLVideoView(frame: localView.bounds)
-localView.addSubview(local)
-track.add(local)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これで端末のフロントカメラの映像が自動で表示されるようになる&lt;/p&gt;
-
-&lt;h4 id=&#34;接続の生成&#34;&gt;接続の生成&lt;/h4&gt;
-
-&lt;p&gt;ビデオチャットなのでVideoとAudioを必須と指定して&lt;code&gt;RTCPeerConnection&lt;/code&gt;を生成する。
-またローカルストリームを接続と紐づけて相手に送信できるようにする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// peer: RTCPeerConnection
-let constraints = RTCMediaConstraints(
-  mandatoryConstraints: [&amp;quot;OfferToReceiveVideo&amp;quot;: kRTCMediaConstraintsValueTrue,
-                         &amp;quot;OfferToReceiveAudio&amp;quot;: kRTCMediaConstraintsValueTrue],
-   optionalConstraints: nil)
-peer = factory.peerConnection(with: RTCConfiguration(),
-                       constraints: constraints,
-                          delegate: self)
-peer.add(localStream)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;接続の開始&#34;&gt;接続の開始&lt;/h3&gt;
-
-&lt;p&gt;接続の準備ができればシグナリングを行なって相手と接続を確立させる&lt;/p&gt;
-
-&lt;p&gt;流れとしては、&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;端末Aがofferを送信&lt;/li&gt;
-&lt;li&gt;端末Bが端末Aのofferを受信&lt;/li&gt;
-&lt;li&gt;端末Bが端末Aへanswerを送信&lt;/li&gt;
-&lt;li&gt;端末Aが端末Bのanswerを受信&lt;/li&gt;
-&lt;li&gt;ICEをやりとりしてP2Pで接続を確立&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;となる&lt;/p&gt;
-
-&lt;h4 id=&#34;端末a-offerの送信&#34;&gt;[端末A] offerの送信&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;peer.offer&lt;/code&gt;で生成したローカルの情報を&lt;code&gt;peer.setLocalDescription&lt;/code&gt;で設定すると、
-offerとなる&lt;code&gt;SDP&lt;/code&gt;（Peerの情報）が取得できるので、それを相手へ送信する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;peer.offer(for: constraints) { (description, error) in
-  guard let localDescription = description, error == nil else {
-    print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-    return
-  }
-  self.peer.setLocalDescription(localDescription) { error in
-    guard error == nil,
-          let state = self.peer.signalingState,
-          case .haveLocalOffer = state else {
-      print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-      return
-    }
-    // localDescription.sdp(=offer)を相手へ送信する
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;端末b-offerの受信-answerの送信&#34;&gt;[端末B] offerの受信 / answerの送信&lt;/h4&gt;
-
-&lt;p&gt;受信した&lt;code&gt;SDP&lt;/code&gt;から&lt;code&gt;RTCSessionDescription&lt;/code&gt;でリモートの情報を生成し&lt;code&gt;peer.setRemoteDescription&lt;/code&gt;で設定する&lt;/p&gt;
-
-&lt;p&gt;offerを正常に設定できれば、&lt;code&gt;peer.answer&lt;/code&gt;でローカルの情報を生成し&lt;code&gt;peer.setLocalDescription&lt;/code&gt;で設定すると、
-answerとなる&lt;code&gt;SDP&lt;/code&gt;が取得できるので、それを相手へ返信する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// sdp: 受信した端末Aのoffer
-let remoteDescription = RTCSessionDescription(type: .offer, sdp: sdp)
-peer.setRemoteDescription(remoteDescription) { error in
-  guard error == nil,
-        let state = self.peer.signalingState, 
-        case .haveRemoteOffer = state else {
-    print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-    return
-  }
-  self.peer.answer(for: constraints) { (description, error) in
-    guard let localDescription = description, error == nil else {
-      print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-      return
-    }
-    self.peer.setLocalDescription(localDescription) { error in
-      guard error == nil else {
-        print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-        return
-      }
-      // localDescription.sdp(=answer)を相手へ送信する
-    }
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;端末a-answerの受信&#34;&gt;[端末A] answerの受信&lt;/h4&gt;
-
-&lt;p&gt;相手から返信された&lt;code&gt;SDP&lt;/code&gt;から&lt;code&gt;RTCSessionDescription&lt;/code&gt;でリモートの情報を生成し&lt;code&gt;peer.setRemoteDescription&lt;/code&gt;で設定する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// sdp: 受信した端末Bのanswer
-let remoteDescription = RTCSessionDescription(type: .answer, sdp: sdp)
-peer.setRemoteDescription(remoteDescription) { error in
-  guard error == nil else {
-    print(&amp;quot;Error: \(error?.localizedDescription ?? &amp;quot;&amp;quot;)&amp;quot;)
-    return
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;iceの送受信&#34;&gt;ICEの送受信&lt;/h4&gt;
-
-&lt;p&gt;SDPのやり取りとは別に通信経路(&lt;code&gt;ICE Candidate&lt;/code&gt;)もやり取りする必要がある&lt;/p&gt;
-
-&lt;p&gt;こちらは単純に相手に渡すべき&lt;code&gt;ICE Candidate&lt;/code&gt;があると、&lt;code&gt;RTCPeerConnectionDelegate&lt;/code&gt;の&lt;code&gt;didGenerate&lt;/code&gt;が呼ばれるのでそれを相手へ送信する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
-  // candidate.sdp(=ICE)を相手へ送信する
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;受信した側は、&lt;code&gt;SDP&lt;/code&gt;から&lt;code&gt;RTCIceCandidate&lt;/code&gt;を生成して&lt;code&gt;RTCPeerConnection&lt;/code&gt;に追加する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let can = RTCIceCandidate(sdp: sdp, sdpMLineIndex: 0, sdpMid: nil)
-peer.add(can)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これは何度か行われる&lt;/p&gt;
-
-&lt;h3 id=&#34;リモートストリームの受信&#34;&gt;リモートストリームの受信&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;ICE&lt;/code&gt;のやり取りで接続が確立されると、&lt;code&gt;RTCPeerConnectionDelegate&lt;/code&gt;の&lt;code&gt;didAdd&lt;/code&gt;が呼び出されて、
-相手側からのリモートストリームが渡される&lt;/p&gt;
-
-&lt;p&gt;今回はVideoとAudioの両方のストリームがくるはずなので、それを表示用のViewと紐づける&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func peerConnection(_ peerConnection: RTCPeerConnection, 
-                       didAdd stream: RTCMediaStream) {
-  // remoteView: ViewController内に置いた表示用ビューのコンテナ
-  let remote = RTCEAGLVideoView(frame: remoteView.bounds)
-  remoteView.addSubview(remote)
-  stream.videoTracks.last?.add(remote)
-  remoteStream = stream
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これで相手の映像が表示されてチャットができるようになる&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;macOS 10.12&lt;/li&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/mike-neko/WebRTCVideoChat&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
-</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1864,79 +145,12 @@ peer.add(can)
       <pubDate>Tue, 29 Nov 2016 23:24:55 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/webrtc-build/</guid>
-      <description>
-
-&lt;p&gt;iOSのブラウザでは&lt;code&gt;WebRTC&lt;/code&gt;がサポートされていないので、利用したい場合は
+      <description>&lt;p&gt;iOSのブラウザでは&lt;code&gt;WebRTC&lt;/code&gt;がサポートされていないので、利用したい場合は
 ネイティブのフレームワークを使う必要がある。&lt;/p&gt;
 
 &lt;p&gt;今回の準備編では公式のフレームワークを使うにあたってフレームワークの生成と組み込みまでの手順について&lt;/p&gt;
 
-&lt;p&gt;ただ、これが結構面倒で、ソースをダウンロードして一からビルドしないといけないし、
-その方法が公式に明記されていないというおまけ付き&lt;/p&gt;
-
-&lt;p&gt;普段、GitHubやCarthageに頼りきっている身には大変だった・・・&lt;/p&gt;
-
-&lt;h2 id=&#34;フレームワークの生成&#34;&gt;フレームワークの生成&lt;/h2&gt;
-
-&lt;p&gt;まずは、作業用の適当なフォルダを作っておく&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;mkdir 作業用のフォルダ
-cd 作業用のフォルダ
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ビルド用のツールをインストールする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;brew update
-brew install git
-brew install python
-git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ソースをダウンロードする&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;以下、ものすごく時間と容量をくうので注意！&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;export PATH=`pwd`/depot_tools:&amp;quot;$PATH&amp;quot;
-fetch --nohooks webrtc_ios
-gclient sync
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ビルドする&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd src
-webrtc/build/ios/build_ios_libs.sh
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;成功すれば、&lt;code&gt;src/out_ios_libs/&lt;/code&gt;の中に&lt;code&gt;WebRTC.framework&lt;/code&gt;ができている&lt;/p&gt;
-
-&lt;h2 id=&#34;組み込み&#34;&gt;組み込み&lt;/h2&gt;
-
-&lt;p&gt;組み込み自体は他のサードパーティのフレームワークと一緒だが、ポイントは&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Embedded Binaries&lt;/code&gt;で追加&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Build Settings&lt;/code&gt;で&lt;code&gt;Bitcode&lt;/code&gt;を無効にする&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;というあたり&lt;/p&gt;
-
-&lt;p&gt;また、&lt;code&gt;Video&lt;/code&gt;を使う場合はシミュレータが使えないので注意&lt;/p&gt;
-
-&lt;h1 id=&#34;参考リンク&#34;&gt;参考リンク&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://webrtc.org/native-code/&#34;&gt;WebRTC公式&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;macOS 10.12&lt;/li&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1945,156 +159,9 @@ webrtc/build/ios/build_ios_libs.sh
       <pubDate>Tue, 29 Nov 2016 18:40:09 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/multipeer/</guid>
-      <description>
+      <description>&lt;p&gt;iOS同士限定になるが、&lt;code&gt;Multipeer Connectivity Framework&lt;/code&gt;でお手軽にP2P通信をさせる方法&lt;/p&gt;
 
-&lt;p&gt;iOS同士限定になるが、&lt;code&gt;Multipeer Connectivity Framework&lt;/code&gt;でお手軽にP2P通信をさせる方法&lt;/p&gt;
-
-&lt;p&gt;今回は特に&lt;code&gt;MCBrowserViewController&lt;/code&gt;を使わずに実装してみた&lt;/p&gt;
-
-&lt;h2 id=&#34;使い方&#34;&gt;使い方&lt;/h2&gt;
-
-&lt;p&gt;おおまかな流れは&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;MCSession&lt;/code&gt;で接続を開く&lt;br /&gt;
-同時に&lt;code&gt;MCNearbyServiceAdvertiser&lt;/code&gt;で他の端末からの接続を待機&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;MCNearbyServiceBrowser&lt;/code&gt;で待機している端末を探す&lt;br /&gt;
-見つかれば、招待して接続を確立する&lt;/li&gt;
-&lt;li&gt;招待された側が招待を受け入れれば接続が確立されるので、データをやりとりできる&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;となる&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;なお、各種デリゲートはメインスレッドで呼び出されるとは限らないので、
-UIを操作する場合は注意すること&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;接続の開始&#34;&gt;接続の開始&lt;/h3&gt;
-
-&lt;p&gt;各端末は&lt;code&gt;Peer&lt;/code&gt;（ピア）と呼ばれ、相手に表示させる表示名を設定できる。
-自端末をあらわす&lt;code&gt;Peer&lt;/code&gt;を生成したら、それを使って接続を開始する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;let peerID = MCPeerID(displayName: &amp;quot;表示名&amp;quot;)
-session = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .none)
-session.delegate = self
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;さらに他の端末から見える状態にする為に&lt;code&gt;MCNearbyServiceAdvertiser&lt;/code&gt;を設定する。
-サービス名は相手を検索するのに使用するIDの様なものなので、かぶらないものを指定する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;advertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType: &amp;quot;サービス名&amp;quot;)
-advertiser.delegate = self
-advertiser.startAdvertisingPeer()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ここまでの手順でいわば接続の待ち受け状態となる&lt;/p&gt;
-
-&lt;h3 id=&#34;相手の検索と接続の確立&#34;&gt;相手の検索と接続の確立&lt;/h3&gt;
-
-&lt;p&gt;相手を検索するには、&lt;code&gt;MCNearbyServiceBrowser&lt;/code&gt;を利用する。
-サービス名には&lt;code&gt;Advertiser&lt;/code&gt;で設定したのと同じものを指定する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;browser = MCNearbyServiceBrowser(peer: peerID, serviceType: &amp;quot;サービス名&amp;quot;)
-browser.delegate = self
-browser.startBrowsingForPeers()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;指定したサービス名と同じPeerが見つかると&lt;code&gt;MCNearbyServiceBrowserDelegate&lt;/code&gt;の&lt;code&gt;foundPeer&lt;/code&gt;が呼び出される&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func browser(_ browser: MCNearbyServiceBrowser,
-      foundPeer peerID: MCPeerID,
-withDiscoveryInfo info: [String : String]?) {
-    print(&amp;quot;found: \(peerID)&amp;quot;)
-    browser.invitePeer(peerID, to: session, withContext: nil, timeout: 0)
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;見つかった相手に、&lt;code&gt;invitePeer&lt;/code&gt;で接続を招待することができる。
-招待された側には、&lt;code&gt;MCNearbyServiceAdvertiserDelegate&lt;/code&gt;の&lt;code&gt;didReceiveInvitationFromPeer&lt;/code&gt;が呼び出される&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func advertiser(_ advertiser: MCNearbyServiceAdvertiser,
-  didReceiveInvitationFromPeer peerID: MCPeerID,
-                  withContext context: Data?,
-                    invitationHandler: @escaping (Bool, MCSession?) -&amp;gt; Void) {
-    print(&amp;quot;InvitationFrom: \(peerID)&amp;quot;)
-    invitationHandler(true, session)
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;invitationHandler&lt;/code&gt;の第一引数で&lt;code&gt;true&lt;/code&gt;を渡すと招待を受け入れたことになり接続が確立される。&lt;/p&gt;
-
-&lt;h3 id=&#34;データの送受信&#34;&gt;データの送受信&lt;/h3&gt;
-
-&lt;p&gt;接続が確立されればデータのやりとりが出来る様になる。
-データのやりとりには&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;Data / NSData&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;URL / NSURL&lt;/code&gt;でのリソース&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Stream / NSStream&lt;/code&gt;でのストリーム&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;のどれかを使う&lt;/p&gt;
-
-&lt;p&gt;一番シンプルな&lt;code&gt;Data&lt;/code&gt;の場合、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;session.send(data, toPeers: session.connectedPeers, with: .reliable)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;とすると、接続を確立しているPeer全てにデータを送信できる。
-&lt;code&gt;.reliable&lt;/code&gt;にするとデータの送信順が保証され、
-&lt;code&gt;.unreliable&lt;/code&gt;にすると送信順が保証されない代わりに即時にデータが送られる&lt;/p&gt;
-
-&lt;p&gt;送信されたデータは、&lt;code&gt;MCSessionDelegate&lt;/code&gt;の各メソッドで受け取ることができる。
-&lt;code&gt;Data&lt;/code&gt;の場合だと、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;で受け取れる&lt;/p&gt;
-
-&lt;h1 id=&#34;ソース&#34;&gt;ソース&lt;/h1&gt;
-
-&lt;p&gt;上記を元に2台の端末同士でP2Pで単純なテキストを送受信するクラスのソースは以下のとおり&lt;/p&gt;
-
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://gist.github.com/00e0e04fd7bdf4c3e9378fc6d8e0a11a.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;使い方は、&lt;/p&gt;
-
-&lt;h4 id=&#34;接続の開始-1&#34;&gt;接続の開始&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;P2PConnectivity.manager.start(
-    serviceType: &amp;quot;MIKE-SIMPLE-P2P&amp;quot;,
-    displayName: UIDevice.current.name,
-    stateChangeHandler: { state in
-        // 接続状況の変化した時の処理
-    }, recieveHandler: { data in
-        // データを受信した時の処理
-    }
-)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;データの送信&#34;&gt;データの送信&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;// 送信
-P2PConnectivity.manager.send(message: &amp;quot;送信するテキスト&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;終了&#34;&gt;終了&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;P2PConnectivity.manager.stop()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;という感じ&lt;/p&gt;
-
-&lt;h1 id=&#34;開発環境&#34;&gt;開発環境&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Xcode 8.1&lt;/li&gt;
-&lt;li&gt;iOS 9.3.2 / 10.1.1&lt;/li&gt;
-&lt;li&gt;iPhone 6+ / 7+&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -2103,89 +170,9 @@ P2PConnectivity.manager.send(message: &amp;quot;送信するテキスト&amp;quo
       <pubDate>Sun, 27 Nov 2016 22:50:47 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/vpn-win/</guid>
-      <description>
+      <description>&lt;p&gt;&lt;code&gt;SSH&lt;/code&gt;が入っていないVPN上のWindowsへアクセスする方法&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;SSH&lt;/code&gt;が入っていないVPN上のWindowsへアクセスする方法&lt;/p&gt;
-
-&lt;p&gt;この場合、踏み台となる&lt;code&gt;SSH&lt;/code&gt;が入った別のマシンが必要となる&lt;/p&gt;
-
-&lt;p&gt;今回の検証環境は以下の通り&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;ローカル：Mac OS 10.11(※)&lt;/li&gt;
-&lt;li&gt;VPN
-
-&lt;ul&gt;
-&lt;li&gt;CentOS 6.8(踏み台)&lt;/li&gt;
-&lt;li&gt;Windows(SQLServer)&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;※ macOS 10.12(sierra)は&lt;code&gt;PPTP&lt;/code&gt;でのVPN接続がOSではサポートされていないので注意！&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;接続のイメージは以下の通り&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;    Mac
-     |
-(VPN / SSH)
-     |
-   CentOS(192.168.10.1 / 踏み台) - Windows(192.168.10.2 / SQLServer)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;remotedesktopでログイン&#34;&gt;RemoteDesktopでログイン&lt;/h2&gt;
-
-&lt;p&gt;Windowsなので遠隔で操作するには&lt;code&gt;RemoteDesktop&lt;/code&gt;を利用&lt;/p&gt;
-
-&lt;h3 id=&#34;sshの接続方法&#34;&gt;SSHの接続方法&lt;/h3&gt;
-
-&lt;p&gt;以下の形式でSSH接続する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ssh -C -L 3389:(WindowsのIP):3389 (踏み台のIP)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;例えば、上述の環境でCentOSの&lt;code&gt;user&lt;/code&gt;でログインする場合だと、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ssh -C -L 3389:192.168.10.2:3389 user@192.168.10.1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;で接続する&lt;/p&gt;
-
-&lt;h3 id=&#34;remotedesktopの設定&#34;&gt;RemoteDesktopの設定&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;PC name:&lt;code&gt;localhost&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;User name: Windowsのユーザ名&lt;/li&gt;
-&lt;li&gt;Password: Windowsのパスワード&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;ポイントはホストが&lt;code&gt;localhost&lt;/code&gt;になること&lt;/p&gt;
-
-&lt;h2 id=&#34;sql-serverへ接続&#34;&gt;SQL Serverへ接続&lt;/h2&gt;
-
-&lt;h3 id=&#34;sshの接続方法-1&#34;&gt;SSHの接続方法&lt;/h3&gt;
-
-&lt;p&gt;以下の形式でSSH接続する&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ssh -C -L (DBのポート):(WindowsのIP):(DBのポート) (踏み台のIP)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;例えば、上述の環境でCentOSの&lt;code&gt;user&lt;/code&gt;、SQLServerのポートが&lt;code&gt;1433&lt;/code&gt;でログインする場合だと、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ssh -C -L 1433:192.168.10.2:1433 user@192.168.10.1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;で接続する&lt;/p&gt;
-
-&lt;h3 id=&#34;db接続設定&#34;&gt;DB接続設定&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;ホスト:&lt;code&gt;localhost&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;ポート:1433&lt;/li&gt;
-&lt;li&gt;DB名: そのまま&lt;/li&gt;
-&lt;li&gt;DBユーザ: そのまま&lt;/li&gt;
-&lt;li&gt;DBパスワード: そのまま&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -2194,123 +181,505 @@ P2PConnectivity.manager.send(message: &amp;quot;送信するテキスト&amp;quo
       <pubDate>Tue, 08 Nov 2016 21:32:51 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/vagrant-cent/</guid>
-      <description>
+      <description>&lt;p&gt;野良BOXはちょっと怖いので公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
 
-&lt;p&gt;野良BOXはちょっと怖いので公式BOXを利用しようとしたら、いろいろと落とし穴があったのでメモ&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>CentOSからOracleへ接続</title>
+      <link>https://mike-neko.github.io/blog/oracle-cent/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/oracle-cent/</guid>
+      <description>&lt;p&gt;CentOSのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法
 
-&lt;h2 id=&#34;手順&#34;&gt;手順&lt;/h2&gt;
+Macの場合は&lt;a href=&#34;../oracle-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>CentOSからSQLServerへ接続</title>
+      <link>https://mike-neko.github.io/blog/mssql-cent/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/mssql-cent/</guid>
+      <description>&lt;p&gt;CentOSのPHP5.6から&lt;code&gt;PDO_ODBC&lt;/code&gt;でSQLServer(MSSQL)へ接続する方法
 
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;Vagrantfile&lt;/code&gt;を作成&lt;/p&gt;
+Macの場合は&lt;a href=&#34;../mssql-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>MacからOracleへ接続</title>
+      <link>https://mike-neko.github.io/blog/oracle-mac/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/oracle-mac/</guid>
+      <description>&lt;p&gt;MacのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;br /&gt;
 
-&lt;pre&gt;&lt;code&gt;mkdir -p （適当なフォルダ）
-cd （上で作ったフォルダ）
-vagrant init bento/centos-6.8
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+CentOSの場合は&lt;a href=&#34;../oracle-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>MacからSQLServerへ接続</title>
+      <link>https://mike-neko.github.io/blog/mssql-mac/</link>
+      <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/mssql-mac/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Guzzle(PHP)でAPNsの同時配信を行う</title>
+      <link>https://mike-neko.github.io/blog/guzzle-apns/</link>
+      <pubDate>Sat, 29 Oct 2016 22:40:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/guzzle-apns/</guid>
+      <description>&lt;p&gt;&lt;code&gt;Guzzle&lt;/code&gt;でiOSのAPNs(Push通知)をお手軽に同時配信する方法&lt;/p&gt;
 
-&lt;li&gt;&lt;p&gt;&lt;code&gt;Vagrantfile&lt;/code&gt;を編集(サーバとして使いたいので以下のように編集)&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Guzzleで非同期の並列リクエストを行う</title>
+      <link>https://mike-neko.github.io/blog/guzzle/</link>
+      <pubDate>Sat, 29 Oct 2016 16:50:33 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/guzzle/</guid>
+      <description>&lt;p&gt;&lt;code&gt;PHP&lt;/code&gt;のHTTPクライアント(&lt;a href=&#34;http://docs.guzzlephp.org/en/latest/&#34;&gt;Guzzle&lt;/a&gt;)で非同期の並列リクエストを行う方法&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>UIScrollViewのAutoLayoutをStoryboardのみで設定</title>
+      <link>https://mike-neko.github.io/blog/scrollview/</link>
+      <pubDate>Sun, 23 Oct 2016 22:28:33 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/scrollview/</guid>
+      <description>&lt;p&gt;Storyboard上だけでUIScrollViewのAutoLayoutを完結させる方法。
+中のUIを動的に追加や削除しないのであればコードを書く必要もないし、
+&lt;code&gt;UILabel&lt;/code&gt;のようにコンテンツに応じて動的に高さが変わるようなものにも対応可能&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# config.vm.network &amp;quot;forwarded_port&amp;quot;, guest: 80, host: 8080
-# ↓コメントを外す＋ポートは空いているものを指定
-config.vm.network &amp;quot;forwarded_port&amp;quot;, guest: 8010, host: 8010
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>NotificationCenterの使い方</title>
+      <link>https://mike-neko.github.io/blog/notification/</link>
+      <pubDate>Sun, 23 Oct 2016 18:30:34 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/notification/</guid>
+      <description>&lt;p&gt;旧&lt;code&gt;NSNotification&lt;/code&gt;がSwift3でちょっと変更が入ったので使い方と＋αのエクステンションのまとめ&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# config.vm.network &amp;quot;private_network&amp;quot;, ip: &amp;quot;192.168.33.10&amp;quot;
-# ↓コメントを外す＋IPは空いているものを指定
-config.vm.network &amp;quot;private_network&amp;quot;, ip: &amp;quot;192.168.33.10&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>さくらのレンタルサーバでredisを使う</title>
+      <link>https://mike-neko.github.io/blog/redis-sakura/</link>
+      <pubDate>Sat, 15 Oct 2016 21:53:49 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/redis-sakura/</guid>
+      <description>&lt;p&gt;さくらのレンタルサーバ（スタンダード）に&lt;a href=&#34;http://redis.io/&#34;&gt;redis&lt;/a&gt;をインストールする方法のメモ&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>さくらのレンタルサーバでeasy_installを使う</title>
+      <link>https://mike-neko.github.io/blog/easyinstall-sakura/</link>
+      <pubDate>Sat, 15 Oct 2016 02:03:14 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/easyinstall-sakura/</guid>
+      <description>&lt;p&gt;さくらのレンタルサーバ（スタンダード）でいつのまにか
+&lt;a href=&#34;http://setuptools.readthedocs.io/en/latest/easy_install.html&#34;&gt;easy_install&lt;/a&gt;
+が使えるようになっていたので使い方のメモ&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>PhpStormからさくらのレンタルサーバを使う</title>
+      <link>https://mike-neko.github.io/blog/phpstorm-sakura/</link>
+      <pubDate>Mon, 10 Oct 2016 02:03:14 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/phpstorm-sakura/</guid>
+      <description>&lt;p&gt;さくらのレンタルサーバ（スタンダード）をPhpStormから使うにあたっての便利な小ネタ&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# Centos6.8限定で以下も追記(※1 詳細は後述)
-config.vm.provider &amp;quot;virtualbox&amp;quot; do |vb|
-vb.customize [&amp;quot;modifyvm&amp;quot;, :id, &amp;quot;--cableconnected1&amp;quot;, &amp;quot;on&amp;quot;]
-end
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Laravelをさくらのレンタルサーバへデプロイ</title>
+      <link>https://mike-neko.github.io/blog/laravel-sakura/</link>
+      <pubDate>Thu, 06 Oct 2016 00:27:56 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/laravel-sakura/</guid>
+      <description>&lt;p&gt;ローカルで開発した&lt;code&gt;Laravel5&lt;/code&gt;のプロジェクトをさくらのレンタルサーバ（スタンダード）で公開する時のメモ&lt;/p&gt;
 
-&lt;li&gt;&lt;p&gt;起動する&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Docker(Kitematic)&#43;PHPStormでMySQL環境をお手軽構築</title>
+      <link>https://mike-neko.github.io/blog/docker-db/</link>
+      <pubDate>Thu, 29 Sep 2016 01:44:58 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/docker-db/</guid>
+      <description>&lt;p&gt;個人的には&lt;code&gt;MariaDB&lt;/code&gt;を使っているが、レンタルサーバや既存開発のものだと
+まだまだ&lt;code&gt;MySQL&lt;/code&gt;の環境が必要なこともしばしば。。。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;vagrant up
-vagrant ssh
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;かといって、そんなに使わない環境をわざわざローカルに構築するのも面倒なので、
+さっくりとお手軽に速攻で構築してしまおうという時のメモ&lt;/p&gt;
 
-&lt;h2 id=&#34;トラブルシューティング&#34;&gt;トラブルシューティング&lt;/h2&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>ATS有効の状態でオレオレ証明書を使って通信する</title>
+      <link>https://mike-neko.github.io/blog/ios-cert/</link>
+      <pubDate>Tue, 06 Sep 2016 00:35:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/ios-cert/</guid>
+      <description>&lt;p&gt;&lt;code&gt;ATS&lt;/code&gt;が有効の場合、SSL/TLS通信でないと通信自体ができない&lt;/p&gt;
 
-&lt;h3 id=&#34;vagrant-up-で-private-key-で先に進まずエラーになる&#34;&gt;vagrant up で private key で先に進まずエラーになる&lt;/h3&gt;
+&lt;p&gt;が、開発時はローカル環境だったりドメイン自体がなかったりで正式なSSL証明書を使えないことが多い・・・
+かといって、ATSをOFFにして開発するのも・・・&lt;/p&gt;
 
-&lt;p&gt;エラーは以下の感じでCentOS6.8で発生(6.7は問題無し)&lt;/p&gt;
+&lt;p&gt;って時に自己署名証明書（オレオレ証明書）を使ってしのぐ方法&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;Timed out while waiting for the machine to boot. This means that
-Vagrant was unable to communicate with the guest machine within
-the configured (&amp;quot;config.vm.boot_timeout&amp;quot; value) time period.
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>jazzyの使い方 その1</title>
+      <link>https://mike-neko.github.io/blog/jazzy-cmd/</link>
+      <pubDate>Sat, 03 Sep 2016 00:12:14 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/jazzy-cmd/</guid>
+      <description>&lt;p&gt;Swiftのドキュメント生成ツールの&lt;a href=&#34;https://github.com/realm/jazzy&#34;&gt;jazzy&lt;/a&gt;の使い方。
+その1はコマンド周りのメモ&lt;/p&gt;
 
-If you look above, you should be able to see the error(s) that
-Vagrant had when attempting to connect to the machine. These errors
-are usually good hints as to what may be wrong.
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APNs Provider API(http2)を利用する(iOS)</title>
+      <link>https://mike-neko.github.io/blog/http2apns-ios/</link>
+      <pubDate>Thu, 25 Aug 2016 23:00:38 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/http2apns-ios/</guid>
+      <description>&lt;p&gt;iOSのAPNsをAPI経由で使う方法。
+しかもiOS端末からPush通知を送信する方法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APNs Provider API(http2)を利用する(Node.js)</title>
+      <link>https://mike-neko.github.io/blog/http2apns/</link>
+      <pubDate>Thu, 11 Aug 2016 17:16:16 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/http2apns/</guid>
+      <description>&lt;p&gt;iOSのAPNsをAPI経由で使う方法。サーバサイドは&lt;code&gt;Node.js&lt;/code&gt;を利用&lt;/p&gt;
 
-If you&#39;re using a custom box, make sure that networking is properly
-working and you&#39;re able to connect to the machine. It is a common
-problem that networking isn&#39;t setup properly in these boxes.
-Verify that authentication configurations are also setup properly,
-as well.
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>GitHubにタグ付けする</title>
+      <link>https://mike-neko.github.io/blog/gittag/</link>
+      <pubDate>Tue, 02 Aug 2016 21:36:00 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/gittag/</guid>
+      <description>&lt;p&gt;GitHubにタグを付ける方法。
+&lt;code&gt;GitHub Desktop&lt;/code&gt;はブランチ周りはサポートしているけどタグ関係はサポートしていないのでメモしておく&lt;/p&gt;
 
-If the box appears to be booting properly, you may want to increase
-the timeout (&amp;quot;config.vm.boot_timeout&amp;quot;) value.
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>KVOを利用する(Swift)</title>
+      <link>https://mike-neko.github.io/blog/swift-kvo/</link>
+      <pubDate>Mon, 25 Jul 2016 22:55:03 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/swift-kvo/</guid>
+      <description>&lt;p&gt;&lt;code&gt;Swift&lt;/code&gt;で&lt;code&gt;KVO&lt;/code&gt;を利用する方法について。特に&lt;code&gt;context&lt;/code&gt;を一意の識別子として使いたい場合の方法
+&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>SceneKitでMetalのシェーダを利用する(SCNProgram)</title>
+      <link>https://mike-neko.github.io/blog/metalshader-scenekit/</link>
+      <pubDate>Sun, 10 Jul 2016 18:28:58 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metalshader-scenekit/</guid>
+      <description>&lt;p&gt;&lt;code&gt;Metal&lt;/code&gt;を使いたい場合にネックとなるのが、シーンの構築とかモデル・テクスチャの管理。
+なので、その面倒な部分を&lt;code&gt;SceneKit&lt;/code&gt;に任せたいという時の話。&lt;/p&gt;
 
-&lt;h4 id=&#34;対応策&#34;&gt;対応策&lt;/h4&gt;
+&lt;p&gt;今回は描画周りに&lt;code&gt;Metal&lt;/code&gt;のシェーダを使うパターン。&lt;/p&gt;
 
-&lt;p&gt;ググると色々出てくるが、CentOS6.8で発生する場合は、前述の※1を&lt;code&gt;Vagrantfile&lt;/code&gt;に追記しておけば大丈夫。&lt;br /&gt;
-（というか他の方法は効果なしだった・・・）&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>WKWebViewの内容をPDFで保存する(Swift)</title>
+      <link>https://mike-neko.github.io/blog/webview-pdf/</link>
+      <pubDate>Thu, 23 Jun 2016 00:13:25 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/webview-pdf/</guid>
+      <description>&lt;p&gt;昔に&lt;code&gt;UIWebView&lt;/code&gt;でやっていたものを最新の&lt;code&gt;WKWebView&lt;/code&gt;+&lt;code&gt;Swift&lt;/code&gt;で書き換えた時のメモ。&lt;/p&gt;
 
-&lt;h3 id=&#34;ファイルの共有ができない&#34;&gt;ファイルの共有ができない&lt;/h3&gt;
+&lt;p&gt;内容は大したことないのだけれど、検索で引っかかるWebの資料がiOS9の実機で動かなかったので残しておく。&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;vagrant up&lt;/code&gt;で以下のエラーが出ている&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>QRコードの読み取りサンプル(Swift) その2</title>
+      <link>https://mike-neko.github.io/blog/qr-reader/</link>
+      <pubDate>Thu, 16 Jun 2016 21:17:36 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/qr-reader/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;&lt;em&gt;ソースはSwift2なので注意！&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;Vagrant was unable to mount VirtualBox shared folders. This is usually
-because the filesystem &amp;quot;vboxsf&amp;quot; is not available. This filesystem is
-made available via the VirtualBox Guest Additions and kernel module.
-Please verify that these guest additions are properly installed in the
-guest. This is not a bug in Vagrant and is usually caused by a faulty
-Vagrant box. For context, the command attempted was:
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;以前に書いたQRコードの読み取りサンプルの別バージョン。
+今回はカメラ不要で画像データから直接QRコードを読み取りが可能&lt;/p&gt;
 
-&lt;h4 id=&#34;対応策-1&#34;&gt;対応策&lt;/h4&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>QRコードの読み取りサンプル(Swift) その1</title>
+      <link>https://mike-neko.github.io/blog/code-reader/</link>
+      <pubDate>Wed, 15 Jun 2016 22:52:40 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/code-reader/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;&lt;em&gt;ソースはSwift2なので注意！&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
 
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;まずはエラーを一旦無視してログインし、カーネルをアップデート&lt;/p&gt;
+&lt;p&gt;iOS端末のカメラでQRコードを読み取り、認識されたコードを枠線で強調表示するサンプル&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;vagrant ssh
-su                     # pass:&amp;quot;vagrant&amp;quot;
-yum -y update kernel
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>UnityからOpenCVを利用する(iOS)</title>
+      <link>https://mike-neko.github.io/blog/unity-opencv/</link>
+      <pubDate>Tue, 07 Jun 2016 00:56:50 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/unity-opencv/</guid>
+      <description>&lt;p&gt;UnityからiOSのネイティブプラグイン経由で&lt;code&gt;OpenCV&lt;/code&gt;でカメラを利用するサンプル&lt;/p&gt;
 
-&lt;li&gt;&lt;p&gt;アップデートが完了すれば&lt;code&gt;exit&lt;/code&gt;を2回でログアウトする&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>nginxをhttp2に対応させる</title>
+      <link>https://mike-neko.github.io/blog/nginx-http2/</link>
+      <pubDate>Fri, 03 Jun 2016 21:29:36 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/nginx-http2/</guid>
+      <description>&lt;p&gt;以前に構築したDockerでの開発環境で使ったnginxを&lt;code&gt;http2&lt;/code&gt;に対応させた時のメモ。&lt;/p&gt;
 
-&lt;li&gt;&lt;p&gt;&lt;code&gt;Guest Additions&lt;/code&gt;をインストール&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Perfect APNs編</title>
+      <link>https://mike-neko.github.io/blog/perfect-push/</link>
+      <pubDate>Mon, 11 Apr 2016 19:45:28 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/perfect-push/</guid>
+      <description>&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその3&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;vagrant plugin install vagrant-vbguest
-vagrant vbguest
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;p&gt;今回はiOSのプッシュ通知を送信する方法について&lt;/p&gt;
 
-&lt;li&gt;&lt;p&gt;リロードをかけてエラーが出なければOK&lt;/p&gt;
+&lt;p&gt;Perfectは最新のAPNsの通信形式に対応していて、細かなエラーレスポンスを取れるのがメリット。
+なので、開発用としては大変使いやすい&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;vagrant reload
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Perfect 基礎編</title>
+      <link>https://mike-neko.github.io/blog/perfect-2/</link>
+      <pubDate>Sun, 10 Apr 2016 23:09:11 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/perfect-2/</guid>
+      <description>&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその2&lt;/p&gt;
 
-&lt;h1 id=&#34;環境&#34;&gt;環境&lt;/h1&gt;
+&lt;p&gt;基礎編ではルーティングやリクエストの処理方法のあたりまで&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Perfect 導入編</title>
+      <link>https://mike-neko.github.io/blog/perfect-1/</link>
+      <pubDate>Fri, 08 Apr 2016 22:25:06 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/perfect-1/</guid>
+      <description>&lt;p&gt;サーバーサイドSwiftフレームワークの&lt;a href=&#34;https://perfect.org/&#34;&gt;Perfect&lt;/a&gt;の使い方のメモその1&lt;/p&gt;
+
+&lt;p&gt;導入編ではベースとなるプロジェクトを一から作るあたりまで&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Docker構築メモ</title>
+      <link>https://mike-neko.github.io/blog/docker/</link>
+      <pubDate>Mon, 04 Apr 2016 00:35:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/docker/</guid>
+      <description>&lt;p&gt;iOS用のサーバ環境をDockerでローカルに構築した時のメモ。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;なお、ローカルの開発用ということでセキュリティは考慮していないので注意&lt;/em&gt;
+&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Dockerのコマンド備忘録</title>
+      <link>https://mike-neko.github.io/blog/docker-cmd/</link>
+      <pubDate>Sat, 02 Apr 2016 14:00:57 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/docker-cmd/</guid>
+      <description>&lt;h2 id=&#34;dockerでよく使うコマンド&#34;&gt;Dockerでよく使うコマンド&lt;/h2&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>IPアドレス取得のサンプル(Swift)</title>
+      <link>https://mike-neko.github.io/blog/ipaddress/</link>
+      <pubDate>Mon, 07 Mar 2016 23:59:45 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/ipaddress/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;&lt;em&gt;以下はSwift2の情報で古い為、注意！&lt;/em&gt;&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;&lt;em&gt;Swift3版のソースは&lt;a href=&#34;https://github.com/mike-neko/NetworkInfo&#34;&gt;こちら&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;&lt;em&gt;(解説はそのうちに・・・・)&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;iOS端末のIPアドレスを取得するサンプル。Cの関数呼び出し周りも含めてSwiftにて実装。&lt;/p&gt;
+
+&lt;p&gt;一応、Apple公式の方法でIPv6only環境でも動作確認済。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Metalによる砂のシミュレーションもどき</title>
+      <link>https://mike-neko.github.io/blog/metal-sand/</link>
+      <pubDate>Thu, 25 Feb 2016 22:05:16 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal-sand/</guid>
+      <description>&lt;p&gt;MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
+パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。&lt;/p&gt;
+
+&lt;p&gt;なお、これも約26万パーティクルで60FPSを維持している。&lt;/p&gt;
+
+&lt;h2 id=&#34;動作イメージ&#34;&gt;動作イメージ&lt;/h2&gt;</description>
+    </item>
+    
+    <item>
+      <title>SwiftでNSExceptionを処理する</title>
+      <link>https://mike-neko.github.io/blog/objc-exception/</link>
+      <pubDate>Sat, 20 Feb 2016 08:10:44 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/objc-exception/</guid>
+      <description>&lt;p&gt;ObjectiveCで書かれた&lt;code&gt;NSException&lt;/code&gt;を発生させるソースをSwiftから利用したい時の処理方法。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;NSException&lt;/code&gt;は、ObjectiveCの&lt;code&gt;@try ~ @catch ~ @finally&lt;/code&gt;でしか例外処理を行えない。例外処理を書いていない時は、実行時エラーとして処理される。つまり、Swiftから&lt;code&gt;NSException&lt;/code&gt;を発生させるコードを呼び出して例外が起きると、問答無用でアプリが落ちてしまう・・・&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Hugoのshortcodeのメモ</title>
+      <link>https://mike-neko.github.io/blog/hugo-shortcode/</link>
+      <pubDate>Tue, 16 Feb 2016 23:07:23 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/hugo-shortcode/</guid>
+      <description>&lt;p&gt;Hugoの&lt;code&gt;shortcode&lt;/code&gt;を使って、記事の中でHTMLのタグをべた書きしなくて良い様にする方法のメモ。あと、おまけで&lt;code&gt;shortcode&lt;/code&gt;をMarkdownの中でエスケープして表示する方法。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>UnityのSprite用シェーダ(2本)</title>
+      <link>https://mike-neko.github.io/blog/sprite-shader/</link>
+      <pubDate>Tue, 16 Feb 2016 04:13:47 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/sprite-shader/</guid>
+      <description>&lt;p&gt;Unity公式のスプライトシェーダをベースにした、スプライトにエフェクトをつけるシェーダ2本。&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Mac 10.11&lt;/li&gt;
-&lt;li&gt;VirtualBox 5.0.28&lt;/li&gt;
-&lt;li&gt;Vagrant 1.8.6
-
-&lt;ul&gt;
-&lt;li&gt;CentOS6.7&lt;/li&gt;
-&lt;li&gt;CentOS6.8&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;指定色でベタ塗りにするシェーダ：&lt;code&gt;SpriteBetaMask&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;指定色でアウトラインと影をつけるシェーダ：&lt;code&gt;SpriteOutline&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</description>
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>MetalのGPGPUによるパーティクルデモ</title>
+      <link>https://mike-neko.github.io/blog/metal-image/</link>
+      <pubDate>Thu, 11 Feb 2016 09:20:27 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal-image/</guid>
+      <description>&lt;p&gt;読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。&lt;/p&gt;
+
+&lt;p&gt;画像サイズが512*512、1ピクセル=1パーティクルに分解するので、約26万個のパーティクルを動かしているが、60FPSを維持している。約100万まで増やすとiPhone6+で30FPSぐらいとなる。&lt;/p&gt;
+
+&lt;p&gt;そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。&lt;/p&gt;
+
+&lt;h2 id=&#34;動作イメージ&#34;&gt;動作イメージ&lt;/h2&gt;</description>
+    </item>
+    
+    <item>
+      <title>Metal組み込み関数</title>
+      <link>https://mike-neko.github.io/blog/metal-function/</link>
+      <pubDate>Thu, 28 Jan 2016 22:32:26 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal-function/</guid>
+      <description>&lt;h2 id=&#34;metalのシェーダで利用できる関数のまとめ&#34;&gt;Metalのシェーダで利用できる関数のまとめ&lt;/h2&gt;
+
+&lt;h4 id=&#34;hlsl-glslは各言語との対比&#34;&gt;HLSL/GLSLは各言語との対比&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;(空白) : 同じ&lt;/li&gt;
+&lt;li&gt;ー : 該当なし&lt;/li&gt;
+&lt;li&gt;△ : 同等の関数があるが詳細が異なる&lt;/li&gt;
+&lt;li&gt;(関数名) : 挙動は同じだが、名前が別の関数がある&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>MetalのGPGPUによるPerlinノイズ</title>
+      <link>https://mike-neko.github.io/blog/metal-noise/</link>
+      <pubDate>Mon, 25 Jan 2016 19:41:59 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal-noise/</guid>
+      <description>&lt;p&gt;GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。&lt;/p&gt;
+
+&lt;p&gt;パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
+デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。&lt;/p&gt;
+
+&lt;h2 id=&#34;動作イメージ&#34;&gt;動作イメージ&lt;/h2&gt;</description>
+    </item>
+    
+    <item>
+      <title>MetalKitのSwift版サンプル</title>
+      <link>https://mike-neko.github.io/blog/metal-model/</link>
+      <pubDate>Fri, 22 Jan 2016 00:23:56 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metal-model/</guid>
+      <description>&lt;p&gt;元ネタのApple公式の&lt;a href=&#34;https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html&#34;&gt;MetalKitEssentials&lt;/a&gt;をSwiftで書き直し＋αしたもの。
+内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
+シェーダもいたってシンプルでライトもなし。&lt;br /&gt;
+ちなみに、MetalKitは&lt;strong&gt;iOS9以降&lt;/strong&gt;でしか使えないので注意。
+&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Hugo利用方法メモ</title>
+      <link>https://mike-neko.github.io/blog/hugo-memo/</link>
+      <pubDate>Wed, 20 Jan 2016 22:48:33 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/hugo-memo/</guid>
+      <description>&lt;p&gt;このブログは&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;+&lt;code&gt;GitHub Pages&lt;/code&gt;で公開しているがそれにあたってのメモ
+&lt;/p&gt;</description>
     </item>
     
   </channel>

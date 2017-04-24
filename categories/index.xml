@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on M.Ikeの小ネタ集</title>
+    <link>https://mike-neko.github.io/categories/</link>
+    <description>Recent content in Categories on M.Ikeの小ネタ集</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>jp</language>
+    
+	<atom:link href="https://mike-neko.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Ios</title>
+      <link>https://mike-neko.github.io/categories/ios/</link>
+      <pubDate>Wed, 29 Mar 2017 00:58:37 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/categories/ios/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mac</title>
+      <link>https://mike-neko.github.io/categories/mac/</link>
+      <pubDate>Wed, 29 Mar 2017 00:58:37 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/categories/mac/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Old</title>
+      <link>https://mike-neko.github.io/categories/old/</link>
+      <pubDate>Thu, 25 Aug 2016 23:00:38 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/categories/old/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Server</title>
+      <link>https://mike-neko.github.io/categories/server/</link>
+      <pubDate>Sun, 27 Nov 2016 22:50:47 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/categories/server/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Unity</title>
+      <link>https://mike-neko.github.io/categories/unity/</link>
+      <pubDate>Tue, 07 Jun 2016 00:56:50 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/categories/unity/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Web</title>
+      <link>https://mike-neko.github.io/categories/web/</link>
+      <pubDate>Tue, 02 Aug 2016 21:36:00 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/categories/web/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

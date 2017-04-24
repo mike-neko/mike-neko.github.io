@@ -2,11 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://mike-neko.github.io/</loc>
-    <lastmod>2017-03-29T00:58:37+09:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://mike-neko.github.io/blog/modelio-load/</loc>
     <lastmod>2017-03-29T00:58:37+09:00</lastmod>
   </url>
@@ -279,6 +274,167 @@
   <url>
     <loc>https://mike-neko.github.io/blog/hugo-memo/</loc>
     <lastmod>2016-01-20T22:48:33+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/apns/</loc>
+    <lastmod>2016-10-29T22:40:57+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/centos/</loc>
+    <lastmod>2016-11-27T22:50:47+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/db/</loc>
+    <lastmod>2016-11-27T22:50:47+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/docker/</loc>
+    <lastmod>2016-09-29T01:44:58+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/github/</loc>
+    <lastmod>2016-12-14T19:52:13+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/gpgpu/</loc>
+    <lastmod>2016-02-25T22:05:16+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/http2/</loc>
+    <lastmod>2016-10-29T22:40:57+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/hugo/</loc>
+    <lastmod>2016-02-16T23:07:23+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/categories/ios/</loc>
+    <lastmod>2017-03-29T00:58:37+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/</loc>
+    <lastmod>2017-03-29T00:58:37+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/categories/mac/</loc>
+    <lastmod>2017-03-29T00:58:37+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/metal/</loc>
+    <lastmod>2017-03-29T00:58:37+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/nginx/</loc>
+    <lastmod>2016-06-03T21:29:36+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/objc/</loc>
+    <lastmod>2016-06-07T00:56:50+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/categories/old/</loc>
+    <lastmod>2016-08-25T23:00:38+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/opencv/</loc>
+    <lastmod>2016-06-07T00:56:50+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/php/</loc>
+    <lastmod>2016-12-06T22:04:28+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/post/</loc>
+    <lastmod>2017-03-29T00:58:37+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/categories/server/</loc>
+    <lastmod>2016-11-27T22:50:47+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/ssl/</loc>
+    <lastmod>2016-09-06T00:35:57+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/swift2/</loc>
+    <lastmod>2016-08-25T23:00:38+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/swift3/</loc>
+    <lastmod>2017-03-29T00:58:37+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/</loc>
+    <lastmod>2016-10-29T22:40:57+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/categories/unity/</loc>
+    <lastmod>2016-06-07T00:56:50+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/categories/web/</loc>
+    <lastmod>2016-08-02T21:36:00+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/webrtc/</loc>
+    <lastmod>2016-11-30T01:38:22+09:00</lastmod>
+    <priority>0</priority>
   </url>
   
 </urlset>

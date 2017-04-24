@@ -145,11 +145,11 @@
     <br/>
     <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
     </span>
-    
-
-<p>基本的にSwiftからポインタをそのまま扱う機会はほとんどないが、CのAPIやMetal等でポインタを扱う場合用のメモ</p>
+    <p>基本的にSwiftからポインタをそのまま扱う機会はほとんどないが、CのAPIやMetal等でポインタを扱う場合用のメモ</p>
 
 <p>なお、画像などのバイナリデータを単に扱いたいだけの場合は<code>Data</code>が<code>UInt8</code>の配列と同等に扱えるようになったのでそっちを使った方が良い</p>
+
+<p></p>
 
 <p>実際の使い方は<a href="../swift-pointerc">実践編</a>も参照</p>
 
@@ -346,7 +346,6 @@ printInt(atAddress: &amp;numbers)       // inoutなので&amp;
 let numberPointer = UnsafePointer&lt;Int&gt;(&amp;number)
 // numberPointerの動作は未定義
 </code></pre>
-
   </div>
   
 </div>
