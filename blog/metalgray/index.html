@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Model I/Oで立体図形のメッシュを生成 &middot; M.Ike</title>
+  <title>画像をグレースケールへ変換する（Metal編） &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -136,10 +136,10 @@
 
 <div class="content container">
   <div class="post">
-    <h1>Model I/Oで立体図形のメッシュを生成</h1>
-    <span class="post-date">Mar 5, 2017 
+    <h1>画像をグレースケールへ変換する（Metal編）</h1>
+    <span class="post-date">May 3, 2017 
     
-    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
     
     
     <br/>
@@ -147,119 +147,92 @@
     </span>
     <h2 id="概要">概要</h2>
 
-<p>Metalで描画のテストなどでさくっとモデルを表示したい時に、Model I/Oを使って3Dのモデルを生成する方法</p>
+<p>RGBの<code>MTLTexture</code>をグレースケールの<code>MTLTexture</code>に変換する方法</p>
 
-<p>法線やUV座標も作ってくれるので地味に便利である</p>
+<p><code>UIImage</code>を変換する方法は<a href="../grayimage">こちら</a>を参照
+</p>
 
-<p></p>
+<p>Metal上でこういった画像処理をしたい場合は、<code>MetalPerformanceShaders</code>を利用する。
+今回のような色空間の変更だけでなく、各種フィルタ処理なども高速に処理できる（どれくらい高速かは未確認）</p>
 
-<h2 id="生成されるモデル">生成されるモデル</h2>
+<p>ただし、<strong>iOS10(iOS_GPUFamily2_v3)以降</strong>でしか使えない</p>
 
-<p>生成できる図形の種類は、</p>
+<h2 id="使い方">使い方</h2>
 
-<ul>
-<li>ボックス</li>
-<li>球体</li>
-<li>シリンダ</li>
-<li>円錐</li>
-<li>平面</li>
-<li>正20面体</li>
-</ul>
+<p>色空間の変更には<code>MPSImageConversion</code>を利用する</p>
 
-<p>生成時には大きさや分割数も指定できる</p>
-
-<p>各頂点データの中身は、シェーダで書くと以下の感じ</p>
-
-<pre><code>struct Vertex {
-    float3 position    [[ attribute(0) ]];
-    float3 normal      [[ attribute(1) ]];
-    float2 texcoord    [[ attribute(2) ]];
-};
-</code></pre>
-
-<h2 id="生成の方法">生成の方法</h2>
-
-<p>流れとしては、</p>
+<p>色空間の定義は<a href="https://developer.apple.com/reference/coregraphics/cgcolorspace">こちら</a>の<code>Accessing System-Defined Color Spaces</code>を参照</p>
 
 <ol>
-<li><code>MDLMesh</code>のクラスメソッドで指定した図形のメッシュを生成</li>
-<li>Metalで扱えるように<code>MTKMesh</code>へ変換</li>
-<li>頂点データに合わせて<code>MTLRenderPipelineState</code>を生成</li>
-<li>メッシュを描画</li>
-</ol>
+<li><p>変換元と変換後の色空間を定義する<br />
+<code>sRGB</code>からグレースケールの場合は以下のとおり</p>
 
-<p>という感じになる</p>
+<pre><code>let srcColorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
+let dstColorSpace = CGColorSpace(name: CGColorSpace.linearGray)!
+let conversionInfo = CGColorConversionInfo(src: srcColorSpace,
+                                           dst: dstColorSpace)
+</code></pre></li>
 
-<h3 id="メッシュを生成">メッシュを生成</h3>
-
-<p>例えば、ボックスを生成したい場合は以下のとおり</p>
+<li><p>フィルタ（カーネル）を生成する</p>
 
 <pre><code>let device = MTLCreateSystemDefaultDevice()!
-let allocator = MTKMeshBufferAllocator(device: device)
-let mdlMesh = MDLMesh.newBox(withDimensions: vector_float3(1),
-                             segments: vector_uint3(2),
-                             geometryType: .triangles,
-                             inwardNormals: false,
-                             allocator: allocator)
+let conversion = MPSImageConversion(device: device,
+                                    srcAlpha: .alphaIsOne,
+                                    destAlpha: .alphaIsOne,
+                                    backgroundColor: nil,
+                                    conversionInfo: conversionInfo)
 </code></pre>
 
-<p><code>MDLMesh.newBox</code>がボックスのメッシュを生成するクラスメソッドで、
-引数の<code>dimensions</code>でサイズ、<code>segments</code>で分割数を指定している。
-図形の種類によって引数のパラメータは異なる（円筒なら半径も指定など）</p>
+<p>αは特に関係ないのでデフォルトの1に、背景色も指定しないので<code>nil</code>にしておく</p></li>
 
-<p><code>inwardNormals</code>は法線の向きの指定。
-通常は<code>false</code>で良いが、スカイボックスや部屋の中のように立体の内側に視点がある場合は<code>true</code>にする</p>
+<li><p>実行する</p>
 
-<h3 id="メッシュを変換">メッシュを変換</h3>
+<pre><code>let commandQueue = device.makeCommandQueue()
+let commandBuffer = commandQueue.makeCommandBuffer()
 
-<p><code>MDLMesh</code>を<code>MTKMesh</code>（Metalで描画する時に必要な情報全部がまとまったクラス）へ変換する</p>
-
-<pre><code>let mesh = try! MTKMesh(mesh: mdlMesh, device: device)
+conversion.encode(commandBuffer: commandBuffer,
+                  sourceTexture: colorTexture,
+                  destinationTexture: grayTexture)
+// 必要に応じて他のMetalの処理
+commandBuffer.commit()
 </code></pre>
 
-<h3 id="mtlrenderpipelinestateを生成">MTLRenderPipelineStateを生成</h3>
+<p>これで<code>grayTexture</code>にグレースケール化された画像が入る</p></li>
+</ol>
 
-<p><code>MTLRenderPipelineState</code>を生成する際にメッシュの頂点情報を与えて生成する</p>
+<h2 id="小ネタ">小ネタ</h2>
 
-<pre><code>let vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(mesh.vertexDescriptor)
-let renderDescriptor = MTLRenderPipelineDescriptor()
-renderDescriptor.vertexDescriptor = vertexDescriptor
-// ここで通常どおりシェーダなどの設定をする
-let renderState = try! device.makeRenderPipelineState(descriptor: renderDescriptor)
+<h3 id="色空間の調べ方">色空間の調べ方</h3>
+
+<p>変換先の色空間はともかく、変換元の色空間がなんなのか判らない場合、
+<code>UIImage</code>（<code>CGImage</code>）であれば以下で取得できる</p>
+
+<pre><code>let image: UIImage = ...
+let colorSpace = image.cgImage!.colorSpace
 </code></pre>
 
-<p>ただし、生成されるメッシュの頂点形式は固定のようなので手動で設定するのもありかもしれない</p>
+<p>ちなみに<code>nil</code>になる場合は、マスク画像が入っているらしい</p>
 
-<h3 id="メッシュを描画">メッシュを描画</h3>
+<h3 id="mpsimageの場合">MPSImageの場合</h3>
 
-<pre><code>renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer,
-                              offset: 0, at: 0)
-renderEncoder.drawIndexedPrimitives(
-    type: mesh.submeshes[0].primitiveType,
-    indexCount: mesh.submeshes[0].indexCount,
-    indexType: mesh.submeshes[0].indexType,
-    indexBuffer: mesh.submeshes[0].indexBuffer.buffer,
-    indexBufferOffset: mesh.submeshes[0].indexBuffer.offset)
+<p>MPSをCNNで使っている場合などで、<code>MTLTexture</code>ではなく<code>MPSImage</code>がソースの場合は、</p>
+
+<pre><code>conversion.encode(commandBuffer: commandBuffer,
+                  sourceTexture: colorImage.texture,
+                  destinationTexture: grayImage.texture)
 </code></pre>
 
-<p>メッシュのデータはインデックスバッファ形式で格納されているので、<code>drawIndexedPrimitives</code>を使う。
-また、<code>VertexBuffer</code>は一つのみ、サブメッシュも一つのみ生成されるようなので固定にしている</p>
+<p>というように指定する</p>
 
-<h2 id="ソース">ソース</h2>
-
-<p>必要最低限（ライト固定、テクスチャなし）のコードは以下の感じ<br />
-mac用だがiOSへもViewController周り以外はそのまま使える</p>
-
-<script type="text/javascript" src="https://gist.github.com/6ed7ba3fe83bcf0418a6f5e682e6138a.js"></script>
-
-<p><code>Matrix</code>周りは<a href="https://github.com/mike-neko/MetalTessellation/blob/master/MetalTessellation/Matrix.swift">こちら</a>を参照</p>
+<p>なお、この場合は、必ず<code>MPSImage</code>のチャンネル数を合わせないと実行時にエラーとなるので注意
+（RGBなら3、グレースケールなら1）</p>
 
 <h1 id="開発環境">開発環境</h1>
 
 <ul>
-<li>Xcode 8.2</li>
-<li>iOS 10</li>
-<li>macOS 10.12</li>
+<li>Xcode 8.3</li>
+<li>iOS 10.3.1</li>
+<li>iPhone 7+</li>
 </ul>
   </div>
   

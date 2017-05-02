@@ -6,10 +6,24 @@
     <description>Recent content on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Mon, 24 Apr 2017 23:44:11 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 03 May 2017 00:11:00 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>画像をグレースケールへ変換する（Metal編）</title>
+      <link>https://mike-neko.github.io/blog/metalgray/</link>
+      <pubDate>Wed, 03 May 2017 00:11:00 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/metalgray/</guid>
+      <description>&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;RGBの&lt;code&gt;MTLTexture&lt;/code&gt;をグレースケールの&lt;code&gt;MTLTexture&lt;/code&gt;に変換する方法&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;UIImage&lt;/code&gt;を変換する方法は&lt;a href=&#34;../grayimage&#34;&gt;こちら&lt;/a&gt;を参照
+&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>UIImageをグレースケールに変換する</title>
