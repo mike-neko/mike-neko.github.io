@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Arkit on M.Ikeの小ネタ集</title>
+    <link>https://mike-neko.github.io/tags/arkit/</link>
+    <description>Recent content in Arkit on M.Ikeの小ネタ集</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>jp</language>
+    <lastBuildDate>Sun, 16 Jul 2017 14:36:16 +0900</lastBuildDate>
+    
+	<atom:link href="https://mike-neko.github.io/tags/arkit/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ARKitのまとめ（概要）</title>
+      <link>https://mike-neko.github.io/blog/arkit1/</link>
+      <pubDate>Sun, 16 Jul 2017 14:36:16 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/arkit1/</guid>
+      <description>&lt;h1 id=&#34;概要&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;WWDC2017で発表された&lt;code&gt;ARKit&lt;/code&gt;についてのまとめ&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;ARKit&lt;/code&gt;はiOS上でAR​を実現するためのフレームワークである&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

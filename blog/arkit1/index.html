@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>ARKitのまとめ（概要） &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(26)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(11)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/arkit">arkit&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(10)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(19)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>ARKitのまとめ（概要）</h1>
+    <span class="post-date">Jul 16, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/arkit">arkit</a>
+    </span>
+    <h1 id="概要">概要</h1>
+
+<p>WWDC2017で発表された<code>ARKit</code>についてのまとめ</p>
+
+<p><code>ARKit</code>はiOS上でAR​を実現するためのフレームワークである</p>
+
+<p></p>
+
+<p>スマホでのよくあるARでは、GPSの位置情報を元にしたローケーション型や画像認識を元にしたマーカー型やマーカーレス型が多いが、<code>ARKit</code>では画像認識とモーションセンサーを組み合わせた自己位置認識(<code>visual-inertial odometry</code>)を元にしている</p>
+
+<p>一般的な使い方の手順としては、</p>
+
+<ol>
+<li>実空間の状態（位置など）を検出する</li>
+<li>検出した情報を元に、仮想オブジェクトを配置する</li>
+<li>カメラでキャプチャした画像に重ね合わせて仮想オブジェクトを描画</li>
+</ol>
+
+<p>となる。
+この仮想オブジェクトとは、例えば家具を配置するアプリなら家具に該当するもので、ARとして現実世界に登場させたい「もの」のことである</p>
+
+<p>このオブジェクトを描画する際に、リアリティをいかに持たせるか（仮想のオブジェクトと現実の景色を融合させるか）がARのポイントとなる。
+例えば、家具を配置させるアプリの場合は、実際に床の上に実物大で家具が置かれていたり、カメラ（デバイス）の位置や向きが変わるとそれに追従して家具の位置や向きも変わる必要がある</p>
+
+<p><code>ARKit</code>の場合は、デバイスや仮想オブジェクトの位置や向き、大きさを簡単に取得でき、<code>SceneKit</code>や<code>SpriteKit</code>を使えば描画も簡単である（アプリ側での座標計算は基本不要）。
+また、他のフレームワークと違って、照明状況（明るさ）も取得できるのが特徴。
+ただし、検知できる物体が平面（床）だけなので、マーカー型の様にこちらからピンポイントの位置を指定して出すのは難しい。
+一方で、ヒットテストがあるので、ユーザが画面をタップして位置を指定というのは簡単である</p>
+
+<h2 id="動作環境">動作環境</h2>
+
+<ul>
+<li>iOS11</li>
+<li>iPhone6S以降</li>
+</ul>
+
+<p>機種が対応していれば、デプスセンサーの様な追加のセンサーであったり、空間スキャンなどの事前設定が不要なのも特徴
+（ただし、その分環境によっては認識精度が落ちる）</p>
+
+<p>なお、<code>Unity</code>や<code>UE4</code>でもフルサポートされる予定</p>
+
+<h2 id="他のフレームワークとの関係性">他のフレームワークとの関係性</h2>
+
+<p>以下の2つのフレームワークの上に構成されている</p>
+
+<ul>
+<li><code>AVFoundation</code>: カメラ画像のキャプチャ用</li>
+<li><code>CoreMotion</code>: センサー用</li>
+</ul>
+
+<p>AR空間に配置したオブジェクトのレンダリング用に、以下のフレームワークには専用のクラスが用意されている</p>
+
+<ul>
+<li><code>SceneKit</code>: 3Dの場合</li>
+<li><code>SpriteKit</code>: 2Dの場合</li>
+</ul>
+
+<p>カスタムレンダリングをしたい場合は、<code>Metal</code>を使うことが推奨されている</p>
+
+<h1 id="機能">機能</h1>
+
+<h2 id="デバイスのトラッキング">デバイスのトラッキング</h2>
+
+<p>実空間におけるデバイスの相対的な位置や向きを追跡（トラッキング）し続ける機能</p>
+
+<p>「相対的な」というのがポイントで、<code>ARKit</code>の実行開始時を原点<code>(0, 0, 0)</code>として、どれだけデバイスが動いたかを追跡し続けることにより、現時点での位置や向きを取得できるようにしている</p>
+
+<p>デバイスの位置が特定できるので、それを元にAR空間に追加した仮想オブジェクトの位置も特定できる</p>
+
+<p>また、実際の物体のスケール（大きさ）も<code>m</code>（メートル）単位で取得できる</p>
+
+<h3 id="仕組みと動作">仕組みと動作</h3>
+
+<p>カメラの画像やデバイスの位置や向きや回転から、セッションの開始位置からの相対的な位置（物理的な距離と向き）を求めている。
+画像からは3次元の特徴点を複数検出し、それを元に三角測量の原理で特定しているらしい</p>
+
+<p>よって、画像やセンサーのデータが止まってしまうと、トラッキングもできなくなる。
+また、特徴点の検出がしにくい画像（背景）の場合もトラッキングが制限される。
+例えば、白い壁の様に特徴となるものが無い場合や十分な明るさがない場合は、精度が落ちたりトラッキングができなくなる</p>
+
+<p>トラッキング時は、動きの少ない画像（デバイスや背景があまり動かない）が効果的である。
+あまりに動きが大きいとモーションデータ（センサー情報）と画像情報が一致せずにドリフトが発生してしまう</p>
+
+<h2 id="場面把握">場面把握</h2>
+
+<p>デバイスがある空間（シーン）の状況を把握する機能</p>
+
+<p>以下の3つから成る</p>
+
+<ul>
+<li>平面検出: 床やテーブルといった平面（水平面）を検出する機能</li>
+<li>ヒットテスト: 指定したポイントからレイキャストを行い、平面や特徴点との交差判定を行うする機能</li>
+<li>照明の明るさを推測する機能</li>
+</ul>
+
+<p>この機能により、指定したテーブルの上にオブジェクトをリアルに配置するといったことが行える</p>
+
+<h3 id="仕組みと動作-1">仕組みと動作</h3>
+
+<p>シーンの状況は画像を複数のフレームにわたり集計することで検出している。
+それで、カメラを動かすならより多くの情報を取得できる（ただし、速く動かすとトラッキング精度が落ちる）。
+逆に言うと、カメラで捉えていない部分の状況の把握はできない（当然だけど・・・）</p>
+
+<p>この状況の把握はリアルタイムで行われ、例えばデバイスを動かすことで新たな平面が検出されたりすると、即座にアプリ側に通知される</p>
+
+<h4 id="平面検出">平面検出</h4>
+
+<p>検出できるのは水平面だけであり、壁のような垂直面は検出できない。
+平面は一つだけでなく、ある程度の大きさのある平面なら複数検出できる</p>
+
+<p>実際に検出された平面は、その平面が収まる矩形に調整されて通知される。
+一度検出された平面も、デバイスが動くことで情報が追加されると範囲が更新されていく</p>
+
+<p>もし複数の平面が検出され、それらが物理的に同一の面であるなら、ARKitはそれを一つの面にマージする。
+マージされた場合、新しい方の面が削除され、元からある方の面の範囲が大きくなる</p>
+
+<h4 id="ヒットテスト">ヒットテスト</h4>
+
+<p>指定したポイントとぶつかる平面または特徴点があるかを検索する。
+検索対象はオプションとして指定でき、結果は距離が近い順にソートされた配列で取得できる。
+（配列の最初にデバイスと一番近い交点が入る）</p>
+
+<p>始点となるポイントは、正規化されたカメラ画像の座標空間で指定できる。
+座標系は左上が<code>(0, 0)</code>, 右下が<code>(1, 1)</code>となる。
+この指定された座標とデバイスの位置から実空間での始点となる位置を求め、
+そこからデバイスのカメラの向きに向かってレイを照射し交差判定を行う</p>
+
+<p><code>SceneKit</code>や<code>SpriteKit</code>では、ビュー座標で指定ができるメソッドが準備されているので、
+画面のタップした位置を渡して結果を取得するのが簡単にできる</p>
+
+<h4 id="照明の状況">照明の状況</h4>
+
+<p>シーンの環境光の強度を推定する機能。
+デフォルト（ニュートラル）を1000ルーメン。
+明るい場所では数値は大きく、暗い場所では数値は小さくなる</p>
+
+<p>これによりリアルなライティングを行え、仮想のオブジェクトを現実空間により溶け込ませることができる。
+なお、<code>SceneKit</code>の<code>ARSCNView</code>は自動でこの値を使ってライトを調整することができる</p>
+
+<h1 id="確認環境">確認環境</h1>
+
+<ul>
+<li>Xcode9.0 beta3</li>
+</ul>
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

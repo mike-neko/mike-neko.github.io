@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Swift2 &middot; M.Ike</title>
+  <title>Arkit &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -26,7 +26,7 @@
   
   
   
-  <link href="https://mike-neko.github.io/tags/swift2/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
+  <link href="https://mike-neko.github.io/tags/arkit/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -144,108 +144,35 @@
 
 
 <div class="content container">
-  <h1>tag: " swift2 "</h1>
+  <h1>tag: " arkit "</h1>
   <div class="posts">
     
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/metal-image/">MetalのGPGPUによるパーティクルデモ</a>
+        <a href="https://mike-neko.github.io/blog/arkit1/">ARKitのまとめ（概要）</a>
       </h1>
-      <span class="post-date">Feb 11, 2016
+      <span class="post-date">Jul 16, 2017
       
-      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
+      <a class="label" href="https://mike-neko.github.io/tags/arkit">arkit</a>
       </span>
       
-      <p>読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。</p>
+      <h1 id="概要">概要</h1>
 
-<p>画像サイズが512*512、1ピクセル=1パーティクルに分解するので、約26万個のパーティクルを動かしているが、60FPSを維持している。約100万まで増やすとiPhone6+で30FPSぐらいとなる。</p>
+<p>WWDC2017で発表された<code>ARKit</code>についてのまとめ</p>
 
-<p>そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。</p>
+<p><code>ARKit</code>はiOS上でAR​を実現するためのフレームワークである</p>
 
-<h2 id="動作イメージ">動作イメージ</h2>
-      <a href="https://mike-neko.github.io/blog/metal-image/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/metal-noise/">MetalのGPGPUによるPerlinノイズ</a>
-      </h1>
-      <span class="post-date">Jan 25, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
-      </span>
-      
-      <p>GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。</p>
-
-<p>パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
-デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。</p>
-
-<h2 id="動作イメージ">動作イメージ</h2>
-      <a href="https://mike-neko.github.io/blog/metal-noise/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/metal-model/">MetalKitのSwift版サンプル</a>
-      </h1>
-      <span class="post-date">Jan 22, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
-      </span>
-      
-      <p>元ネタのApple公式の<a href="https://developer.apple.com/library/mac/samplecode/MetalKitEssentials/Introduction/Intro.html">MetalKitEssentials</a>をSwiftで書き直し＋αしたもの。
-内容は主にMetalKitを使って、obj形式のモデルをテクスチャありで表示させるだけ。
-シェーダもいたってシンプルでライトもなし。<br />
-ちなみに、MetalKitは<strong>iOS9以降</strong>でしか使えないので注意。
-</p>
-      <a href="https://mike-neko.github.io/blog/metal-model/">Read On &rarr;</a>
+<p></p>
+      <a href="https://mike-neko.github.io/blog/arkit1/">Read On &rarr;</a>
       
     </div>
     
     
-    
-    <ul class="pagination">
-        
-        <li>
-            <a href="/tags/swift2/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
-        </li>
-        
-        <li
-        >
-        <a href="/tags/swift2/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
-        </li>
-        
-        <li
-        ><a href="/tags/swift2/">1</a></li>
-        
-        <li
-        class="active"><a href="/tags/swift2/page/2/">2</a></li>
-        
-        <li
-        class="disabled">
-        <a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
-        </li>
-        
-        <li>
-            <a href="/tags/swift2/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
-        </li>
-        
-    </ul>
     
   </div>
 </div>
