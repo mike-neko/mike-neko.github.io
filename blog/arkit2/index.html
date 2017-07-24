@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>ARKitのまとめ（実装） &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(27)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(11)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/arkit">arkit&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(10)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(19)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>ARKitのまとめ（実装）</h1>
+    <span class="post-date">Jul 23, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/arkit">arkit</a>
+    </span>
+    <h1 id="概要">概要</h1>
+
+<p>WWDC2017で発表された<code>ARKit</code>の実装についてのまとめ</p>
+
+<p></p>
+
+<p><code>ARKit</code>は<code>ARSession</code>というセッションを通して利用できる</p>
+
+<p>基本的な流れは、セッションを実行しデリゲートで状況の変化を受け取ることになる</p>
+
+<p><code>Metal</code>を使う場合など自分でレンダリングのループを回したい様な場合は、デリゲートを使わずに一定時間ごとにセッションのオブジェクトにアクセスしてチェックしてもOK</p>
+
+<h2 id="レンダリング用のフレームワークとの連携">レンダリング用のフレームワークとの連携</h2>
+
+<p><code>ARKit</code>の特徴の一つは、<code>SceneKit</code>や<code>SpriteKit</code>にそれぞれ専用のクラスが準備されていて、オブジェクトのレンダリングまで簡単に連携できる点である</p>
+
+<ul>
+<li><code>SceneKit</code>: 3Dの描画用
+
+<ul>
+<li><code>ARSCNView</code>(<code>SCNView</code>のサブクラス)</li>
+<li><code>ARSCNViewDelegate</code>(<code>SCNViewDelegate</code> + <code>ARSessionDelegate</code>)</li>
+</ul></li>
+<li><code>SpriteKit</code>:
+
+<ul>
+<li><code>ARSKView</code>(<code>SKView</code>のサブクラス)</li>
+<li><code>ARSKViewDelegate</code>(<code>SKViewDelegate</code> + <code>ARSessionDelegate</code>)</li>
+</ul></li>
+</ul>
+
+<p>それぞれのクラスには、あらかじめ<code>ARSession</code>がメンバとして存在している。また、カメラでキャプチャされた画像を背景として描画する</p>
+
+<h1 id="使い方">使い方</h1>
+
+<h2 id="初期設定-実行">初期設定〜実行</h2>
+
+<h3 id="初期設定">初期設定</h3>
+
+<h4 id="カメラのパーミッション">カメラのパーミッション</h4>
+
+<p><code>ARKit</code>のアプリを実行するにあたり、カメラのキャプチャを行うので、<code>Info.plist</code>でカメラの利用設定が必須</p>
+
+<ul>
+<li><code>Privacy - Camera Usage Description</code>: 利用目的の説明文（初回利用時の許可ダイアログに表示される）</li>
+</ul>
+
+<p>なお、これがないと実行時に落ちる</p>
+
+<h4 id="対応機種の確認">対応機種の確認</h4>
+
+<p><code>ARKit</code>は実行可能なデバイスが限られている（<code>A9</code>チップ以降）ので、以下のどちらかで対応機種の確認を行う</p>
+
+<ul>
+<li>インストール自体の制限<br />
+<code>ARKit</code>が必須の場合は<code>Info.plist</code>で以下の制限を追加し、非対応機種にインストールできなくする
+
+<ul>
+<li><code>Required device capabilities</code>: <code>arkit</code><br /></li>
+</ul></li>
+<li>実行時の確認<br />
+実行時の確認で良い場合は、以下のフラグで確認する
+
+<ul>
+<li><code>ARWorldTrackingSessionConfiguration.isSupported</code></li>
+</ul></li>
+</ul>
+
+<h2 id="実行-停止">実行〜停止</h2>
+
+<h3 id="arsessionの生成">ARSessionの生成</h3>
+
+<p><code>ARSCNView</code>や<code>ARSKView</code>を使う場合は、特に自分で生成する必要はない。
+使わずに自分で生成する場合は、<code>ViewController</code>などのメンバとして保持しておく</p>
+
+<h3 id="設定">設定</h3>
+
+<p>何をトラッキングするかといった設定は<code>ARSessionConfiguration</code>で指定する</p>
+
+<p>例えば、水平面（床）を検出したい場合は、</p>
+
+<pre><code>let configuration = ARWorldTrackingSessionConfiguration()
+configuration.planeDetection = .horizontal
+</code></pre>
+
+<p>というように設定をする</p>
+
+<h3 id="実行-開始">実行（開始）</h3>
+
+<p>セッションを開始するには、一つ前で作成した<code>ARSessionConfiguration</code>の設定を引数にして<code>run</code>を呼ぶ</p>
+
+<pre><code>// let session = ARSession()
+session.run(configuration)
+</code></pre>
+
+<p>なお、<code>run</code>でオプションの<code>.resetTracking</code>を指定すると、前回実行時のトラッキング情報をリセットが可能（他にもオプションあり）</p>
+
+<h3 id="停止">停止</h3>
+
+<p>セッションは<code>pause</code>で一時停止できる</p>
+
+<pre><code>session.pause()
+</code></pre>
+
+<p>再開時は再度、<code>run</code>を呼び出せば良い。ただし、都度<code>ARSessionConfiguration</code>を指定する必要がある
+（再開前と同じトラッキングをしたければ、同じ設定を渡す必要がある。
+逆に別の設定に切り替えて再開しても良い）</p>
+
+<p>なお、アプリがバックグラウンドにいった場合などは、カメラが利用不可となる為、トラッキングが停止されてしまうので、<code>viewWillDisappear</code>で明示的に停止した方が良いかもしれない（停止時の通知は受信可能）</p>
+
+<h2 id="結果の取得">結果の取得</h2>
+
+<p><code>ARSession</code>のイベントは、<code>ARSessionDelegate</code>で通知されるので、<code>delegate</code>を登録して受信する</p>
+
+<pre><code>class ViewController: UIViewController, ARSessionDelegate {
+    var session: ARSession!
+
+    override func viewDidLoad() {
+        ...
+
+        session = ARSession()
+        session.delegate = self
+    }
+
+    ...
+}
+</code></pre>
+
+<p>なお、<code>ARSCNView</code>や<code>ARSKView</code>を使う場合はそれぞれ専用のデリゲートが用意されている。
+セッション状態のハンドリングは共通であるが、コンテンツのハンドリングはそれぞれ専用になっている</p>
+
+<h3 id="セッション状態の-ハンドリング">セッション状態のハンドリング</h3>
+
+<ul>
+<li><p>エラー発生時</p>
+
+<pre><code>func session(ARSession, didFailWithError: Error)
+</code></pre></li>
+
+<li><p>セッションが中断した時<br />
+アプリがバックグラウンドに行ってカメラのキャプチャが中断された場合など</p>
+
+<pre><code>func sessionWasInterrupted(ARSession)
+</code></pre></li>
+
+<li><p>中断したセッションが再開された時</p>
+
+<pre><code>func sessionInterruptionEnded(ARSession)
+</code></pre>
+
+<p><code>sessionWasInterrupted</code>の後に呼ばれる</p></li>
+
+<li><p>トラッキング状態（品質）が変わった時</p>
+
+<pre><code>func session(ARSession, cameraDidChangeTrackingState: ARCamera)
+</code></pre></li>
+</ul>
+
+<h3 id="コンテンツのハンドリング">コンテンツのハンドリング</h3>
+
+<ul>
+<li><p>カメラのキャプチャ画像が更新された時<br />
+キャプチャ画像と同時にその画像から解析されたAR情報を取得できる</p>
+
+<pre><code>func session(ARSession, didUpdate: ARFrame)
+</code></pre>
+
+<p><code>Metal</code>などで独自レンダリングをする場合に使う想定</p></li>
+
+<li><p>アンカーが追加された時</p>
+
+<pre><code>func session(ARSession, didAdd: [ARAnchor])
+</code></pre></li>
+
+<li><p>アンカーが更新された時</p>
+
+<pre><code>func session(ARSession, didUpdate: [ARAnchor])
+</code></pre></li>
+
+<li><p>アンカーが削除された時</p>
+
+<pre><code>func session(ARSession, didRemove: [ARAnchor])
+</code></pre></li>
+</ul>
+
+<p>それぞれの具体的な使い方は次回</p>
+
+<h1 id="確認環境">確認環境</h1>
+
+<ul>
+<li>Xcode9.0 beta3</li>
+</ul>
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+
