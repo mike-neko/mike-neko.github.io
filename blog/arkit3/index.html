@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>ARKitのまとめ（実装2） &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(28)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(11)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/arkit">arkit&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(10)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(19)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>ARKitのまとめ（実装2）</h1>
+    <span class="post-date">Jul 25, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/arkit">arkit</a>
+    </span>
+    <h1 id="概要">概要</h1>
+
+<p>WWDC2017で発表された<code>ARKit</code>の実装についてのまとめ2</p>
+
+<p></p>
+
+<p><code>ARKit</code>では<code>ARSession</code>実行後の状況を<code>ARSessionDelegate</code>の通知で取得できる</p>
+
+<h2 id="トラッキング状態">トラッキング状態</h2>
+
+<p><code>ARSession</code>実行時のデバイスのトラッキング状態は、</p>
+
+<pre><code>func session(ARSession, cameraDidChangeTrackingState: ARCamera)
+</code></pre>
+
+<p>で通知される。
+この<code>ARCamera</code>の中の<code>trackingState</code>でトラッキング状態を取得できる</p>
+
+<p>ステータスの種類は以下のとおり</p>
+
+<ul>
+<li><code>Not Available</code></li>
+<li><code>Normal</code></li>
+<li><code>Limited</code></li>
+</ul>
+
+<p>セッション開始時は<code>Not Available</code>である。
+まだ、トラッキングできるだけのデータが入ってきていない状態で、デバイス位置は初期状態となっている</p>
+
+<p>しばらく経過して、必要なデータが取得できて、デバイスの位置や姿勢をトラッキングできる様になると、<code>Normal</code>へと変わる。<code>Normal</code>の間はデバイス位置の利用が可能である</p>
+
+<p>何らかの原因でトラッキングがうまくできなくない状態になると、<code>Limited</code>になる。<code>Limited</code>の場合は、<code>enum</code>の<code>Associated Value</code>で理由が渡されてくる</p>
+
+<h2 id="ar情報の-取得">AR情報の取得</h2>
+
+<p><em>※以下は<code>SceneKit</code>や<code>SpriteKit</code>を使わない場合の前提である</em></p>
+
+<h3 id="arframe">ARFrame</h3>
+
+<p><code>ARSession</code>を実行すると、<code>ARKit</code>が検出したデバイスや空間の状況は、<code>ARFrame</code>のオブジェクトとして取得できる。
+つまり、<code>ARFrame</code>は<code>ARKit</code>が現在認識している状況そのものといえる</p>
+
+<p>この<code>ARFrame</code>の取得は、</p>
+
+<ul>
+<li><code>ARSessionDelegate</code>の<code>didUpdate</code>で更新時に取得</li>
+<li><code>ARSession</code>のプロパティの<code>currentFrame</code>で任意に取得</li>
+</ul>
+
+<p>の2通りがある</p>
+
+<p><code>ARFrame</code>には以下の情報が含まれる</p>
+
+<ul>
+<li>カメラのキャプチャ画像</li>
+<li>トラッキング情報
+
+<ul>
+<li>デバイスの位置や向き</li>
+<li>トラッキング状態</li>
+</ul></li>
+<li>空間（シーン）状況
+
+<ul>
+<li>AR空間上のオブジェクトの位置や向き</li>
+<li>検出された面や特徴点</li>
+<li>照明の状況</li>
+</ul></li>
+</ul>
+
+<h3 id="arcamera">ARCamera</h3>
+
+<p><code>ARCamera</code>は空間上に配置された仮想のカメラで、デバイスの位置や向きと一致している（デバイスのカメラを表しているとみなせば良い）</p>
+
+<p><code>ARFrame</code>には1つだけ含まれる</p>
+
+<p>主な中身はトランスフォーム（変換行列）である。これは、セッション開始時のデバイスの位置を原点とし、どれだけ移動や回転したかの行列となっている</p>
+
+<p>他には、トラッキングの状態やレンダリング時に使用出来る各種行列（ビュー行列やプロジェクション行列）も提供されている</p>
+
+<h3 id="aranker">ARAnker</h3>
+
+<p>AR空間上にあるオブジェクトの位置や向きを表している。
+その実体はトランスフォーム（変換行列）である</p>
+
+<p>このオブジェクトは、検出された水平面の様に<code>ARKit</code>によって自動で追加されるほか、任意に追加や削除することができる。
+例えば、画面上に仮想の物体を配置した場合は、対応する<code>ARAnker</code>をセッションに追加することができる。
+つまり、現実空間に実在するオブジェクトを表す場合もあれば、存在しない仮想のオブジェクトを表す場合もある</p>
+
+<p><code>ARFrame</code>はその空間に含まれる全ての<code>ARAnker</code>を配列として保持している。
+このアンカーが追加や削除、更新された場合は、<code>ARSessionDelegate</code>で通知を受信できる</p>
+
+<h4 id="arplaneanchor">ARPlaneAnchor</h4>
+
+<p><code>ARPlaneAnchor</code>は<code>ARAnker</code>のサブクラスで、<code>ARKit</code>が検出した平面を表す</p>
+
+<p>平面なのでセンター位置と面の範囲を持っている。
+<code>ARKit</code>は常に空間の状況を検出、更新するので、これらは動的に変化する場合がある。
+更新された場合は、デリゲートで通知される</p>
+
+<p>例えば、デバイスを動かすことにより床の範囲がさらに検出されて広くなった場合は、センター位置と範囲が更新される。
+また、最初は2つの別々の面として認識されていたものが、実際には一つの大きな面だと認識された場合には、それらの面はマージされて後から検出された面の方が削除される</p>
+
+<h3 id="arpointcloud">ARPointCloud</h3>
+
+<p><code>ARPointCloud</code>は<code>ARKit</code>が検出した特徴点一式を表す</p>
+
+<p>通常はこれを直接使うことはないが、空間のオブジェクトの輪郭とある程度一致する</p>
+
+<h3 id="arlightestimate">ARLightEstimate</h3>
+
+<p><code>ARLightEstimate</code>は現在の空間の環境光（照明）の強度を表す</p>
+
+<p>この値を利用してレンダリング時のライトを調整することで、よりリアルな描画ができる</p>
+
+<h1 id="確認環境">確認環境</h1>
+
+<ul>
+<li>Xcode9.0 beta3</li>
+</ul>
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+
