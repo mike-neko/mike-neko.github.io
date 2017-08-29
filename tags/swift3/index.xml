@@ -17,9 +17,7 @@
       <pubDate>Wed, 03 May 2017 00:11:00 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/metalgray/</guid>
-      <description>&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;RGBの&lt;code&gt;MTLTexture&lt;/code&gt;をグレースケールの&lt;code&gt;MTLTexture&lt;/code&gt;に変換する方法&lt;/p&gt;
+      <description>&lt;p&gt;RGBの&lt;code&gt;MTLTexture&lt;/code&gt;をグレースケールの&lt;code&gt;MTLTexture&lt;/code&gt;に変換する方法&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;UIImage&lt;/code&gt;を変換する方法は&lt;a href=&#34;../grayimage&#34;&gt;こちら&lt;/a&gt;を参照
 &lt;/p&gt;</description>
@@ -56,9 +54,7 @@
       <pubDate>Sun, 05 Mar 2017 22:36:43 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/modelio-mesh/</guid>
-      <description>&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;Metalで描画のテストなどでさくっとモデルを表示したい時に、Model I/Oを使って3Dのモデルを生成する方法&lt;/p&gt;
+      <description>&lt;p&gt;Metalで描画のテストなどでさくっとモデルを表示したい時に、Model I/Oを使って3Dのモデルを生成する方法&lt;/p&gt;
 
 &lt;p&gt;法線やUV座標も作ってくれるので地味に便利である&lt;/p&gt;
 
