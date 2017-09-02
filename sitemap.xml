@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://mike-neko.github.io/blog/makefile/</loc>
+    <lastmod>2017-09-02T22:00:42+09:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://mike-neko.github.io/blog/slideshare/</loc>
     <lastmod>2017-08-29T23:13:59+09:00</lastmod>
   </url>
@@ -373,7 +378,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/</loc>
-    <lastmod>2017-08-29T23:13:59+09:00</lastmod>
+    <lastmod>2017-09-02T22:00:42+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -415,7 +420,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/categories/others/</loc>
-    <lastmod>2017-08-29T23:13:59+09:00</lastmod>
+    <lastmod>2017-09-02T22:00:42+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -427,7 +432,13 @@
   
   <url>
     <loc>https://mike-neko.github.io/post/</loc>
-    <lastmod>2017-08-29T23:13:59+09:00</lastmod>
+    <lastmod>2017-09-02T22:00:42+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/python/</loc>
+    <lastmod>2017-09-02T22:00:42+09:00</lastmod>
     <priority>0</priority>
   </url>
   

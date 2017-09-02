@@ -6,10 +6,21 @@
     <description>Recent content on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Tue, 29 Aug 2017 23:13:59 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 02 Sep 2017 22:00:42 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>指定バイト数でファイルを作る（Python）</title>
+      <link>https://mike-neko.github.io/blog/makefile/</link>
+      <pubDate>Sat, 02 Sep 2017 22:00:42 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/makefile/</guid>
+      <description>&lt;p&gt;ファイルIO系のテストをする時に、指定したバイト数ちょうどで、かつ、ランダムな内容のファイルを&lt;code&gt;Python&lt;/code&gt;で作成する方法&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>SlideShareに日本語のKeynoteをアップロードする</title>

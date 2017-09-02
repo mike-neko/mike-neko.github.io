@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Mac &middot; M.Ike</title>
+  <title>指定バイト数でファイルを作る（Python） &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -26,7 +26,7 @@
   
   
   
-  <link href="https://mike-neko.github.io/categories/mac/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
+  
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -142,71 +142,50 @@
 </div>
 
 
-
-
-
-
-
-
-
 <div class="content container">
-  <h1>category: " mac "</h1>
-  <div class="posts">
+  <div class="post">
+    <h1>指定バイト数でファイルを作る（Python）</h1>
+    <span class="post-date">Sep 2, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/others">others</a> 
     
     
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/docker/">Docker構築メモ</a>
-      </h1>
-      <span class="post-date">Apr 4, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/ios">iOS</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/docker">docker</a><a class="label" href="https://mike-neko.github.io/tags/php">php</a><a class="label" href="https://mike-neko.github.io/tags/db">db</a><a class="label" href="https://mike-neko.github.io/tags/nginx">nginx</a><a class="label" href="https://mike-neko.github.io/tags/ssl">ssl</a>
-      </span>
-      
-      <p>iOS用のサーバ環境をDockerでローカルに構築した時のメモ。</p>
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/python">python</a>
+    </span>
+    <p>ファイルIO系のテストをする時に、指定したバイト数ちょうどで、かつ、ランダムな内容のファイルを<code>Python</code>で作成する方法</p>
 
-<p><em>なお、ローカルの開発用ということでセキュリティは考慮していないので注意</em>
-</p>
-      <a href="https://mike-neko.github.io/blog/docker/">Read On &rarr;</a>
-      
-    </div>
-    
-    
-    
-    <ul class="pagination">
-        
-        <li>
-            <a href="/categories/mac/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
-        </li>
-        
-        <li
-        >
-        <a href="/categories/mac/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
-        </li>
-        
-        <li
-        ><a href="/categories/mac/">1</a></li>
-        
-        <li
-        class="active"><a href="/categories/mac/page/2/">2</a></li>
-        
-        <li
-        class="disabled">
-        <a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
-        </li>
-        
-        <li>
-            <a href="/categories/mac/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
-        </li>
-        
-    </ul>
-    
+<p></p>
+
+<p>指定サイズのファイルを作る方法は、macだと<code>mkfile</code>が有名だが、この方法では1<code>byte</code>単位までは指定できない</p>
+
+<p>簡単なテストならともかく、ちゃんと境界値チェックを行いたい場合には、任意のバイト数ぴったりのファイルが必要となるので、それを作成するスクリプト</p>
+
+<h2 id="ソース">ソース</h2>
+
+<script type="text/javascript" src="https://gist.github.com/186877e5d4cd419d27975b8de8e58d7b.js"></script>
+
+<p>まずは<code>numpy</code>を使って、コマンドラインの引数で指定されたバイト数分のランダムなバイナリを作成する</p>
+
+<pre><code>numpy.random.bytes(int(sys.argv[1]))
+</code></pre>
+
+<p>あとは、単純にそのバイナリをファイルへ書き出しているだけ。
+ちなみに<code>with</code>は例外の処理やら<code>close</code>を勝手にしてくれる便利なもの</p>
+
+<h2 id="使い方">使い方</h2>
+
+<pre><code>python r.py 1000
+</code></pre>
+
+<p>といった感じにすれば、1000byteのファイルが<code>1000.bin</code>という名前で生成される</p>
+
+<p><code>python</code>はライブラリが充実しているので、こういうスクリプトをサクッと作るのに便利</p>
   </div>
+  
 </div>
+
+
 
 
 <script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
