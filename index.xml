@@ -6,10 +6,21 @@
     <description>Recent content on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sat, 02 Sep 2017 22:00:42 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 10 Oct 2017 23:42:36 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ファイル追記書き込み(Swift)</title>
+      <link>https://mike-neko.github.io/blog/outputstream/</link>
+      <pubDate>Tue, 10 Oct 2017 23:42:36 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/outputstream/</guid>
+      <description>&lt;p&gt;Swiftっぽくファイルの書き込みをする方法&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>指定バイト数でファイルを作る（Python）</title>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>CentOSからSQLServerへ接続 &middot; M.Ike</title>
+  <title>ファイル追記書き込み(Swift) &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -144,124 +144,64 @@
 
 <div class="content container">
   <div class="post">
-    <h1>CentOSからSQLServerへ接続</h1>
-    <span class="post-date">Nov 3, 2016 
+    <h1>ファイル追記書き込み(Swift)</h1>
+    <span class="post-date">Oct 10, 2017 
     
-    &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/php">php</a><a class="label" href="https://mike-neko.github.io/tags/db">db</a><a class="label" href="https://mike-neko.github.io/tags/centos">centos</a>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
     </span>
-    <p>CentOSのPHP5.6から<code>PDO_ODBC</code>でSQLServer(MSSQL)へ接続する方法
+    <p>Swiftっぽくファイルの書き込みをする方法</p>
 
-Macの場合は<a href="../mssql-mac/">こちら</a></p>
+<p></p>
 
-<p>なおCentOSからであれば<code>PDO_DBLIB</code>+<code>FreeTDS</code>も可能だが、公式ドライバがあるこちらを試してみた</p>
-
-<h2 id="手順">手順</h2>
-
-<h3 id="sqlserverのドライバのインストール">SQLServerのドライバのインストール</h3>
-
-<ol>
-<li><p>以下でインストール</p>
-
-<pre><code>su
-yum -y update
-yum -y install yum-utils
-yum-config-manager --add-repo https://apt-mo.trafficmanager.net/yumrepos/mssql-rhel6-release/
-yum-config-manager --enable mssql-rhel6-release
-wget &quot;http://aka.ms/msodbcrhelpublickey/dpgswdist.v1.asc&quot;
-rpm --import dpgswdist.v1.asc
-yum -y remove unixODBC
-yum -y install msodbcsql # 途中にライセンスの承諾確認あり
-yum -y install unixODBC-utf16-devel
-</code></pre></li>
-
-<li><p>ODBCドライバの確認</p>
-
-<pre><code>vi /etc/odbcinst.ini
-</code></pre>
-
-<p>として、以下のような文言があればOK</p>
-
-<pre><code>[ODBC Driver 13 for SQL Server]
-Description=Microsoft ODBC Driver 13 for SQL Server
-Driver=/opt/microsoft/msodbcsql/lib64/libmsodbcsql-13.0.so.1.0
-UsageCount=1
-</code></pre></li>
-</ol>
-
-<h3 id="odbcドライバの設定">ODBCドライバの設定</h3>
-
-<pre><code>sudo vi /etc/odbcinst.ini
-</code></pre>
-
-<p>として、次のような設定を追記する</p>
-
-<pre><code>[(ドライバ名として判り易い名称)]
-Driver = （odbcinst.iniの[]で囲まれたドライバ名）
-Description = (適当な説明)
-Trace = Yes
-Server = (サーバのIP)
-Port = (サーバのポート)
-Database = (データベース名)
-</code></pre>
-
-<p>上記の例の場合だと、</p>
-
-<pre><code>[SQLServer]
-Driver = ODBC Driver 13 for SQL Server
-Description = For Develop
-Trace = Yes
-Server = 192.168.0.10
-Port = 1433
-Database = sample
-</code></pre>
-
-<p>といった感じになる</p>
-
-<h3 id="pdo-odbcのインストール">PDO_ODBCのインストール</h3>
-
-<ol>
-<li><p>以下でインストール</p>
-
-<pre><code>yum -y install --enablerepo=remi --enablerepo=remi-php56 php-pdo php-odbc
-</code></pre></li>
-
-<li><p>設定の確認</p>
-
-<pre><code>php -i | grep odbc
-</code></pre>
-
-<p>を実行して、<code>PDO drivers</code>に<code>odbc</code>が表示されていればOK</p></li>
-</ol>
-
-<h2 id="phpからの接続">PHPからの接続</h2>
-
-<p>PDOのDSNの指定は以下の通り</p>
-
-<pre><code>$driver = 'SQLServer';      // odbc.iniで設定したドライバ名
-$user = 'test';             // ユーザ名
-$pass = '1234';             // パスワード
-
-$pdo = new PDO('odbc:' . $driver, $user, $pass); 
-</code></pre>
-
-<h1 id="参考リンク">参考リンク</h1>
+<p>iOSでファイルへの追記書き込みをしたい場合、</p>
 
 <ul>
-<li>PHP公式 <a href="http://php.net/manual/ja/ref.pdo-odbc.php">PDO_ODBC</a></li>
-<li>Microsoft公式 <a href="https://blogs.technet.microsoft.com/dataplatforminsider/2016/10/25/odbc-driver-13-0-for-sql-server-linux-is-now-released/">ODBC Driver 13.0 for SQL Server</a></li>
+<li><code>FileHandle</code>でファイルを開く</li>
+<li><code>seekToEndOfFile</code>でファイルポインタをファイルの最後に移動させる</li>
+<li><code>write</code>で書き込む</li>
 </ul>
+
+<p>というのが、ググるとよく出てくる方法である</p>
+
+<p>上記の方法自体は間違っていないが、ファイルへの書き込みが失敗した(<code>write</code>を実行したらエラーが発生した)場合のエラーが戻り値ではなく、例外で投げられてしまうという問題がある</p>
+
+<p><strong>しかも、この時に投げられる例外はSwiftの例外ではキャッチできないタイプとなっている</strong></p>
+
+<p>もちろん、<a href="../objc-exception">こういった方法</a>を使えばキャッチできなくはないが、正直、面倒である</p>
+
+<p>という訳で、いろいろ探してたどり着いたのが<code>OutputStream</code>を使う方法</p>
+
+<h2 id="ソース">ソース</h2>
+
+<p>メソッドにすると以下のような感じ</p>
+
+<script type="text/javascript" src="https://gist.github.com/6149430f06501b5db9c89aeaf103d5e8.js"></script>
+
+<h2 id="解説">解説</h2>
+
+<p>2行目で書き込み用のストリームを作成する時に、<code>append</code>で追記書き込みを指定している。
+なお、ここを<code>false</code>にすると通常のファイル書き込みに、<code>true</code>にすると追記になる</p>
+
+<p>7~9行目では<code>defer</code>を使ってclose処理を予約している。
+これにより以降の処理でこのメソッドを抜ける（例えば11行目で<code>return false</code>になった）時に、自動的に<code>defer</code>の中の<code>stream.close()</code>が実行される</p>
+
+<p><code>defer</code>は書かれた直後から有効になるので、<code>open</code>の直後に書いておくのがポイント。
+これにより、ファイルのクローズ処理漏れがなくなる</p>
+
+<p>13~15行目で書き込み処理。
+<code>write</code>はポインタでデータを受け取り結果を返すのでこういう書き方になる</p>
+
+<p>本当はちゃんとSwiftで例外を受け取れる様になれば一番良いのだけど・・・</p>
 
 <h1 id="開発環境">開発環境</h1>
 
 <ul>
-<li>CentOS6.8</li>
-<li>PHP 5.6.27 + PDO_ODBC</li>
-<li>ODBC Driver 13.0 for SQL Server</li>
-<li>DBサーバ SQLServer Express 2016(Win)</li>
+<li>Xcode 8.3.3</li>
+<li>iOS 10.3</li>
 </ul>
   </div>
   
