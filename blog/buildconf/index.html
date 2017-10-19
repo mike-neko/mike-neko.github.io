@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>QRコードの読み取りサンプル(Swift) その2 &middot; M.Ike</title>
+  <title>Swift(Xcode)でプリプロセッサを使う &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -144,104 +144,108 @@
 
 <div class="content container">
   <div class="post">
-    <h1>QRコードの読み取りサンプル(Swift) その2</h1>
-    <span class="post-date">Jun 16, 2016 
+    <h1>Swift(Xcode)でプリプロセッサを使う</h1>
+    <span class="post-date">Oct 19, 2017 
     
-    &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
     </span>
-    <p><strong><em>ソースはSwift2なので注意！</em></strong></p>
+    <h2 id="概要">概要</h2>
 
-<p>以前に書いたQRコードの読み取りサンプルの別バージョン。
-今回はカメラ不要で画像データから直接QRコードを読み取りが可能</p>
+<p>Xcodeでプリプロセッサによるソースの切り替えを行う方法
+</p>
 
-<p></p>
+<p>ObjectiveCなどのC系の言語の場合だと、</p>
 
-<blockquote>
-<p>過去の記事（<a href="../code-reader/">QRコードの読み取りサンプル</a>）</p>
-</blockquote>
-
-<p>サンプルでは、カメラロールから画像を取得し、認識できたQRコードを切り出して表示している</p>
-
-<p>今回の認識部分は、<code>CoreImage</code>の<code>CIDetector</code>を利用している。
-<code>CIDetector</code>は顔認識や文字認識もできる優れもの</p>
-
-<h3 id="相違点">相違点</h3>
-
-<p>前回の<code>AVMetadataMachineReadableCodeObject</code>を利用した方法との違いは、</p>
-
-<ul>
-<li>画像データから読み取り可能</li>
-<li>読み取り可能なコードはQRコードのみ</li>
-</ul>
-
-<p>といった辺り。複数認識可能なのは変わらない</p>
-
-<p>画像データは<code>UIImage</code>が生成できるデータを用意すれば良いので、
-元データはローカルファイルでもネット上でも、当然カメラからでもOK</p>
-
-<h3 id="qr検出">QR検出</h3>
-
-<p>検出のコードはとてもシンプル</p>
-
-<p>画像データを<code>CoreImage</code>の形式へ変換し、検出器にかけるだけ</p>
-
-<p>エラー処理を省略して抜粋すると以下の感じ</p>
-
-<pre><code>let ciimg = CIImage(image: image)!
-let detector = CIDetector(ofType: CIDetectorTypeQRCode,
-                          context: nil, options: nil)
-let results = detector.featuresInImage(ciimg) as! [CIQRCodeFeature]
+<pre><code>#ifdef DEBUG
+    // 開発用の接続先
+    let server = &quot;api.development.push.apple.com&quot;
+#else
+    // 本番用の接続先
+    let server = &quot;api.push.apple.com&quot;
+#endif
 </code></pre>
 
-<p>これで、検出されたコードの配列が取得される</p>
+<p>といった感じのことを<code>Swift</code>でしたい場合の方法。
+なお、<strong>Xcode8以降</strong>で有効</p>
 
-<p><code>CIQRCodeFeature</code>には</p>
+<h2 id="デバッグビルドかどうかの判別">デバッグビルドかどうかの判別</h2>
 
-<ul>
-<li><code>bounds</code>：コードを検出した領域</li>
-<li><code>bottomLeft bottomRight topLeft topRight</code>：コードを検出した位置</li>
-<li><code>messageString</code>：コードに含まれるデータ</li>
-</ul>
+<p>Xcode8以降の場合は、コンパイル時のフラグとしてデフォルトでデバッグビルドには<code>DEBUG</code>が付与されている</p>
 
-<p>が入っている</p>
+<p>よって、</p>
 
-<h3 id="検出位置">検出位置</h3>
+<pre><code>#if DEBUG
+    // 開発用の接続先
+    let server = &quot;api.development.push.apple.com&quot;
+#else
+    // 本番用の接続先
+    let server = &quot;api.push.apple.com&quot;
+#endif
+</code></pre>
 
-<p>位置の座標は、画面ではなく画像の座標を基準とした座標で取得される</p>
+<p>とするだけで良い</p>
 
-<p><code>bounds</code>とそれ以外の<code>bottom〜</code>や<code>top〜</code>で取れる座標は、
-検出したQRコードが回転していた場合に異なってくる</p>
+<h2 id="独自の定義を使いたい場合">独自の定義を使いたい場合</h2>
 
-<p>例えば、斜めの状態のQRコードが検出された場合、
-<code>bounds</code>は周りの余白部分を含めた正方形の領域が入る。
-それ以外のものにはQRコードの各頂点の座標がそれぞれ入る<br />
-（この辺りは実際に斜めの画像を読み込んで見ればよくわかる）</p>
+<p><code>Build Settings</code>の<code>Swift Compiler - Custom Flags</code>の中の<code>Active Compilation Conditions</code>の中に追加する</p>
 
-<h2 id="感想">感想</h2>
+<p>（デフォルトでは、<code>Debug</code>のConfigutationsのみに<code>DEBUG</code>が入っている）</p>
 
-<p>このQRコードの検出は<code>iOS8</code>から可能になっているが、全然把握できていなかったので反省</p>
+<p>例えば、ステージング環境の<code>Configurations</code>(Staging)に専用の<code>HOGE</code>を付与したい場合は、</p>
 
-<p>この<code>CIDetector</code>は他にもいろいろ検出できるので楽しみ。
-他にもまだこういう知らないものがいっぱいあるんだろうな・・・</p>
+<figure>
+	<img src="/media/2017-10-19-buildconf/conf.png" />
+</figure>
 
-<p>なお、<code>AVMetadataMachineReadableCodeObject</code>との性能などの差は未調査。。。</p>
+
+<p>という感じにすればOK</p>
+
+<h3 id="ビルド設定の状態">ビルド設定の状態</h3>
+
+<p>上記の様に設定した場合、以下の環境変数に設定がされる</p>
+
+<pre><code>// 一つで設定した場合
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = HOGE;
+
+// 複数で設定した場合
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = &quot;DEBUG HOGE&quot;;
+</code></pre>
+
+<h3 id="参考-古い方法-xcode7以前">参考・古い方法(Xcode7以前)</h3>
+
+<p><code>Build Settings</code>の<code>Swift Compiler - Custom Flags</code>の中には<code>Other Swift Flags</code>という項目もある</p>
+
+<p>ここは<code>Active Compilation Conditions</code>が登場する前にシンボルを定義する際に使っていた場所である。独自の定義を追加するには<code>-D HOGE</code>と設定すれば先の設定と同じ状態になる</p>
+
+<p>が、ビルドの種類（デバッグとかリリースとか）に応じて切り替えをしたい場合は、より適切な<code>Active Compilation Conditions</code>に統一した方が良い</p>
+
+<h2 id="defineは使えない">#defineは使えない</h2>
+
+<p>Swiftでは<code>#define</code>のようにソース中で定義をすることはできない</p>
+
+<p><code>#define</code>は柔軟すぎて困る（上書きされたり<code>#undef</code>ができてバグる）こともあるので個人的にはこれで良いと思う</p>
+
+<p>ただ、開発中などでわざわざ定義を触るのも大変な時には以下の感じで逃げている</p>
+
+<pre><code>let DEBUG = true        // #define DEBUG true と同義
+let server: String = {
+    return DEBUG
+        ? &quot;api.development.push.apple.com&quot;
+        : &quot;api.push.apple.com&quot;
+}()
+</code></pre>
+
+<p><code>#define</code>との違いは値の確定がコンパイル時ではなく、実行時に行われる点であるが、判定は初回のみなのでパフォーマンスへの影響は無視できる</p>
 
 <h1 id="開発環境">開発環境</h1>
 
 <ul>
-<li>Xcode 7.3.1</li>
-<li>Swift 2.2</li>
-<li>iOS 9.3.2</li>
-<li>iPhone 6+</li>
+<li>Xcode 8.3 / 9.0</li>
 </ul>
-
-<h1 id="ソース">ソース</h1>
-
-<p><a href="https://github.com/mike-neko/QRReader/">こちら</a></p>
   </div>
   
 </div>
