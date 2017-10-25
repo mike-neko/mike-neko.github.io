@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Mac &middot; M.Ike</title>
+  <title>文字列の先頭または末尾のTrim(Swift) &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -26,7 +26,7 @@
   
   
   
-  <link href="https://mike-neko.github.io/categories/mac/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
+  
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -142,71 +142,76 @@
 </div>
 
 
-
-
-
-
-
-
-
 <div class="content container">
-  <h1>category: " mac "</h1>
-  <div class="posts">
+  <div class="post">
+    <h1>文字列の先頭または末尾のTrim(Swift)</h1>
+    <span class="post-date">Oct 25, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
     
     
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/docker/">Docker構築メモ</a>
-      </h1>
-      <span class="post-date">Apr 4, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/ios">iOS</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/docker">docker</a><a class="label" href="https://mike-neko.github.io/tags/php">php</a><a class="label" href="https://mike-neko.github.io/tags/db">db</a><a class="label" href="https://mike-neko.github.io/tags/nginx">nginx</a><a class="label" href="https://mike-neko.github.io/tags/ssl">ssl</a>
-      </span>
-      
-      <p>iOS用のサーバ環境をDockerでローカルに構築した時のメモ。</p>
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    <p>Swiftで<code>LTrim</code>や<code>RTrim</code>相当の処理を行う方法</p>
 
-<p><em>なお、ローカルの開発用ということでセキュリティは考慮していないので注意</em>
-</p>
-      <a href="https://mike-neko.github.io/blog/docker/">Read On &rarr;</a>
-      
-    </div>
-    
-    
-    
-    <ul class="pagination">
-        
-        <li>
-            <a href="/categories/mac/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
-        </li>
-        
-        <li
-        >
-        <a href="/categories/mac/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
-        </li>
-        
-        <li
-        ><a href="/categories/mac/">1</a></li>
-        
-        <li
-        class="active"><a href="/categories/mac/page/2/">2</a></li>
-        
-        <li
-        class="disabled">
-        <a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
-        </li>
-        
-        <li>
-            <a href="/categories/mac/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
-        </li>
-        
-    </ul>
-    
+<p></p>
+
+<p>そもそも、Swiftの文字列では<code>Trim</code>そのもののメソッドはないので、</p>
+
+<pre><code>let text = &quot; hoge &quot;.trimmingCharacters(in: .whitespaces)
+</code></pre>
+
+<p>でトリムを行うが、これでは、文頭も文末も両方とも空白が削除されてしまう
+(例だと<code>hoge</code>という結果になる)</p>
+
+<p>文頭だけ、または文末だけトリムしたい場合は自前で実装が必要となるが、Swiftっぽい実装なのでメモしておく</p>
+
+<h2 id="コード">コード</h2>
+
+<p>今回は以下の様に<code>String</code>の<code>extension</code>として実装。
+また、既存の<code>trimmingCharacters</code>と同等に使える様にキャラセットは指定する方法にしている</p>
+
+<script type="text/javascript" src="https://gist.github.com/654a24a08223fcd6dad88c9e28762a82.js"></script>
+
+<p>処理としては、文字列を先頭から末尾（または末尾から先頭）へ1文字ずつ走査していき、指定した文字種別以外であればその文字から残りの部分までを切り出している</p>
+
+<h3 id="文字種別の判断">文字種別の判断</h3>
+
+<p>今回の実装で一番難しかったのは、文字が指定した文字セットに含まれているかどうかの判定部分</p>
+
+<p>従来の<code>NSCharacterSet</code>であれば、<code>characterIsMember</code>や<code>longCharacterIsMember</code>で、チェックすることができたが、Swiftの<code>CharacterSet</code>には存在していない</p>
+
+<p>これをSwiftで行っているのが、</p>
+
+<pre><code>let isMatch = c.element.unicodeScalars.contains { set.contains($0) }
+</code></pre>
+
+<p>の箇所となる。<code>c.element</code>は<code>Character</code>型で「1文字分」の文字が入っているが、unicodeの場合はこの「1文字分」が文字通りの1文字であるとは限らない（詳細は結合文字でググる）。。。<br />
+それで、その<code>Character</code>1文字を構成するunicode文字すべてを<code>unicodeScalars</code>で取得してから、それぞれが文字セットに含まれるかどうかの比較が必要となる</p>
+
+<p>このあたりは、Swiftが<del>バカ</del>真面目にunicodeに対応しているので、仕方が無いけどもうちょっと何とかなるとありがたいところだと思う
+（いつかは落とし穴にはまるので、本来はちゃんと文字コードの仕組みを把握しないといけないけど、そこまでのレベルはめったに使うものでないので・・・）</p>
+
+<h1 id="参考リンク">参考リンク</h1>
+
+<p><em>いずれもSwiftのバージョンが古いので内容が若干変わっている可能性あり</em></p>
+
+<ul>
+<li><a href="http://postd.cc/why-is-swifts-string-api-so-hard/">なぜSwiftの文字列APIは難しいのか</a></li>
+<li><a href="https://ez-net.jp/article/28/7I6PI-lB/27pbsZx7YJG_/">Swift で文字を文字コードに変換する</a></li>
+</ul>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Xcode 8.3 / 9</li>
+</ul>
   </div>
+  
 </div>
+
+
 
 
 <script src="https://mike-neko.github.io/js/highlight.pack.js"></script>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Mac &middot; M.Ike</title>
+  <title>Ios &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -26,7 +26,7 @@
   
   
   
-  <link href="https://mike-neko.github.io/categories/mac/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
+  <link href="https://mike-neko.github.io/categories/ios/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -150,28 +150,27 @@
 
 
 <div class="content container">
-  <h1>category: " mac "</h1>
+  <h1>category: " ios "</h1>
   <div class="posts">
     
     
     <div class="post">
       <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/docker/">Docker構築メモ</a>
+        <a href="https://mike-neko.github.io/blog/objc-exception/">SwiftでNSExceptionを処理する</a>
       </h1>
-      <span class="post-date">Apr 4, 2016
+      <span class="post-date">Feb 20, 2016
       
-      &middot; <a href="https://mike-neko.github.io/categories/ios">iOS</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
+      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
       
       
       <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/docker">docker</a><a class="label" href="https://mike-neko.github.io/tags/php">php</a><a class="label" href="https://mike-neko.github.io/tags/db">db</a><a class="label" href="https://mike-neko.github.io/tags/nginx">nginx</a><a class="label" href="https://mike-neko.github.io/tags/ssl">ssl</a>
+      <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a><a class="label" href="https://mike-neko.github.io/tags/objc">objc</a>
       </span>
       
-      <p>iOS用のサーバ環境をDockerでローカルに構築した時のメモ。</p>
+      <p>ObjectiveCで書かれた<code>NSException</code>を発生させるソースをSwiftから利用したい時の処理方法。</p>
 
-<p><em>なお、ローカルの開発用ということでセキュリティは考慮していないので注意</em>
-</p>
-      <a href="https://mike-neko.github.io/blog/docker/">Read On &rarr;</a>
+<p><code>NSException</code>は、ObjectiveCの<code>@try ~ @catch ~ @finally</code>でしか例外処理を行えない。例外処理を書いていない時は、実行時エラーとして処理される。つまり、Swiftから<code>NSException</code>を発生させるコードを呼び出して例外が起きると、問答無用でアプリが落ちてしまう・・・</p>
+      <a href="https://mike-neko.github.io/blog/objc-exception/">Read On &rarr;</a>
       
     </div>
     
@@ -180,19 +179,25 @@
     <ul class="pagination">
         
         <li>
-            <a href="/categories/mac/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+            <a href="/categories/ios/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
         </li>
         
         <li
         >
-        <a href="/categories/mac/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        <a href="/categories/ios/page/3/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
         </li>
         
         <li
-        ><a href="/categories/mac/">1</a></li>
+        ><a href="/categories/ios/">1</a></li>
         
         <li
-        class="active"><a href="/categories/mac/page/2/">2</a></li>
+        ><a href="/categories/ios/page/2/">2</a></li>
+        
+        <li
+        ><a href="/categories/ios/page/3/">3</a></li>
+        
+        <li
+        class="active"><a href="/categories/ios/page/4/">4</a></li>
         
         <li
         class="disabled">
@@ -200,7 +205,7 @@
         </li>
         
         <li>
-            <a href="/categories/mac/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+            <a href="/categories/ios/page/4/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
         </li>
         
     </ul>
