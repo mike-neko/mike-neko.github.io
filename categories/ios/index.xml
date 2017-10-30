@@ -6,10 +6,21 @@
     <description>Recent content in Ios on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 25 Oct 2017 00:23:56 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 30 Oct 2017 22:41:00 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Pythonista3でGitHubのリポジトリを取り込む</title>
+      <link>https://mike-neko.github.io/blog/pythonista-git/</link>
+      <pubDate>Mon, 30 Oct 2017 22:41:00 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/pythonista-git/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;http://omz-software.com/pythonista/&#34;&gt;Pythonista3&lt;/a&gt;だけでGitHub上のリポジトリ一式をダウンロードする方法&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>文字列の先頭または末尾のTrim(Swift)</title>

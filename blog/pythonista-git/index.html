@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Others &middot; M.Ike</title>
+  <title>Pythonista3でGitHubのリポジトリを取り込む &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -26,7 +26,7 @@
   
   
   
-  <link href="https://mike-neko.github.io/categories/others/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
+  
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -142,82 +142,42 @@
 </div>
 
 
-
-
-
-
-
-
-
 <div class="content container">
-  <h1>category: " others "</h1>
-  <div class="posts">
+  <div class="post">
+    <h1>Pythonista3でGitHubのリポジトリを取り込む</h1>
+    <span class="post-date">Oct 30, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/others">others</a> 
     
     
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/pythonista-git/">Pythonista3でGitHubのリポジトリを取り込む</a>
-      </h1>
-      <span class="post-date">Oct 30, 2017
-      
-      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/others">others</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/python">python</a>
-      </span>
-      
-      <p><a href="http://omz-software.com/pythonista/">Pythonista3</a>だけでGitHub上のリポジトリ一式をダウンロードする方法</p>
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/python">python</a>
+    </span>
+    <p><a href="http://omz-software.com/pythonista/">Pythonista3</a>だけでGitHub上のリポジトリ一式をダウンロードする方法</p>
 
 <p></p>
-      <a href="https://mike-neko.github.io/blog/pythonista-git/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/makefile/">指定バイト数でファイルを作る（Python）</a>
-      </h1>
-      <span class="post-date">Sep 2, 2017
-      
-      &middot; <a href="https://mike-neko.github.io/categories/others">others</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/python">python</a>
-      </span>
-      
-      <p>ファイルIO系のテストをする時に、指定したバイト数ちょうどで、かつ、ランダムな内容のファイルを<code>Python</code>で作成する方法</p>
 
-<p></p>
-      <a href="https://mike-neko.github.io/blog/makefile/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/slideshare/">SlideShareに日本語のKeynoteをアップロードする</a>
-      </h1>
-      <span class="post-date">Aug 29, 2017
-      
-      &middot; <a href="https://mike-neko.github.io/categories/others">others</a> 
-      
-      
-      <br/>
-      
-      </span>
-      
-      <p>日本語の<code>Keynote</code>のスライドを<a href="https://www.slideshare.net/">SlideShare</a>へちゃんとアップロードする方法</p>
+<ol>
+<li>iOSのブラウザで以下のページを開く<br />
+<a href="https://raw.githubusercontent.com/jsbain/GitHubGet/master/GitHubGet.py">GitHubGet</a></li>
+<li>全て選択→コピー<br />
+<em>(※iOS上で上記スクリプトがコピーした状態にする。他の方法でも良い)</em></li>
+<li><code>Pythonista3</code>で<code>Empty Script</code>でスクリプトを新規作成<br />
+名前は適当にわかりやすいものにしておく</li>
+<li>3のスクリプトに2でコピーしたスクリプトを貼り付け</li>
+<li>設定（スパナアイコン）から<code>Python 2 to 3</code>で変換を実行<br />
+（Python3で実行したい場合のみ実行する）</li>
+<li>ブラウザ等でダウンロードしたいリポジトリのURLをコピー</li>
+<li><code>Pythonista3</code>でスクリプトをRun</li>
+<li>しばらくすると、<code>Pythonista3</code>内に新しくフォルダが作成されて一式がダウンロードされている</li>
+</ol>
 
-<p></p>
-      <a href="https://mike-neko.github.io/blog/slideshare/">Read On &rarr;</a>
-      
-    </div>
-    
-    
-    
+<p>次回以降は、6からでOK</p>
   </div>
+  
 </div>
+
+
 
 
 <script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
