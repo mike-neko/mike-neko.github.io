@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://mike-neko.github.io/blog/fst-setup/</loc>
+    <lastmod>2017-11-06T22:48:14+09:00</lastmod>
+  </url>
   
   <url>
     <loc>https://mike-neko.github.io/blog/pythonista-git/</loc>
@@ -398,13 +404,19 @@
   
   <url>
     <loc>https://mike-neko.github.io/</loc>
-    <lastmod>2017-10-30T22:41:00+09:00</lastmod>
+    <lastmod>2017-11-06T22:48:14+09:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://mike-neko.github.io/categories/mac/</loc>
     <lastmod>2017-03-29T00:58:37+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/tags/machinelearning/</loc>
+    <lastmod>2017-11-06T22:48:14+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -440,7 +452,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/categories/others/</loc>
-    <lastmod>2017-10-30T22:41:00+09:00</lastmod>
+    <lastmod>2017-11-06T22:48:14+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -452,7 +464,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/post/</loc>
-    <lastmod>2017-10-30T22:41:00+09:00</lastmod>
+    <lastmod>2017-11-06T22:48:14+09:00</lastmod>
     <priority>0</priority>
   </url>
   
