@@ -275,12 +275,8 @@ luarocks install lua-cjson
 
 <li><p>「Linux」 - 「x86_64」 - 「Ubuntu」 - 「16.04」 - 「deb[network]」を選択</p></li>
 
-<li><p>右上の「download」のリンクをコピーして、以下のようにしてダウンロード</p>
-
-<pre><code>wget ​（ここにコピーしたリンクを貼り付け）
-</code></pre>
-
-<p>※現時点(<sup>2017</sup>&frasl;<sub>11</sub>)では、<code>http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.0.176-1_amd64.deb</code>というURL。以降はこのURLを前提とする</p></li>
+<li><p>右上の「download」からファイルをダウンロード<br />
+※現時点(<sup>2017</sup>&frasl;<sub>11</sub>)では、<code>http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.0.176-1_amd64.deb</code>というURL。以降はこのURLを前提とする</p></li>
 
 <li><p>以下のコマンドを実行</p>
 
@@ -308,25 +304,36 @@ luarocks install lua-cjson
 <ol>
 <li>公式の<a href="https://developer.nvidia.com/cudnn">NVIDIA cuDNN</a>をブラウザで開いて「Download」をクリック</li>
 <li>ログインする（ユーザ登録が必須）</li>
-<li>「」を選択<br />
-<em>5系でないとダメ。またdeb方式ではなぜかコピーされないのでダメ</em></li>
-<li>以下のコマンドを実行
-<code>
-​tar -xzvf cudnn-8.0-linux-x64-v5.1.tgz
-sudo cp cuda/include/cudnn.h /usr/local/cuda/include
+<li>画面の指示通りに承諾をしていく</li>
+<li>「<code>Download cuDNN v5.1 (Jan 20, 2017), for CUDA 8.0</code>」を選択</li>
+<li>「<code>cuDNN v5.1 Library for Linux</code>」をダウンロードする<br />
+<strong>v5系かつtgz方式を選択すること</strong>(Debの方はマニュアル通りにしてもうまくコピーされなかった)</li>
+
+<li><p>ダウンロードしたファイルを解凍する</p>
+
+<pre><code>​tar -xzvf cudnn-8.0-linux-x64-v5.1.tgz
+</code></pre>
+
+<p><strong>指定するファイル名がダウンロードしたファイル名と一致しているか注意</strong></p></li>
+
+<li><p>以下のコマンドを実行</p>
+
+<pre><code>sudo cp cuda/include/cudnn.h /usr/local/cuda/include
 sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64
 sudo chmod a+r /usr/local/cuda/include/cudnn.h
 sudo chmod a+r /usr/local/cuda/lib64/libcudnn*
-</code></li>
-<li>パスを設定する（bashの場合）
-<code>
-echo export CUDNN_PATH=&quot;/usr/local/cuda/lib64/libcudnn.so.5&quot; &gt;&gt; ~/.bashrc
+</code></pre></li>
+
+<li><p>パスを設定する（bashの場合）</p>
+
+<pre><code>echo export CUDNN_PATH=&quot;/usr/local/cuda/lib64/libcudnn.so.5&quot; &gt;&gt; ~/.bashrc
 source ~/.bashrc
-</code></li>
-<li>Luaのモジュールをインストールする
-<code>
-​luarocks install cudnn
-</code></li>
+</code></pre></li>
+
+<li><p>Luaのモジュールをインストールする</p>
+
+<pre><code>​luarocks install cudnn
+</code></pre></li>
 </ol>
 
 <h3 id="トラブルシューティング-1">トラブルシューティング</h3>
