@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Toarchの高速画風変換を試す（環境構築） &middot; M.Ike</title>
+  <title>Toarchのリアルタイム画風変換を試す（環境構築） &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -146,7 +146,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>Toarchの高速画風変換を試す（環境構築）</h1>
+    <h1>Toarchのリアルタイム画風変換を試す（環境構築）</h1>
     <span class="post-date">Nov 6, 2017 
     
     &middot; <a href="https://mike-neko.github.io/categories/others">others</a> 
@@ -155,13 +155,14 @@
     <br/>
     <a class="label" href="https://mike-neko.github.io/tags/machinelearning">MachineLearning</a>
     </span>
-    <p>リアルタイムスタイル変換とか高速画風変換といわれる、ディープラーニングを使って画像の画風（雰囲気）を変換する技術を実際に試すまでの手順のメモ</p>
+    <p>リアルタイム画風(スタイル)変換といわれる、ディープラーニングを使って画像の画風（雰囲気）を変換する技術を実際に試すまでの手順のメモ</p>
 
-<p>利用するアルゴリズムの元の論文は<a href="http://cs.stanford.edu/people/jcjohns/eccv16/">こちら</a>でGithub上での実装が<a href="https://github.com/jcjohnson/fast-neural-style">こちら</a></p>
+<p>利用するアルゴリズムの元の論文は<a href="http://cs.stanford.edu/people/jcjohns/eccv16/">こちら</a><br />
+Github上での実装:<a href="https://github.com/jcjohnson/fast-neural-style">fast-neural-style</a></p>
 
 <p></p>
 
-<p>この実装ではニューラルネットワークを<code>Toarch</code>で実装されているので、動作環境は<code>Ubuntu</code>か<code>mac</code>である。今回は、<code>Ubuntu</code>上で実際にオリジナルのモデルのトレーニングまでを試してみる</p>
+<p>この実装ではニューラルネットワークが<code>Toarch</code>で実装されているので、動作環境は<code>Ubuntu</code>か<code>mac</code>である。今回は、<code>Ubuntu</code>上で実際にオリジナルのモデルのトレーニングまでを試してみる</p>
 
 <p>なおトレーニング済のモデルを使って画風変換をするだけなら、<code>mac</code>でも特に問題ない。今回はモデルのトレーニングも試したかったので、GPUが使える<code>Ubuntu</code>を選択した（今のMacBookProのGPUはRadeonに変わってしまったので・・・）ちなみにWindows10上での<code>Ubuntu</code>も試してみたが、ものすごく動作が遅くてダメだった（原因は不明）</p>
 
@@ -307,7 +308,8 @@ luarocks install lua-cjson
 <li>画面の指示通りに承諾をしていく</li>
 <li>「<code>Download cuDNN v5.1 (Jan 20, 2017), for CUDA 8.0</code>」を選択</li>
 <li>「<code>cuDNN v5.1 Library for Linux</code>」をダウンロードする<br />
-<strong>v5系かつtgz方式を選択すること</strong>(Debの方はマニュアル通りにしてもうまくコピーされなかった)</li>
+<strong>v5系かつtgz方式を選択すること</strong><br />
+(Debの方はマニュアル通りにしてもうまくコピーされなかった)</li>
 
 <li><p>ダウンロードしたファイルを解凍する</p>
 
@@ -335,6 +337,8 @@ source ~/.bashrc
 <pre><code>​luarocks install cudnn
 </code></pre></li>
 </ol>
+
+<p>ここまででひとまず最低限の環境はできた状態</p>
 
 <h3 id="トラブルシューティング-1">トラブルシューティング</h3>
 
