@@ -6,10 +6,26 @@
     <description>Recent content in Posts on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Mon, 06 Nov 2017 22:48:14 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 09 Nov 2017 22:48:52 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Toarchのリアルタイム画風変換を試す（実行）</title>
+      <link>https://mike-neko.github.io/blog/fst-training/</link>
+      <pubDate>Thu, 09 Nov 2017 22:48:52 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/fst-training/</guid>
+      <description>&lt;p&gt;リアルタイム画風(スタイル)変換といわれる、ディープラーニングを使って画像の画風（雰囲気）を変換する技術を実際に試すまでの手順のメモ&lt;/p&gt;
+
+&lt;p&gt;利用するアルゴリズムの元の論文は&lt;a href=&#34;http://cs.stanford.edu/people/jcjohns/eccv16/&#34;&gt;こちら&lt;/a&gt;&lt;br /&gt;
+Github上での実装:&lt;a href=&#34;https://github.com/jcjohnson/fast-neural-style&#34;&gt;fast-neural-style&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;前回の&lt;a href=&#34;../fst-setup&#34;&gt;環境構築&lt;/a&gt;ができれば、実際に動かしてみる&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Toarchのリアルタイム画風変換を試す（環境構築）</title>
@@ -21,6 +37,8 @@
 
 &lt;p&gt;利用するアルゴリズムの元の論文は&lt;a href=&#34;http://cs.stanford.edu/people/jcjohns/eccv16/&#34;&gt;こちら&lt;/a&gt;&lt;br /&gt;
 Github上での実装:&lt;a href=&#34;https://github.com/jcjohnson/fast-neural-style&#34;&gt;fast-neural-style&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;この記事では環境構築まで。実際の実行は&lt;a href=&#34;../fst-training&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;/p&gt;</description>
     </item>

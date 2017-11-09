@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Toarchのリアルタイム画風変換を試す（実行） &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(32)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(11)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/others">others&nbsp;(5)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/arkit">arkit&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/machinelearning">machinelearning&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(10)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/python">python&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(22)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Toarchのリアルタイム画風変換を試す（実行）</h1>
+    <span class="post-date">Nov 9, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/others">others</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/machinelearning">MachineLearning</a>
+    </span>
+    <p>リアルタイム画風(スタイル)変換といわれる、ディープラーニングを使って画像の画風（雰囲気）を変換する技術を実際に試すまでの手順のメモ</p>
+
+<p>利用するアルゴリズムの元の論文は<a href="http://cs.stanford.edu/people/jcjohns/eccv16/">こちら</a><br />
+Github上での実装:<a href="https://github.com/jcjohnson/fast-neural-style">fast-neural-style</a></p>
+
+<p>前回の<a href="../fst-setup">環境構築</a>ができれば、実際に動かしてみる</p>
+
+<p></p>
+
+<h2 id="リポジトリの取得">リポジトリの取得</h2>
+
+<p>まずは、適当な場所で、</p>
+
+<pre><code>​git clone https://github.com/jcjohnson/fast-neural-style.git
+</code></pre>
+
+<p>として、リポジトリを落としてくる</p>
+
+<h2 id="変換を試す">変換を試す</h2>
+
+<h3 id="サンプルモデルの取得">サンプルモデルの取得</h3>
+
+<p>テスト用に、あらかじめ準備されているサンプルのトレーニング済​モデルを取得する</p>
+
+<pre><code>cd fast-neural-style/
+bash models/download_style_transfer_models.sh
+</code></pre>
+
+<p>実行すると、<code>models</code>の中に<code>Torch</code>形式のモデル(<code>.t7</code>)がダウンロードされてくる</p>
+
+<h3 id="変換の実行">変換の実行</h3>
+
+<p>以下のコマンドで変換する</p>
+
+<pre><code>​th fast_neural_style.lua -model (モデルのパス) -input_image (変換するイメージのパス) -output_image (変換後のイメージのパス)
+</code></pre>
+
+<p>実際に付属のサンプルで試す場合は、</p>
+
+<pre><code>​th fast_neural_style.lua -model models/eccv16/starry_night.t7 -input_image images/content/chicago.jpg -output_image out.png
+</code></pre>
+
+<p>という感じで実行すると、<code>out.png</code>が生成される</p>
+
+<h2 id="新しいモデルの-作成">新しいモデルの作成</h2>
+
+<p>自分でオリジナルの画風変換をしたい場合は、</p>
+
+<ol>
+<li>適用したい画風の画像(=スタイル画像)を用意</li>
+<li>モデルをトレーニング（学習）して作成する</li>
+</ol>
+
+<p>という流れになる</p>
+
+<p>つまり、一つの画風の変換につき、一つの専用のモデルを作成することになる</p>
+
+<h3 id="データの準備">データの準備</h3>
+
+<p>基本的な流れは<a href="https://github.com/jcjohnson/fast-neural-style/blob/master/doc/training.md">公式</a>の説明通り</p>
+
+<p>モデルのトレーニングをするにはトレーニング用のデータセットが必要となる。今回は分類（画像認識）ではないので、トレーニング用とバリデーション用のデータを準備する</p>
+
+<p>といっても、自分で用意する必要はなくて、<a href="http://cocodataset.org/#download">COCO dataset</a>のデータを利用する。なお、今回は2017のバージョンを使ったが、本家は2014のバージョンをつかっている様子</p>
+
+<ol>
+<li><p>以下の2つのデータセットをダウンロードし解凍しておく</p>
+
+<ul>
+<li>トレーニング用: 2017 Train images [118K/18GB]</li>
+<li>バリデーション用: 2017 Val images [5K/1GB]</li>
+</ul></li>
+
+<li><p>データセットをトレーニング用に変換する</p>
+
+<ol>
+<li><p>変換用のPython2.7環境を準備</p>
+
+<pre><code>sudo apt-get install python2.7-dev
+sudo apt-get install libhdf5-dev
+sudo apt-get install virtualenv
+virtualenv .env
+source .env/bin/activate
+pip install -r requirements.txt
+</code></pre></li>
+
+<li><p>変換する</p>
+
+<pre><code>python scripts/make_style_dataset.py  --train_dir (1のトレーニング用データのフォルダのパス) --val_dir (1のバリデーション用データのフォルダのパス)
+--output_file dataset.h5
+</code></pre></li>
+</ol>
+
+<p>実行すると、<code>dataset.h5</code>という1つのファイルが作成される</p>
+
+<p>作成されれば、</p>
+
+<pre><code>deactivate
+</code></pre>
+
+<p>として環境から抜ける</p></li>
+
+<li><p>トレーニング用のモデルを準備<br />
+トレーニングには<code>VGG16</code>のモデルを使うのでダウンロードする</p>
+
+<pre><code>bash models/download_vgg16.sh
+</code></pre></li>
+</ol>
+
+<h3 id="環境の-セットアップ">環境のセットアップ</h3>
+
+<p><code>h5</code>ファイルを扱える様にLuaのモジュールをインストールする</p>
+
+<pre><code>luarocks install https://raw.githubusercontent.com/deepmind/torch-hdf5/master/hdf5-0-0.rockspec
+luarocks install hdf5
+</code></pre>
+
+<p>なお、公式では上の行で良いとなっているが、それだけではエラーになったので、下の行も実行した。上の行は実行不要かもしれない</p>
+
+<h3 id="トレーニング実行">トレーニング実行</h3>
+
+<p>以下のコマンドで実行する</p>
+
+<pre><code>th train.lua -h5_file (dataset.h5へのパス) -style_image (スタイル画像へのパス) -style_image_size 300 -content_weights 1.0 -style_weights 5.0 -batch_size 3
+</code></pre>
+
+<p>実行すると、<code>checkpoint.t7</code>というモデルが生成される。
+生成されたモデルはわかりやすい様に名前を変更しておく。
+あとは、前述の方法で画風変換を実行すれば良い</p>
+
+<p>なお、今回はGPUにGTX970を利用したが、だいたい4時間ほどかかった・・・<br />
+(例の3.5GB問題がどう影響しているかは不明)</p>
+
+<h4 id="トレーニング時のパラメータについて">トレーニング時のパラメータについて</h4>
+
+<p>公式のデフォルトとの相違点は、以下の2つ
+- <code>style_image_size</code>: 384 → 300
+- <code>batch_size</code>: 4 → 3</p>
+
+<p>これはバリデーション時に、GPUのメモリ不足で</p>
+
+<pre><code>​THCudaCheck FAIL file=/torch/extra/cutorch/lib/THC/generic/THCStorage.cu line=66 error=2 : out of memory
+</code></pre>
+
+<p>という感じのエラーが発生してしまう為</p>
+
+<p>GTX970はVRAMが4GBなので、この設定になったが、他のGPUの場合は適当なものに変更した方が良いと思われる</p>
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+
