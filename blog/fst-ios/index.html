@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Metalの座標周りのメモ &middot; M.Ike</title>
+  <title>Toarchのリアルタイム画風変換を試す（iOS組込） &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -146,133 +146,105 @@
 
 <div class="content container">
   <div class="post">
-    <h1>Metalの座標周りのメモ</h1>
-    <span class="post-date">Mar 2, 2017 
+    <h1>Toarchのリアルタイム画風変換を試す（iOS組込）</h1>
+    <span class="post-date">Nov 13, 2017 
     
-    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/others">others</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a>
+    <a class="label" href="https://mike-neko.github.io/tags/machinelearning">MachineLearning</a>
     </span>
-    <p>わりと間違いやすいので、Metalの座標周りのまとめ</p>
+    <p>リアルタイム画風(スタイル)変換といわれる、ディープラーニングを使って画像の画風（雰囲気）を変換する技術を実際に試すまでの手順のメモ</p>
 
-<p>
-実はAppleの公式のサンプルも間違っていたりする・・・・</p>
+<p>前回の<a href="../fst-training">実行編</a>でオリジナルのモデルを作ったので、今回はそれを実際にiOSに組み込むまでの手順</p>
 
-<h2 id="座標系">座標系</h2>
+<p></p>
 
-<p>Metalは <em>左手系</em> である</p>
+<p>利用するアルゴリズムの元の論文は<a href="http://cs.stanford.edu/people/jcjohns/eccv16/">こちら</a><br />
+Github上での実装:<a href="https://github.com/jcjohnson/fast-neural-style">fast-neural-style</a></p>
 
-<p><strong>元々のiOS / macはOpenGLの為、そのまま既存サンプルを移し替えようとすると、座標系でハマるので注意！</strong>
-OpenGLからの移植は行列の中身（列ベクトル or 行ベクトル）が違う場合もあるので注意！</p>
+<h2 id="変換ツールを用意する">変換ツールを用意する</h2>
 
-<table>
-<thead>
-<tr>
-<th></th>
-<th>座標系</th>
-</tr>
-</thead>
+<p>iOSの<code>CoreML</code>で機械学習を行うには、CoreML形式(<code>.mlmodel</code>)にしたモデルデータが必要</p>
 
-<tbody>
-<tr>
-<td>Metal</td>
-<td>左手系</td>
-</tr>
+<p><code>keras</code>などはApple公式の<a href="https://github.com/apple/coremltools">coremltools</a>という変換ツールが公開されているが、今回は<code>Torch</code>で学習したモデルなので、<a href="https://github.com/prisma-ai/torch2coreml">torch2coreml</a>という変換ツールを利用する</p>
 
-<tr>
-<td>OpenGL / WebGL</td>
-<td>右手系</td>
-</tr>
+<p>なお、この作業は前回までと違ってmac上で行なっている。
+macには事前に</p>
 
-<tr>
-<td>DirectX</td>
-<td>左手系</td>
-</tr>
-</tbody>
-</table>
+<ul>
+<li>Python2.7</li>
+<li>pip</li>
+</ul>
 
-<p>なお、左手系と右手系の違いはZ軸の向きだけである</p>
+<p>の環境があるものとする</p>
 
-<table>
-<thead>
-<tr>
-<th align="center">Metal, DirectX</th>
-<th align="center">OpenGL, WebGL</th>
-</tr>
-</thead>
+<ol>
+<li><p><code>PyTorch</code>をインストールする</p>
 
-<tbody>
-<tr>
-<td align="center"><figure>
-	<img src="/media/2017-03-02-metal-coordinate/left.png" />
-</figure>
-</td>
-<td align="center"><figure>
-	<img src="/media/2017-03-02-metal-coordinate/right.png" />
-</figure>
-</td>
-</tr>
+<ol>
+<li><a href="http://pytorch.org/">公式</a>の<code>Get Started.</code>で環境を選択してインストール方法を確認する<br />
+今回は「OSX」-「pip」-「2.7」-「none」と選択</li>
 
-<tr>
-<td align="center">z軸の奥が+</td>
-<td align="center">z軸の手前が+</td>
-</tr>
-</tbody>
-</table>
+<li><p>表示されたコマンドを順に実行する</p>
 
-<h2 id="uv座標">UV座標</h2>
+<pre><code>pip install http://download.pytorch.org/whl/torch-0.2.0.post3-cp27-none-macosx_10_7_x86_64.whl
+pip install torchvision
+</code></pre>
 
-<p>Metalは <em>左上</em> が原点(0, 0)、右下が(1, 1)となる</p>
+<p>1行目のURLは環境によって変わる場合あり</p></li>
+</ol></li>
 
-<table>
-<thead>
-<tr>
-<th></th>
-<th>UV座標</th>
-</tr>
-</thead>
+<li><p><code>torch2coreml</code>をインストールする</p>
 
-<tbody>
-<tr>
-<td>Metal</td>
-<td>左上</td>
-</tr>
+<pre><code>pip install torch2coreml
+</code></pre></li>
+</ol>
 
-<tr>
-<td>OpenGL / WebGL</td>
-<td>右上</td>
-</tr>
+<h2 id="モデルの変換">モデルの変換</h2>
 
-<tr>
-<td>DirectX</td>
-<td>左上</td>
-</tr>
-</tbody>
-</table>
+<p>前回学習した時のモデルには、CoreMLでは対応していないレイヤーや処理が含まれているので、そのままではコンバータにかけても変換できない。参考リンクにある通り、事前にコンバータに対応したモデル形式に変換しておく必要がある</p>
 
-<table>
-<thead>
-<tr>
-<th align="center">Metal, DirectX</th>
-<th align="center">OpenGL, WebGL</th>
-</tr>
-</thead>
+<ol>
+<li><p>リポジトリを取得<br />
+適当な場所で以下のコマンドを実行する</p>
 
-<tbody>
-<tr>
-<td align="center"><figure>
-	<img src="/media/2017-03-02-metal-coordinate/lefttop.png" />
-</figure>
-</td>
-<td align="center"><figure>
-	<img src="/media/2017-03-02-metal-coordinate/rightbottom.png" />
-</figure>
-</td>
-</tr>
-</tbody>
-</table>
+<pre><code>git clone https://github.com/prisma-ai/torch2coreml.git
+cd torch2coreml/example/fast-neural-style/
+</code></pre></li>
+
+<li><p>モデルの事前変換処理</p>
+
+<pre><code>th prepare_model.lua -input (トレーニング結果のモデルへのパス) -output (変換後モデルのパス)
+</code></pre>
+
+<ul>
+<li><code>input</code>: 前回学習した結果のモデル(<code>t7</code>形式)へのパス<br />
+何もしていなければ<code>checkpoint.t7</code></li>
+<li><code>output</code>: 結果として出力するモデル名。拡張子は<code>t7</code>にしておく</li>
+</ul></li>
+
+<li><p>CoreMLモデルへ変換</p>
+
+<pre><code>python convert-fast-neural-style.py -input (変換前のモデルへのパス) -output (変換後のモデルのパス)
+</code></pre>
+
+<ul>
+<li><code>input</code>: 2で<code>output</code>に指定したモデル(<code>t7</code>形式)</li>
+<li><code>output</code>: 結果として出力するCoreMLモデル。拡張子は<code>mlmodel</code>にしておく
+
+<br /></li>
+</ul></li>
+</ol>
+
+<p>これで公式で作成したモデルと同じ形式のモデルが出力される。あとは、通常通りXcodeから組み込みをすればOK</p>
+
+<h1 id="参考リンク">参考リンク</h1>
+
+<ul>
+<li><a href="https://blog.prismalabs.ai/diy-prisma-app-with-coreml-6b4994cc99e1">DIY Prisma app with CoreML</a></li>
+</ul>
   </div>
   
 </div>

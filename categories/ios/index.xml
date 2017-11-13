@@ -6,10 +6,23 @@
     <description>Recent content in Ios on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Mon, 30 Oct 2017 22:41:00 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 13 Nov 2017 22:56:11 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/categories/ios/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Toarchのリアルタイム画風変換を試す（iOS組込）</title>
+      <link>https://mike-neko.github.io/blog/fst-ios/</link>
+      <pubDate>Mon, 13 Nov 2017 22:56:11 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/fst-ios/</guid>
+      <description>&lt;p&gt;リアルタイム画風(スタイル)変換といわれる、ディープラーニングを使って画像の画風（雰囲気）を変換する技術を実際に試すまでの手順のメモ&lt;/p&gt;
+
+&lt;p&gt;前回の&lt;a href=&#34;../fst-training&#34;&gt;実行編&lt;/a&gt;でオリジナルのモデルを作ったので、今回はそれを実際にiOSに組み込むまでの手順&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Pythonista3でGitHubのリポジトリを取り込む</title>
