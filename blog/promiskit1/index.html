@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>PromiseKitの使い方 その1 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(34)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(11)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/others">others&nbsp;(6)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/arkit">arkit&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/machinelearning">machinelearning&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(10)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/python">python&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(23)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>PromiseKitの使い方 その1</h1>
+    <span class="post-date">Nov 17, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    <p>Swiftのクロージャはコールバック処理がObjectiveCと比べるとかなり書きやすくなっているが、それでも非同期処理が重なるとコールバック地獄に陥りやすい</p>
+
+<p>それから脱出するのに役立つのが<code>Promise</code>で、Swiftでは<a href="https://github.com/mxcl/PromiseKit">PromiseKit</a>というフレームワークで実装されている。その使い方のメモ</p>
+
+<p></p>
+
+<p>ちなみに<code>Promise</code>自体を使うにはPromiseKitでなくても良いし、個人的には<a href="https://github.com/ReactKit/SwiftTask">SwiftTask</a>が良さげだったが、選定時点ではSwift3への対応がまだされていなかったので<code>PromiseKit</code>を選んだ</p>
+
+<h2 id="メリット-デメリット">メリット・デメリット</h2>
+
+<h3 id="メリット">メリット</h3>
+
+<h4 id="非同期での逐次処理が見やすくなる">非同期での逐次処理が見やすくなる</h4>
+
+<p>例えば、非同期処理の完了後に次の非同期処理を行なっていく場合、クロージャだと入れ子がどんどん深くなっていってしまったり、エラーを一元的に管理するのが難しい。デリゲートだとステータス管理が必要になったり、処理の流れが分散して分かりにくくなってしまう</p>
+
+<p><code>Promise</code>であれば、非同期の逐次処理を直列的に書くことができ、次にどの処理に行くのか？どういう結果を受け取るのか？エラー時の処理はどうなるのかといったことが判りやすくなる</p>
+
+<h4 id="状態遷移-の管理が不要">状態遷移の管理が不要</h4>
+
+<p>特にデリゲートの場合だと、ステータス管理を自分で行わないといけないが、<code>Promise</code>ではフレームワーク側で管理してもらえる。ステータス管理はバグが潜みやすく、何か改修が入った時も影響を受けやすいが、フレームワーク側で管理されているとその心配をしなくて良い</p>
+
+<p>リトライやタイムアウトといった処理では、若干自前で実装しないといけないが、それでも一から実装するよりははるかに楽</p>
+
+<p>いずれにせよ、<code>Promise</code>を使った場合は、処理の流れの制御をあまり気にすることなく、各処理の内容に集中できるのでとても良い</p>
+
+<h3 id="デメリット">デメリット</h3>
+
+<h4 id="覚えないといけない">覚えないといけない</h4>
+
+<p>これをデメリットにあげるのは微妙だが、<code>Promise</code>という概念とクロージャの使い方を覚える必要がある</p>
+
+<p>ただ、<code>Promise</code>自体はJSなどWeb系ではよく知られた考え方だし、クロージャもSwiftでは欠かせないので、さほど問題にはならないはず（古いObjC時代のコーディングに慣れていて知識がアップデートされていない人がチームにいたりすると・・・）</p>
+
+<h4 id="デリゲートと相性が悪い場合がある">デリゲートと相性が悪い場合がある</h4>
+
+<p>利用するフレームワークにもよる部分もあるが、例えば、ダウンロードの進捗を毎回通知する様な場合は向いていない（書き方がややこしくなってしまう）</p>
+
+<h4 id="書き方が-ややこしい場合がある">書き方がややこしい場合がある</h4>
+
+<p>ちょっと複雑な処理をしたい場合など、書き方が難しい場合がある（日本語情報も少なかったりする）。ただ、逆にいうと、そういった場合は<code>Promise</code>自体の概念にあっていないか、処理の切り分けに失敗している可能性があるので、一概にデメリットとは言えない</p>
+
+<p>ただ、Swiftでは（クロージャ部分は特に）様々な省略記法が使える上、<code>PromiseKit</code>も色々な書き方ができる様になっており、同じ処理でも色々な書き方が存在して混乱することがあるので、これは書き方を統一するなどした方が良い。
+<em>実際、今回、メモに残したコードもあくまで一例で他の書き方が可能だったりする</em></p>
+
+<h2 id="使い方">使い方</h2>
+
+<p>まず、<code>Promise</code>の基本的な動作としては、</p>
+
+<ul>
+<li>1つの非同期処理は必ず成功か失敗のどちらかの結果を返す</li>
+<li>成功時は次の処理へ進む。その際、任意のデータを渡せる</li>
+<li>失敗時はエラー処理へ飛んで終了する（次へ進まない）</li>
+</ul>
+
+<p>となる</p>
+
+<h3 id="非同期処理を実装">非同期処理を実装</h3>
+
+<p><code>PromiseKit</code>では、非同期処理部分を<code>Promise&lt;T&gt;</code>(※Tは<code>Generics</code>。任意の型のデータを入れれる)を返すメソッドとして定義する必要がある</p>
+
+<p>一番シンプルなのは、非同期処理をまず以下の様なメソッドとして定義し、それを<code>wrap</code>する方法である。
+例えば、単純にAPIを叩くだけの場合は以下の通り</p>
+
+<pre><code>func hoge(completion: (Data?, Error?) -&gt; Void) {
+    URLSession.shared.dataTask(with: url) { (data, response, error) in
+        guard error != nil {
+            // 失敗
+            completion(nil, error)
+            return
+        }
+
+        // 成功
+        completion(data, nil)
+    }
+}
+</code></pre>
+
+<p>ポイントは、</p>
+
+<ul>
+<li>結果をクロージャ(<code>(Data?, Error?) -&gt; Void</code>)で返す</li>
+<li>クロージャには2つの引数（成功時のデータと失敗時のエラー）が必要</li>
+<li>成功時は<code>Data</code>に結果を入れて返す（エラーは<code>nil</code>に）<br />
+→ 成功時のデータ型は他の型でもOK</li>
+<li>失敗時は<code>Error</code>にエラーを入れて返す（データ部分は<code>nil</code>に）<br />
+→ 失敗時のデータは<code>Error</code>を継承した型のみ</li>
+</ul>
+
+<p>である。なお、<strong>DataとError両方とも<code>nil</code>を返すとエラーになる</strong></p>
+
+<p>メソッドを定義できれば、以下の様にして<code>Promise</code>を返すメソッドに変換する</p>
+
+<pre><code>PromiseKit.wrap(hoge)
+</code></pre>
+
+<p>この場合、<code>Promise</code>の型は<code>Promise&lt;Data&gt;</code>となる。
+これは、元のメソッドの成功時に返すデータが<code>Data</code>であるのでそうなる</p>
+
+<h3 id="非同期処理を繋げる">非同期処理を繋げる</h3>
+
+<p><code>Promise</code>を返す非同期処理のメソッドができれば、次はそれを繋げてフローを作っていく</p>
+
+<p>例えば、最初に<code>hoge1</code>を実行し、成功すれば次の<code>hoge2</code>を実行するといった場合は、以下の実装となる</p>
+
+<pre><code>firstry {
+    // ここに1つ目の非同期処理
+    PromiseKit.wrap(hoge1)
+}.then {
+    // ここに2つ目の非同期処理
+    PromiseKit.wrap(self.hoge2)
+}.then {
+    // ここで2つ目の非同期処理が成功した場合の処理
+}.catch {
+    // エラー時の処理
+}
+</code></pre>
+
+<p>最初の処理は、<code>firstry</code>を使い、続くクロージャの中に初回の非同期処理を書く。
+<strong>この時クロージャは<code>Promise</code>を返す必要がある</strong></p>
+
+<p>2つ目以降の処理は<code>then</code>を使う。<code>then</code>は前の処理の結果が成功であればクロージャ内の処理を実行する。
+<strong>このクロージャも最後の処理以外は<code>Promise</code>を返す必要がある</strong>。
+フローの最後に当たる<code>then</code>の中では、前の非同期処理が成功した時の処理だけを書く（<code>Promise</code>を返す処理を書いても、それの成功時の処理が無いのでエラーとなる）。
+また、2つ目以降は<code>self</code>がいる様になるので注意</p>
+
+<p>非同期処理でエラーを返した場合は、<code>catch</code>の中の処理が実行され、残りの処理は実行されない。
+例えば、上図で<code>hoge1</code>がエラーだった場合は、<code>catch</code>へ飛んで<code>hoge2</code>は実行されない</p>
+
+<h4 id="処理結果の受け取り">処理結果の受け取り</h4>
+
+<p>上のサンプルコードでは省略されているが、各非同期の処理結果はクロージャの引数として受け取れる。
+この場合の型は、非同期処理を行なったメソッドが成功時に返すデータの型と同じである</p>
+
+<p>例えば、<code>hoge1</code>が<code>Data</code>を返す場合は、</p>
+
+<pre><code>firstry {
+    PromiseKit.wrap(hoge1)
+}.then { result in
+    // result: Data型の結果データ
+    PromiseKit.wrap(self.hoge2)
+}.then {
+...
+</code></pre>
+
+<p>という感じで結果を受け取れる</p>
+
+<p>エラーが発生した場合は、以下の様に<code>catch</code>で<code>Error</code>を受け取ることができる</p>
+
+<pre><code>}.catch { error in
+    print(error.localizedDescription)
+}
+</code></pre>
+
+<h2 id="書き方の省略について">書き方の省略について</h2>
+
+<p>Swiftのクロージャは省略して書ける書き方がかなり多い。
+上のサンプルも色々と省略をして書いているが、省略せずに書くと、</p>
+
+<pre><code>firstry { () -&gt; Promise&lt;Data&gt; in
+    return PromiseKit.wrap(hoge1)
+}.then { (result: Data) -&gt; Promise&lt;Data&gt; in
+    return PromiseKit.wrap(self.hoge2)
+}.then { (result: Data) -&gt; Void in
+    // ここで2つ目の非同期処理が成功した場合の処理
+}.catch { (error: Error) -&gt; Void in
+    // エラー時の処理
+}
+</code></pre>
+
+<p>といった感じになる。
+さすがに上記の様に全く省略しないのは冗長になるのでやめた方が良いが、ある程度、型情報は残しておいた方がわかりやすいし、補完も効きやすいのでオススメ</p>
+
+<p>また、<code>Promise</code>を返す部分でたまに正しく<code>Promise</code>を返しているのにエラーとなる場合がある。
+この場合は、クロージャの返り値の型（<code>-&gt;</code>の後ろの<code>Promise&lt;T&gt;</code>の部分）を省略せずに指定するとビルドが通る様になる</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Xcode 8.3.3</li>
+<li>iOS 10.3</li>
+</ul>
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

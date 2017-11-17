@@ -6,10 +6,23 @@
     <description>Recent content in Swift3 on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Wed, 25 Oct 2017 00:23:56 +0900</lastBuildDate>
+    <lastBuildDate>Fri, 17 Nov 2017 17:26:40 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/tags/swift3/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>PromiseKitの使い方 その1</title>
+      <link>https://mike-neko.github.io/blog/promiskit1/</link>
+      <pubDate>Fri, 17 Nov 2017 17:26:40 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/promiskit1/</guid>
+      <description>&lt;p&gt;Swiftのクロージャはコールバック処理がObjectiveCと比べるとかなり書きやすくなっているが、それでも非同期処理が重なるとコールバック地獄に陥りやすい&lt;/p&gt;
+
+&lt;p&gt;それから脱出するのに役立つのが&lt;code&gt;Promise&lt;/code&gt;で、Swiftでは&lt;a href=&#34;https://github.com/mxcl/PromiseKit&#34;&gt;PromiseKit&lt;/a&gt;というフレームワークで実装されている。その使い方のメモ&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>文字列の先頭または末尾のTrim(Swift)</title>
