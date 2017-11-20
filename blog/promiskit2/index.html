@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>PromiseKitの使い方 その2 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(35)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(11)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/others">others&nbsp;(6)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/arkit">arkit&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/machinelearning">machinelearning&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(10)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/python">python&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(24)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>PromiseKitの使い方 その2</h1>
+    <span class="post-date">Nov 20, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    <p>Swiftで<code>Promise</code>を使える様になる<a href="https://github.com/mxcl/PromiseKit">PromiseKit</a>の使い方その2</p>
+
+<p>今回はもうちょっと色々なパターンでの使い方のメモ</p>
+
+<p></p>
+
+<p>基本的な使い方のメモは<a href="../promiskit1">その1</a></p>
+
+<h2 id="繋げ方">繋げ方</h2>
+
+<p>とりあえず、よく使いそうなものだけ</p>
+
+<h3 id="firstry"><code>firstry</code></h3>
+
+<p>一連の非同期処理（チェーン）の最初で使う。なお、糖衣構文なので使わなくても書けるが、通常は使った方が見やすい</p>
+
+<h3 id="then"><code>then</code></h3>
+
+<p>前の非同期処理の結果が成功であれば次の処理を実行する
+</p>
+
+<h3 id="catch"><code>catch</code></h3>
+
+<p>非同期処理の結果が失敗だった場合には、後続の<code>then</code>は無視されて、一番近い<code>catch</code>へ飛んでその中の処理が実行される。複数の非同期処理が繋がっていた場合でも、全てのエラーが<code>catch</code>へ飛んでくる。逆に言うと、どこで発生したエラーかを把握したい場合は、それぞれでエラーを定義しないといけない。発生した<code>Error</code>はクロージャの引数として受け取れる</p>
+
+<p>チェーンの中に<code>catch</code>がない場合は、ワーニングが出るので特にエラーを処理しない場合でも空のクロージャとエラー処理不要のコメントをいれておく
+（ただし、<code>Promise</code>を返すメソッドで、呼び出し元でエラー処理をしたい場合は不要）</p>
+
+<h3 id="always"><code>always</code></h3>
+
+<p>チェーンが成功か失敗かに関係なく実行される。例外処理の<code>finally</code>と同じ</p>
+
+<h3 id="after"><code>after</code></h3>
+
+<p>一定時間後に次の（クロージャ内の）処理を実行する</p>
+
+<p><code>after(seconds:)</code>であれば秒数(<code>TimeInterval</code>)、<code>after</code>であれば<code>DispatchTimeInterval</code>で経過時間を指定する</p>
+
+<p>内部的には、<code>DispatchQueue</code>の<code>asyncAfter</code>を使っているので安心</p>
+
+<h3 id="when"><code>when</code></h3>
+
+<p>配列で渡された<code>Promise</code>全てを並列で実行し全てが成功すれば<code>then</code>が呼ばれる。ライブラリによっては<code>all</code>と呼ばれるものと同じ</p>
+
+<p>失敗したものが1つでもあれば、<code>catch</code>が呼ばれる。ただし、実行中の非同期処理自体がキャンセルされるわけではないので注意</p>
+
+<h3 id="recover"><code>recover</code></h3>
+
+<p>通常、失敗した場合は<code>catch</code>へ飛ばされてしまって、以降の処理を継続することはできないが、エラーの内容によってはリカバリ処理を行うなどして処理を継続させたいといった時に使う</p>
+
+<p>発生したエラーは<code>catch</code>と同じく引数として受け取れるので、それを元に判断して復帰させられるなら結果を返し、やはり失敗のままにする場合はエラーを再送すれば良い</p>
+
+<pre><code>firstory {
+    hoge1()
+}.recover { error -&gt; Promise&lt;T&gt; in
+    guard error is UnknownError {
+        throw error
+    }
+    return hoge2()
+}
+</code></pre>
+
+<p>このコードの場合だと、<code>hoge1</code>で発生したエラーを一旦捕まえて、<code>UnknownError</code>かどうかを判定し、<code>UnknownError</code>であれば、再度<code>throw</code>してエラー処理へ回し、それ以外なら別の非同期処理を実行させている</p>
+
+<p>なお、単にエラー処理の選別だけでなく、例えばネットワーク経由で最新値を取得、失敗した場合に圏外のエラーならデフォルト値を返すといった用途にも使える</p>
+
+<h2 id="小ネタ">小ネタ</h2>
+
+<h3 id="成功で返ってきた後に-失敗扱いにしたい場合">成功で返ってきた後に失敗扱いにしたい場合</h3>
+
+<p>例えば、<code>then</code>で成功時の結果を受け取ったものの、それを失敗扱いにして<code>catch</code>へ飛ばしたい場合は、例外を<code>throw</code>すれば良い</p>
+
+<pre><code>firstory {
+    hoge1()
+}.then { (result: Data) -&gt; Promise&lt;T&gt; in
+    guard !result.isEmpty() else { 
+        throw EmptyError()
+    }
+    return hoge2()
+}.then {
+</code></pre>
+
+<p>（ただし、通常は判りにくくなる可能性があるので、元の処理の中で失敗扱いにできないかをよく考慮すること）</p>
+
+<h3 id="結果として次へ渡せるもの">結果として次へ渡せるもの</h3>
+
+<p>実は、<code>PromiseKit</code>の<code>then</code>で次の処理へ渡せるのは<code>Promise</code>だけではなく、任意の型のデータを渡すことができる。
+また、チェーンの途中で渡す型を変えることもできる（最初は<code>Promise&lt;String&gt;</code>で次に<code>Promise&lt;Data&gt;</code>、最後は<code>Promise&lt;String&gt;</code>を渡すといったことが可能）</p>
+
+<p>いずれにしても、<code>then</code>で返す型と次の<code>then</code>が受け取る型が一致していないとビルドエラーになる</p>
+
+<p>これにより、あまりないかもしれないが、クロージャ内の処理が非同期でない場合は、直接そのデータを返すことが可能である。例えば、非同期の<code>hoge1</code>を実行し結果のデータを処理してから、次の非同期処理を行いたいといった場合は、</p>
+
+<pre><code>firstory {
+    hoge1()   // ここは非同期なのでPromise&lt;Data&gt;を返している
+}.then { (result: Data) -&gt; String in
+    // ここでresultを文字列へ変換
+    guard let str = String(data: result, encoding: .utf8) {
+        throw EncodeError()
+    }
+    return str
+}.then { (text: String) -&gt; Promise&lt;T&gt; in
+    // 次の非同期処理
+}
+</code></pre>
+
+<p>の様にすれば良い。通常は<code>hoge1</code>の中で文字列まで変換して処理すれば良いが、共通化されたメソッドでそうできなかったり、設計上そうすべきでない様な場合には役立つ</p>
+
+<p>また、<code>recover</code>で出てきたデフォルト値を直接返す場合にも有効</p>
+
+<h4 id="promise-void"><code>Promise&lt;Void&gt;</code></h4>
+
+<p>後続の<code>then</code>が呼ばれる＝前回の非同期処理は成功したことになるので、結果として何もデータを渡す必要がない場合がある。この場合は、<code>Promise&lt;Void&gt;</code>の型を使えば良い</p>
+
+<p><code>Promise</code>を返す側（非同期処理）では、何も返さなければOK（<code>return</code>を書かない）。もし、どうしても<code>return</code>を書いたり、引数として<code>Void</code>を渡す必要があるなら、<code>()</code>と書けば<code>Void</code>扱いとなる(<code>return</code>なら<code>return ()</code>と書く)</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Xcode 8.3.3</li>
+<li>iOS 10.3</li>
+<li>PromiseKit 4.4</li>
+</ul>
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+
