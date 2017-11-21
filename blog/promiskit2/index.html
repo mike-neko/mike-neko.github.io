@@ -207,13 +207,13 @@
 
 <p>発生したエラーは<code>catch</code>と同じく引数として受け取れるので、それを元に判断して復帰させられるなら結果を返し、やはり失敗のままにする場合はエラーを再送すれば良い</p>
 
-<pre><code>firstory {
+<pre><code>firstry {
     hoge1()
 }.recover { error -&gt; Promise&lt;T&gt; in
     guard error is UnknownError {
         throw error
     }
-    return hoge2()
+    return self.hoge2()
 }
 </code></pre>
 
@@ -227,13 +227,13 @@
 
 <p>例えば、<code>then</code>で成功時の結果を受け取ったものの、それを失敗扱いにして<code>catch</code>へ飛ばしたい場合は、例外を<code>throw</code>すれば良い</p>
 
-<pre><code>firstory {
+<pre><code>firstry {
     hoge1()
 }.then { (result: Data) -&gt; Promise&lt;T&gt; in
     guard !result.isEmpty() else { 
         throw EmptyError()
     }
-    return hoge2()
+    return self.hoge2()
 }.then {
 </code></pre>
 
@@ -248,7 +248,7 @@
 
 <p>これにより、あまりないかもしれないが、クロージャ内の処理が非同期でない場合は、直接そのデータを返すことが可能である。例えば、非同期の<code>hoge1</code>を実行し結果のデータを処理してから、次の非同期処理を行いたいといった場合は、</p>
 
-<pre><code>firstory {
+<pre><code>firstry {
     hoge1()   // ここは非同期なのでPromise&lt;Data&gt;を返している
 }.then { (result: Data) -&gt; String in
     // ここでresultを文字列へ変換
