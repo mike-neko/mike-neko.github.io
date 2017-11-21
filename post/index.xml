@@ -6,10 +6,23 @@
     <description>Recent content in Posts on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Mon, 20 Nov 2017 21:18:22 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 21 Nov 2017 22:26:32 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>PromiseKitの使い方 その3</title>
+      <link>https://mike-neko.github.io/blog/promiskit3/</link>
+      <pubDate>Tue, 21 Nov 2017 22:26:32 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/promiskit3/</guid>
+      <description>&lt;p&gt;Swiftで&lt;code&gt;Promise&lt;/code&gt;を使える様になる&lt;a href=&#34;https://github.com/mxcl/PromiseKit&#34;&gt;PromiseKit&lt;/a&gt;の使い方その3&lt;/p&gt;
+
+&lt;p&gt;より実践的な応用パターンの書き方&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>PromiseKitの使い方 その2</title>

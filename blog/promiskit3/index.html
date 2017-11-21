@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>PromiseKitの使い方 その3 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(36)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(11)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/others">others&nbsp;(6)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/arkit">arkit&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/machinelearning">machinelearning&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(10)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/python">python&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(25)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>PromiseKitの使い方 その3</h1>
+    <span class="post-date">Nov 21, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    <p>Swiftで<code>Promise</code>を使える様になる<a href="https://github.com/mxcl/PromiseKit">PromiseKit</a>の使い方その3</p>
+
+<p>より実践的な応用パターンの書き方</p>
+
+<p></p>
+
+<h2 id="応用パターン">応用パターン</h2>
+
+<h3 id="入れ子にする">入れ子にする</h3>
+
+<p><code>Promise</code>の中身は、非同期処理がキューで詰まっている様なものである。
+それで、<code>then</code>の中で<code>Promise</code>を返す時に、複数の非同期処理を繋いだ<code>Promise</code>を返すことができる</p>
+
+<p>これにより、ある非同期処理の結果によって次に実行する非同期処理のフローを変更するといった使い方ができる</p>
+
+<p>例えば、<code>hoge</code>メソッドの処理結果が<code>true</code>なら非同期処理フローA(A-1→A-2→C)を実行、<code>false</code>なら非同期処理フローB(B→C)を実行させたい場合は、以下の様に実装できる</p>
+
+<pre><code>firstly {
+    hoge()
+}.then { result: Bool -&gt; Promise&lt;String&gt; in
+    if result {
+        return self.hogeA()
+    } else {
+        return self.hogeB()
+    }
+}.then { result: String 
+    // 非同期処理C
+}.then {
+    // 以下省略
+}
+
+func hogeA() -&gt; Promise&lt;String&gt; {
+    return firstly {
+        // 非同期処理 A-1
+    }.then {
+        // 非同期処理 A-2
+    }
+}
+
+func hogeB() -&gt; Promise&lt;String&gt; {
+    return firstly {
+        // 非同期処理 B
+    }
+}
+</code></pre>
+
+<p>例の様に、非同期処理のサブルーチン部分をメソッドに切り出しておくとフローが複雑な場合でもみやすくなり、1つのメソッドが巨大になることも防げる</p>
+
+<p>もちろん、<code>hogeB</code>の様にわざわざメソッドに切り出す程でもないぐらいと判断するなら、</p>
+
+<pre><code>firstly {
+    hoge()
+}.then { result: Bool -&gt; Promise&lt;String&gt; in
+    if result {
+        return self.hogeA()
+    } else {
+        return firstly {
+            // 非同期処理 B
+        }
+    }
+}.then { result: String
+</code></pre>
+
+<p>として、直接入れ子にしても良いが、コールバック地獄が復活する感じなのでおすすめはしない</p>
+
+<p>この時の注意点としては、チェーンに<code>catch</code>やデータを直接返す<code>then</code>の様に<code>Promise</code>を返さないものをつけられないことである。
+それでもし、このサブルーチンだけで一旦エラーを処理したい場合（非同期処理フローAの失敗は一旦<code>hogeA</code>の中で処理したい）は<code>recover</code>を使うと良い</p>
+
+<h3 id="非同期処理に引数を渡したい場合">非同期処理に引数を渡したい場合</h3>
+
+<p><code>Promise</code>を返すメソッドを作るのに、<code>PromiseKit.wrap</code>は便利だが、引数でデータを渡せないというデメリットがある。かといって、クラスのメンバ変数を使うのはカプセル化が崩れるので望ましくない。そこで、Swiftの関数はファーストクラスであるというのを利用して次の様に書くことができる</p>
+
+<pre><code>func wrapHoge(data: Data) -&gt; Promise&lt;Data&gt; {
+    let task = { (completion: (Data?, Error?) -&gt; Void) -&gt; Void in
+        hoge(data: data, completion: completion)
+    }
+    return PromiseKit.wrap(task)
+}
+
+// wrapしたいメソッド（dataが引数で渡したいデータ）
+func hoge(data: Data, completion: (Data?, Error?) -&gt; Void) {
+    // 非同期処理
+}
+
+firstly {
+    wrapHoge()
+}.then { result: Data in
+</code></pre>
+
+<p>なお、<code>task</code>の中に<code>hoge</code>メソッドの内容を全て書いてしまうのもあり</p>
+
+<h3 id="非同期処理をスルーしたい場合">非同期処理をスルーしたい場合</h3>
+
+<p>例えば、<strong>特定の条件の時は</strong>非同期処理をまるっと飛ばして（あるいは同期的な処理をして）次の非同期処理に進みたい場合の方法。次の非同期処理に進むには、<code>Promise</code>を返さないといけないけど、非同期処理をしないから返せる<code>Promise</code>が無い・・・という状況を解決する為、以下の様なメソッドを作っておく</p>
+
+<pre><code>func success&lt;T&gt;(_ value: T) -&gt; Promise&lt;T&gt; {
+    return PromiseKit.wrap { (completion: @escaping (T?, Error?) -&gt; Void) -&gt; Void in
+        completion(value, nil)
+    }
+}
+</code></pre>
+
+<p>このメソッドは呼び出されると即時に成功扱いとなる<code>Promise</code>を返す、いわばダミーの非同期処理を行うメソッドである。
+引数の<code>value</code>には次の処理に渡したいデータを指定する
+（なお、ジェネリックを使っているのは汎用的に使える様にする為なので、型が固定なら使わなくても良い）</p>
+
+<p>実際に使う場合は、</p>
+
+<pre><code>firstly {
+    hoge()
+}.then { result: Bool -&gt; Promise&lt;String&gt; in
+    guard result else { return self.success(&quot;&quot;) }
+
+    return self.hogeA()
+}.then { result: String 
+    // 非同期処理C
+</code></pre>
+
+<p>という様に書けば良い。
+この例だと<code>hoge</code>の結果が<code>false</code>の場合は<code>hogeA</code>の非同期処理は行わずに、<code>&quot;&quot;</code>（空文字）のデータを渡して呼び出している。これを実際に実行すると、<code>hoge</code>が<code>true</code>の時には<code>hogeA</code>が実行されて、その結果が非同期処理Cに渡されて次の非同期処理が行われる。<code>false</code>の時には、<code>&quot;&quot;</code>が非同期処理Cに渡されて次の非同期処理が行われる</p>
+
+<p>なお、次の処理（非同期処理C）が<code>Void</code>の場合は、引数に<code>()</code>を指定すれば良い</p>
+
+<p>（ちなみに、逆バージョンで必ず失敗するダミーメソッドも作れるが、それを使うより直接エラーを<code>throw</code>する方が良いので作るだけ無駄になる・・・）</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Xcode 8.3.3</li>
+<li>iOS 10.3</li>
+<li>PromiseKit 4.4</li>
+</ul>
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+
