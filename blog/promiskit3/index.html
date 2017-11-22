@@ -248,25 +248,18 @@ firstly {
 
 <h3 id="非同期処理をスルーしたい場合">非同期処理をスルーしたい場合</h3>
 
-<p>例えば、<strong>特定の条件の時は</strong>非同期処理をまるっと飛ばして（あるいは同期的な処理をして）次の非同期処理に進みたい場合の方法。次の非同期処理に進むには、<code>Promise</code>を返さないといけないけど、非同期処理をしないから返せる<code>Promise</code>が無い・・・という状況を解決する為、以下の様なメソッドを作っておく</p>
+<p>例えば、<strong>特定の条件の時は</strong>非同期処理をまるっと飛ばして（あるいは同期的な処理をして）次の非同期処理に進みたい場合の方法。
+非同期処理をせずに次の処理に進むには、<code>Promise(value:)</code>を使う</p>
 
-<pre><code>func success&lt;T&gt;(_ value: T) -&gt; Promise&lt;T&gt; {
-    return PromiseKit.wrap { (completion: @escaping (T?, Error?) -&gt; Void) -&gt; Void in
-        completion(value, nil)
-    }
-}
-</code></pre>
-
-<p>このメソッドは呼び出されると即時に成功扱いとなる<code>Promise</code>を返す、いわばダミーの非同期処理を行うメソッドである。
-引数の<code>value</code>には次の処理に渡したいデータを指定する
-（なお、ジェネリックを使っているのは汎用的に使える様にする為なので、型が固定なら使わなくても良い）</p>
+<p>このコンストラクタは呼び出されると即時に成功扱いとなる<code>Promise</code>を返す。
+引数の<code>value</code>には次の処理に渡すデータを指定しなければならない</p>
 
 <p>実際に使う場合は、</p>
 
 <pre><code>firstly {
     hoge()
 }.then { result: Bool -&gt; Promise&lt;String&gt; in
-    guard result else { return self.success(&quot;&quot;) }
+    guard result else { return Promise(value:&quot;&quot;) }
 
     return self.hogeA()
 }.then { result: String 
@@ -274,11 +267,9 @@ firstly {
 </code></pre>
 
 <p>という様に書けば良い。
-この例だと<code>hoge</code>の結果が<code>false</code>の場合は<code>hogeA</code>の非同期処理は行わずに、<code>&quot;&quot;</code>（空文字）のデータを渡して呼び出している。これを実際に実行すると、<code>hoge</code>が<code>true</code>の時には<code>hogeA</code>が実行されて、その結果が非同期処理Cに渡されて次の非同期処理が行われる。<code>false</code>の時には、<code>&quot;&quot;</code>が非同期処理Cに渡されて次の非同期処理が行われる</p>
+この例だと<code>hoge</code>の結果が<code>false</code>の場合は、<code>&quot;&quot;</code>（空文字）のデータを渡す<code>Promise</code>を返しているので、非同期処理Cに<code>&quot;&quot;</code>が渡されて処理が行われる</p>
 
 <p>なお、次の処理（非同期処理C）が<code>Void</code>の場合は、引数に<code>()</code>を指定すれば良い</p>
-
-<p>（ちなみに、逆バージョンで必ず失敗するダミーメソッドも作れるが、それを使うより直接エラーを<code>throw</code>する方が良いので作るだけ無駄になる・・・）</p>
 
 <h1 id="開発環境">開発環境</h1>
 
