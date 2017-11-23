@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>CentOSからOracleへ接続 &middot; M.Ike</title>
+  <title>PromiseKitの使い方 その4 &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -146,143 +146,109 @@
 
 <div class="content container">
   <div class="post">
-    <h1>CentOSからOracleへ接続</h1>
-    <span class="post-date">Nov 3, 2016 
+    <h1>PromiseKitの使い方 その4</h1>
+    <span class="post-date">Nov 24, 2017 
     
-    &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/php">php</a><a class="label" href="https://mike-neko.github.io/tags/db">db</a><a class="label" href="https://mike-neko.github.io/tags/centos">centos</a>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
     </span>
-    <p>CentOSのPHP5.6から別サーバで動いているOracleのDBへ<code>oci8</code>で接続する方法
+    <p>Swiftで<code>Promise</code>を使える様になる<a href="https://github.com/mxcl/PromiseKit">PromiseKit</a>の使い方その4</p>
 
-Macの場合は<a href="../oracle-mac/">こちら</a></p>
+<p><code>PromiseKit</code>でリトライ処理を実行する方法</p>
 
-<h2 id="手順">手順</h2>
+<p></p>
 
-<h3 id="oracleのドライバのインストール">Oracleのドライバのインストール</h3>
+<p>非同期処理部分がネットワーク処理の様にある程度失敗することが前提で、リトライをさせたい場合の方法</p>
 
-<ol>
-<li><p>サーバのアーキテクチャを確認</p>
-
-<pre><code>uname -a
-</code></pre></li>
-
-<li><p><a href="http://www.oracle.com/technetwork/database/features/instant-client/index.html">Oracle Instant Client</a>から
-1で確認した環境の<code>basic</code>と<code>SDK</code>をダウンロードしサーバへ保存<br />
-(今回は<code>x86_64</code>だったので<code>Version 12.1.0.2 (x86_64)</code>の<code>rpm</code>を選択。以降このバージョンが前提)</p></li>
-
-<li><p>以下でインストール</p>
-
-<pre><code>cd (保存した場所)
-su
-rpm -ivh oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
-rpm -ivh oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
-</code></pre></li>
-
-<li><p>パスを通す</p>
-
-<pre><code>vi /etc/profile
-# 以下の行を追加
-export LD_LIBRARY_PATH=/usr/lib/oracle/12.1/client64/lib:$LD_LIBRARY_PATH
-export PATH=/usr/lib/oracle/12.1/client64/bin:$PATH
-</code></pre>
-
-<p>追記したら保存して終了し</p>
-
-<pre><code>source /etc/profile
-</code></pre>
-
-<p>で強制反映させる</p></li>
-</ol>
-
-<h3 id="peclのインストール">peclのインストール</h3>
-
-<ol>
-<li>以下でインストール
-<code>
-yum -y install --enablerepo=remi --enablerepo=remi-php56 php-pear
-</code></li>
-</ol>
-
-<h3 id="oci8のインストール">oci8のインストール</h3>
-
-<ol>
-<li><p><code>pecl</code>からインストールするので<code>DTrace</code>サポートを有効にする</p>
-
-<pre><code>yum -y install systemtap-sdt-devel
-export PHP_DTRACE=yes
-</code></pre>
-
-<blockquote>
-<p>ちなみにこれをしないと<code>error: oci8_dtrace_gen.h: No such file or director</code>というエラーになる。
-詳細は<a href="http://php.net/manual/ja/oci8.dtrace.php">こちら</a></p>
-</blockquote></li>
-
-<li><p><code>oci8</code>をバージョン（Ver.2.0.12）を指定してインストール</p>
-
-<pre><code>pecl install oci8-2.0.12
-</code></pre>
-
-<blockquote>
-<p>oci8の最新版だとPHP7以降の為、2.0系を指定する</p>
-</blockquote></li>
-
-<li><p>インストール中にプロンプトが出れば、</p>
-
-<pre><code>instantclient,/usr/lib/oracle/12.1/client64/lib
-</code></pre>
-
-<p>と入力</p></li>
-
-<li><p>PHPの設定
-<code>php.ini</code>に以下を設定</p>
-
-<pre><code>extension=oci8.so
-</code></pre>
-
-<p>（場所が判らない時は<code>php -i | grep php.ini</code>）</p></li>
-
-<li><p>設定の確認</p>
-
-<pre><code>php --ri oci8
-</code></pre>
-
-<p>を実行して、</p>
-
-<pre><code>（略）
-OCI8 Support =&gt; enabled
-（略）
-OCI8 Version =&gt; 2.0.12
-（略）
-Oracle Run-time Client Library Version =&gt; 12.1.0.2.0
-Oracle Compile-time Instant Client Version =&gt; 12.1
-</code></pre>
-
-<p>と出ていればOK</p></li>
-</ol>
-
-<h2 id="phpからの接続">PHPからの接続</h2>
-
-<p>Macの場合の<a href="../oracle-mac/">PHPからの接続</a>を参照</p>
-
-<h1 id="参考リンク">参考リンク</h1>
+<p>まず、リトライの動きとしては、</p>
 
 <ul>
-<li>PHP公式 <a href="http://php.net/manual/ja/book.oci8.php">Oracle OCI8</a></li>
-<li>Pecl公式 <a href="https://pecl.php.net/package/oci8">oci8</a></li>
-<li><a href="http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html">Orcale Instant Client</a>
-(下の方にインストール方法)</li>
+<li>ある非同期処理が失敗した時に、同じ非同期処理のリトライができる</li>
+<li>非同期処理は引数あり</li>
+<li>最大リトライ回数を指定できる</li>
+<li>リトライする前に処理をはさめる<br />
+（発生したエラーによってはリトライさせないとかキャンセルするとか）</li>
 </ul>
+
+<p>という挙動をさせる</p>
+
+<h2 id="ソース">ソース</h2>
+
+<p>基本は公式のリトライ方法をベースに汎用的に使える様に以下の専用メソッドを作成</p>
+
+<script type="text/javascript" src="https://gist.github.com/4389caf81df1314ec2ed039a264d7f3a.js"></script>
+
+<p>動作の流れとしては、</p>
+
+<ol>
+<li>リトライ回数を+1</li>
+<li>非同期処理を実行</li>
+<li>失敗すれば、<code>recover</code>で一旦捕捉</li>
+<li><code>preRetry</code>でリトライするかチェック<br />
+（あるいは何か必要な処理。例えば、リトライ開始を通知するなど）
+
+<ul>
+<li><code>true</code>: 次の処理へ</li>
+<li><code>false</code>: 失敗時のエラーを<code>throw</code><br />
+（このメソッドの呼び出し元でエラー処理）</li>
+</ul></li>
+<li>リトライ上限回数内かチェック
+
+<ul>
+<li>上限回数内: 1へ戻る</li>
+<li>上限回数を超えた: <code>RetryError</code>を<code>throw</code><br />
+（※今回はリトライしたがエラーになったというのを知りたいので、専用の<code>RetryError</code>を作っているが、単に失敗時のエラーを<code>throw</code>でも良い）</li>
+</ul></li>
+</ol>
+
+<p>という感じになる</p>
+
+<p>非同期処理に渡す引数がもし、複数ある場合は、タプルで渡してあげれば良い
+（次の使い方の例を参照）</p>
+
+<h2 id="使い方">使い方</h2>
+
+<p>例えば、「ログイン処理のAPIを3回までリトライ、ただし認証エラーの場合はリトライしない」といった挙動をさせたいなら、</p>
+
+<pre><code>firstly {
+    retry(maxRepeat: 3, args: (&quot;username&quot;, &quot;1234&quot;), task: login, preRetry: { error -&gt; Bool in
+        switch error as APIError {
+        case .auth: return false
+        default:    return true
+        }
+    })
+}.then { result: String in
+// 以下省略
+
+
+func login(username: String, password: String) -&gt; Promise&lt;String&gt; {
+// 以下省略
+</code></pre>
+
+<p>といった感じで呼び出せばOK。
+もちろん、<code>login</code>メソッドの中でも<code>Promise</code>を使える</p>
+
+<p>リトライ部分を自分で一旦実装しないといけないのが面倒だが、<code>Promise</code>を使わない場合と比べて、かなりシンプルに書けているのが良いと思う
+（本当はある程度フレームワーク側で実装されているとうれしいが、エラーをどうするとかの細かな部分はプロジェクトごとで違うので仕方がないのかも）</p>
+
+<p>また、このリトライ自体の処理がメソッド内で完結しているのも良い。リトライ回数が内部に隠蔽されているので、誰かが勝手に回数を書き換えるみたいな妙なバグが入らない</p>
+
+<p>さらに、シーケンスが複雑になってもコードが見にくくならない。
+単なる通信のリトライぐらいならまだベタ書きでもなんとかなるかもしれないが、例えば、NFCの様にデータの書込や読込をさせるのに一連のコマンドのやりとりが必要で、さらにある処理をさせるにはその書込や読込を複数回行わないといけない。
+また、当然電波を使っているので、コマンドのやりとり自体にもリトライ処理が必要といった場合、<code>Promise</code>の威力は絶大になる</p>
+
+<p>（ちなみに某案件ではベタ書きで実装されていたのを<code>PromiseKit</code>で書き直すと3分の1以下にソースが減ったという実績あり。
+しかもベタ書きではリトライ処理が全くの未実装だったにも関わらず・・・）</p>
 
 <h1 id="開発環境">開発環境</h1>
 
 <ul>
-<li>CentOS6.8</li>
-<li>PHP 5.6.27 + OCI8 2.0.12</li>
-<li>Oracle Instant Client 12.1.0.2.0</li>
-<li>DBサーバ OracleDB(Win)</li>
+<li>Xcode 8.3.3</li>
+<li>iOS 10.3</li>
+<li>PromiseKit 4.4</li>
 </ul>
   </div>
   
