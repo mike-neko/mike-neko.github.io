@@ -17,7 +17,7 @@
       <pubDate>Fri, 24 Nov 2017 00:14:30 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/promiskit-retry/</guid>
-      <description>&lt;p&gt;Swiftで&lt;code&gt;Promise&lt;/code&gt;を使える様になる&lt;a href=&#34;https://github.com/mxcl/PromiseKit&#34;&gt;PromiseKit&lt;/a&gt;の使い方その4&lt;/p&gt;
+      <description>&lt;p&gt;Swiftで&lt;code&gt;Promise&lt;/code&gt;を使える様になる&lt;a href=&#34;https://github.com/mxcl/PromiseKit&#34;&gt;PromiseKit&lt;/a&gt;の使い方 その4&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;PromiseKit&lt;/code&gt;でリトライ処理を実行する方法&lt;/p&gt;
 
@@ -30,7 +30,7 @@
       <pubDate>Tue, 21 Nov 2017 22:26:32 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/promiskit3/</guid>
-      <description>&lt;p&gt;Swiftで&lt;code&gt;Promise&lt;/code&gt;を使える様になる&lt;a href=&#34;https://github.com/mxcl/PromiseKit&#34;&gt;PromiseKit&lt;/a&gt;の使い方その3&lt;/p&gt;
+      <description>&lt;p&gt;Swiftで&lt;code&gt;Promise&lt;/code&gt;を使える様になる&lt;a href=&#34;https://github.com/mxcl/PromiseKit&#34;&gt;PromiseKit&lt;/a&gt;の使い方 その3&lt;/p&gt;
 
 &lt;p&gt;より実践的な応用パターンの書き方&lt;/p&gt;
 
@@ -43,7 +43,7 @@
       <pubDate>Mon, 20 Nov 2017 21:18:22 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/promiskit2/</guid>
-      <description>&lt;p&gt;Swiftで&lt;code&gt;Promise&lt;/code&gt;を使える様になる&lt;a href=&#34;https://github.com/mxcl/PromiseKit&#34;&gt;PromiseKit&lt;/a&gt;の使い方その2&lt;/p&gt;
+      <description>&lt;p&gt;Swiftで&lt;code&gt;Promise&lt;/code&gt;を使える様になる&lt;a href=&#34;https://github.com/mxcl/PromiseKit&#34;&gt;PromiseKit&lt;/a&gt;の使い方 その2&lt;/p&gt;
 
 &lt;p&gt;今回はもうちょっと色々なパターンでの使い方のメモ&lt;/p&gt;
 
