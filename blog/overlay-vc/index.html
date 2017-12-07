@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>UIViewControllerをオーバレイ表示させる &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(38)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(11)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/others">others&nbsp;(6)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(3)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/arkit">arkit&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/machinelearning">machinelearning&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(10)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/python">python&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(27)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>UIViewControllerをオーバレイ表示させる</h1>
+    <span class="post-date">Dec 7, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    <h2 id="概要">概要</h2>
+
+<p><code>UIViewController</code>を<code>UIAlertController</code>みたいに表示させるのを<code>Storyboard</code>で実現する方法</p>
+
+<p>例えば、くるくるとインジケータを回したい画面をオーバレイで表示させたい時とかに使える</p>
+
+<p></p>
+
+<h2 id="メリット">メリット</h2>
+
+<p>古い時代の実装だと、画面はnibで作るかコードで実装、表示させたい時に<code>addSubview</code>していた分だが、
+こちらの方がいろいろとメリットが大きい</p>
+
+<p>ざっと思いつくだけでも、</p>
+
+<ul>
+<li><code>ViewController</code>が持てるのでライフサイクル周りのイベントが取れる</li>
+<li>他の<code>ViewController</code>、特に<code>UIAlertController</code>と同じ様に扱えるので便利で判りやすい</li>
+<li><code>AutoLayout</code>が使える（自分で実装しなくて良い）</li>
+<li>書くコードの量が減る</li>
+<li>標準の手法である</li>
+</ul>
+
+<p>といったあたり</p>
+
+<p>（よく<code>Storyboard</code>を覚えるのが大変だから、コードで実装した方が良い派がいるけど、個人的にはどう考えても
+<code>UIViewController</code>が中でやっているライフサイクルの管理や<code>AutoLayout</code>等を全部、
+しかも各OSのバージョン毎に覚えて実装してテストする方が大変だと思う）</p>
+
+<h2 id="作り方">作り方</h2>
+
+<h3 id="表示したい画面を作る">表示したい画面を作る</h3>
+
+<p>通常の画面と同じ要領で表示したい<code>ViewController</code>を作る</p>
+
+<p>この時、本来のアプリの画面で使う<code>Storyboard</code>とは別の<code>Storyboard</code>で作成しておくと、
+<code>nib</code>ファイルみたいに他のプロジェクトで使い回すことも容易になるのでオススメ<br />
+（これに限らず、<code>Storyboard</code>はこまめに分割しておくとコンフリクトも起こりにくくなるので良い）</p>
+
+<p>作成できたら、以下の設定を行う</p>
+
+<ul>
+<li><code>ViewController</code>のViewの<code>Background</code>を <em>半透明</em> で設定する</li>
+<li>透過させたくないViewは<code>Opaque</code>にチェックを入れる</li>
+<li><code>ViewController</code>の<code>Transition Style</code>を<code>Cross Dissolve</code>に設定する（※）<br />
+（画面を表示する際のアニメーション。通常だと違和感があるのでこれに変える）</li>
+<li><code>ViewController</code>の<code>Presentation</code>を<code>Over Full Screen</code>に設定する（※）</li>
+</ul>
+
+<p>※：もし、後述のセグエを使って表示しか使わない場合は設定不要（セグエでの設定が優先されるため）</p>
+
+<h4 id="例">例</h4>
+
+<p>インジケータを表示させる<code>IndicatorViewController</code>を作りたい場合、、、</p>
+
+<p>画面イメージとしては、ボタンのない<code>UIAlertController</code>の様に画面中央に白いViewがあり、その上に<code>UIActivity</code>が載っている状態。また、画面中央の白いView以外の部分は黒の半透明で、元の<code>ViewController</code>が表示されている</p>
+
+<p>この場合は白いViewの<code>Opaque</code>にチェックを入れる</p>
+
+<h3 id="表示させる">表示させる</h3>
+
+<p>大きく分けると、</p>
+
+<ul>
+<li>セグエを使って表示</li>
+<li><code>present</code>を使って表示</li>
+</ul>
+
+<p>の2つになる</p>
+
+<h4 id="セグエを使う">セグエを使う</h4>
+
+<p>データの受け渡しが面倒なのと、そもそもモーダル表示を他の画面遷移と同列に扱うのか？といったあたりがあるので、あまり使わない方法</p>
+
+<p>基本的には通常の画面遷移と同じ。
+（専用の<code>Storyboard</code>に作った場合は、<code>Storyboard Reference</code>を使う）</p>
+
+<p>セグエの設定ポイントは、</p>
+
+<ul>
+<li><code>Kind</code>を<code>Present Modally</code>に設定する</li>
+<li><code>Presentation</code>を<code>Over Full Screen</code>に設定する</li>
+<li><code>Transition Style</code>を<code>Cross Dissolve</code>に設定する<br />
+（画面を表示する際のアニメーション。通常だと違和感があるのでこれに変える）</li>
+</ul>
+
+<p>である。この設定にすると<code>UIAlertController</code>に似た表示のされ方となる</p>
+
+<h4 id="コードから呼び出す">コードから呼び出す</h4>
+
+<p>例のインジケータを表示させる<code>IndicatorViewController</code>の場合だと、生成するコードは、</p>
+
+<pre><code>static func instantiate() -&gt; IndicatorViewController {
+    let storyboard = UIStoryboard(name: 作成したストーリーボード名, bundle: nil)
+    return storyboard.instantiateViewController(withIdentifier: ストーリーボード上のID) as! IndicatorViewController
+}
+</code></pre>
+
+<p>となり、<code>IndicatorViewController</code>のクラスメソッドとしておく</p>
+
+<p>使う時は、</p>
+
+<pre><code>let indicator = IndicatorViewController.instantiate()
+present(indicator, animated: true)
+</code></pre>
+
+<p>とすれば表示される</p>
+
+<p>表示元の<code>ViewController</code>から閉じたい場合は、</p>
+
+<pre><code>presentedViewController?.dismiss(animated: true)
+</code></pre>
+
+<p>の1行で閉じても良いし、先ほどの生成した<code>IndicatorViewController</code>を保持して<code>dismiss</code>しても良い</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Xcode 9.1</li>
+<li>iOS 11.1</li>
+</ul>
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

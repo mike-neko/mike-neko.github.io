@@ -6,10 +6,25 @@
     <description>Recent content on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Fri, 24 Nov 2017 00:14:30 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 07 Dec 2017 22:48:17 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>UIViewControllerをオーバレイ表示させる</title>
+      <link>https://mike-neko.github.io/blog/overlay-vc/</link>
+      <pubDate>Thu, 07 Dec 2017 22:48:17 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/overlay-vc/</guid>
+      <description>&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;UIViewController&lt;/code&gt;を&lt;code&gt;UIAlertController&lt;/code&gt;みたいに表示させるのを&lt;code&gt;Storyboard&lt;/code&gt;で実現する方法&lt;/p&gt;
+
+&lt;p&gt;例えば、くるくるとインジケータを回したい画面をオーバレイで表示させたい時とかに使える&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>PromiseKitの使い方 その4</title>
