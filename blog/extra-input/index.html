@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>ファイル追記書き込み(Swift) &middot; M.Ike</title>
+  <title>StoryboardのExtraViewの便利な使い道(UITextField) &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -146,8 +146,8 @@
 
 <div class="content container">
   <div class="post">
-    <h1>ファイル追記書き込み(Swift)</h1>
-    <span class="post-date">Oct 10, 2017 
+    <h1>StoryboardのExtraViewの便利な使い道(UITextField)</h1>
+    <span class="post-date">Dec 9, 2017 
     
     &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
     
@@ -155,55 +155,48 @@
     <br/>
     <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
     </span>
-    <p>Swiftっぽくファイルの書き込みをする方法</p>
+    <h2 id="概要">概要</h2>
+
+<p><code>UITextField</code>のキーボードにボタンをつけたい場合に、ほぼコードを書かずに<code>Storyboard</code>で完結する方法</p>
 
 <p></p>
 
-<p>iOSでファイルへの追記書き込みをしたい場合、</p>
+<p>キーボードの上部に「キャンセル」とか「実行」みたいなボタンをつけたい場合、ググると出てくるのは<code>UIToolbar</code>をコードで生成して<code>inputAccessoryView</code>に追加する方法だと思うが、この方法は結構コードを書かないといけない</p>
 
-<ul>
-<li><code>FileHandle</code>でファイルを開く</li>
-<li><code>seekToEndOfFile</code>でファイルポインタをファイルの最後に移動させる</li>
-<li><code>write</code>で書き込む</li>
-</ul>
+<p>実はそんな面倒なことをせずとも<code>ExtraView</code>を使えばUI部分を<code>Storyboard</code>で作成することができる</p>
 
-<p>というのが、ググるとよく出てくる方法である</p>
+<h2 id="手順">手順</h2>
 
-<p>上記の方法自体は間違っていないが、ファイルへの書き込みが失敗した(<code>write</code>を実行したらエラーが発生した)場合のエラーが戻り値ではなく、例外で投げられてしまうという問題がある</p>
+<ol>
+<li>一旦、<code>ViewController</code>上に<code>UIToolbar</code>を配置する</li>
+<li><code>UIToolbar</code>に必要なボタンなどを配置する
 
-<p><strong>しかも、この時に投げられる例外はSwiftの例外ではキャッチできないタイプとなっている</strong></p>
+<ol>
+<li>タップイベントも通常と同じ方法(<code>@IBAction</code>)で実装する</li>
+<li><code>UIToolbar</code>を<code>@IBOutlet</code>で<code>ViewController</code>のメンバに追加しておく</li>
+</ol></li>
+<li>作成した<code>UIToolbar</code>を<code>ExtraView</code>に移動させる<br />
+（<code>UIToolbar</code>を<code>UIViewController</code>の<code>First Responder</code>と<code>Exit</code>のアイコンの間ぐらいにドラッグ＆ドロップする）</li>
+</ol>
 
-<p>もちろん、<a href="../objc-exception">こういった方法</a>を使えばキャッチできなくはないが、正直、面倒である</p>
+<p>作成できれば、</p>
 
-<p>という訳で、いろいろ探してたどり着いたのが<code>OutputStream</code>を使う方法</p>
+<pre><code>// textField: 表示させたいフィールド
+// toolbar: 2-1で紐づけたUIToolbar
+textField.inputAccessoryView = toolbar
+</code></pre>
 
-<h2 id="ソース">ソース</h2>
+<p>というのを<code>viewDidLoad</code>なり、<code>textField</code>の<code>didSet</code>なりで呼べばOK</p>
 
-<p>メソッドにすると以下のような感じ</p>
+<p>これによって、<code>ViewController</code>の中で画面を生成するコードを書かなくてもよくなってすっきりとする</p>
 
-<script type="text/javascript" src="https://gist.github.com/6149430f06501b5db9c89aeaf103d5e8.js"></script>
-
-<h2 id="解説">解説</h2>
-
-<p>2行目で書き込み用のストリームを作成する時に、<code>append</code>で追記書き込みを指定している。
-なお、ここを<code>false</code>にすると通常のファイル書き込みに、<code>true</code>にすると追記になる</p>
-
-<p>7~9行目では<code>defer</code>を使ってclose処理を予約している。
-これにより以降の処理でこのメソッドを抜ける（例えば11行目で<code>return false</code>になった）時に、自動的に<code>defer</code>の中の<code>stream.close()</code>が実行される</p>
-
-<p><code>defer</code>は書かれた直後から有効になるので、<code>open</code>の直後に書いておくのがポイント。
-これにより、ファイルのクローズ処理漏れがなくなる</p>
-
-<p>13~15行目で書き込み処理。
-<code>write</code>はポインタでデータを受け取り結果を返すのでこういう書き方になる</p>
-
-<p>本当はちゃんとSwiftで例外を受け取れる様になれば一番良いのだけど・・・</p>
+<p>この方法は他にもいろいろと応用が効き、例えば、<code>UITextField</code>の<code>inputView</code>に<code>UIPicker</code>を入れて、コンボボックスの様なUIを作るといった場合にも使える</p>
 
 <h1 id="開発環境">開発環境</h1>
 
 <ul>
-<li>Xcode 8.3.3</li>
-<li>iOS 10.3</li>
+<li>Xcode 9.1</li>
+<li>iOS 11.1</li>
 </ul>
   </div>
   

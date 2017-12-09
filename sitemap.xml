@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://mike-neko.github.io/blog/extra-input/</loc>
+    <lastmod>2017-12-09T23:31:59+09:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://mike-neko.github.io/blog/overlay-vc/</loc>
     <lastmod>2017-12-07T22:48:17+09:00</lastmod>
   </url>
@@ -433,13 +438,13 @@
   
   <url>
     <loc>https://mike-neko.github.io/categories/ios/</loc>
-    <lastmod>2017-12-07T22:48:17+09:00</lastmod>
+    <lastmod>2017-12-09T23:31:59+09:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://mike-neko.github.io/</loc>
-    <lastmod>2017-12-07T22:48:17+09:00</lastmod>
+    <lastmod>2017-12-09T23:31:59+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -499,7 +504,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/post/</loc>
-    <lastmod>2017-12-07T22:48:17+09:00</lastmod>
+    <lastmod>2017-12-09T23:31:59+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -529,7 +534,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/tags/swift3/</loc>
-    <lastmod>2017-12-07T22:48:17+09:00</lastmod>
+    <lastmod>2017-12-09T23:31:59+09:00</lastmod>
     <priority>0</priority>
   </url>
   

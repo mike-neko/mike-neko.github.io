@@ -6,10 +6,23 @@
     <description>Recent content in Swift3 on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Thu, 07 Dec 2017 22:48:17 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 09 Dec 2017 23:31:59 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/tags/swift3/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>StoryboardのExtraViewの便利な使い道(UITextField)</title>
+      <link>https://mike-neko.github.io/blog/extra-input/</link>
+      <pubDate>Sat, 09 Dec 2017 23:31:59 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/extra-input/</guid>
+      <description>&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;UITextField&lt;/code&gt;のキーボードにボタンをつけたい場合に、ほぼコードを書かずに&lt;code&gt;Storyboard&lt;/code&gt;で完結する方法&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>UIViewControllerをオーバレイ表示させる</title>
