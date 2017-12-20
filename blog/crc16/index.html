@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>Gpgpu &middot; M.Ike</title>
+  <title>SwiftでCRC16を計算する &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -26,7 +26,7 @@
   
   
   
-  <link href="https://mike-neko.github.io/tags/gpgpu/index.xml" rel="alternate" type="application/rss+xml" title="M.Ikeの小ネタ集 &middot; M.Ike" />
+  
 
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -144,121 +144,44 @@
 </div>
 
 
-
-
-
-
-
-
-
 <div class="content container">
-  <h1>tag: " gpgpu "</h1>
-  <div class="posts">
+  <div class="post">
+    <h1>SwiftでCRC16を計算する</h1>
+    <span class="post-date">Dec 20, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
     
     
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/metal-sand/">Metalによる砂のシミュレーションもどき</a>
-      </h1>
-      <span class="post-date">Feb 25, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
-      </span>
-      
-      <p>MetalのGPGPUによる大量のパーティクル処理能力を活かしたデモ。
-パーティクルをそれぞれ砂の一粒に見立てており、上から落下してきた砂粒が山のように積みあがっていく様子をシュミレートしている。</p>
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+    </span>
+    <h2 id="概要">概要</h2>
 
-<p>なお、これも約26万パーティクルで60FPSを維持している。</p>
-
-<h2 id="動作イメージ">動作イメージ</h2>
-      <a href="https://mike-neko.github.io/blog/metal-sand/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/metal-image/">MetalのGPGPUによるパーティクルデモ</a>
-      </h1>
-      <span class="post-date">Feb 11, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
-      </span>
-      
-      <p>読み込んだテクスチャをパーティクルに分解して動かすデモ。動きは滝のように画像がパーティクルに分解して落下していくのをイメージ。</p>
-
-<p>画像サイズが512*512、1ピクセル=1パーティクルに分解するので、約26万個のパーティクルを動かしているが、60FPSを維持している。約100万まで増やすとiPhone6+で30FPSぐらいとなる。</p>
-
-<p>そんなに複雑な計算をさせていないとはいえ、さすがGPGPUといったところ。なお、処理時間のほとんどはGPGPUの部分でCPUは余力がある様子。</p>
-
-<h2 id="動作イメージ">動作イメージ</h2>
-      <a href="https://mike-neko.github.io/blog/metal-image/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/metal-function/">Metal組み込み関数</a>
-      </h1>
-      <span class="post-date">Jan 28, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a>
-      </span>
-      
-      <h2 id="metalのシェーダで利用できる関数のまとめ">Metalのシェーダで利用できる関数のまとめ</h2>
-
-<h4 id="hlsl-glslは各言語との対比">HLSL/GLSLは各言語との対比</h4>
-
-<ul>
-<li>(空白) : 同じ</li>
-<li>ー : 該当なし</li>
-<li>△ : 同等の関数があるが詳細が異なる</li>
-<li>(関数名) : 挙動は同じだが、名前が別の関数がある</li>
-</ul>
+<p>SWiftで<code>CRC16-CCITT</code>を計算する方法</p>
 
 <p></p>
-      <a href="https://mike-neko.github.io/blog/metal-function/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/metal-noise/">MetalのGPGPUによるPerlinノイズ</a>
-      </h1>
-      <span class="post-date">Jan 25, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
-      </span>
-      
-      <p>GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。</p>
 
-<p>パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
-デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。</p>
+<ul>
+<li>CRC16-CCITT</li>
+<li>初期値: 0x0000</li>
+<li>生成多項式: X<sup>16</sup> + X<sup>12</sup> + X<sup>5</sup> + 1</li>
+</ul>
 
-<h2 id="動作イメージ">動作イメージ</h2>
-      <a href="https://mike-neko.github.io/blog/metal-noise/">Read On &rarr;</a>
-      
-    </div>
-    
-    
+<p>上記条件のCRCを<code>Data</code>のエクステンションとして実装すると以下のとおり</p>
 
+<script type="text/javascript" src="https://gist.github.com/00b0e15801cc332a89f850539f1a7d8c.js"></script>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>Xcode 9.0 / 8.3</li>
+<li>Swift 4.0 / 3.1</li>
+</ul>
   </div>
+  
 </div>
+
+
 
 
 <script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
