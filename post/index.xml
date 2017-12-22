@@ -17,9 +17,7 @@
       <pubDate>Wed, 20 Dec 2017 23:34:23 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/crc16/</guid>
-      <description>&lt;h2 id=&#34;概要&#34;&gt;概要&lt;/h2&gt;
-
-&lt;p&gt;SWiftで&lt;code&gt;CRC16-CCITT&lt;/code&gt;を計算する方法&lt;/p&gt;
+      <description>&lt;p&gt;SWiftで&lt;code&gt;CRC16-CCITT&lt;/code&gt;を計算する方法&lt;/p&gt;
 
 &lt;p&gt;&lt;/p&gt;</description>
     </item>
