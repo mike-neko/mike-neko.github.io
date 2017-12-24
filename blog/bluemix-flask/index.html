@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>FlaskのアプリをIBM Cloud (Bluemix)で公開する &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/ios">ios&nbsp;(40)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/mac">mac&nbsp;(11)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/old">old&nbsp;(14)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/others">others&nbsp;(6)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/server">server&nbsp;(17)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/unity">unity&nbsp;(2)</a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+            <a href="/categories/web">web&nbsp;(4)</a>
+        </li>
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/arkit">arkit&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/machinelearning">machinelearning&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(10)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/python">python&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(29)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2017
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>FlaskのアプリをIBM Cloud (Bluemix)で公開する</h1>
+    <span class="post-date">Dec 24, 2017 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/web">web</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/python">python</a>
+    </span>
+    <p><code>IBM Cloud</code>のライトアカウントで<code>Flask</code>のアプリを公開するまでの手順</p>
+
+<p></p>
+
+<p><code>IBM Cloud</code>はIBMが提供するPaaS。<code>Watson</code>が使えるのが特徴的。
+以前は<code>Bluemix</code>と呼ばれていたが、最近名前が変わった。
+また、ライト・アカウントという無料で使えるプラン（以前も無料枠はあったがクレカ登録が必要）が登場し、無料枠もそこそこあるので一気に使いやすくなった</p>
+
+<p>あと、ツールや管理画面が結構、日本語対応しているのも良い</p>
+
+<h2 id="事前準備">事前準備</h2>
+
+<p><em>随時、アップデートされる様で細かな画面や手順は変わる可能性があるので注意！</em></p>
+
+<p>基本的には<a href="https://www.ibm.com/cloud-computing/jp/ja/bluemix/developerslounge/makingapp/">公式チュートリアル</a>と同じ流れ</p>
+
+<h3 id="アカウントの取得">アカウントの取得</h3>
+
+<p><a href="https://console.bluemix.net/registration/free">ここから</a>アカウントを取得する</p>
+
+<p>以前の<code>Bluemix</code>で作ったアカウント（メールアドレス）ではライトアカウントを取得できないので、
+新たにアカウントを作成する必要がある・・・
+（なお、Gmailの場合は「.」を付加する方法を使えば新たなアドレスの準備がいらない）</p>
+
+<p>チュートリアルでは「組織」と「スペース」の作成が必要となっているが、試した時には以下の設定が自動で作成されていた</p>
+
+<ul>
+<li>地域: 米国南部</li>
+<li>組織: アカウント（メールアドレス）と同じ</li>
+<li>スペース: dev</li>
+</ul>
+
+<p>以降の手順はこの設定が前提となるので、作成されていなければ作成する</p>
+
+<h3 id="ローカル環境の設定">ローカル環境の設定</h3>
+
+<ol>
+<li><p><a href="https://console.bluemix.net/docs/cli/reference/bluemix_cli/get_started.html#getting-started">IBM Cloud CLI</a>をインストールする</p></li>
+
+<li><p>ターミナルで以下のコマンドを実行</p>
+
+<pre><code>bx login
+</code></pre></li>
+
+<li><p>APIのエンドポイントとして、<code>us-south</code>を選択する  </p></li>
+
+<li><p>IBM Cloudのメールアドレスとパスワードを入力する</p></li>
+
+<li><p>認証が通れば、アカウントの選択になるので自分のアカウントを選択する</p></li>
+
+<li><p>ログイン情報（地域やユーザなど）が表示されるので、間違いないか確認する<br />
+（この時点では「組織」と「スペース」は空白で良い）</p></li>
+
+<li><p>ターミナルで以下のコマンドを実行</p>
+
+<pre><code>bx target -o 組織 -s スペース
+</code></pre>
+
+<ul>
+<li>組織: アカウント（メールアドレス）と同じ</li>
+<li>スペース: dev</li>
+</ul></li>
+
+<li><p>ログイン情報（地域やユーザなど）が表示されるので、組織とスペースが指定したものになっているか確認する</p></li>
+</ol>
+
+<h3 id="ibm-cloud-上にアプリを作成">IBM Cloud上にアプリを作成</h3>
+
+<ol>
+<li>IBM CloudにWebでログインする</li>
+<li>「カタログ」を選択</li>
+<li>「Cloud Foundry アプリ」の中の「Python」を選択<br />
+<em>「ボイラープレート」の中の「Flask」は検索に出てきても、実際は選択不可なので注意</em></li>
+<li>アプリ名とホスト名を入力する
+
+<ul>
+<li>アプリ名: 任意に入力（アカウント内でユニーク）</li>
+<li>ホスト名: 他者を含め<code>IBM Cloud</code>の中でユニークになるものを入力</li>
+</ul></li>
+<li>価格プランでメモリ量を選択する（今回は他に動かす予定ないので256MB）<br />
+<em>使用中になる場合は、既に稼働中のアプリがあるはずなので、それを停止する</em></li>
+<li>「作成」をクリックしてしばらく待てば作成される</li>
+</ol>
+
+<h2 id="プロジェクトを作成する">プロジェクトを作成する</h2>
+
+<p>IDEとして<code>PyCharm</code>を使っているので、以下の手順でプロジェクトを作成する</p>
+
+<ol>
+<li><code>Create New Project</code>を選択</li>
+<li><code>Flask</code>を選択し、以下の設定にする
+
+<ul>
+<li><code>Location</code>: フォルダがプロジェクト名。保存場所を選択</li>
+<li><code>Template language</code>: <code>Jinja2</code></li>
+</ul></li>
+<li><code>Create</code>をクリック</li>
+</ol>
+
+<p><em>プロジェクト名を<code>flask</code>にしないこと！</em></p>
+
+<h3 id="デプロイ用の設定を追加">デプロイ用の設定を追加</h3>
+
+<p>以下の3つのファイルをプロジェクト直下に追加する</p>
+
+<ul>
+<li>runtime.txt</li>
+<li>requirements.txt</li>
+<li>manifest.yml</li>
+</ul>
+
+<p>各ファイルの内容は以下のとおり</p>
+
+<script type="text/javascript" src="https://gist.github.com/b28728f1f85ceae598e0f45eb2adbbd0.js"></script>
+
+<h4 id="runtime-txt"><code>runtime.txt</code></h4>
+
+<p>ここで<code>Bluemix</code>上のPythonのバージョンを指定する。
+指定しなければ<code>2.7</code>系がデフォルトとなる</p>
+
+<h4 id="requirements-txt"><code>requirements.txt</code></h4>
+
+<p>必要なPythonのパッケージを記入する。多分、<code>pip</code>のそれと同じ</p>
+
+<h4 id="manifest-yml"><code>manifest.yml</code></h4>
+
+<p>デプロイ情報を設定するファイル。
+基本的にはIBM Cloud上に作ったアプリの情報をそのまま入れる</p>
+
+<p><code>command</code>はアプリを起動する時に実行されるスクリプトファイル名を指定する。
+今回だと<code>Flask</code>を実行するスクリプトファイルなので、プロジェクト名と同じファイル名を指定する</p>
+
+<h3 id="ソースを改修する">ソースを改修する</h3>
+
+<p>デフォルトのテンプレートから<code>Bluemix</code>用のソースを追加する。
+追加後のソースは以下のとおり</p>
+
+<pre><code>from flask import Flask
+import os
+
+app = Flask(__name__)
+
+if os.getenv('VCAP_APP_PORT'):
+    host = '0.0.0.0'
+    port = int(os.getenv('VCAP_APP_PORT'))
+else:
+    # ローカル用の設定
+    host = '127.0.0.1'
+    port = 5000
+
+
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
+
+
+if __name__ == '__main__':
+    app.run(host=host, port=port)
+</code></pre>
+
+<p><code>Bluemix</code>では起動時に動的に利用されるポートが決定されるので、
+渡される環境変数を見て<code>Flask</code>へポートの設定を行う</p>
+
+<h2 id="デプロイ">デプロイ</h2>
+
+<p>プロジェクト直下で、</p>
+
+<pre><code>bx app push
+</code></pre>
+
+<p>を実行すればOK</p>
+
+<p>後は、アップロードからアプリの再起動まで自動で行ってくれる</p>
+
+<h1 id="開発環境">開発環境</h1>
+
+<ul>
+<li>macOS 10.13.2</li>
+<li>PyCharm 2017.3</li>
+<li>Python 3.6.1</li>
+<li>Flask 0.12.2</li>
+</ul>
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+
