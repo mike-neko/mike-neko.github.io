@@ -329,6 +329,15 @@ if __name__ == '__main__':
 
 <p>後は、アップロードからアプリの再起動まで自動で行ってくれる</p>
 
+<h3 id="cfignore-の設定"><code>.cfignore</code>の設定</h3>
+
+<p>デフォルトの状態では、一部を除き（※）プロジェクト直下のファイル全部がアップロードされてしまうので、
+<code>.cfignore</code>のファイルを作成して、除外したいファイルやフォルダを設定する</p>
+
+<p>設定方法は<code>.gitignore</code>と同じなので、<code>venv</code>や<code>.idea</code>のフォルダなどを指定している</p>
+
+<p>※: <code>git</code>関連や<code>.DS_Store</code>はアップされない</p>
+
 <h1 id="開発環境">開発環境</h1>
 
 <ul>
