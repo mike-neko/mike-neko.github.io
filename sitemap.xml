@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://mike-neko.github.io/blog/flask-instance/</loc>
+    <lastmod>2017-12-26T22:16:55+09:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://mike-neko.github.io/blog/bluemix-flask/</loc>
     <lastmod>2017-12-24T01:18:42+09:00</lastmod>
   </url>
@@ -454,7 +459,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/</loc>
-    <lastmod>2017-12-24T01:18:42+09:00</lastmod>
+    <lastmod>2017-12-26T22:16:55+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -514,13 +519,13 @@
   
   <url>
     <loc>https://mike-neko.github.io/post/</loc>
-    <lastmod>2017-12-24T01:18:42+09:00</lastmod>
+    <lastmod>2017-12-26T22:16:55+09:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://mike-neko.github.io/tags/python/</loc>
-    <lastmod>2017-12-24T01:18:42+09:00</lastmod>
+    <lastmod>2017-12-26T22:16:55+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -562,7 +567,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/categories/web/</loc>
-    <lastmod>2017-12-24T01:18:42+09:00</lastmod>
+    <lastmod>2017-12-26T22:16:55+09:00</lastmod>
     <priority>0</priority>
   </url>
   

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>WKWebViewの内容をPDFで保存する(Swift) &middot; M.Ike</title>
+  <title>Flaskでinstanceフォルダが認識されない場合の対処方法 &middot; M.Ike</title>
 
   
   <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
@@ -146,85 +146,104 @@
 
 <div class="content container">
   <div class="post">
-    <h1>WKWebViewの内容をPDFで保存する(Swift)</h1>
-    <span class="post-date">Jun 23, 2016 
+    <h1>Flaskでinstanceフォルダが認識されない場合の対処方法</h1>
+    <span class="post-date">Dec 26, 2017 
     
-    &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+    &middot; <a href="https://mike-neko.github.io/categories/web">web</a> 
     
     
     <br/>
-    <a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
+    <a class="label" href="https://mike-neko.github.io/tags/python">python</a>
     </span>
-    <p>昔に<code>UIWebView</code>でやっていたものを最新の<code>WKWebView</code>+<code>Swift</code>で書き換えた時のメモ。</p>
-
-<p>内容は大したことないのだけれど、検索で引っかかるWebの資料がiOS9の実機で動かなかったので残しておく。</p>
+    <p><code>virtualenv</code>の環境で<code>Flask</code>の<code>instance</code>フォルダがうまく認識されなかった時の対処方法</p>
 
 <p></p>
 
-<h2 id="小ネタ">小ネタ</h2>
+<h2 id="状況">状況</h2>
 
-<h3 id="内容全体の取得">内容全体の取得</h3>
+<p>環境としては、IDEに<code>PyCharm</code>を利用。Pythonは<code>virtualenv</code>の仮想環境を利用</p>
 
-<p>今回は<code>WebView</code>の中身全体をPDF化したいので、PDF化する時に表示中のコンテンツがビュー内に収まるように、
-コンテンツの表示位置（<code>scrollView.contentOffset</code>）を初期位置に戻し、
-ビュー自体のサイズも表示ページのサイズ（<code>scrollView.contentSize</code>）に拡大している。</p>
-
-<p>また、以下のようにPDFのページのサイズもコンテンツと同じサイズに設定している。</p>
-
-<pre><code>// frameの中身はコンテンツのサイズ
-UIGraphicsBeginPDFPageWithInfo(frame, nil)
+<pre><code>Project
+  - main.py
+  - instance
+    - app.cfg
 </code></pre>
 
-<p>（つまり、書き出し時には一瞬画面がちらついてしまうので、気になる場合は
-<code>ViewController</code>の<code>view</code>にマスクとなるビューを<code>addSubView</code>して隠すこと）</p>
+<p>みたいな感じのフォルダ構成で</p>
 
-<p><strong>ただし、あまりにコンテンツが長い場合は、うまく描画されないので注意！</strong><br />
-（例えば、Google検索結果とかだと半分ぐらいから下は空白状態になったり、全く空白になったりする）</p>
-
-<p>なお、端末によっても状況が異なるようで、対処方法は未調査。。。</p>
-
-<h3 id="pdfへの書き出し">PDFへの書き出し</h3>
-
-<p>今回は、</p>
-
-<pre><code>webView.scrollView.drawViewHierarchyInRect(frame, afterScreenUpdates: true)
+<pre><code>app = Flask(__name__, instance_relative_config=True)
+app.config.from_pyfile('app.cfg')
 </code></pre>
 
-<p>としてWebView内のコンテンツをPDFに書き出ししている。</p>
+<p>とすると、正しくは<code>instance</code>フォルダ内の<code>app.cfg</code>の設定が読み込まれるはずだが、
+このファイルが見つからないとエラーになっていた</p>
 
-<p>ちまたにある資料では、この部分が、</p>
+<p><code>instance_path</code>で絶対パスを指定すると正しく読み込まれるが、
+<code>Bluemix</code>で使う実装なので絶対パスは使いたくなかった</p>
 
-<pre><code>webView.scrollView.layer.renderInContext(context)
+<p>で、デバッガでパスを見ると、<code>PyCharm.app</code>の中の<code>bin</code>が指定されていた・・・</p>
+
+<h2 id="原因">原因</h2>
+
+<p>結論から言うと、フォルダ構成が</p>
+
+<pre><code>Project
+  - main.py
+  - instance
+    - app.cfg
+  - venv        # &lt;-ここがNG
 </code></pre>
 
-<p>のようになっているのが多いが、iOS9の実機では、
-<code>CGImageCreateWithImageProvider: invalid image provider: NULL</code>
-のエラーが出て書き出しが出来なくなっている。（他のOSは未検証）</p>
+<p>となっていたのが原因。どうやらプロジェクト直下に<code>venv</code>があると、正しく認識してくれないらしい
+（詳細は参考リンクを参照）</p>
 
-<p>なお、<code>drawViewHierarchyInRect</code>の方が速いらしいが、個人的には、
-わざわざコンテキストの取得がいらなくなったのがありがたい。
-（よく書く場所を間違えて取得に失敗する凡ミスをしていたので）</p>
+<p>特に<code>PyCharm</code>の場合だとデフォルトで新しい仮想環境をプロジェクト直下に作ってくれるのでハマってしまった・・・</p>
 
-<h3 id="pdfのファイル保存">PDFのファイル保存</h3>
+<h2 id="対処方法">対処方法</h2>
 
-<p>PDFをファイルとして保存したい場合は、<code>UIGraphicsBeginPDFContextToFile</code>を利用するが、
-このメソッドは既存のファイルを問答無用で上書きするので注意すること。</p>
+<p>仮想環境をプロジェクト直下ではなく別のフォルダに構築する。今回だと</p>
 
-<p>もし、サーバへ送信などでデータが欲しい場合は、<code>UIGraphicsBeginPDFContextToData</code>を利用すれば、
-<code>NSData</code>で取得できる。</p>
+<pre><code>Project
+    - main.py
+    - instance
+        - app.cfg
+venv
+</code></pre>
 
-<h1 id="開発環境">開発環境</h1>
+<p>という様にProject直下ではないところに仮想環境を構築したら改善した</p>
+
+<h3 id="pycharm-での修正手順">PyCharmでの修正手順</h3>
+
+<ol>
+<li>既存の仮想環境を削除
+
+<ol>
+<li><code>Preferences</code> - <code>Project:</code> - <code>Project Interpreter</code>を開く</li>
+<li><code>Project Interpreter</code>の右端にある「歯車」アイコン - <code>Show All...</code>を開く</li>
+<li>現在のプロジェクトのものを選択し、左下の「ー」で削除</li>
+</ol></li>
+<li>新しい仮想環境を作成
+
+<ol>
+<li>左下の「＋」 - <code>Add Local</code>を開く</li>
+<li><code>Virtualenv Environment</code> - <code>New environment</code>にチェック</li>
+<li><code>Location</code>にプロジェクト直下以外を選択して作成（他は任意に選択）</li>
+</ol></li>
+<li><code>Project Interpreter</code>のリストボックスに2で作った仮想環境が出てくる様になるので選択<br /></li>
+<li>設定画面を閉じるとモジュールのインストールの確認画面が出てくるのでインストールする</li>
+<li>実行時の設定を変更
+
+<ol>
+<li>メニューの<code>Run</code> - <code>Edit Configurations</code>を選択</li>
+<li><code>Working directory</code>にプロジェクトのフォルダ位置を指定する</li>
+</ol></li>
+</ol>
+
+<h1 id="参考リンク">参考リンク</h1>
 
 <ul>
-<li>OS X 10.11.5</li>
-<li>Xcode 7.3.1</li>
-<li>iOS 9.3.2</li>
-<li>iPhone 6+</li>
+<li><a href="https://stackoverflow.com/questions/31164127/unable-to-load-configuration-file-from-instance-folder-when-deploying-app">stack overflow</a>の回答</li>
 </ul>
-
-<h1 id="ソース">ソース</h1>
-
-<p><a href="https://github.com/mike-neko/WebView2PDF">こちら</a></p>
   </div>
   
 </div>

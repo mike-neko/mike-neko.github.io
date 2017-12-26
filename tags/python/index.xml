@@ -6,13 +6,24 @@
     <description>Recent content in Python on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sun, 24 Dec 2017 01:18:42 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 26 Dec 2017 22:16:55 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>FlaskのアプリをIBM Cloud (Bluemix)で公開する</title>
+      <title>Flaskでinstanceフォルダが認識されない場合の対処方法</title>
+      <link>https://mike-neko.github.io/blog/flask-instance/</link>
+      <pubDate>Tue, 26 Dec 2017 22:16:55 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/flask-instance/</guid>
+      <description>&lt;p&gt;&lt;code&gt;virtualenv&lt;/code&gt;の環境で&lt;code&gt;Flask&lt;/code&gt;の&lt;code&gt;instance&lt;/code&gt;フォルダがうまく認識されなかった時の対処方法&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>FlaskのアプリをIBM Cloud (Bluemix)で公開する</title>
       <link>https://mike-neko.github.io/blog/bluemix-flask/</link>
       <pubDate>Sun, 24 Dec 2017 01:18:42 +0900</pubDate>
       
