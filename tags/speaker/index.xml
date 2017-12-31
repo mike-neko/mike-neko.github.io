@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Speaker on M.Ikeの小ネタ集</title>
+    <link>https://mike-neko.github.io/tags/speaker/</link>
+    <description>Recent content in Speaker on M.Ikeの小ネタ集</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>jp</language>
+    <lastBuildDate>Sun, 31 Dec 2017 15:09:37 +0900</lastBuildDate>
+    
+	<atom:link href="https://mike-neko.github.io/tags/speaker/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>2017年の発表資料 - 「CoreMLでリアルタイム画風変換」</title>
+      <link>https://mike-neko.github.io/blog/speak-1703/</link>
+      <pubDate>Sun, 31 Dec 2017 15:09:37 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/speak-1703/</guid>
+      <description>&lt;p&gt;2017年の振り返りをかねて、勉強会で発表した内容のまとめ&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;12&lt;/sup&gt;&amp;frasl;&lt;sub&gt;2&lt;/sub&gt; 第75回 Cocoa勉強会関西で「CoreMLでリアルタイム画風変換」を発表&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>2017年の発表資料 - 「ARKit」</title>
+      <link>https://mike-neko.github.io/blog/speak-1702/</link>
+      <pubDate>Sun, 31 Dec 2017 15:09:34 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/speak-1702/</guid>
+      <description>&lt;p&gt;2017年の振り返りをかねて、勉強会で発表した内容のまとめ&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;8&lt;/sup&gt;&amp;frasl;&lt;sub&gt;26&lt;/sub&gt; 第74回 Cocoa勉強会関西で「ARKitについて」を発表&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>2017年の発表資料 - 「MetalでTessellation」</title>
+      <link>https://mike-neko.github.io/blog/speak-1701/</link>
+      <pubDate>Sun, 31 Dec 2017 15:09:29 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/speak-1701/</guid>
+      <description>&lt;p&gt;2017年の振り返りをかねて、勉強会で発表した内容のまとめ&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;2&lt;/sup&gt;&amp;frasl;&lt;sub&gt;11&lt;/sub&gt; 第71回 Cocoa勉強会関西で「MetalでTessellation」を発表&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -6,10 +6,23 @@
     <description>Recent content in Arkit on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Tue, 25 Jul 2017 23:37:35 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 31 Dec 2017 15:09:34 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/tags/arkit/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2017年の発表資料 - 「ARKit」</title>
+      <link>https://mike-neko.github.io/blog/speak-1702/</link>
+      <pubDate>Sun, 31 Dec 2017 15:09:34 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/speak-1702/</guid>
+      <description>&lt;p&gt;2017年の振り返りをかねて、勉強会で発表した内容のまとめ&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;8&lt;/sup&gt;&amp;frasl;&lt;sub&gt;26&lt;/sub&gt; 第74回 Cocoa勉強会関西で「ARKitについて」を発表&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>ARKitのまとめ（実装2）</title>
