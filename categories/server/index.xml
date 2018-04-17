@@ -6,10 +6,21 @@
     <description>Recent content in Server on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sun, 27 Nov 2016 22:50:47 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 17 Apr 2018 22:40:42 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/categories/server/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>AWSのCloud9でLambda(Node.js 8.10)を使う</title>
+      <link>https://mike-neko.github.io/blog/aws-cloud9/</link>
+      <pubDate>Tue, 17 Apr 2018 22:40:42 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/aws-cloud9/</guid>
+      <description>&lt;p&gt;AWSのLambda（Node.js 8.10）を編集するのにCloud9を使う時の手順など&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>VPN上のWindows機へ接続</title>
