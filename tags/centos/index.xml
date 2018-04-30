@@ -40,8 +40,7 @@
       
       <guid>https://mike-neko.github.io/blog/oracle-cent/</guid>
       <description>&lt;p&gt;CentOSのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法
-
-Macの場合は&lt;a href=&#34;../oracle-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;</description>
+&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -51,8 +50,7 @@ Macの場合は&lt;a href=&#34;../oracle-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&
       
       <guid>https://mike-neko.github.io/blog/mssql-cent/</guid>
       <description>&lt;p&gt;CentOSのPHP5.6から&lt;code&gt;PDO_ODBC&lt;/code&gt;でSQLServer(MSSQL)へ接続する方法
-
-Macの場合は&lt;a href=&#34;../mssql-mac/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;</description>
+&lt;/p&gt;</description>
     </item>
     
   </channel>

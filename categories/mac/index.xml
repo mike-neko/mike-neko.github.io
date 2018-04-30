@@ -100,8 +100,7 @@
       
       <guid>https://mike-neko.github.io/blog/oracle-mac/</guid>
       <description>&lt;p&gt;MacのPHP5.6から別サーバで動いているOracleのDBへ&lt;code&gt;oci8&lt;/code&gt;で接続する方法&lt;br /&gt;
-
-CentOSの場合は&lt;a href=&#34;../oracle-cent/&#34;&gt;こちら&lt;/a&gt;&lt;/p&gt;</description>
+&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -110,7 +109,8 @@ CentOSの場合は&lt;a href=&#34;../oracle-cent/&#34;&gt;こちら&lt;/a&gt;&lt
       <pubDate>Thu, 03 Nov 2016 19:24:51 +0900</pubDate>
       
       <guid>https://mike-neko.github.io/blog/mssql-mac/</guid>
-      <description></description>
+      <description>&lt;p&gt;MacのPHP5.6からSQLServer(MSSQL)へ接続する方法
+&lt;/p&gt;</description>
     </item>
     
     <item>
