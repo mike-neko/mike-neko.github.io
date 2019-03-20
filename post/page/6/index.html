@@ -51,7 +51,7 @@
       
         &nbsp;<a href="/categories/old">old&nbsp;(14)</a>&nbsp;
       
-        &nbsp;<a href="/categories/others">others&nbsp;(9)</a>&nbsp;
+        &nbsp;<a href="/categories/others">others&nbsp;(11)</a>&nbsp;
       
         &nbsp;<a href="/categories/server">server&nbsp;(18)</a>&nbsp;
       
@@ -86,7 +86,7 @@
         
           &nbsp;<a href="/tags/machinelearning">machinelearning&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/metal">metal&nbsp;(11)</a>&nbsp;
+          &nbsp;<a href="/tags/metal">metal&nbsp;(13)</a>&nbsp;
         
           &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
         
@@ -98,7 +98,7 @@
         
           &nbsp;<a href="/tags/python">python&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/speaker">speaker&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/speaker">speaker&nbsp;(5)</a>&nbsp;
         
           &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
         
@@ -128,7 +128,7 @@
     </ul>
 
 
-    <p>Copyright &copy; 2018
+    <p>Copyright &copy; 2019
       <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
        Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
   </div>
@@ -146,6 +146,48 @@
   <h1>mike-neko.github.io: " post "</h1>
   <div class="posts">
     
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/scrollview/">UIScrollViewのAutoLayoutをStoryboardのみで設定</a>
+      </h1>
+      <span class="post-date">Oct 23, 2016
+      
+      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+      
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+      </span>
+      
+      <p>Storyboard上だけでUIScrollViewのAutoLayoutを完結させる方法。
+中のUIを動的に追加や削除しないのであればコードを書く必要もないし、
+<code>UILabel</code>のようにコンテンツに応じて動的に高さが変わるようなものにも対応可能</p>
+
+<p></p>
+      <a href="https://mike-neko.github.io/blog/scrollview/">Read On &rarr;</a>
+      
+    </div>
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/notification/">NotificationCenterの使い方</a>
+      </h1>
+      <span class="post-date">Oct 23, 2016
+      
+      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+      
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+      </span>
+      
+      <p>旧<code>NSNotification</code>がSwift3でちょっと変更が入ったので使い方と＋αのエクステンションのまとめ</p>
+
+<p></p>
+      <a href="https://mike-neko.github.io/blog/notification/">Read On &rarr;</a>
+      
+    </div>
     
     <div class="post">
       <h1 class="post-title">
@@ -314,58 +356,16 @@
       
     </div>
     
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/http2apns/">APNs Provider API(http2)を利用する(Node.js)</a>
-      </h1>
-      <span class="post-date">Aug 11, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/server">server</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/apns">apns</a><a class="label" href="https://mike-neko.github.io/tags/http2">http2</a>
-      </span>
-      
-      <p>iOSのAPNsをAPI経由で使う方法。サーバサイドは<code>Node.js</code>を利用</p>
-
-<p></p>
-      <a href="https://mike-neko.github.io/blog/http2apns/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/gittag/">GitHubにタグ付けする</a>
-      </h1>
-      <span class="post-date">Aug 2, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/web">web</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/github">github</a>
-      </span>
-      
-      <p>GitHubにタグを付ける方法。
-<code>GitHub Desktop</code>はブランチ周りはサポートしているけどタグ関係はサポートしていないのでメモしておく</p>
-
-<p></p>
-      <a href="https://mike-neko.github.io/blog/gittag/">Read On &rarr;</a>
-      
-    </div>
-    
     
 
 <ul class="pagination">
     
-    <li>
-        <a href="/post/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+    <li class="page-item">
+        <a href="/post/" class="page-link" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
     </li>
     
-    <li
-    >
-    <a href="/post/page/5/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+    <li class="page-item">
+    <a href="/post/page/5/" class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
     </li>
     
     
@@ -377,8 +377,7 @@
         
     
     
-    <li
-    ><a href="/post/">1</a></li>
+    <li class="page-item"><a class="page-link" href="/post/">1</a></li>
     
     
     
@@ -389,8 +388,7 @@
         
     
     
-    <li
-    ><a href="/post/page/2/">2</a></li>
+    <li class="page-item"><a class="page-link" href="/post/page/2/">2</a></li>
     
     
     
@@ -401,8 +399,7 @@
         
     
     
-    <li
-    ><a href="/post/page/3/">3</a></li>
+    <li class="page-item"><a class="page-link" href="/post/page/3/">3</a></li>
     
     
     
@@ -413,7 +410,7 @@
         
     
     
-    <li class="disabled"><span aria-hidden="true">&hellip;</span></li>
+    <li class="page-item disabled"><span aria-hidden="true">&nbsp;&hellip;&nbsp;</span></li>
     
     
     
@@ -424,8 +421,7 @@
         
     
     
-    <li
-    ><a href="/post/page/5/">5</a></li>
+    <li class="page-item"><a class="page-link" href="/post/page/5/">5</a></li>
     
     
     
@@ -436,8 +432,7 @@
         
     
     
-    <li
-    class="active"><a href="/post/page/6/">6</a></li>
+    <li class="page-item active"><a class="page-link" href="/post/page/6/">6</a></li>
     
     
     
@@ -448,8 +443,7 @@
         
     
     
-    <li
-    ><a href="/post/page/7/">7</a></li>
+    <li class="page-item"><a class="page-link" href="/post/page/7/">7</a></li>
     
     
     
@@ -460,7 +454,7 @@
         
     
     
-    <li class="disabled"><span aria-hidden="true">&hellip;</span></li>
+    <li class="page-item disabled"><span aria-hidden="true">&nbsp;&hellip;&nbsp;</span></li>
     
     
     
@@ -471,17 +465,15 @@
         
     
     
-    <li
-    ><a href="/post/page/9/">9</a></li>
+    <li class="page-item"><a class="page-link" href="/post/page/9/">9</a></li>
     
     
-    <li
-    >
-    <a href="/post/page/7/" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+    <li class="page-item">
+    <a href="/post/page/7/" class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
     </li>
     
-    <li>
-        <a href="/post/page/9/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+    <li class="page-item">
+        <a href="/post/page/9/" class="page-link" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
     </li>
     
 </ul>

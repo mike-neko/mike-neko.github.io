@@ -51,7 +51,7 @@
       
         &nbsp;<a href="/categories/old">old&nbsp;(14)</a>&nbsp;
       
-        &nbsp;<a href="/categories/others">others&nbsp;(9)</a>&nbsp;
+        &nbsp;<a href="/categories/others">others&nbsp;(11)</a>&nbsp;
       
         &nbsp;<a href="/categories/server">server&nbsp;(18)</a>&nbsp;
       
@@ -86,7 +86,7 @@
         
           &nbsp;<a href="/tags/machinelearning">machinelearning&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/metal">metal&nbsp;(11)</a>&nbsp;
+          &nbsp;<a href="/tags/metal">metal&nbsp;(13)</a>&nbsp;
         
           &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
         
@@ -98,7 +98,7 @@
         
           &nbsp;<a href="/tags/python">python&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/speaker">speaker&nbsp;(3)</a>&nbsp;
+          &nbsp;<a href="/tags/speaker">speaker&nbsp;(5)</a>&nbsp;
         
           &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
         
@@ -128,7 +128,7 @@
     </ul>
 
 
-    <p>Copyright &copy; 2018
+    <p>Copyright &copy; 2019
       <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
        Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
   </div>
@@ -146,6 +146,58 @@
   <h1>tag: " metal "</h1>
   <div class="posts">
     
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/metal-function/">Metal組み込み関数</a>
+      </h1>
+      <span class="post-date">Jan 28, 2016
+      
+      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+      
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a>
+      </span>
+      
+      <h2 id="metalのシェーダで利用できる関数のまとめ">Metalのシェーダで利用できる関数のまとめ</h2>
+
+<h4 id="hlsl-glslは各言語との対比">HLSL/GLSLは各言語との対比</h4>
+
+<ul>
+<li>(空白) : 同じ</li>
+<li>ー : 該当なし</li>
+<li>△ : 同等の関数があるが詳細が異なる</li>
+<li>(関数名) : 挙動は同じだが、名前が別の関数がある</li>
+</ul>
+
+<p></p>
+      <a href="https://mike-neko.github.io/blog/metal-function/">Read On &rarr;</a>
+      
+    </div>
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/metal-noise/">MetalのGPGPUによるPerlinノイズ</a>
+      </h1>
+      <span class="post-date">Jan 25, 2016
+      
+      &middot; <a href="https://mike-neko.github.io/categories/old">old</a> 
+      
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/gpgpu">gpgpu</a><a class="label" href="https://mike-neko.github.io/tags/swift2">swift2</a>
+      </span>
+      
+      <p>GPGPUでリアルタイムにパーリンノイズを生成しテクスチャに書き込んで表示するデモ。</p>
+
+<p>パーリンノイズはGPU Gems2の改良パーリンノイズで、それを元にした数種類を選択可能。
+デモでは3次元ノイズを生成し、z値だけを時間で加算していきノイズを変化させている。</p>
+
+<h2 id="動作イメージ">動作イメージ</h2>
+      <a href="https://mike-neko.github.io/blog/metal-noise/">Read On &rarr;</a>
+      
+    </div>
     
     <div class="post">
       <h1 class="post-title">
@@ -173,13 +225,12 @@
 
 <ul class="pagination">
     
-    <li>
-        <a href="/tags/metal/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+    <li class="page-item">
+        <a href="/tags/metal/" class="page-link" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
     </li>
     
-    <li
-    >
-    <a href="/tags/metal/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+    <li class="page-item">
+    <a href="/tags/metal/" class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
     </li>
     
     
@@ -191,8 +242,7 @@
         
     
     
-    <li
-    ><a href="/tags/metal/">1</a></li>
+    <li class="page-item"><a class="page-link" href="/tags/metal/">1</a></li>
     
     
     
@@ -203,17 +253,15 @@
         
     
     
-    <li
-    class="active"><a href="/tags/metal/page/2/">2</a></li>
+    <li class="page-item active"><a class="page-link" href="/tags/metal/page/2/">2</a></li>
     
     
-    <li
-    class="disabled">
-    <a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+    <li class="page-item disabled">
+    <a href="" class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
     </li>
     
-    <li>
-        <a href="/tags/metal/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+    <li class="page-item">
+        <a href="/tags/metal/page/2/" class="page-link" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
     </li>
     
 </ul>

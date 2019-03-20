@@ -6,10 +6,36 @@
     <description>Recent content in Speaker on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Sun, 31 Dec 2017 15:09:37 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 31 Dec 2018 15:09:29 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/tags/speaker/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2018年の発表資料 - 「Swiftとメモリ管理」</title>
+      <link>https://mike-neko.github.io/blog/speak-1802/</link>
+      <pubDate>Mon, 31 Dec 2018 15:09:29 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/speak-1802/</guid>
+      <description>&lt;p&gt;2018年の振り返りをかねて、勉強会で発表した内容のまとめ&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;4&lt;/sup&gt;&amp;frasl;&lt;sub&gt;14&lt;/sub&gt; 第77回 Cocoa勉強会関西で「Swiftとメモリ管理」を発表&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>2018年の発表資料 - 「進化するCoreML」</title>
+      <link>https://mike-neko.github.io/blog/speak-1801/</link>
+      <pubDate>Mon, 31 Dec 2018 15:09:29 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/speak-1801/</guid>
+      <description>&lt;p&gt;2018年の振り返りをかねて、勉強会で発表した内容のまとめ&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;2&lt;/sup&gt;&amp;frasl;&lt;sub&gt;3&lt;/sub&gt; 第76回 Cocoa勉強会関西で「進化するCoreML」を発表&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>2017年の発表資料 - 「CoreMLでリアルタイム画風変換」</title>

@@ -3,6 +3,16 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://mike-neko.github.io/blog/speak-1802/</loc>
+    <lastmod>2018-12-31T15:09:29+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mike-neko.github.io/blog/speak-1801/</loc>
+    <lastmod>2018-12-31T15:09:29+09:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://mike-neko.github.io/blog/aws-cloud9/</loc>
     <lastmod>2018-04-17T22:40:42+09:00</lastmod>
   </url>
@@ -485,7 +495,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/</loc>
-    <lastmod>2018-04-17T22:40:42+09:00</lastmod>
+    <lastmod>2018-12-31T15:09:29+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -503,7 +513,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/tags/metal/</loc>
-    <lastmod>2017-12-31T15:09:29+09:00</lastmod>
+    <lastmod>2018-12-31T15:09:29+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -533,7 +543,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/categories/others/</loc>
-    <lastmod>2017-12-31T15:09:37+09:00</lastmod>
+    <lastmod>2018-12-31T15:09:29+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -545,7 +555,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/post/</loc>
-    <lastmod>2018-04-17T22:40:42+09:00</lastmod>
+    <lastmod>2018-12-31T15:09:29+09:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -563,7 +573,7 @@
   
   <url>
     <loc>https://mike-neko.github.io/tags/speaker/</loc>
-    <lastmod>2017-12-31T15:09:37+09:00</lastmod>
+    <lastmod>2018-12-31T15:09:29+09:00</lastmod>
     <priority>0</priority>
   </url>
   
