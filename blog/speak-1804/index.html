@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="google-site-verification" content="TE7Itl6qCgv2E7jeWyM_y19ArwRppMuK9GLXHMQ4qgA" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>2018年の発表資料 - 「WWDC2018で発表された機械学習周りについて」 &middot; M.Ike</title>
+
+  
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://mike-neko.github.io/css/highlight/xcode.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link href="https://mike-neko.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d layout-reverse">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>M.Ike</h1>
+      <p class="lead">〜小ネタ集〜</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://mike-neko.github.io/">Top</a></li>
+
+      
+        &nbsp;<a href="/categories/ios">ios&nbsp;(40)</a>&nbsp;
+      
+        &nbsp;<a href="/categories/mac">mac&nbsp;(11)</a>&nbsp;
+      
+        &nbsp;<a href="/categories/old">old&nbsp;(14)</a>&nbsp;
+      
+        &nbsp;<a href="/categories/others">others&nbsp;(14)</a>&nbsp;
+      
+        &nbsp;<a href="/categories/server">server&nbsp;(18)</a>&nbsp;
+      
+        &nbsp;<a href="/categories/unity">unity&nbsp;(2)</a>&nbsp;
+      
+        &nbsp;<a href="/categories/web">web&nbsp;(6)</a>&nbsp;
+      
+
+      <li class="sidebar-nav-item lead">Tags</li>
+
+      <li>
+        
+          &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/arkit">arkit&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/aws">aws&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/centos">centos&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/db">db&nbsp;(11)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/docker">docker&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/github">github&nbsp;(5)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/gpgpu">gpgpu&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/http2">http2&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/machinelearning">machinelearning&nbsp;(6)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/metal">metal&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/objc">objc&nbsp;(2)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/opencv">opencv&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/php">php&nbsp;(12)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/python">python&nbsp;(4)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/speaker">speaker&nbsp;(8)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift">swift&nbsp;(1)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift3">swift3&nbsp;(29)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/webrtc">webrtc&nbsp;(2)</a>&nbsp;
+        
+      </li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/mike-neko"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/m__ike_"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      <a href="https://www.instagram.com/m_ike__/"><i class="fa fa-instagram fa-3x"></i></a>
+      <a href="https://qiita.com/m__ike_"><img src="/qiita.png" width="40px" height="40px" style="display: inline-block; margin: 0; top: 2px; position: relative;"></a>
+      
+      </li>
+    </ul>
+
+
+    <p>Copyright &copy; 2019
+      <a href="https://twitter.com/m__ike_">M.Ike</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>2018年の発表資料 - 「WWDC2018で発表された機械学習周りについて」</h1>
+    <span class="post-date">Dec 31, 2018 
+    
+    &middot; <a href="https://mike-neko.github.io/categories/others">others</a> 
+    
+    
+    <br/>
+    <a class="label" href="https://mike-neko.github.io/tags/speaker">speaker</a><a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/machinelearning">machinelearning</a>
+    </span>
+    <p>2018年の振り返りをかねて、勉強会で発表した内容のまとめ</p>
+
+<p><sup>8</sup>&frasl;<sub>26</sub> 第79回 Cocoa勉強会関西で「WWDC2018で発表された機械学習周りについて」を発表</p>
+
+<p></p>
+
+<h1 id="wwdc2018で発表された機械学習周りについて">WWDC2018で発表された機械学習周りについて</h1>
+
+<iframe src="//www.slideshare.net/slideshow/embed_code/key/EtkUcetT6LUmwL" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+  </div>
+  
+</div>
+
+
+
+
+<script src="https://mike-neko.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-83211342-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

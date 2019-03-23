@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Swift on M.Ikeの小ネタ集</title>
+    <link>https://mike-neko.github.io/tags/swift/</link>
+    <description>Recent content in Swift on M.Ikeの小ネタ集</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>jp</language>
+    <lastBuildDate>Mon, 31 Dec 2018 15:09:29 +0900</lastBuildDate>
+    
+	<atom:link href="https://mike-neko.github.io/tags/swift/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>2018年の発表資料 - 「Swiftとメモリ管理」</title>
+      <link>https://mike-neko.github.io/blog/speak-1802/</link>
+      <pubDate>Mon, 31 Dec 2018 15:09:29 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/speak-1802/</guid>
+      <description>&lt;p&gt;2018年の振り返りをかねて、勉強会で発表した内容のまとめ&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;4&lt;/sup&gt;&amp;frasl;&lt;sub&gt;14&lt;/sub&gt; 第77回 Cocoa勉強会関西で「Swiftとメモリ管理」を発表&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

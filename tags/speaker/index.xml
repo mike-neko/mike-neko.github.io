@@ -6,10 +6,49 @@
     <description>Recent content in Speaker on M.Ikeの小ネタ集</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp</language>
-    <lastBuildDate>Mon, 31 Dec 2018 15:09:29 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 31 Dec 2018 18:09:29 +0900</lastBuildDate>
     
 	<atom:link href="https://mike-neko.github.io/tags/speaker/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>2018年の発表資料 - 「SiriKitについて」</title>
+      <link>https://mike-neko.github.io/blog/speak-1805/</link>
+      <pubDate>Mon, 31 Dec 2018 18:09:29 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/speak-1805/</guid>
+      <description>&lt;p&gt;2018年の振り返りをかねて、勉強会で発表した内容のまとめ&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;11&lt;/sup&gt;&amp;frasl;&lt;sub&gt;17&lt;/sub&gt; 第80回 Cocoa勉強会関西で「SiriKitについて」を発表&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>2018年の発表資料 - 「WWDC2018で発表された機械学習周りについて」</title>
+      <link>https://mike-neko.github.io/blog/speak-1804/</link>
+      <pubDate>Mon, 31 Dec 2018 17:09:29 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/speak-1804/</guid>
+      <description>&lt;p&gt;2018年の振り返りをかねて、勉強会で発表した内容のまとめ&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;8&lt;/sup&gt;&amp;frasl;&lt;sub&gt;26&lt;/sub&gt; 第79回 Cocoa勉強会関西で「WWDC2018で発表された機械学習周りについて」を発表&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>2018年の発表資料 - 「ARKit2について」</title>
+      <link>https://mike-neko.github.io/blog/speak-1803/</link>
+      <pubDate>Mon, 31 Dec 2018 16:09:29 +0900</pubDate>
+      
+      <guid>https://mike-neko.github.io/blog/speak-1803/</guid>
+      <description>&lt;p&gt;2018年の振り返りをかねて、勉強会で発表した内容のまとめ&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;6&lt;/sup&gt;&amp;frasl;&lt;sub&gt;24&lt;/sub&gt; 第78回 Cocoa勉強会関西で「ARKit2について」を発表&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>2018年の発表資料 - 「Swiftとメモリ管理」</title>

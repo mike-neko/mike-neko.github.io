@@ -52,7 +52,7 @@
       
         &nbsp;<a href="/categories/old">old&nbsp;(14)</a>&nbsp;
       
-        &nbsp;<a href="/categories/others">others&nbsp;(11)</a>&nbsp;
+        &nbsp;<a href="/categories/others">others&nbsp;(14)</a>&nbsp;
       
         &nbsp;<a href="/categories/server">server&nbsp;(18)</a>&nbsp;
       
@@ -67,7 +67,7 @@
         
           &nbsp;<a href="/tags/apns">apns&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/arkit">arkit&nbsp;(4)</a>&nbsp;
+          &nbsp;<a href="/tags/arkit">arkit&nbsp;(5)</a>&nbsp;
         
           &nbsp;<a href="/tags/aws">aws&nbsp;(1)</a>&nbsp;
         
@@ -85,9 +85,9 @@
         
           &nbsp;<a href="/tags/hugo">hugo&nbsp;(2)</a>&nbsp;
         
-          &nbsp;<a href="/tags/machinelearning">machinelearning&nbsp;(4)</a>&nbsp;
+          &nbsp;<a href="/tags/machinelearning">machinelearning&nbsp;(6)</a>&nbsp;
         
-          &nbsp;<a href="/tags/metal">metal&nbsp;(13)</a>&nbsp;
+          &nbsp;<a href="/tags/metal">metal&nbsp;(12)</a>&nbsp;
         
           &nbsp;<a href="/tags/nginx">nginx&nbsp;(2)</a>&nbsp;
         
@@ -99,9 +99,11 @@
         
           &nbsp;<a href="/tags/python">python&nbsp;(4)</a>&nbsp;
         
-          &nbsp;<a href="/tags/speaker">speaker&nbsp;(5)</a>&nbsp;
+          &nbsp;<a href="/tags/speaker">speaker&nbsp;(8)</a>&nbsp;
         
           &nbsp;<a href="/tags/ssl">ssl&nbsp;(3)</a>&nbsp;
+        
+          &nbsp;<a href="/tags/swift">swift&nbsp;(1)</a>&nbsp;
         
           &nbsp;<a href="/tags/swift2">swift2&nbsp;(13)</a>&nbsp;
         
@@ -139,6 +141,70 @@
 <div class="content container">
   <div class="posts">
     
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/metalgray/">画像をグレースケールへ変換する（Metal編）</a>
+      </h1>
+      <span class="post-date">May 3, 2017
+      
+      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+      
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+      </span>
+      
+      <p>RGBの<code>MTLTexture</code>をグレースケールの<code>MTLTexture</code>に変換する方法</p>
+
+<p><code>UIImage</code>を変換する方法は<a href="../grayimage">こちら</a>を参照
+</p>
+      <a href="https://mike-neko.github.io/blog/metalgray/">Read On &rarr;</a>
+      
+    </div>
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/grayimage/">UIImageをグレースケールに変換する</a>
+      </h1>
+      <span class="post-date">Apr 24, 2017
+      
+      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
+      
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+      </span>
+      
+      <p>RGBの<code>UIImage</code>をグレースケールの<code>UIImage</code>に変換する方法</p>
+
+<p>あと<code>CGContext</code>周りも変わっていたのでそれも兼ねてメモ
+</p>
+      <a href="https://mike-neko.github.io/blog/grayimage/">Read On &rarr;</a>
+      
+    </div>
+    
+    <div class="post">
+      <h1 class="post-title">
+        <a href="https://mike-neko.github.io/blog/modelio-load/">Model I/Oでモデルをロード</a>
+      </h1>
+      <span class="post-date">Mar 29, 2017
+      
+      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> &middot; <a href="https://mike-neko.github.io/categories/mac">mac</a> 
+      
+      
+      <br/>
+      <a class="label" href="https://mike-neko.github.io/tags/metal">metal</a><a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
+      </span>
+      
+      <p>MetalでModel I/O経由でモデルをファイルからロードする方法</p>
+
+<p><a href="https://developer.apple.com/library/content/samplecode/MetalKitEssentials/Introduction/Intro.html">公式サンプル</a>よりもシンプルな方法</p>
+
+<p></p>
+      <a href="https://mike-neko.github.io/blog/modelio-load/">Read On &rarr;</a>
+      
+    </div>
     
     <div class="post">
       <h1 class="post-title">
@@ -278,68 +344,6 @@
       
       <p><code>UIPageViewController</code>をエンドレスでページ切り替えする方法とかその他小ネタ</p>
       <a href="https://mike-neko.github.io/blog/pageview/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/provisioning/">Provisioning Profileの有効期限をアプリ内で取得</a>
-      </h1>
-      <span class="post-date">Dec 7, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a>
-      </span>
-      
-      <p><code>AdHoc</code>で作成したiOSアプリ(ipa)にはプロビジョニングプロファイルの有効期限が存在するが、
-その有効期限をアプリ内から確認する方法</p>
-
-<p></p>
-      <a href="https://mike-neko.github.io/blog/provisioning/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/multipart/">multipart/form-dataによるファイルのアップロード</a>
-      </h1>
-      <span class="post-date">Dec 6, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a><a class="label" href="https://mike-neko.github.io/tags/php">php</a>
-      </span>
-      
-      <p>（<code>Alamofire</code>とかのライブラリを使った方が幸せになれると思うが）
-HTMLのフォームからの送信と同じ様な<code>multipart</code>によるアップロードをiOSからする方法</p>
-
-<p></p>
-      <a href="https://mike-neko.github.io/blog/multipart/">Read On &rarr;</a>
-      
-    </div>
-    
-    <div class="post">
-      <h1 class="post-title">
-        <a href="https://mike-neko.github.io/blog/webrtc-ios/">WebRTCをiOSネイティブで使う(実装編)</a>
-      </h1>
-      <span class="post-date">Nov 30, 2016
-      
-      &middot; <a href="https://mike-neko.github.io/categories/ios">ios</a> 
-      
-      
-      <br/>
-      <a class="label" href="https://mike-neko.github.io/tags/swift3">swift3</a><a class="label" href="https://mike-neko.github.io/tags/webrtc">webrtc</a>
-      </span>
-      
-      <p>iOSで<code>WebRTC</code>を使ったビデオチャットを作る方法</p>
-
-<p></p>
-      <a href="https://mike-neko.github.io/blog/webrtc-ios/">Read On &rarr;</a>
       
     </div>
     
